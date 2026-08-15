@@ -1,0 +1,223 @@
+---
+title: The time-independent Schrödinger equation
+section: '2.3'
+order: 3
+summary: 'Separating variables splits the time-dependent problem in two: an eigenvalue problem that fixes the levels, and a trivial phase factor that handles the evolution.'
+status: done
+prereqs:
+  - 02-wavefunction/01-born-rule
+  - 02-wavefunction/02-normalization-and-current
+objectives:
+  - Derive the stationary equation by separation of variables
+  - Explain why energy eigenvalues must be real, and why solutions exist only for particular E
+  - Judge the qualitative shape of a wavefunction in a given potential from its curvature
+---
+
+The full Schrödinger equation is
+
+$$
+\ii\hbar\frac{\partial\Psi(x,t)}{\partial t} = \hat H\Psi(x,t),\qquad
+\hat H = -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2}+V(x)
+$$
+
+a partial differential equation. The good news: when $V$ does not depend explicitly on time — which covers almost every textbook problem — **separation of variables** splits it into two ordinary differential equations, and one of them is completely trivial.
+
+## Separating the variables
+
+<Derivation title="From the time-dependent equation to the stationary one" level="基础" minutes={5} open={true}>
+
+Try a separable solution
+
+$$
+\Psi(x,t) = \psi(x)\,\varphi(t)
+$$
+
+and substitute:
+
+$$
+\ii\hbar\,\psi(x)\frac{\dd\varphi}{\dd t} = \varphi(t)\left[-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V(x)\psi\right]
+$$
+
+Divide both sides by $\psi\varphi$:
+
+$$
+\underbrace{\ii\hbar\frac{1}{\varphi}\frac{\dd\varphi}{\dd t}}_{\text{depends on }t\text{ only}}
+=\underbrace{\frac{1}{\psi}\left[-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V\psi\right]}_{\text{depends on }x\text{ only}}
+$$
+
+The left side is a function of $t$ alone, the right side of $x$ alone, and $x$ and $t$ are independent variables. A quantity depending only on $t$ can equal one depending only on $x$ only if **both equal the same constant**. Call that separation constant $E$ — it will turn out to be the energy.
+
+**The time part**:
+
+$$
+\ii\hbar\frac{\dd\varphi}{\dd t}=E\varphi
+\;\Longrightarrow\;
+\varphi(t)=\ee^{-\ii Et/\hbar}
+$$
+
+(the integration constant is absorbed into $\psi$). This solution is completely universal and has nothing to do with the shape of the potential. All the physics lives in the spatial part.
+
+**The spatial part**, which is the **time-independent Schrödinger equation**:
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V(x)\psi = E\psi
+$$
+
+or, in operator form, $\hat H\psi = E\psi$.
+
+</Derivation>
+
+So a separable solution always looks like
+
+$$
+\Psi_n(x,t)=\psi_n(x)\,\ee^{-\ii E_n t/\hbar}
+$$
+
+<Callout type="insight" title="This is not an ordinary differential equation">
+On the surface $\hat H\psi=E\psi$ is a second-order ODE, but it has an extra identity: it is an **eigenvalue problem**.
+
+The difference is this. An ordinary differential equation has solutions for any value of its parameters; here we additionally demand that $\psi$ satisfy physical boundary conditions (normalisable, continuous, and so on). Those conditions can only be met simultaneously for particular values of $E$. The allowed values are the **energy levels** and the corresponding $\psi$ are the **energy eigenstates**.
+
+**Quantisation of energy is not an extra assumption; it is a mathematical consequence of the boundary conditions.** This is one of the loveliest things in quantum mechanics: the quantisation conditions that Planck and Bohr had to insert by hand fall out of Schrödinger's framework on their own.
+</Callout>
+
+## Why E must be real
+
+<Derivation title="Bound-state energy eigenvalues are real" level="进阶" minutes={4}>
+
+Assume $\hat H\psi = E\psi$ with normalisable $\psi$. Take the complex conjugate (with $V$ real):
+
+$$
+-\frac{\hbar^2}{2m}\psi^{*\prime\prime}+V\psi^*=E^*\psi^*
+$$
+
+Multiply the first equation by $\psi^*$ and the second by $\psi$, then subtract; the $V$ terms cancel:
+
+$$
+-\frac{\hbar^2}{2m}\left(\psi^*\psi''-\psi\psi^{*\prime\prime}\right)=(E-E^*)|\psi|^2
+$$
+
+The bracket on the left is again a total derivative, $\frac{\dd}{\dd x}(\psi^*\psi'-\psi\psi^{*\prime})$. Integrating over all space turns the left side into a boundary term, which vanishes because $\psi$ is normalisable:
+
+$$
+0=(E-E^*)\int|\psi|^2\dd x = (E-E^*)\cdot 1
+$$
+
+Hence $E=E^*$, so $E$ is real.
+
+This is no accident. Its general form is "the eigenvalues of a Hermitian operator are real", redone in operator language in [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) — in three lines. The long-winded integral proof here shows exactly that: **change the language and the same fact becomes much simpler.**
+
+</Derivation>
+
+Reality of $E$ has an immediate consequence: $|\varphi(t)|^2=|\ee^{-\ii Et/\hbar}|^2=1$, so the time factor has constant modulus. Therefore $|\Psi_n(x,t)|^2=|\psi_n(x)|^2$ does not change with time — which is where the name "stationary state" comes from. The next section says more.
+
+## Reading a wavefunction from its curvature
+
+You can see roughly what $\psi$ looks like without solving anything. Rewrite the stationary equation as
+
+$$
+\frac{\dd^2\psi}{\dd x^2}=\frac{2m}{\hbar^2}\left[V(x)-E\right]\psi
+$$
+
+<DualView>
+<div slot="left">
+
+**Classically allowed region ($E>V$)**: $\psi''$ has the opposite sign to $\psi$, so the curve bends **towards the axis** — it oscillates. The larger $E-V$ (the larger the kinetic energy), the sharper the bending and the shorter the wavelength.
+
+**Classically forbidden region ($E<V$)**: $\psi''$ has the same sign as $\psi$, so the curve bends **away from the axis** — exponential behaviour. Physically we keep only the decaying branch, or normalisation fails.
+
+**Turning point ($E=V$)**: $\psi''=0$ and the curve changes its concavity there.
+
+</div>
+<div slot="right">
+
+$$
+\psi''=\frac{2m(V-E)}{\hbar^2}\psi
+$$
+
+$E>V$: locally $\psi\sim\ee^{\pm\ii kx}$ with $k=\frac{\sqrt{2m(E-V)}}{\hbar}$
+
+$E<V$: locally $\psi\sim\ee^{\pm\kappa x}$ with $\kappa=\frac{\sqrt{2m(V-E)}}{\hbar}$
+
+These two approximations are the starting point of the [WKB method](/en/ch/07-approximation/04-wkb/).
+
+</div>
+</DualView>
+
+<Callout type="insight" title="This picture alone predicts quantisation">
+Consider a potential well that traps a particle. Starting from far to the left, $\psi$ must decay exponentially towards zero. Entering the well it starts to oscillate; leaving the well it returns to exponential behaviour.
+
+Here is the catch: the exponential solution on the right generally contains both a growing branch $\ee^{+\kappa x}$ and a decaying branch $\ee^{-\kappa x}$. For $\psi$ to go to zero far to the right as well, the coefficient of the growing branch must be tuned to **exactly** zero.
+
+That is only possible for particular values of $E$, where the oscillation inside the well accumulates just the right phase to match both sides. This is where discrete levels come from. The larger $n$, the more half-wavelengths fit inside, the more nodes, and the higher the energy.
+</Callout>
+
+<Callout type="note" title="Why this section has no simulation">
+This section is about a method (separation of variables) rather than a specific system, so the thing to visualise would be a solution procedure, not a physical quantity. The curvature intuition above can be checked directly in the simulations of sections [2.7](/en/ch/02-wavefunction/07-infinite-well/) and [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/): change the quantum number and watch how the density of the bending inside the well tracks the energy. The genuinely general tool is the custom-potential solver in [section 4.5](/en/ch/04-1d-problems/05-custom-potential-solver/).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Time-independent Schrödinger equation', latex: '-\\frac{\\hbar^2}{2m}\\frac{\\dd^2\\psi}{\\dd x^2}+V(x)\\psi=E\\psi', note: 'An eigenvalue problem: only particular E admit normalisable solutions' },
+    { name: 'Separable solution', latex: '\\Psi_n(x,t)=\\psi_n(x)\\,\\ee^{-\\ii E_n t/\\hbar}', note: 'The time factor is independent of the potential — always this phase' },
+    { name: 'Curvature relation', latex: '\\frac{\\dd^2\\psi}{\\dd x^2}=\\frac{2m}{\\hbar^2}[V(x)-E]\\,\\psi', note: 'Oscillatory for E>V, exponential for E<V; the whole qualitative picture' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tise-1',
+      prompt: 'Does the time factor e^{−iEt/ħ} obtained by separation of variables depend on the potential V(x)?',
+      options: [
+        'No — as long as V is time-independent, the time factor always takes this form',
+        'Yes — different V give different time evolution',
+        'Yes — a larger V makes the phase turn faster',
+        'Only for V = 0 does it take this form',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'All information about V goes into the spatial equation, where it determines the allowed values of E.',
+        2: 'The rate of phase rotation is set by the eigenvalue E, which comes out of the eigenvalue problem.',
+      },
+      explain: 'After separation the time equation is iħφ̇ = Eφ, which contains no V at all. V affects the evolution only indirectly, by fixing the allowed E.',
+    },
+    {
+      id: 'tise-2',
+      prompt: 'Why are bound-state energies discrete?',
+      options: [
+        'Because only particular E allow the wavefunction to decay to zero on both sides',
+        'Because the Schrödinger equation only has solutions for discrete E',
+        'Because energy is inherently lumpy; it is a basic postulate',
+        'Because the wavefunction must be periodic',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The differential equation has mathematical solutions for any E; the point is that they are generally not normalisable.',
+        2: 'Quite the opposite: quantisation is derived from the equation plus boundary conditions, not assumed.',
+        3: 'Bound-state wavefunctions are generally not periodic.',
+      },
+      explain: 'In the forbidden region the general solution contains a growing and a decaying exponential. Demanding normalisability on both sides means the growing coefficient must vanish at both ends — a strong constraint that only discrete E satisfy.',
+    },
+    {
+      id: 'tise-3',
+      prompt: 'At one point E − V(x) = 4 eV; at another E − V(x) = 1 eV. Which statement about the wavefunction is correct?',
+      options: [
+        'The first oscillates faster (shorter local wavelength)',
+        'The second oscillates faster',
+        'The wavelength is the same at both points, only the amplitude differs',
+        'The second decays exponentially',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The local wave number k = √(2m(E−V))/ħ grows with E−V.',
+        3: 'Exponential behaviour requires E < V, and here E > V at both points.',
+      },
+      explain: 'The local wavelength is λ = 2πħ/√(2m(E−V)): more kinetic energy means shorter wavelength and sharper bending. The amplitude behaves the other way round — where the particle moves fast it spends less time, so the probability density is lower.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Separation of variables produces only a family of particular solutions. The genuinely general solution is a **superposition** of them — and superpositions behave nothing like stationary states. The next section returns to the full time-dependent equation.

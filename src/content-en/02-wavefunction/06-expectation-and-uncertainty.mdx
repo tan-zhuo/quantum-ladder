@@ -1,0 +1,302 @@
+---
+title: Expectation values, variance and the uncertainty principle
+section: '2.6'
+order: 6
+summary: 'Extracting numbers from a probability distribution: means, fluctuations, and one inequality that constrains them.'
+status: done
+prereqs:
+  - 02-wavefunction/05-stationary-states
+objectives:
+  - Compute the expectation value and standard deviation of any observable
+  - Explain why the momentum operator is −iħ∂/∂x and not something else
+  - State the uncertainty principle correctly and say what is wrong with the "observer disturbance" reading
+  - Use Ehrenfest's theorem to show how classical mechanics emerges
+sims: ['infinite-well']
+---
+
+With $|\Psi|^2$ in hand we have a probability distribution. What remains is statistics: compute means, compute fluctuations.
+
+## Expectation values
+
+The definition of an <Term id="expectation">expectation value</Term> comes straight from probability theory:
+
+$$
+\langle x\rangle=\int_{-\infty}^{\infty}x\,|\Psi(x,t)|^2\,\dd x
+$$
+
+<Callout type="misconception" title="An expectation value is not the most likely result">
+A double-peaked distribution makes the point: a particle has a 50% chance of being near $x=-a$ and 50% near $x=+a$, so $\langle x\rangle=0$ — and $x=0$ is exactly where the probability is **lowest**.
+
+An expectation value is the **average over many repeated measurements**, not a prediction for any single one. And it must be stressed: one measurement each on **many identically prepared copies**, not repeated measurements on the same particle — after the first measurement that particle's state has changed ([section 3.8](/en/ch/03-formalism/08-measurement/)).
+</Callout>
+
+## Where the momentum operator comes from
+
+The expectation value of position is easy to write. What about momentum? We do not know what "the particle's momentum distribution" looks like. But there is one clue: $\langle p\rangle$ ought to equal $m\,\dd\langle x\rangle/\dd t$.
+
+<Derivation title="Deriving the momentum operator from d⟨x⟩/dt" level="进阶" minutes={7}>
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=\int x\frac{\partial}{\partial t}|\Psi|^2\,\dd x
+$$
+
+Use the continuity equation $\partial_t|\Psi|^2=-\partial_x j$ from [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/):
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=-\int x\frac{\partial j}{\partial x}\dd x
+$$
+
+Integrate by parts; the boundary term vanishes because $\Psi$ is normalisable:
+
+$$
+=\int j\,\dd x=\int\frac{\ii\hbar}{2m}\left(\Psi\frac{\partial\Psi^*}{\partial x}-\Psi^*\frac{\partial\Psi}{\partial x}\right)\dd x
+$$
+
+Integrate the first term by parts once more (moving the derivative from $\Psi^*$ onto $\Psi$) and combine:
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=-\frac{\ii\hbar}{m}\int\Psi^*\frac{\partial\Psi}{\partial x}\,\dd x
+$$
+
+Hence
+
+$$
+\langle p\rangle=m\frac{\dd\langle x\rangle}{\dd t}=\int\Psi^*\left(-\ii\hbar\frac{\partial}{\partial x}\right)\Psi\,\dd x
+$$
+
+and the thing in brackets is the **momentum operator**:
+
+$$
+\hat p=-\ii\hbar\frac{\partial}{\partial x}
+$$
+
+It was not postulated; it was derived — given only the Born rule, the Schrödinger equation, and the classical correspondence "momentum = mass × velocity".
+
+</Derivation>
+
+In general, the operator for a classical quantity $A(x,p)$ is obtained by the substitution $x\to x$, $p\to-\ii\hbar\partial_x$, and its expectation value is
+
+$$
+\langle \hat A\rangle=\int\Psi^*\,\hat A\,\Psi\,\dd x
+$$
+
+Note that $\hat A$ must sit **between** $\Psi^*$ and $\Psi$ — the operator acts on the $\Psi$ to its right, and the order cannot be shuffled.
+
+<Callout type="insight" title="Why there is an i in the momentum operator">
+On a momentum eigenstate $\ee^{\ii px/\hbar}$, the operator $-\ii\hbar\partial_x$ returns the eigenvalue $p$:
+
+$$
+-\ii\hbar\frac{\partial}{\partial x}\ee^{\ii px/\hbar}=p\,\ee^{\ii px/\hbar}
+$$
+
+That $\ii$ is exactly what cancels the $\ii$ produced by differentiating. It also guarantees that $\hat p$ is **Hermitian**, so its eigenvalues are real — drop the $\ii$ and the eigenvalues become purely imaginary and useless as momenta.
+
+The de Broglie relation $p=\hbar k$ becomes a direct consequence of the definition.
+</Callout>
+
+## Variance and standard deviation
+
+$$
+\sigma_A^2=\langle \hat A^2\rangle-\langle \hat A\rangle^2
+$$
+
+$\sigma_A$ measures the **spread of measurement outcomes**. In particular $\sigma_A=0$ if and only if $\Psi$ is an eigenstate of $\hat A$ — in which case every measurement returns the same value.
+
+<Derivation title="Example: σₓ and σ_p for the infinite-well ground state" level="进阶" minutes={6}>
+
+The ground state is $\psi_1=\sqrt{2/L}\sin(\pi x/L)$ on $[0,L]$.
+
+**Position**: by symmetry $\langle x\rangle=L/2$.
+
+$$
+\langle x^2\rangle=\frac{2}{L}\int_0^L x^2\sin^2\frac{\pi x}{L}\dd x
+=\frac{2}{L}\int_0^L x^2\cdot\frac{1-\cos(2\pi x/L)}{2}\dd x
+$$
+
+The first term gives $\frac{L^2}{3}$; the second, after two integrations by parts, gives $-\frac{L^2}{2\pi^2}$. Together,
+
+$$
+\langle x^2\rangle=L^2\left(\frac13-\frac{1}{2\pi^2}\right)
+$$
+
+$$
+\sigma_x^2=\langle x^2\rangle-\frac{L^2}{4}=L^2\left(\frac{1}{12}-\frac{1}{2\pi^2}\right)
+\approx0.0326\,L^2
+\;\Longrightarrow\;\sigma_x\approx0.181\,L
+$$
+
+**Momentum**: $\langle p\rangle=0$ (the wavefunction is real, and by symmetry the integral vanishes; physically, left- and right-moving components are equally likely). And
+
+$$
+\langle p^2\rangle=2m\langle T\rangle=2mE_1=\frac{\pi^2\hbar^2}{L^2}
+\;\Longrightarrow\;\sigma_p=\frac{\pi\hbar}{L}
+$$
+
+**The product**:
+
+$$
+\sigma_x\sigma_p\approx0.181L\cdot\frac{\pi\hbar}{L}=0.568\,\hbar\approx1.14\cdot\frac{\hbar}{2}
+$$
+
+Larger than $\hbar/2$, and fairly close to the bound. Note that $L$ **cancels completely**: shrink the box and $\sigma_x$ shrinks proportionally while $\sigma_p$ grows proportionally, leaving the product untouched. You can see this directly in the simulation below.
+
+</Derivation>
+
+## The uncertainty principle
+
+$$
+\sigma_x\,\sigma_p\ \ge\ \frac{\hbar}{2}
+$$
+
+The rigorous proof needs the generalised uncertainty relation ([section 3.6](/en/ch/03-formalism/06-commutators/)). What matters here is **what it actually says**.
+
+<Callout type="misconception" title="This is not about measurement disturbance">
+The popular story runs: "to see where the electron is you must shine short-wavelength light on it, the photon kicks momentum into the electron, and so the momentum becomes uncertain."
+
+That story — Heisenberg's microscope — has historical value, but as an explanation of the inequality it is **wrong**, for a simple reason.
+
+$\sigma_x$ and $\sigma_p$ are two statistical properties of **the same wavefunction**. You can compute both from $\Psi$ with pen and paper without measuring anything at all — which is exactly what the derivation above did. The inequality holds before you decide what to measure.
+
+The correct statement: a wavefunction with small $\sigma_x$ (narrow in space) **necessarily** contains a broad range of wave numbers in its Fourier expansion, hence a large $\sigma_p$. That is a theorem of Fourier analysis, equally true for sound waves and light pulses — it is why an ultrashort laser pulse necessarily has a broad spectrum. The distinctively quantum ingredient is only $p=\hbar k$, which translates "spread in wave number" into "uncertainty in momentum".
+</Callout>
+
+<DualView>
+<div slot="left">
+
+**How to read the inequality**
+
+It is a statement about **states**, not about **instruments**.
+
+It says: there is no quantum state whose position and momentum distributions are both arbitrarily narrow. However good your apparatus, and whether or not you measure at all, the constraint stands.
+
+The states that saturate it are **Gaussian wave packets**, which is why Gaussians occupy a special place in quantum mechanics ([section 2.10](/en/ch/02-wavefunction/10-free-particle/)).
+
+</div>
+<div slot="right">
+
+$$
+\sigma_x\sigma_p\ge\frac{\hbar}{2}
+$$
+
+The standard order-of-magnitude estimate:
+
+$$
+\Delta p\sim\frac{\hbar}{\Delta x},\qquad
+E\sim\frac{(\Delta p)^2}{2m}\sim\frac{\hbar^2}{2m(\Delta x)^2}
+$$
+
+Confine a particle to a length $L$ and the zero-point kinetic energy is $\sim\hbar^2/2mL^2$. The infinite well's $E_1=\pi^2\hbar^2/2mL^2$ differs from that estimate only by $\pi^2$.
+
+</div>
+</DualView>
+
+<Sim name="infinite-well" />
+
+Drag the well width $L$ and watch $\Delta x/L$ in the readout: it is a **constant**, about 0.181. So $\sigma_x\propto L$, while energy $\propto1/L^2$ means $\sigma_p\propto1/L$. The product is independent of $L$ — the inequality is equally tight for a box of any size.
+
+## Ehrenfest's theorem: the return of classical mechanics
+
+<Derivation title="⟨x⟩ and ⟨p⟩ obey Newton's equations" level="进阶" minutes={5}>
+
+We already have the first relation:
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=\frac{\langle p\rangle}{m}
+$$
+
+A similar computation for $\langle p\rangle$ (differentiate in time, substitute the Schrödinger equation, integrate by parts) gives
+
+$$
+\frac{\dd\langle p\rangle}{\dd t}=\left\langle-\frac{\partial V}{\partial x}\right\rangle=\langle F\rangle
+$$
+
+Together these are Newton's second law for expectation values.
+
+**But look carefully at the right-hand side**: it is $\langle F(x)\rangle$, not $F(\langle x\rangle)$. In general these differ. Expanding $F$ about $\langle x\rangle$:
+
+$$
+\langle F(x)\rangle=F(\langle x\rangle)+\frac12 F''(\langle x\rangle)\,\sigma_x^2+\cdots
+$$
+
+Only when the force is approximately linear across the width of the packet ($F''\approx0$), or the packet is narrow enough ($\sigma_x$ small), do the two agree and the expectation value genuinely follow a classical trajectory.
+
+This explains **when classical mechanics is a good approximation**: for macroscopic objects $\sigma_x$ is absurdly small and everyday force fields are extremely smooth on that scale. It also explains when it is not: for an electron crossing a double slit the packet width is comparable to the slit separation, and the $F''$ term is not remotely negligible.
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'Expectation value', latex: '\\langle \\hat A\\rangle=\\int\\Psi^*\\hat A\\Psi\\,\\dd x', note: 'The operator sits in the middle and acts on the Ψ to its right' },
+    { name: 'Momentum operator', latex: '\\hat p=-\\ii\\hbar\\frac{\\partial}{\\partial x}', note: 'Derived from ⟨p⟩ = m d⟨x⟩/dt, not assumed' },
+    { name: 'Standard deviation', latex: '\\sigma_A=\\sqrt{\\langle \\hat A^2\\rangle-\\langle \\hat A\\rangle^2}', note: 'σ_A = 0 ⟺ Ψ is an eigenstate of Â' },
+    { name: 'Uncertainty principle', latex: '\\sigma_x\\sigma_p\\ge\\frac{\\hbar}{2}', note: 'A property of the state, independent of measurement; Gaussians saturate it' },
+    { name: "Ehrenfest's theorem", latex: 'm\\frac{\\dd^2\\langle x\\rangle}{\\dd t^2}=\\left\\langle-\\frac{\\partial V}{\\partial x}\\right\\rangle', note: 'Note ⟨F(x)⟩, not F(⟨x⟩)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'unc-1',
+      prompt: 'Which statement about σₓσ_p ≥ ħ/2 is correct?',
+      options: [
+        'It relates two statistical properties of the same wavefunction, independently of any measurement',
+        'It describes the disturbance an apparatus inflicts on the momentum when measuring position',
+        'It shows that our instruments are not yet precise enough',
+        'It only holds when a measurement is actually performed',
+      ],
+      answer: 0,
+      distractors: {
+        1: "Heisenberg's microscope is a historically useful picture, but the inequality itself follows from Ψ by pure calculation, with no measurement involved.",
+        2: 'It is a limit set by nature, not by technology.',
+        3: 'The inequality holds for every legitimate wavefunction.',
+      },
+      explain: 'Both σₓ and σ_p are numbers computed from Ψ. A wavefunction narrow in position necessarily contains a broad spread of wave numbers — a theorem of Fourier analysis that holds for classical waves too. The quantum contribution is the single step p = ħk.',
+    },
+    {
+      id: 'unc-2',
+      prompt: 'How does σₓσ_p for the infinite-well ground state depend on the width L?',
+      options: [
+        'It does not depend on L; it is always about 1.14 × ħ/2',
+        'Proportional to L',
+        'Inversely proportional to L',
+        'Proportional to L²',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'σₓ ∝ L but σ_p ∝ 1/L, so L cancels in the product.',
+        2: 'Same reason.',
+      },
+      explain: 'σₓ ≈ 0.181L and σ_p = πħ/L give a product of about 0.568ħ, independent of L. Shrinking the box narrows the position distribution and broadens the momentum distribution in step, leaving the tightness of the inequality unchanged.',
+    },
+    {
+      id: 'unc-3',
+      prompt: "Ehrenfest's theorem gives d⟨p⟩/dt = ⟨−∂V/∂x⟩. Why does that not mean quantum mechanics is just classical mechanics?",
+      options: [
+        'Because the right side is ⟨F(x)⟩ rather than F(⟨x⟩); they agree only for nearly linear forces or narrow packets',
+        'Because expectation values have no physical meaning',
+        'Because the relation only holds for stationary states',
+        'Because the relation ignores the potential energy',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Expectation values are measurable — they are averages over many repetitions.',
+        2: 'The derivation holds for any wavefunction.',
+      },
+      explain: '⟨F(x)⟩ = F(⟨x⟩) + ½F″(⟨x⟩)σₓ² + …. When the force is non-linear across the packet, the correction is not negligible and the expectation value stops following a classical trajectory. That is precisely the criterion for quantum effects to matter.',
+    },
+    {
+      id: 'unc-4',
+      type: 'numeric',
+      prompt: 'Confine an electron to 0.1 nm (roughly an atomic scale). Estimate its zero-point kinetic energy in eV using ΔxΔp ≈ ħ/2 and E ≈ (Δp)²/2m. (Take ħc = 197.3 eV·nm and mc² = 511000 eV.)',
+      answer: 0.95,
+      tolerance: 0.25,
+      unit: 'eV',
+      explain: 'Δp c ≈ ħc/(2Δx) = 197.3/(2×0.1) = 986.5 eV, so E = (Δpc)²/(2mc²) = 986.5²/(2×511000) ≈ 0.95 eV. Landing on the electron-volt scale of atoms is no accident: that balance is what sets the atomic energy scale in the first place.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The tools are in place. The next five sections apply them to specific potentials, starting from the simplest: one particle and two infinitely high walls.

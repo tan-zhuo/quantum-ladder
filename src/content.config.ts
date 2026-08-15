@@ -6,9 +6,7 @@ import { glob } from 'astro/loaders'
  * 一个 mdx 文件 = 一小节。id 形如 `02-wavefunction/07-infinite-well`，
  * 直接对应路由 /ch/02-wavefunction/07-infinite-well。
  */
-const sections = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content' }),
-  schema: z.object({
+const sectionSchema = z.object({
     /** 小节标题，不含节号 */
     title: z.string(),
     /** 节号，如 "2.7"；章导言页留空 */
@@ -29,7 +27,11 @@ const sections = defineCollection({
     status: z.enum(['done', 'draft', 'stub']).default('stub'),
     /** 本节嵌入的交互模拟名，用于目录树打标与「模拟索引」页 */
     sims: z.array(z.string()).default([]),
-  }),
+})
+
+const sections = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content' }),
+  schema: sectionSchema,
 })
 
 /**
@@ -62,4 +64,19 @@ const lab = defineCollection({
   }),
 })
 
-export const collections = { sections, lab }
+/**
+ * 教材小节的英文版。
+ *
+ * 单独一个集合、单独一个目录（src/content-en/），而不是把中文挪进
+ * src/content/zh/：这样中文小节的 id（如 `02-wavefunction/01-born-rule`）
+ * 一个字都不用改——它同时是学习进度的 localStorage 键、lab 模块 related
+ * 字段的引用目标，改了会让老用户的进度对不上。
+ *
+ * 英文文件用**完全相同的相对 id**，缺哪一篇就回退到中文那一篇。
+ */
+const sectionsEn = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content-en' }),
+  schema: sectionSchema,
+})
+
+export const collections = { sections, lab, sectionsEn }

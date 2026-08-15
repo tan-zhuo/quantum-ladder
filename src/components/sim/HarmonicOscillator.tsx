@@ -4,6 +4,8 @@ import { Button, Readout, Segmented, Slider, Toggle } from './controls'
 import { useCanvasFrame } from './useCanvas'
 import { drawAxes, drawCurve, drawLegend, makeScale } from '@/lib/plot'
 import { harmonicEigenstate, lnFactorial } from '@/lib/numerics'
+import { rich } from './rich'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 一维谐振子：ψₙ 的波形、能级阶梯、与经典概率分布的对照，以及相干态。
@@ -21,7 +23,8 @@ const COHERENT_TERMS = 40
 
 type Mode = 'levels' | 'single' | 'coherent'
 
-export default function HarmonicOscillator() {
+export default function HarmonicOscillator({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const [mode, setMode] = useState<Mode>('levels')
   const [n, setN] = useState(0)
   const [omega, setOmega] = useState(1)
@@ -84,7 +87,7 @@ export default function HarmonicOscillator() {
 
       f.ctx.clearRect(0, 0, f.width, f.height)
       drawAxes(f, sx, sy, {
-        xLabel: 'x  （√(ħ/mω) 为单位）',
+        xLabel: T('x  （√(ħ/mω) 为单位）'),
         yLabel: 'E',
         grid: false,
         zeroLine: false,
@@ -242,14 +245,14 @@ export default function HarmonicOscillator() {
         f.ctx.font = '10.5px var(--font-sans, sans-serif)'
         f.ctx.textAlign = 'left'
         f.ctx.textBaseline = 'top'
-        f.ctx.fillText('经典禁区 →', sx.toPx(A) + 3, pad.top + 2)
+        f.ctx.fillText(T('经典禁区 →'), sx.toPx(A) + 3, pad.top + 2)
         f.ctx.restore()
 
         const legend: { color: string; label: string; dash?: number[] }[] = useProb
           ? [{ color: f.colors.prob, label: '|ψ|²' }]
           : [{ color: f.colors.wave, label: mode === 'coherent' ? 'Re ψ' : 'ψ(x)' }]
         if (useProb && showClassical)
-          legend.push({ color: f.colors.warn, label: '经典 P(x)', dash: [5, 4] })
+          legend.push({ color: f.colors.warn, label: T('经典 P(x)'), dash: [5, 4] })
         if (!useProb && mode === 'coherent')
           legend.push({ color: f.colors.waveIm, label: 'Im ψ', dash: [4, 3] })
         drawLegend(f, legend)
@@ -261,7 +264,7 @@ export default function HarmonicOscillator() {
           f.ctx.textAlign = 'left'
           f.ctx.textBaseline = 'bottom'
           f.ctx.fillText(
-            `t = ${t.toFixed(1)}   经典周期 T = ${((2 * Math.PI) / omega).toFixed(2)}`,
+            T('t = {0}   经典周期 T = {1}', t.toFixed(1), ((2 * Math.PI) / omega).toFixed(2)),
             pad.left + 6,
             f.height - pad.bottom - 4,
           )
@@ -269,7 +272,7 @@ export default function HarmonicOscillator() {
         }
       }
     },
-    [mode, n, omega, alpha, useProb, showClassical, xs, coherentCoeffs, eTop, xMax],
+    [mode, n, omega, alpha, useProb, showClassical, xs, coherentCoeffs, eTop, xMax, lang],
     { animate, padding: { left: 46, bottom: 34 } },
   )
 
@@ -278,26 +281,25 @@ export default function HarmonicOscillator() {
   return (
     <SimShell
       id="harmonic-oscillator"
-      title="一维谐振子"
-      subtitle={
-        <>
-          等间距能级、零点能、渗进经典禁区的尾巴，以及唯一一种「像经典粒子」的量子态。
-          单位取 ħ = m = 1。
-        </>
-      }
+      lang={lang}
+      title={T('一维谐振子')}
+      subtitle={T('等间距能级、零点能、渗进经典禁区的尾巴，以及唯一一种「像经典粒子」的量子态。单位取 ħ = m = 1。')}
       onReset={reset}
       readout={
         <Readout
           items={[
             {
-              label: mode === 'coherent' ? `⟨E⟩ (|α|²=${(alpha * alpha).toFixed(1)})` : `Eₙ = (n+½)ħω`,
+              label:
+                mode === 'coherent'
+                  ? `⟨E⟩ (|α|²=${(alpha * alpha).toFixed(1)})`
+                  : 'Eₙ = (n+½)ħω',
               value: currentE.toFixed(3),
               color: 'var(--c-energy)',
             },
-            { label: '能级间距 ħω', value: omega.toFixed(2) },
-            { label: '经典转折点 ±A', value: `±${turningPoint(currentE).toFixed(2)}` },
+            { label: T('能级间距 ħω'), value: omega.toFixed(2) },
+            { label: T('经典转折点 ±A'), value: `±${turningPoint(currentE).toFixed(2)}` },
             {
-              label: mode === 'levels' ? '零点能 E₀' : 'Δx',
+              label: mode === 'levels' ? T('零点能 E₀') : 'Δx',
               value:
                 mode === 'levels' ? (0.5 * omega).toFixed(3) : stats.xSpread.toFixed(3),
             },
@@ -308,52 +310,40 @@ export default function HarmonicOscillator() {
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Slider
-              label={
-                <>
-                  角频率 <span className="font-mono">ω</span>
-                </>
-              }
+              label={rich(T('角频率 `ω`'))}
               value={omega}
               min={0.4}
               max={2.5}
               step={0.05}
               onChange={setOmega}
-              hint="势阱变陡 → 能级间距 ħω 变大，波函数被压窄"
+              hint={T('势阱变陡 → 能级间距 ħω 变大，波函数被压窄')}
             />
             {mode === 'coherent' ? (
               <Slider
-                label={
-                  <>
-                    相干态振幅 <span className="font-mono">α</span>
-                  </>
-                }
+                label={rich(T('相干态振幅 `α`'))}
                 value={alpha}
                 min={0}
                 max={4}
                 step={0.1}
                 onChange={setAlpha}
-                hint={`平均光子数 |α|² = ${(alpha * alpha).toFixed(2)}；α → 0 就是基态`}
+                hint={T('平均光子数 |α|² = {0}；α → 0 就是基态', (alpha * alpha).toFixed(2))}
               />
             ) : (
               <Slider
-                label={
-                  <>
-                    量子数 <span className="font-mono">n</span>
-                  </>
-                }
+                label={rich(T('量子数 `n`'))}
                 value={n}
                 min={0}
                 max={MAX_N}
                 step={1}
                 onChange={(v) => setN(Math.round(v))}
-                hint={`节点数 = n = ${n}`}
+                hint={T('节点数 = n = {0}', n)}
               />
             )}
           </div>
 
           <div className="flex flex-wrap items-end justify-between gap-4">
             <Segmented
-              label="视图"
+              label={T('视图')}
               value={mode}
               onChange={(v) => {
                 setMode(v)
@@ -361,24 +351,32 @@ export default function HarmonicOscillator() {
                 if (v === 'coherent') setUseProb(true)
               }}
               options={[
-                { value: 'levels', label: '能级阶梯', title: '教科书式：每条 ψₙ 画在自己的能级上' },
-                { value: 'single', label: '单个本征态', title: '放大看一个 ψₙ 的细节' },
-                { value: 'coherent', label: '相干态', title: '不弥散的振荡波包' },
+                {
+                  value: 'levels',
+                  label: T('能级阶梯'),
+                  title: T('教科书式：每条 ψₙ 画在自己的能级上'),
+                },
+                { value: 'single', label: T('单个本征态'), title: T('放大看一个 ψₙ 的细节') },
+                { value: 'coherent', label: T('相干态'), title: T('不弥散的振荡波包') },
               ]}
             />
             <div className="flex flex-wrap items-center gap-4">
               <Toggle
-                label={useProb ? '显示 |ψ|²' : '显示 ψ'}
+                label={useProb ? T('显示 |ψ|²') : T('显示 ψ')}
                 checked={useProb}
                 onChange={setUseProb}
               />
               {useProb ? (
-                <Toggle label="对照经典分布" checked={showClassical} onChange={setShowClassical} />
+                <Toggle
+                  label={T('对照经典分布')}
+                  checked={showClassical}
+                  onChange={setShowClassical}
+                />
               ) : null}
               {mode === 'coherent' ? (
                 <>
                   <Button onClick={() => setPlaying((p) => !p)} variant="primary">
-                    {playing ? '暂停' : '播放'}
+                    {playing ? T('暂停') : T('播放')}
                   </Button>
                   <Button onClick={() => (timeRef.current = 0)}>t = 0</Button>
                 </>
@@ -388,33 +386,34 @@ export default function HarmonicOscillator() {
         </div>
       }
       prompts={[
-        <>
-          在「能级阶梯」下把 <code>n</code> 拉到 8：能级之间永远等距 <code>ħω</code>。
-          这是谐振子独有的——回头看无限深势阱，那里的间距是越往上越大的。
-        </>,
-        <>
-          把 <code>ω</code> 调小到 0.4，注意基态能 <code>E₀ = ħω/2</code> 变小但绝不为零。
-          想让 E₀ = 0 就得让粒子精确停在 x = 0 且 p = 0，<code>ΔxΔp ≥ ħ/2</code> 不允许。
-        </>,
-        <>
-          切到「单个本征态」+ 显示 ψ，看 n = 0 的曲线在两条虚线（经典转折点）之外并没有归零——
-          粒子有确定的概率出现在经典能量禁止的区域。这就是隧道效应的同一个根源。
-        </>,
-        <>
-          显示 |ψ|² 并打开「对照经典分布」，把 n 从 0 加到 20：
-          量子概率密度的振荡包络越来越贴合经典曲线（两端概率大，因为经典粒子在转折点最慢）。
-        </>,
-        <>
-          切到「相干态」播放：波包整体来回振荡、形状不变、周期恰好是经典周期 <code>T = 2π/ω</code>。
-          这是薛定谔 1926 年就找出来的「最像经典粒子」的量子态，也是激光的理论描述。
-        </>,
+        rich(
+          T(
+            '在「能级阶梯」下把 `n` 拉到 8：能级之间永远等距 `ħω`。这是谐振子独有的——回头看无限深势阱，那里的间距是越往上越大的。',
+          ),
+        ),
+        rich(
+          T(
+            '把 `ω` 调小到 0.4，注意基态能 `E₀ = ħω/2` 变小但绝不为零。想让 E₀ = 0 就得让粒子精确停在 x = 0 且 p = 0，`ΔxΔp ≥ ħ/2` 不允许。',
+          ),
+        ),
+        T(
+          '切到「单个本征态」+ 显示 ψ，看 n = 0 的曲线在两条虚线（经典转折点）之外并没有归零——粒子有确定的概率出现在经典能量禁止的区域。这就是隧道效应的同一个根源。',
+        ),
+        T(
+          '显示 |ψ|² 并打开「对照经典分布」，把 n 从 0 加到 20：量子概率密度的振荡包络越来越贴合经典曲线（两端概率大，因为经典粒子在转折点最慢）。',
+        ),
+        rich(
+          T(
+            '切到「相干态」播放：波包整体来回振荡、形状不变、周期恰好是经典周期 `T = 2π/ω`。这是薛定谔 1926 年就找出来的「最像经典粒子」的量子态，也是激光的理论描述。',
+          ),
+        ),
       ]}
     >
       <canvas
         ref={canvasRef}
         className="h-[320px] w-full sm:h-[400px]"
         role="img"
-        aria-label={`谐振子，视图 ${mode}，量子数 ${n}，角频率 ${omega.toFixed(2)}`}
+        aria-label={T('谐振子，视图 {0}，量子数 {1}，角频率 {2}', mode, n, omega.toFixed(2))}
       />
     </SimShell>
   )

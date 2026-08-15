@@ -4,7 +4,6 @@ import MasteryPicker from '@/components/progress/MasteryPicker'
 import { getLabNeighbours, type LabModule } from '@/lib/lab'
 import { getToc } from '@/lib/toc'
 import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
-import { SECTION_TITLES_EN } from '@/i18n/sections-en'
 import type { MarkdownHeading } from 'astro'
 
 interface Props {
@@ -20,7 +19,7 @@ const base = import.meta.env.BASE_URL
 const L = (p: string) => localePath(lang, p, base)
 
 // 「深入阅读」：把 frontmatter 里的教材小节 id 解析成带标题的链接
-const toc = await getToc()
+const toc = await getToc(lang)
 const allSections = toc.flatMap((c) => c.sections)
 const related = module.related
   .map((id) => allSections.find((s) => s.id === id))
@@ -128,23 +127,16 @@ const outline = headings.filter((h) => h.depth === 2)
           </h2>
           <p class="mb-3 text-[13px] text-[var(--text-muted)]">
             {t('3D 场景负责建立图像，完整的推导与习题在教材部分。')}
-            {lang === 'en' && (
-              <span class="ml-1 rounded bg-[var(--bg-subtle)] px-1.5 py-0.5 text-[11.5px] text-[var(--text-faint)]">
-                written in Chinese
-              </span>
-            )}
           </p>
           <ul class="grid gap-1.5 sm:grid-cols-2">
             {related.map((s) => (
               <li>
                 <a
-                  href={`${base}${s.href.replace(/^\//, '')}`}
+                  href={L(s.path)}
                   class="flex items-baseline gap-2 rounded-lg px-2 py-1.5 text-[13.5px] transition-colors hover:bg-[var(--bg-subtle)]"
                 >
                   <span class="font-mono text-[11.5px] text-[var(--text-faint)]">{s.section}</span>
-                  <span class="text-[var(--accent-text)]">
-                    {lang === 'en' ? (SECTION_TITLES_EN[s.id] ?? s.title) : s.title}
-                  </span>
+                  <span class="text-[var(--accent-text)]">{s.title}</span>
                 </a>
               </li>
             ))}

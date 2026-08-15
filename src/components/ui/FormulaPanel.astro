@@ -1,8 +1,17 @@
 ---
 import { FORMULA_GROUPS } from '@/data/formulas'
 import Katex from '@/components/math/Katex.astro'
+import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
 
+interface Props {
+  lang?: Lang
+}
+
+const { lang = DEFAULT_LANG } = Astro.props
+const t = translator(lang)
 const base = import.meta.env.BASE_URL
+// 公式表存中文原文（同时是 msgid），渲染时按当前语言翻译
+const L = (p: string) => localePath(lang, p, base)
 ---
 
 <!--
@@ -24,22 +33,22 @@ const base = import.meta.env.BASE_URL
     data-formula-drawer
     role="dialog"
     aria-modal="false"
-    aria-label="公式速查"
+    aria-label={t('公式速查')}
     class="absolute top-0 right-0 flex h-full w-full max-w-[420px] translate-x-full flex-col border-l border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl transition-transform duration-200"
   >
     <header class="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
-      <h2 class="text-[15px] font-semibold">公式速查</h2>
+      <h2 class="text-[15px] font-semibold">{t('公式速查')}</h2>
       <div class="flex items-center gap-1">
         <a
-          href={`${base}ch/appendix-b-formulas/`}
+          href={L('ch/appendix-b-formulas/')}
           class="rounded-md px-2 py-1 text-[12.5px] text-[var(--text-muted)] hover:bg-[var(--bg-subtle)]"
         >
-          完整版 →
+          {t('完整版 →')}
         </a>
         <button
           type="button"
           data-formula-close
-          aria-label="关闭"
+          aria-label={t('关闭')}
           class="rounded-md p-1.5 text-[var(--text-faint)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -54,19 +63,19 @@ const base = import.meta.env.BASE_URL
         FORMULA_GROUPS.map((group) => (
           <section class="mb-5">
             <h3 class="mb-2 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
-              {group.title}
+              {t(group.title)}
             </h3>
             <ul class="space-y-3">
               {group.items.map((item) => (
                 <li class="rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5">
                   <div class="mb-1 flex items-baseline justify-between gap-2">
-                    <span class="text-[13px] font-medium">{item.name}</span>
+                    <span class="text-[13px] font-medium">{t(item.name)}</span>
                     {item.ref && (
                       <a
-                        href={`${base}ch/${item.ref}/`}
+                        href={L(`ch/${item.ref}/`)}
                         class="shrink-0 text-[11.5px] text-[var(--accent-text)] hover:underline"
                       >
-                        出处
+                        {t('出处')}
                       </a>
                     )}
                   </div>
@@ -74,7 +83,7 @@ const base = import.meta.env.BASE_URL
                     <Katex formula={item.latex} display />
                   </div>
                   {item.note && (
-                    <p class="mt-1 text-[12px] leading-snug text-[var(--text-faint)]">{item.note}</p>
+                    <p class="mt-1 text-[12px] leading-snug text-[var(--text-faint)]">{t(item.note)}</p>
                   )}
                 </li>
               ))}

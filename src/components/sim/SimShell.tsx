@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { markSimCompleted, getSection } from '@/lib/progress'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 所有交互模拟的统一外壳：标题、说明、画布区、控件区、探究提示、全屏。
@@ -27,10 +28,13 @@ export interface SimShellProps {
   onReset?: () => void
   /** 画布区高宽比，移动端用 */
   aspect?: string
+  /** 界面语言。外壳会被服务端渲染，所以必须用 props 传 */
+  lang?: Lang
 }
 
 export default function SimShell(props: SimShellProps) {
-  const { id, title, subtitle, children, controls, readout, prompts, onReset } = props
+  const { id, title, subtitle, children, controls, readout, prompts, onReset, lang = DEFAULT_LANG } = props
+  const T = translator(lang)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const [fullscreen, setFullscreen] = useState(false)
   const [done, setDone] = useState(false)
@@ -94,7 +98,7 @@ export default function SimShell(props: SimShellProps) {
             <button
               type="button"
               onClick={onReset}
-              title="重置参数"
+              title={T('重置参数')}
               className="rounded-md p-1.5 text-[var(--text-faint)] transition-colors hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -106,7 +110,7 @@ export default function SimShell(props: SimShellProps) {
           <button
             type="button"
             onClick={toggleFullscreen}
-            title={fullscreen ? '退出全屏' : '全屏'}
+            title={fullscreen ? T('退出全屏') : T('全屏')}
             className="rounded-md p-1.5 text-[var(--text-faint)] transition-colors hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -135,7 +139,7 @@ export default function SimShell(props: SimShellProps) {
       {prompts?.length ? (
         <figcaption className="border-t border-[var(--border)] px-4 py-3">
           <p className="mb-1.5 text-[12px] font-semibold tracking-wide text-[var(--text-faint)] uppercase">
-            试试看
+            {T('试试看')}
           </p>
           <ul className="space-y-1.5">
             {prompts.map((p, i) => (
@@ -159,7 +163,7 @@ export default function SimShell(props: SimShellProps) {
                   : 'border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]')
               }
             >
-              {done ? '✓ 已完成探究' : '标记为已探究'}
+              {done ? T('✓ 已完成探究') : T('标记为已探究')}
             </button>
           ) : null}
         </figcaption>

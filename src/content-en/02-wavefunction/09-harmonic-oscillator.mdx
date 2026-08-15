@@ -1,0 +1,302 @@
+---
+title: The harmonic oscillator
+section: '2.9'
+order: 9
+summary: The most reused model in physics. Solving it with ladder operators is ten times faster than grinding through the differential equation, and it shows the structure far more clearly.
+status: done
+prereqs:
+  - 02-wavefunction/07-infinite-well
+objectives:
+  - Obtain the full spectrum and eigenstates with the ladder-operator method
+  - Explain where the zero-point energy ħω/2 comes from and why it cannot be zero
+  - Say why the harmonic oscillator turns up in every branch of physics
+  - Understand the correspondence principle by comparing the wavefunction tails with the classical distribution
+sims: ['harmonic-oscillator']
+---
+
+$$
+V(x)=\frac12 m\omega^2x^2
+$$
+
+## Why a parabola
+
+Expand any potential $V(x)$ about a minimum at $x_0$:
+
+$$
+V(x)=V(x_0)+\underbrace{V'(x_0)}_{=0}(x-x_0)+\frac12V''(x_0)(x-x_0)^2+\cdots
+$$
+
+The linear term vanishes at a minimum, and the constant can be absorbed into the zero of energy. **The leading surviving term is always quadratic.** Set $m\omega^2\equiv V''(x_0)$ and you have a harmonic oscillator.
+
+So any time you study "small vibrations" you are doing harmonic-oscillator physics: the vibrational spectra of diatomic molecules, phonons in a crystal, every mode of the electromagnetic field, LC circuits, the approximate description of a superconducting qubit… the list goes on.
+
+<Callout type="insight" title="The oscillator's role in quantum field theory">
+A free quantum field is exactly **a collection of infinitely many independent harmonic oscillators** — one per momentum mode. A photon is nothing but one quantum of excitation of one mode's oscillator.
+
+That is why the $n$ in $E_n=(n+\frac12)\hbar\omega$ can be read either as "the $n$-th excited state" or as "$n$ particles". [Second quantisation in section 8.5](/en/ch/08-identical-particles/05-second-quantization/) makes that correspondence official.
+</Callout>
+
+## The ladder-operator method
+
+Grinding through the differential equation (series solution plus Hermite polynomials) certainly works, but the algebraic route is faster and far more illuminating.
+
+<Derivation title="Derivation: from a commutator to the entire spectrum" level="进阶" minutes={12} open={true}>
+
+**Step 1: factorise the Hamiltonian.**
+
+$$
+\hat H=\frac{\hat p^2}{2m}+\frac12m\omega^2\hat x^2
+$$
+
+If $\hat p$ and $\hat x$ were ordinary numbers we could write $p^2+(m\omega x)^2=(m\omega x-\ii p)(m\omega x+\ii p)$. Operators do not commute, so the factorisation is slightly off — off by exactly the commutator. Define
+
+$$
+\hat a_\pm=\frac{1}{\sqrt{2\hbar m\omega}}\left(\mp\ii\hat p+m\omega\hat x\right)
+$$
+
+**Step 2: compute the commutator.** Using $[\hat x,\hat p]=\ii\hbar$:
+
+$$
+\hat a_-\hat a_+=\frac{1}{2\hbar m\omega}\left(\hat p^2+(m\omega\hat x)^2-\ii m\omega[\hat x,\hat p]\right)
+=\frac{\hat H}{\hbar\omega}+\frac12
+$$
+
+Similarly $\hat a_+\hat a_-=\frac{\hat H}{\hbar\omega}-\frac12$. Subtracting,
+
+$$
+[\hat a_-,\hat a_+]=1
+$$
+
+and
+
+$$
+\hat H=\hbar\omega\left(\hat a_+\hat a_-+\frac12\right)
+$$
+
+**Step 3: show that they raise and lower the energy.** Suppose $\hat H\psi=E\psi$ and consider $\hat a_+\psi$:
+
+$$
+\hat H(\hat a_+\psi)=\hbar\omega\left(\hat a_+\hat a_-+\tfrac12\right)\hat a_+\psi
+$$
+
+Use $\hat a_-\hat a_+=\hat a_+\hat a_-+1$ to move $\hat a_+$ all the way left:
+
+$$
+=\hbar\omega\,\hat a_+\left(\hat a_-\hat a_++\tfrac12\right)\psi
+=\hat a_+\left[\hbar\omega\left(\hat a_+\hat a_-+\tfrac12\right)+\hbar\omega\right]\psi
+=(E+\hbar\omega)(\hat a_+\psi)
+$$
+
+So $\hat a_+\psi$ is also an eigenstate, with energy higher by $\hbar\omega$. Likewise $\hat a_-\psi$ has energy lower by $\hbar\omega$. **Hence "ladder operators".**
+
+**Step 4: the ladder must have a bottom rung.** Applying $\hat a_-$ repeatedly would lower the energy indefinitely. But the energy is bounded below:
+
+$$
+E=\langle\hat H\rangle=\frac{\langle\hat p^2\rangle}{2m}+\frac12m\omega^2\langle\hat x^2\rangle>0
+$$
+
+(both terms are expectation values of non-negative operators, and they cannot vanish together). The only escape from the contradiction is a ground state $\psi_0$ satisfying
+
+$$
+\hat a_-\psi_0=0
+$$
+
+**Step 5: solve for the ground state.** This is a first-order equation, far easier than the original second-order one:
+
+$$
+\frac{1}{\sqrt{2\hbar m\omega}}\left(\hbar\frac{\dd}{\dd x}+m\omega x\right)\psi_0=0
+\;\Longrightarrow\;
+\frac{\dd\psi_0}{\psi_0}=-\frac{m\omega}{\hbar}x\,\dd x
+$$
+
+$$
+\psi_0(x)=\left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\ee^{-m\omega x^2/2\hbar}
+$$
+
+(the prefactor comes from normalisation). The ground state is a **Gaussian** — a fact that becomes important again in the next section.
+
+**Step 6: the ground-state energy.** From $\hat H=\hbar\omega(\hat a_+\hat a_-+\frac12)$ with $\hat a_-\psi_0=0$:
+
+$$
+E_0=\frac12\hbar\omega
+$$
+
+**Step 7: the whole spectrum.** Climb from the bottom:
+
+$$
+\psi_n=\frac{1}{\sqrt{n!}}\left(\hat a_+\right)^n\psi_0,\qquad
+E_n=\left(n+\frac12\right)\hbar\omega,\quad n=0,1,2,\dots
+$$
+
+The entire solution used only the commutation relation $[\hat x,\hat p]=\ii\hbar$ and **never once actually solved the second-order differential equation**.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Equally spaced levels.** This is unique to the oscillator. The infinite well's spacing grows with $n$, hydrogen's shrinks with $n$; only the oscillator keeps a constant $\hbar\omega$.
+
+Consequence: the oscillator's spectrum is **a single line** (every adjacent transition has the same frequency). Real molecules show several vibrational lines, which is precisely the evidence that the well is not exactly parabolic — anharmonicity is a rich source of information in molecular spectroscopy.
+
+**Zero-point energy.** $E_0=\hbar\omega/2\ne0$. Even at absolute zero the oscillator still jitters. This is no theoretical ornament: helium stays liquid at atmospheric pressure all the way down because the zero-point motion is violent enough to prevent freezing, and the Casimir force comes from the zero-point energy of electromagnetic field modes.
+
+</div>
+<div slot="right">
+
+$$
+E_n=\left(n+\tfrac12\right)\hbar\omega
+$$
+
+$$
+\psi_n(x)=\left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{\sqrt{2^nn!}}H_n(\xi)\,\ee^{-\xi^2/2}
+$$
+
+with $\xi=\sqrt{m\omega/\hbar}\,x$ and $H_n$ the Hermite polynomials:
+
+$$
+H_0=1,\quad H_1=2\xi,\quad H_2=4\xi^2-2,\quad H_3=8\xi^3-12\xi
+$$
+
+The recurrence $H_{n+1}=2\xi H_n-2nH_{n-1}$ is what this site's simulations use to evaluate them (see [appendix C](/en/ch/appendix-c-numerics/)).
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Zero-point energy cannot simply be defined away">
+Someone will object: the zero of energy is arbitrary anyway, so why not just subtract $\hbar\omega/2$?
+
+For a single isolated oscillator, fine. But **changes** in the zero-point energy are observable:
+
+- The Casimir effect: changing the separation of two metal plates changes which field modes are allowed, hence the total zero-point energy, producing a measurable force (verified precisely in 1997).
+- Isotope effects: $\omega\propto1/\sqrt{\mu}$, so deuterium has a lower zero-point energy than hydrogen, giving C–H and C–D bonds different dissociation energies and reaction rates differing by factors of several. This is a routine tool in chemistry.
+
+What is physically meaningful is always an energy **difference**, and the zero-point energy varies with the parameters — so it cannot be defined away.
+</Callout>
+
+## Take a look
+
+<Sim name="harmonic-oscillator" />
+
+Each of the three views answers one question:
+
+- **Level ladder**: is the spacing really constant? (Drag $n$ and watch the gaps between the lines.)
+- **Single eigenstate**: how much wavefunction lies beyond the classical turning points? (Look at the tails outside the two dashed lines.)
+- **Coherent state**: is there any quantum state that really moves like a classical particle? (Press play.)
+
+<Callout type="check" title="One thing worth confirming yourself">
+Switch to "single eigenstate", display $|\psi|^2$, turn on "compare with classical distribution", and drag $n$ from 0 up to 20.
+
+At $n=0$ the quantum distribution peaks in the middle while the classical one peaks at the edges — **exactly opposite**. By $n=20$ the envelope of the quantum distribution hugs the classical curve.
+
+This is the most vivid demonstration of the correspondence principle: the quantum oscillation does not vanish, it oscillates **about** the classical result, and ever more finely.
+</Callout>
+
+## Tails: leaking into the classically forbidden region
+
+A classical particle with energy $E_n$ can only reach the turning point $x_n=\sqrt{2E_n}/\omega\sqrt{m}$. Beyond that the quantum wavefunction decays as $\ee^{-\xi^2/2}$, but it is not zero.
+
+<Derivation title="Compute it: the probability of finding the ground state in the forbidden region" level="进阶" minutes={5}>
+
+For the ground state $E_0=\hbar\omega/2$, the turning point follows from $\frac12m\omega^2x_0^2=\frac12\hbar\omega$:
+
+$$
+x_0=\sqrt{\frac{\hbar}{m\omega}}\quad\Longleftrightarrow\quad \xi_0=1
+$$
+
+(in the dimensionless coordinate $\xi=\sqrt{m\omega/\hbar}\,x$ the turning points sit exactly at $\xi=\pm1$).
+
+$$
+P_{\text{forbidden}}=2\int_1^\infty\frac{1}{\sqrt\pi}\ee^{-\xi^2}\dd\xi
+=1-\operatorname{erf}(1)=1-0.8427=0.157
+$$
+
+**About 15.7%.** That is not a small number — a ground-state particle has roughly a one-in-six chance of being found where it classically could never be.
+
+What about excited states? The fraction shrinks as $n$ grows (about 5% at $n=10$), because the classically allowed region widens while the decay length of the tail stays put. Once again, the quantum effect weakens in relative terms as $n$ grows — the correspondence principle.
+
+</Derivation>
+
+<Callout type="misconception" title='"The particle borrows energy to get out there" is the wrong story'>
+The common explanation runs: the particle "borrows" an energy $\Delta E$ from the vacuum, sneaks out for a time $\Delta t\sim\hbar/\Delta E$, and pays it back.
+
+That invokes the energy–time uncertainty relation, but $\Delta t$ in quantum mechanics is not an observable corresponding to any operator; the meaning of that relation is quite different from $\sigma_x\sigma_p\ge\hbar/2$, and the analogy does not hold.
+
+The cleaner statement: **finding the particle in the forbidden region cannot be distinguished from "measuring a definite negative kinetic energy"** in any operational sense. The moment you localise the particle inside the forbidden region to within $\Delta x\lesssim1/\kappa$, the uncertainty principle hands it a momentum spread $\Delta p\gtrsim\hbar\kappa$, whose kinetic energy is enough to cover the potential deficit. In other words, the contradictory scenario of "measuring negative kinetic energy" simply cannot be set up experimentally.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Ladder operators', latex: '\\hat a_\\pm=\\frac{1}{\\sqrt{2\\hbar m\\omega}}\\left(\\mp\\ii\\hat p+m\\omega\\hat x\\right),\\qquad[\\hat a_-,\\hat a_+]=1', note: 'The whole structure hides in this one commutator' },
+    { name: 'Hamiltonian', latex: '\\hat H=\\hbar\\omega\\left(\\hat a_+\\hat a_-+\\tfrac12\\right)', note: 'â₊â₋ is the number operator n̂' },
+    { name: 'Energy levels', latex: 'E_n=\\left(n+\\tfrac12\\right)\\hbar\\omega,\\qquad n=0,1,2,\\dots', note: 'Equally spaced; the zero-point energy ħω/2 cannot be removed' },
+    { name: 'Ground state', latex: '\\psi_0(x)=\\left(\\frac{m\\omega}{\\pi\\hbar}\\right)^{1/4}\\ee^{-m\\omega x^2/2\\hbar}', note: 'A Gaussian — and also a minimum-uncertainty state' },
+    { name: 'General eigenstate', latex: '\\psi_n=\\frac{1}{\\sqrt{n!}}(\\hat a_+)^n\\psi_0\\propto H_n(\\xi)\\,\\ee^{-\\xi^2/2}', note: 'ξ = √(mω/ħ)·x, with Hₙ the Hermite polynomials' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ho-1',
+      prompt: 'Why is the harmonic-oscillator model so ubiquitous in physics?',
+      options: [
+        'Because the leading non-constant term in the Taylor expansion of any potential about a minimum is necessarily quadratic',
+        'Because most real forces are in fact exactly proportional to displacement',
+        'Because it is the only exactly solvable model',
+        'Because its levels are equally spaced',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Real forces are almost never strictly linear; the oscillator is the small-oscillation approximation.',
+        2: 'The infinite well, hydrogen and others are exactly solvable too.',
+        3: 'That is a consequence, not a cause.',
+      },
+      explain: 'V(x) = V(x₀) + ½V″(x₀)(x−x₀)² + …, with the linear term vanishing at a minimum. As long as the amplitude is small the quadratic term dominates — which is why molecular vibrations, lattice phonons and field modes are all harmonic oscillators.',
+    },
+    {
+      id: 'ho-2',
+      prompt: 'Which single basic relation does the ladder-operator method rely on?',
+      options: [
+        '[x̂, p̂] = iħ',
+        'The recurrence relation of the Hermite polynomials',
+        'The normalisation condition on the wavefunction',
+        'The boundary condition ψ(±∞) = 0',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Hermite polynomials come out of the series method; the algebraic method never needs them.',
+        2: 'Normalisation only fixes prefactors; it plays no part in deriving the levels.',
+        3: '"The ladder must have a bottom" uses the fact that the energy is bounded below, not an explicit boundary condition.',
+      },
+      explain: 'The whole chain is: [x̂,p̂] = iħ gives [â₋,â₊] = 1, which gives Ĥ = ħω(â₊â₋ + ½), which gives the ladder property, and boundedness of the energy then forces â₋ψ₀ = 0. It is the showcase example of algebraic methods in quantum mechanics.',
+    },
+    {
+      id: 'ho-3',
+      prompt: 'Which statements about the zero-point energy E₀ = ħω/2 are correct? (Select all that apply.)',
+      options: [
+        'It follows from the uncertainty principle: the particle cannot sit exactly at x = 0 with zero momentum',
+        'The Casimir effect and chemical isotope effects are both observable consequences of it',
+        'It can be removed entirely by redefining the zero of energy, so it has no physical meaning',
+        'A larger ω means a larger zero-point energy',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'You can shift the zero of energy for an isolated oscillator, but the zero-point energy varies with parameters (plate separation, reduced mass), and that variation is measurable.',
+      },
+      explain: 'E₀ = ħω/2 grows with ω. The Casimir force comes from the change in zero-point energy when the boundaries move; the difference between C–H and C–D dissociation energies comes from the zero-point difference due to ω ∝ 1/√μ, the origin of kinetic isotope effects in chemistry.',
+    },
+    {
+      id: 'ho-4',
+      type: 'numeric',
+      prompt: 'In the ground state of a harmonic oscillator, what is the probability of finding the particle in the classically forbidden region (|ξ| > 1)? (Give a decimal, e.g. 0.157.)',
+      answer: 0.157,
+      tolerance: 0.06,
+      explain: 'P = 1 − erf(1) = 1 − 0.8427 ≈ 0.157, about 15.7%. The fraction decreases as n grows (about 5% at n = 10) — another face of the correspondence principle.',
+    },
+  ]}
+/>
+
+## What comes next
+
+So far everything has been a bound state: the particle is trapped and the spectrum is discrete. The next section lets go — set the particle free and see what happens. The answer is a little surprising.

@@ -1,0 +1,288 @@
+---
+title: The one-dimensional infinite square well
+section: '2.7'
+order: 7
+summary: 'Quantum mechanics'' "hydrogen atom before hydrogen": completely solvable, and almost every quantum feature already shows up.'
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - 02-wavefunction/06-expectation-and-uncertainty
+objectives:
+  - Solve the infinite well from scratch, start to finish
+  - Explain why n = 0 is excluded and why the level spacing grows with n
+  - Expand an arbitrary initial state in eigenstates and write down its evolution
+  - Use the correspondence principle to show how the classical result returns at large n
+sims: ['infinite-well']
+---
+
+$$
+V(x)=\begin{cases}0,&0<x<L\\ \infty,&\text{otherwise}\end{cases}
+$$
+
+A particle trapped between two infinitely high walls. It is the simplest bound-state problem there is, and it already contains energy quantisation, zero-point energy, node structure, orthogonality and completeness — the entire grammar of quantum mechanics makes its first appearance here.
+
+## Solving it
+
+<Derivation title="The full solution: from equation to energy levels" level="基础" minutes={8} open={true}>
+
+**Step 1: fix the domain.**
+
+Outside the well $V=\infty$. The stationary equation demands $\psi''=\frac{2m(V-E)}{\hbar^2}\psi$, and as $V\to\infty$ the only finite solution is $\psi\equiv0$. The particle is absolutely never found outside the well.
+
+Continuity of the wavefunction then gives the boundary conditions
+
+$$
+\psi(0)=\psi(L)=0
+$$
+
+(Note: $\psi'$ is **not** required to be continuous here, because $V$ is infinite — see the table at the end of [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/).)
+
+**Step 2: solve inside the well.**
+
+Inside, $V=0$:
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}=E\psi
+\quad\Longleftrightarrow\quad
+\frac{\dd^2\psi}{\dd x^2}=-k^2\psi,\qquad k\equiv\frac{\sqrt{2mE}}{\hbar}
+$$
+
+(A bound state requires $E>0$: if $E<0$ then $\psi''=\kappa^2\psi$ with solutions $\ee^{\pm\kappa x}$, which cannot vanish at both ends.) The general solution is
+
+$$
+\psi(x)=A\sin kx+B\cos kx
+$$
+
+**Step 3: impose the boundary conditions.**
+
+$\psi(0)=0$ immediately gives $B=0$. That leaves
+
+$$
+\psi(L)=A\sin kL=0
+$$
+
+Taking $A=0$ gives the trivial everywhere-zero solution (unnormalisable, and no particle). So we must have
+
+$$
+kL=n\pi,\qquad n=1,2,3,\dots
+$$
+
+**Why does $n$ start at 1?** $n=0$ gives $\psi\equiv0$; negative $n$ merely flips the overall sign of $\psi$, which is the same physical state (a global phase). Only the positive integers count.
+
+**Step 4: the energy levels.**
+
+From $k_n=n\pi/L$ and $E=\hbar^2k^2/2m$:
+
+$$
+E_n=\frac{n^2\pi^2\hbar^2}{2mL^2},\qquad n=1,2,3,\dots
+$$
+
+**Step 5: normalisation.**
+
+$$
+1=|A|^2\int_0^L\sin^2\frac{n\pi x}{L}\dd x=|A|^2\cdot\frac{L}{2}
+\;\Longrightarrow\;A=\sqrt{\frac2L}
+$$
+
+(taking $A$ positive real; the phase is arbitrary). Finally
+
+$$
+\psi_n(x)=\sqrt{\frac{2}{L}}\sin\frac{n\pi x}{L}
+$$
+
+</Derivation>
+
+## Reading the result
+
+<DualView>
+<div slot="left">
+
+**Standing waves in a box.** The boundary conditions $\psi(0)=\psi(L)=0$ are exactly those of a string clamped at both ends, so the eigenstates are the string's harmonics: the well must hold an integer number of half-wavelengths, $L=n\lambda/2$.
+
+Combine that with de Broglie's $\lambda=h/p$ and you get $p_n=nh/2L$ at once; then $E=p^2/2m$ reproduces the energy formula above. **Quantisation = the standing-wave condition.**
+
+**Nodes.** $\psi_n$ has $n-1$ zeros inside the well. Higher energy means sharper bending (curvature $\propto E$) and more nodes. This "number of nodes = n − 1" rule holds generally for one-dimensional bound states.
+
+</div>
+<div slot="right">
+
+$$
+\psi_n(x)=\sqrt{\frac2L}\sin\frac{n\pi x}{L},\qquad
+E_n=\frac{n^2\pi^2\hbar^2}{2mL^2}
+$$
+
+$$
+E_n=n^2E_1,\qquad E_{n+1}-E_n=(2n+1)E_1
+$$
+
+Orthonormality:
+
+$$
+\int_0^L\psi_m\psi_n\,\dd x=\delta_{mn}
+$$
+
+(Verify directly with a product-to-sum identity: for $m\ne n$ both terms integrate over a whole number of periods and vanish.)
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Zero-point energy: the particle cannot simply lie down">
+$E_1=\pi^2\hbar^2/2mL^2>0$. Even the lowest state has kinetic energy; the particle can never be at rest.
+
+The reason is the uncertainty principle: confinement to a width $L$ means $\sigma_x\sim L$, hence $\sigma_p\gtrsim\hbar/2L$ and a kinetic energy $\gtrsim\hbar^2/8mL^2$ — off the exact answer only by a numerical factor.
+
+The scaling $E_1\propto1/L^2$ turns up everywhere in physics: the colour of light emitted by a quantum dot as its size changes, conductance quantisation in nanowires, and the degeneracy pressure that holds a neutron star up against gravity all run on the same $1/L^2$.
+</Callout>
+
+<Sim name="infinite-well" />
+
+## Expanding an arbitrary initial state
+
+Because $\{\psi_n\}$ is complete, any initial state satisfying the boundary conditions can be expanded:
+
+$$
+\Psi(x,0)=\sum_{n=1}^{\infty}c_n\psi_n(x),\qquad
+c_n=\sqrt{\frac2L}\int_0^L\sin\frac{n\pi x}{L}\,\Psi(x,0)\,\dd x
+$$
+
+<Derivation title="Example: a particle initially uniform over the left half" level="进阶" minutes={7}>
+
+Take
+
+$$
+\Psi(x,0)=\begin{cases}\sqrt{2/L},&0<x<L/2\\0,&\text{otherwise}\end{cases}
+$$
+
+(already normalised: $\frac{2}{L}\cdot\frac{L}{2}=1$). The coefficients are
+
+$$
+c_n=\sqrt{\frac2L}\cdot\sqrt{\frac2L}\int_0^{L/2}\sin\frac{n\pi x}{L}\dd x
+=\frac2L\cdot\frac{L}{n\pi}\left[1-\cos\frac{n\pi}{2}\right]
+=\frac{2}{n\pi}\left[1-\cos\frac{n\pi}{2}\right]
+$$
+
+Term by term:
+
+| $n$ | $\cos(n\pi/2)$ | $c_n$ | $\lvert c_n\rvert^2$ |
+| --- | --- | --- | --- |
+| 1 | 0 | $2/\pi$ | 0.405 |
+| 2 | $-1$ | $2/\pi$ | 0.405 |
+| 3 | 0 | $2/3\pi$ | 0.045 |
+| 4 | 1 | 0 | 0 |
+| 5 | 0 | $2/5\pi$ | 0.016 |
+
+The first two terms already account for 81%. Check: $\sum|c_n|^2=\frac{4}{\pi^2}(1+1+\frac19+0+\frac1{25}+\cdots)=1$ (use $\sum_{k\,\text{odd}}1/k^2=\pi^2/8$).
+
+**What does an energy measurement give?** $E_1$ with probability 40.5%, $E_2$ with 40.5%, $E_3$ with 4.5%, and so on. Note $c_4=0$: the overlap of $\psi_4$ with this initial state happens to vanish exactly.
+
+**Evolution.** The $E_1$ and $E_2$ components carry almost half the weight each, so the probability density sloshes between the two halves at
+
+$$
+\omega_{21}=\frac{3\pi^2\hbar}{2mL^2}
+$$
+
+Set $c_1=c_2$ in the simulation above and watch it happen.
+
+</Derivation>
+
+## The correspondence principle
+
+<Callout type="insight" title="The large-n limit">
+A classical particle bounces back and forth at constant speed, so it spends equal time everywhere — the classical probability density is uniform, $P_\text{cl}(x)=1/L$.
+
+The quantum answer is $|\psi_n|^2=\frac2L\sin^2\frac{n\pi x}{L}$, oscillating between 0 and $2/L$. The two look nothing alike. But note:
+
+$$
+\overline{|\psi_n|^2}=\frac2L\cdot\overline{\sin^2}=\frac2L\cdot\frac12=\frac1L=P_\text{cl}
+$$
+
+**The average of the oscillation is exactly the classical result.** And the larger $n$ is, the finer the fringes, so any measurement of finite resolution sees only the average. That is the concrete mechanism of the correspondence principle: quantum effects do not "disappear", they get averaged away.
+
+In the simulation, push $n$ up to 12 and imagine a detector with resolution $L/10$ — you would measure a flat line.
+</Callout>
+
+The relative level spacing supports the same conclusion:
+
+$$
+\frac{E_{n+1}-E_n}{E_n}=\frac{2n+1}{n^2}\xrightarrow{\ n\to\infty\ }0
+$$
+
+At large $n$ the relative gap between neighbouring levels goes to zero and the spectrum looks continuous — precisely the classical picture.
+
+<Callout type="warning" title="Limitations of this model">
+The infinite well is an idealisation, and it departs from real systems in two places:
+
+1. **Infinitely high walls do not exist.** Real wells have finite depth, the wavefunction leaks outside, and the number of bound states is finite. See [section 2.8](/en/ch/02-wavefunction/08-finite-well/).
+2. **$\psi'$ is discontinuous at the walls.** That is an artefact of $V=\infty$ and never happens for any finite potential.
+
+Even so, its qualitative predictions for quantum wells, quantum dots and carbon nanotubes — especially $E\propto1/L^2$ — are often accurate enough to compare directly with experiment.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Eigenstates', latex: '\\psi_n(x)=\\sqrt{\\frac{2}{L}}\\sin\\frac{n\\pi x}{L},\\quad n=1,2,3,\\dots', note: 'Nodes = n − 1; n = 0 gives the trivial solution and is excluded' },
+    { name: 'Energy levels', latex: 'E_n=\\frac{n^2\\pi^2\\hbar^2}{2mL^2}=n^2E_1', note: 'Spacing grows with n: E_{n+1}−E_n=(2n+1)E₁' },
+    { name: 'Expansion coefficients', latex: 'c_n=\\sqrt{\\frac2L}\\int_0^L\\sin\\frac{n\\pi x}{L}\\,\\Psi(x,0)\\,\\dd x', note: '|cₙ|² is the probability of measuring Eₙ' },
+    { name: 'Classical limit', latex: '\\overline{|\\psi_n|^2}=\\frac{1}{L}=P_{\\text{cl}}(x)', note: 'At large n the quantum oscillation is averaged away by finite resolution' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'iw-1',
+      prompt: 'Why can the quantum number n of the infinite well not be 0?',
+      options: [
+        'Because n = 0 gives ψ ≡ 0, which cannot be normalised and describes no particle',
+        'Because the energy cannot be zero',
+        'Because sin(0) is undefined',
+        'Because negative-energy states are not allowed',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is a consequence, not a reason — the zero-point energy is non-zero precisely because n ≥ 1.',
+        2: 'sin(0) = 0 is perfectly well defined.',
+      },
+      explain: 'For n = 0, ψ(x) = √(2/L)·sin(0) ≡ 0 everywhere, so ∫|ψ|² = 0 ≠ 1. A non-zero zero-point energy is the result of this exclusion, not its justification.',
+    },
+    {
+      id: 'iw-2',
+      prompt: 'If the well width shrinks from L to L/2, the ground-state energy changes by a factor of:',
+      options: ['4', '2', '1/2', '1/4'],
+      answer: 0,
+      distractors: {
+        1: 'The energy goes as 1/L², not 1/L.',
+        2: 'Shrinking the box raises the energy, it does not lower it.',
+      },
+      explain: 'E₁ ∝ 1/L², so L → L/2 sends E₁ → 4E₁. This 1/L² scaling is why the size of a quantum dot sets the colour of its emission, and you can watch the whole level ladder rise by dragging L in this section’s simulation.',
+    },
+    {
+      id: 'iw-3',
+      prompt: 'The initial state Ψ(x,0) is constant for 0 < x < L/2 and zero elsewhere. Which statements about measuring the energy are correct? (Select all that apply.)',
+      options: [
+        'There is roughly a 40.5% chance of getting E₁',
+        'The probability of getting E₄ is zero',
+        'The measurement is certain to yield ⟨E⟩ = Σ|cₙ|²Eₙ',
+        'The probability density sloshes back and forth inside the well over time',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'A single measurement always returns some eigenvalue Eₙ; ⟨E⟩ is the average over many repetitions and is generally not equal to any single Eₙ.',
+      },
+      explain: 'cₙ = (2/nπ)[1 − cos(nπ/2)] gives |c₁|² = |c₂|² ≈ 0.405 and c₄ = 0. Since c₁ and c₂ are comparable, the cross term is large and |Ψ|² sloshes at ω₂₁ = (E₂−E₁)/ħ.',
+    },
+    {
+      id: 'iw-4',
+      type: 'numeric',
+      prompt: 'An electron is confined to a one-dimensional box of length L = 1.0 nm. Find the ground-state energy in eV. (ħc = 197.3 eV·nm, mc² = 511000 eV)',
+      answer: 0.376,
+      tolerance: 0.05,
+      unit: 'eV',
+      explain: 'E₁ = π²(ħc)²/(2mc²L²) = π²×197.3²/(2×511000×1²) = 9.8696×38927/1022000 ≈ 0.376 eV. That lands squarely in the infrared — exactly the operating range of semiconductor quantum-well devices.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Lower the walls from infinite to finite and three interesting things happen: the number of bound states becomes finite, the wavefunction leaks outside the well, and scattering states appear.

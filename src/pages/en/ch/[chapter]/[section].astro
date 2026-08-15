@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from 'astro:content'
+import ChapterLayout from '@/layouts/ChapterLayout.astro'
+import { getToc, type TocSection } from '@/lib/toc'
+import Callout from '@/components/mdx/Callout.astro'
+import Derivation from '@/components/mdx/Derivation.astro'
+import DualView from '@/components/mdx/DualView.astro'
+import KeyFormulas from '@/components/mdx/KeyFormulas.astro'
+import QuizBlock from '@/components/mdx/QuizBlock.astro'
+import Sim from '@/components/mdx/Sim.astro'
+import Term from '@/components/mdx/Term.astro'
+
+/**
+ * 英文小节页。
+ *
+ * 路由按**中文集合**生成：这样即使某一节还没译，/en/ch/<...>/ 也存在
+ * （正文回退到中文，页面框架仍是英文），语言切换按钮不会指向 404。
+ */
+export async function getStaticPaths() {
+  const entries = await getCollection('sections')
+  const enEntries = await getCollection('sectionsEn')
+  const enIds = new Set(enEntries.map((e: { id: string }) => e.id))
+  return entries.map((entry: { id: string }) => {
+    const [chapter, ...rest] = entry.id.split('/')
+    return {
+      params: { chapter, section: rest.join('/') },
+      props: { entryId: entry.id, translated: enIds.has(entry.id) },
+    }
+  })
+}
+
+const { entryId, translated } = Astro.props
+const collection = translated ? 'sectionsEn' : 'sections'
+const entries = await getCollection(collection)
+const entry = entries.find((e: { id: string }) => e.id === entryId)!
+const { Content, headings } = await render(entry)
+
+const toc = await getToc('en')
+const section = toc.flatMap((c) => c.sections).find((s) => s.id === entryId) as TocSection
+
+const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Sim, Term }
+---
+
+<ChapterLayout section={section} headings={headings} lang="en">
+  <Content components={components} />
+</ChapterLayout>

@@ -1,0 +1,206 @@
+---
+title: Stationary and non-stationary states
+section: '2.5'
+order: 5
+summary: What is stationary is the probability distribution, not the particle. Get that straight and half the confusion in quantum mechanics disappears.
+status: done
+prereqs:
+  - 02-wavefunction/04-time-dependent-schrodinger
+objectives:
+  - Say which quantities change with time in a stationary state and which do not
+  - Explain why a single eigenstate never "moves" while a superposition does
+  - Estimate the oscillation period of a superposition from the level spacing
+sims: ['infinite-well']
+---
+
+<Term id="stationaryState">Stationary state</Term> is one of the most misread terms in the subject. The word *stationary* invites the thought "at rest". The particle is not at rest.
+
+## What does not change in a stationary state
+
+For $\Psi_n(x,t)=\psi_n(x)\ee^{-\ii E_nt/\hbar}$:
+
+$$
+|\Psi_n(x,t)|^2=\psi_n^*(x)\psi_n(x)\underbrace{\ee^{+\ii E_nt/\hbar}\ee^{-\ii E_nt/\hbar}}_{=1}=|\psi_n(x)|^2
+$$
+
+The probability density does not depend on time. More generally, for any observable $\hat A$ with no explicit time dependence, the expectation value
+
+$$
+\langle \hat A\rangle_n=\int\Psi_n^*\hat A\Psi_n\,\dd x=\int\psi_n^*\hat A\psi_n\,\dd x
+$$
+
+is time-independent too — the phase factors appear in pairs, in $\Psi^*$ and $\Psi$, and always cancel.
+
+<DualView>
+<div slot="left">
+
+**What changes**: the wavefunction itself. The phase of $\Psi_n$ rotates uniformly at angular frequency $E_n/\hbar$. For the hydrogen ground state that is about $2\times10^{16}\ \text{s}^{-1}$ — extremely fast.
+
+**What does not**: every observable. The probability density, $\langle x\rangle$, $\langle p\rangle$, $\langle E\rangle$ — all constant.
+
+So what is stationary is the **result of observation**, not the wavefunction, and certainly not the particle.
+
+</div>
+<div slot="right">
+
+$$
+\Psi_n(x,t)=\psi_n(x)\,\ee^{-\ii E_nt/\hbar}
+$$
+
+$$
+|\Psi_n|^2=|\psi_n|^2\quad(\text{independent of }t)
+$$
+
+$$
+\frac{\dd\langle\hat A\rangle_n}{\dd t}=0\quad(\hat A\text{ without explicit }t)
+$$
+
+In a single stationary state the unobservability of the global phase is taken to an extreme: the phase spins constantly and nothing can detect it.
+
+</div>
+</DualView>
+
+<Callout type="misconception" title="Three common misreadings">
+**"Stationary means the particle is at rest."** No. The ground state of an infinite well has kinetic energy $E_1=\pi^2\hbar^2/2mL^2>0$ and $\langle p^2\rangle=2mE_1\ne0$. It is only $\langle p\rangle$ that vanishes, because left- and right-moving probabilities are equal.
+
+**"Stationary means the ground state."** No. Every level $E_n$ has its stationary state $\psi_n$. The ground state is simply the stationary state of lowest energy.
+
+**"Stationary states are the only physical states."** No. Most real states are superpositions. Stationary states matter because they form a **basis** in which any state can be expanded, not because they are somehow more real.
+</Callout>
+
+## Non-stationary states: the cross term does the work
+
+As soon as two or more coefficients are non-zero, the probability density moves. The previous section computed the general two-state result:
+
+$$
+|\Psi|^2=|c_1|^2|\psi_1|^2+|c_2|^2|\psi_2|^2
++2|c_1||c_2|\,\psi_1\psi_2\cos\!\left(\omega_{21}t+\delta\right)
+$$
+
+(taking real $\psi_n$; $\delta$ is the initial phase difference between $c_1$ and $c_2$).
+
+The first two terms are the individual densities, and they do not move. **All of the time dependence sits in the cross term**, oscillating at the Bohr frequency
+
+$$
+\omega_{21}=\frac{E_2-E_1}{\hbar}
+$$
+
+<Callout type="insight" title="Bigger gap, faster sloshing">
+This gives a useful order-of-magnitude estimate: the characteristic evolution time of a superposition is $\tau\sim\hbar/\Delta E$.
+
+- Electrons in an atom ($\Delta E\sim\text{eV}$): $\tau\sim10^{-15}\ \text{s}$, femtoseconds. That is why studying dynamics inside atoms requires femtosecond lasers.
+- Nuclear spins in a 1 T field ($\Delta E\sim10^{-7}\ \text{eV}$): $\tau\sim10^{-8}\ \text{s}$, which is exactly why NMR works in the radio-frequency band.
+
+One formula, eight orders of magnitude apart.
+</Callout>
+
+## See for yourself
+
+The simulation below has a stationary/superposition toggle. This is the one thing in this section you should confirm with your own hands:
+
+<Sim name="infinite-well" />
+
+In **stationary** mode, change $n$ freely — the probability density (purple) is a curve that never moves, however long you wait. Switch to **superposition** with $c_1=c_2$ and press play: the purple curve starts sloshing. Finally drag $c_2$ to zero, leaving only $c_1$, and the sloshing stops immediately.
+
+<Callout type="check" title="Predict before you look">
+Before switching: replace $c_1,c_2$ by $c_1,c_3$ (a superposition of 1 and 3). Does the oscillation get faster or slower, and by what factor?
+
+Since $E_n\propto n^2$, we have $E_3-E_1=8E_1$ against $E_2-E_1=3E_1$. It should be $8/3\approx2.7$ times faster. Check it in the simulation.
+</Callout>
+
+## Why atoms do not collapse
+
+Classical electrodynamics makes a fatal prediction: an electron orbiting a nucleus is accelerating, must therefore radiate, and would lose all its energy and spiral into the nucleus in about $10^{-11}$ seconds. Matter should not exist.
+
+Stationary states are the answer.
+
+<DualView>
+<div slot="left">
+
+For an electron in the ground state, the charge distribution $-e|\psi_1|^2$ **does not change with time at all**. A static charge distribution does not radiate — a point classical electrodynamics itself concedes.
+
+The electron is not "going round the nucleus". The ground state $\psi_{100}$ is even spherically symmetric, with probability current $j$ vanishing everywhere. The orbiting picture of the Bohr model is simply wrong.
+
+And there is no lower level to fall to, so the ground state is absolutely stable.
+
+</div>
+<div slot="right">
+
+The deeper reason for that stability is the uncertainty principle:
+
+$$
+E\sim\frac{\langle p^2\rangle}{2m}-\frac{e^2}{4\pi\varepsilon_0 r}
+\gtrsim\frac{\hbar^2}{2mr^2}-\frac{e^2}{4\pi\varepsilon_0 r}
+$$
+
+As $r\to0$ the first term ($\propto r^{-2}$) diverges faster than the second ($\propto r^{-1}$), so the total energy goes back up. The minimum sits at
+
+$$
+r\sim a_0=\frac{4\pi\varepsilon_0\hbar^2}{me^2}=0.53\ \text{Å}
+$$
+
+**The Bohr radius is the balance point between the cost of confinement and the Coulomb gain.**
+
+</div>
+</DualView>
+
+<KeyFormulas
+  items={[
+    { name: 'Stationary state', latex: '\\Psi_n(x,t)=\\psi_n(x)\\ee^{-\\ii E_nt/\\hbar}\\ \\Longrightarrow\\ |\\Psi_n|^2=|\\psi_n|^2', note: 'Every observable is time-independent' },
+    { name: 'Density of a two-state superposition', latex: '|\\Psi|^2=|c_1\\psi_1|^2+|c_2\\psi_2|^2+2|c_1c_2|\\psi_1\\psi_2\\cos(\\omega_{21}t+\\delta)', note: 'All time dependence lives in the cross term' },
+    { name: 'Characteristic evolution time', latex: '\\tau\\sim\\frac{\\hbar}{\\Delta E}', note: 'Bigger gap, faster motion; excellent for estimates' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'stat-1',
+      prompt: 'Which statements about a particle in a stationary state ψₙ are correct? (Select all that apply.)',
+      options: [
+        'The probability density |Ψ|² does not change with time',
+        'The wavefunction Ψ does not change with time',
+        '⟨p⟩ vanishes for stationary states of the infinite well',
+        'The kinetic energy of the particle is zero',
+      ],
+      answer: [0, 2],
+      distractors: {
+        1: 'The phase of the wavefunction rotates continuously at Eₙ/ħ; that global phase is simply unobservable.',
+        3: 'The kinetic energy ⟨p²⟩/2m = Eₙ > 0. What vanishes is ⟨p⟩, because left- and right-moving probabilities are equal.',
+      },
+      explain: 'What is invariant in a stationary state are the observables, not the wavefunction. ⟨p⟩ = 0 alongside ⟨p²⟩ ≠ 0 is the quantum standing-wave picture: kinetic energy without net motion.',
+    },
+    {
+      id: 'stat-2',
+      prompt: 'An infinite well starts in an equal superposition of ψ₁ and ψ₃. Compared with an equal superposition of ψ₁ and ψ₂, the oscillation frequency of the probability density changes by a factor of:',
+      options: ['8/3', '3/8', '2', '9'],
+      answer: 0,
+      distractors: {
+        1: 'That is upside down: a larger gap means a higher frequency.',
+        2: 'It is not the ratio of quantum numbers but of level differences.',
+        3: '9 is E₃/E₁, not (E₃−E₁)/(E₂−E₁).',
+      },
+      explain: 'Eₙ ∝ n², so (E₃−E₁)/(E₂−E₁) = (9−1)/(4−1) = 8/3 ≈ 2.67. You can check this directly in the simulation above.',
+    },
+    {
+      id: 'stat-3',
+      prompt: 'Classical electrodynamics predicts that an orbiting electron radiates and collapses. How does quantum mechanics avoid this?',
+      options: [
+        'The ground-state charge distribution is time-independent, and a static distribution does not radiate; besides, there is no lower level to fall to',
+        'The electron is not actually charged in quantum mechanics',
+        'The electron moves too fast to radiate',
+        'The radiation is absorbed by the nucleus',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The electron is of course charged.',
+        2: 'Classically, moving faster means radiating more strongly.',
+      },
+      explain: 'A stationary state has time-independent |ψ|², corresponding to a static charge cloud, which does not radiate. The deeper reason is the uncertainty principle: squeezing the electron towards the origin makes the kinetic energy diverge as 1/r², faster than the Coulomb gain −1/r, so there is a lowest-energy radius — the Bohr radius.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We have been talking about probability distributions without ever extracting numbers from them systematically. The next section defines expectation values and variances, and writes down the uncertainty principle rigorously for the first time.

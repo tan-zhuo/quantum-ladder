@@ -12,7 +12,7 @@ import {
 import * as THREE from 'three'
 import { useScenePalette } from './theme'
 import { useSceneStore, useQualityProfile } from './sceneStore'
-import { useT } from '@/i18n/react'
+import { useT, useUiT } from '@/i18n/react'
 
 /**
  * 所有 3D 场景的画布层。
@@ -177,6 +177,8 @@ export function SceneCanvas(props: SceneCanvasProps) {
   // 预设视角的文案定义在各场景的模块级常量里（那里拿不到 lang），
   // 统一在这里翻译：这一段只在客户端渲染，用 hook 读语言是安全的
   const T = useT()
+  // 骨架屏是服务端渲染的，读 <html lang> 的 useT 那时还拿不到语言，走 Context
+  const TUi = useUiT()
   const controlsRef = useRef<any>(null)
   const glRef = useRef<THREE.WebGLRenderer | null>(null)
   const sceneRef = useRef<THREE.Scene | null>(null)
@@ -253,7 +255,7 @@ export function SceneCanvas(props: SceneCanvasProps) {
       <div className="grid h-full w-full place-items-center bg-[var(--bg)]">
         <div className="flex flex-col items-center gap-2 text-[var(--text-faint)]">
           <div className="size-8 animate-pulse rounded-full border-2 border-current opacity-40" />
-          <p className="text-[12px]">{T('3D 场景加载中…')}</p>
+          <p className="text-[12px]">{TUi('3D 场景加载中…')}</p>
         </div>
       </div>
     )

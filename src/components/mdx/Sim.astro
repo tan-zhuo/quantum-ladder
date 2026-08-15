@@ -1,4 +1,5 @@
 ---
+import { getLangFromPath, translator, type Lang } from '@/i18n'
 import InfiniteWell from '@/components/sim/InfiniteWell'
 import HarmonicOscillator from '@/components/sim/HarmonicOscillator'
 import WavePacketScattering from '@/components/sim/WavePacketScattering'
@@ -23,8 +24,16 @@ export type SimName = (typeof SIM_NAMES)[number]
 
 interface Props {
   name: SimName
+  /** 显式指定界面语言；不传就按路由判断，和 Scene.astro 一致 */
+  lang?: Lang
 }
 
+const _base = import.meta.env.BASE_URL
+const _rel = Astro.url.pathname.startsWith(_base)
+  ? Astro.url.pathname.slice(_base.length)
+  : Astro.url.pathname
+const lang: Lang = Astro.props.lang ?? getLangFromPath(_rel)
+const t = translator(lang)
 const { name } = Astro.props
 
 if (!SIM_NAMES.includes(name)) {
@@ -35,15 +44,14 @@ if (!SIM_NAMES.includes(name)) {
 }
 ---
 
-{name === 'infinite-well' && <InfiniteWell client:visible />}
-{name === 'harmonic-oscillator' && <HarmonicOscillator client:visible />}
-{name === 'wave-packet-scattering' && <WavePacketScattering client:visible />}
+{name === 'infinite-well' && <InfiniteWell lang={lang} client:visible />}
+{name === 'harmonic-oscillator' && <HarmonicOscillator lang={lang} client:visible />}
+{name === 'wave-packet-scattering' && <WavePacketScattering lang={lang} client:visible />}
 
 <noscript>
   <div
     class="my-8 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-4 py-6 text-center text-[13.5px] text-[var(--text-muted)]"
   >
-    这里是一个交互模拟（{name}），需要启用 JavaScript 才能运行。
-    正文的推导与结论不依赖它，可以继续往下读。
+    {t('这里是一个交互模拟（{0}），需要启用 JavaScript 才能运行。正文的推导与结论不依赖它，可以继续往下读。', name)}
   </div>
 </noscript>

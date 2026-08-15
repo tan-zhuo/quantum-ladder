@@ -1,0 +1,158 @@
+---
+title: How to use this site
+order: 1
+summary: How to use the site, how to pick one of the three routes, and the notation used throughout.
+status: done
+objectives:
+  - Choose a learning route that suits you
+  - Know what each page element (collapsible derivation, misconception box, simulation, quiz) is for
+  - Learn the notation and unit conventions so nothing clashes with your textbook
+---
+
+## What this site is
+
+A course in quantum mechanics that runs from no background to the research frontier, with one distinguishing habit: **wherever something can be dragged, you get to drag it**. Wavefunctions, energy levels and transmission probabilities are computed in your browser on the spot, not pasted in as images.
+
+The whole site is static. There is no account and no server; your progress lives only in this device's browser. Pages you have already opened stay readable with the network off.
+
+## The blocks you will meet
+
+| Element | How to use it |
+| --- | --- |
+| **Collapsible derivation** | Collapsed by default. Skip on a first read and open it when you want to work through the algebra. Tagged basic / advanced / optional with an estimated time |
+| **Picture vs formalism** | Two columns saying the same thing. Read the left when the formula blocks you, the right when you "understand it but cannot compute with it" |
+| **Common misconception** | The red boxes. These are real traps that textbooks usually leave implicit |
+| **Interactive simulation** | Marked with ◈. **Predict first, then drag**, or you are only watching an animation |
+| **Quiz** | Immediate feedback that tells you where a wrong answer went wrong. Retake freely |
+| **Self-assessment** | At the end of each section; the result shows up in the contents tree on the left |
+
+### Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| `/` or `Ctrl/Cmd + K` | Open search |
+| `←` `→` | Previous / next section |
+| `f` | Formula reference panel |
+| `t` | Toggle dark / light |
+
+## Three routes
+
+Same content, different order. Which one fits depends on what you are currently missing.
+
+<DualView left="Route A: picture first" right="Who it is for">
+<div slot="left">
+
+**01 → 02 → 05 → 06 → 03 → 07 → 08**
+
+Settle "why quantum mechanics is needed at all" first, build intuition with one-dimensional problems and spin, and only then go back for the formalism. Look up mathematical tools in [appendix A](/en/ch/appendix-a-math/) when you need them.
+
+Leaving chapter 3 until late looks odd, but by then you will have worked through a pile of examples by hand, and Dirac notation will read as "a shorter way to write what you already know" rather than abstraction out of nowhere.
+
+</div>
+<div slot="right">
+
+Undergraduates meeting quantum mechanics for the first time, self-learners, and anyone who took a course and is left holding a pile of formulas.
+
+**The cost**: there will be a stretch where your tools feel inadequate (adding angular momenta, for instance). Sit with it; chapter 3 pays the debt off in one go.
+
+</div>
+</DualView>
+
+<DualView left="Route B: formalism first" right="Who it is for">
+<div slot="left">
+
+**03 → 02 → 04 → 05 → 06 → 07 → 08**
+
+Start from Hilbert space and the postulates, and treat one-dimensional problems as worked examples of the formalism. This is how most graduate courses run.
+
+</div>
+<div slot="right">
+
+People with solid linear algebra who are comfortable starting from axioms.
+
+**The cost**: it easily becomes "I can compute but I do not know what I am computing". Play with at least one simulation per chapter as an anchor for intuition.
+
+</div>
+</DualView>
+
+<DualView left="Route C: quantum information" right="Who it is for">
+<div slot="left">
+
+**02 → 03 → 05 → 09 → 10 → 13**
+
+Skip the continuum, hydrogen and approximation methods; go for two-level systems, entanglement, algorithms and error correction. From chapter 5 you only need the spin sections (5.3–5.5).
+
+</div>
+<div slot="right">
+
+People aiming squarely at quantum computing or quantum information.
+
+**The cost**: what you skipped — especially time-dependent perturbation theory and the physical origin of open-system behaviour — will come looking for you when you read hardware papers. Chapters 6–8 can be picked up at any time.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="How to use a simulation so that it counts">
+Every simulation has a "try this" list under it. The right way to use it is:
+
+1. **Read the question and commit to a prediction** — in your head or on paper
+2. Then drag the slider and check
+3. If the prediction was wrong, go back to the text and find the step where your reasoning went off
+
+Drag first and you will feel that everything is "intuitive and obvious", and then discover in an exam or a derivation that nothing stuck. **Learning happens at the failed prediction.**
+</Callout>
+
+## Notation and units
+
+<DualView left="Notation" right="Units">
+<div slot="left">
+
+| Symbol | Meaning |
+| --- | --- |
+| $\Psi(x,t)$ | The full time-dependent wavefunction |
+| $\psi(x)$ | The spatial part (solution of the stationary equation) |
+| $\hat A$ | An operator (hatted); $A$ is the corresponding classical quantity or eigenvalue |
+| $\langle \hat A\rangle$ | Expectation value |
+| $\sigma_A$ | Standard deviation (some books write $\Delta A$) |
+| $\ket{\psi}$, $\bra{\psi}$ | Dirac notation, used from chapter 3 onwards |
+| $\ee$, $\ii$, $\dd$ | Euler's number, the imaginary unit and the differential (upright) |
+
+</div>
+<div slot="right">
+
+**The prose** always keeps $\hbar$ and full dimensions, so that any formula can be checked by substituting SI or eV units directly.
+
+**The simulations** work internally in natural units, $\hbar=m=1$, because then energies, lengths and times are all O(1): slider ranges are easy to choose and floating-point precision is comfortable. Converting back to SI is covered in [appendix C](/en/ch/appendix-c-numerics/).
+
+**Handy conversions** (very useful for estimates):
+
+$$
+\hbar c=197.3\ \text{eV·nm},\qquad m_ec^2=511\ \text{keV}
+$$
+
+$$
+k_BT\big|_{300\text{K}}=25.9\ \text{meV}
+$$
+
+</div>
+</DualView>
+
+<Callout type="warning" title="When comparing with other textbooks">
+Conventions clash between books. Three places in particular:
+
+1. **Where the $2\pi$ goes in the Fourier transform.** This site uses the symmetric convention ($1/\sqrt{2\pi}$ on each side). Griffiths does the same; Sakurai does not.
+2. **Ladder-operator notation.** This site writes $\hat a_\pm$ (Griffiths style); most of the literature writes $\hat a$ and $\hat a^\dagger$. They are the same thing: $\hat a_-=\hat a$, $\hat a_+=\hat a^\dagger$.
+3. **The symbol for uncertainty.** This site writes $\sigma_x$ to emphasise that it is a standard deviation. Books writing $\Delta x$ usually mean the same quantity, but a few mean full width at half maximum, which differs by a factor of about 2.35.
+</Callout>
+
+## State of the content
+
+The site is under construction. The `n/m` after each chapter in the contents tree is "finalised sections / total sections"; sections marked "to write" currently have only an outline.
+
+The one chapter written out in full is [chapter 2](/en/ch/02-wavefunction/), which also serves as the template for the rest: every section has a complete (collapsible) derivation, a picture-versus-formalism comparison, at least one interactive simulation (or an explicit statement of why there is none), a summary of key formulas and a quiz.
+
+## Where to start
+
+- Never studied quantum mechanics → [1.1 The crisis of classical physics](/en/ch/01-history/01-classical-crisis/)
+- Studied it but want the intuition → [2.1 The probability interpretation of the wavefunction](/en/ch/02-wavefunction/01-born-rule/)
+- Only want something that runs → go straight to [2.11 Tunnelling](/en/ch/02-wavefunction/11-tunneling/) and drag the barrier width around

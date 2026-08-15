@@ -123,6 +123,30 @@ export const DICT_UI: Record<string, string> = {
   '纯静态站点，全部计算在你的浏览器里完成。学习进度只存在本机 localStorage，不上传任何数据。 支持离线访问：访问过的页面会被缓存下来。':
     'A fully static site: every calculation happens in your browser. Progress is kept in localStorage and never uploaded. Pages you have visited are cached, so the site keeps working offline.',
 
+  // ── 教材小节页 ──────────────────────────────────────────
+  面包屑: 'Breadcrumb',
+  '上一节 / 下一节': 'Previous / next section',
+  本页目录: 'On this page',
+  上一节: 'Previous section',
+  下一节: 'Next section',
+  学完本节你应该能: 'After this section you should be able to',
+  '本节尚未撰写，当前只有大纲。内容结构与交互模拟的规格见下方。':
+    'This section has not been written yet; only the outline exists. The planned structure and simulations are listed below.',
+  '本节为草稿，推导与措辞可能还会调整。':
+    'Draft: the derivations and wording may still change.',
+  '第 {0} 章': 'Chapter {0}',
+  '{0} 小节': '{0} sections',
+  '{0} 已定稿': '{0} finalised',
+  '{0} 个交互模拟': '{0} interactive simulations',
+  预计用时: 'Estimated time',
+  小节: 'Sections',
+  已定稿: 'Finalised',
+  交互模拟: 'Simulations',
+  小时: 'hours',
+  建议先读: 'Read first',
+  '本章内容尚未撰写。': 'This chapter has not been written yet.',
+  开始阅读: 'Start reading',
+
   // ── 搜索 ────────────────────────────────────────────────
   '搜索章节、概念、公式…（试试「隧道」「Ehrenfest」「归一化」）':
     'Search sections, concepts, formulas… (try "tunnelling", "Ehrenfest", "normalisation")',
@@ -138,6 +162,7 @@ export const DICT_UI: Record<string, string> = {
   // ── MDX 组件的固定标签 ──────────────────────────────────
   注意: 'Note',
   物理图像: 'The picture',
+  数学形式: 'The mathematics',
   常见误解: 'Common misconception',
   容易踩坑: 'Easy to get wrong',
   历史: 'History',

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getSection, recordQuiz } from '@/lib/progress'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 章末自测。两种题型：
@@ -39,11 +40,15 @@ interface Props {
   sectionId?: string
   questions: Question[]
   title?: string
+  /** 界面语言。组件会被服务端渲染，必须用 props 传 */
+  lang?: Lang
 }
 
 type Answer = { picked: number[]; text: string; checked: boolean; correct: boolean }
 
-export default function Quiz({ questions, title = '自测', sectionId }: Props) {
+export default function Quiz({ questions, title, sectionId, lang = DEFAULT_LANG }: Props) {
+  const T = translator(lang)
+  const heading = title ?? T('自测')
   const [resolvedSection, setResolvedSection] = useState<string | undefined>(sectionId)
   const [answers, setAnswers] = useState<Record<string, Answer>>({})
   const [best, setBest] = useState<{ score: number; total: number } | null>(null)
@@ -103,15 +108,15 @@ export default function Quiz({ questions, title = '自测', sectionId }: Props) 
           <span aria-hidden className="text-[var(--c-energy)]">
             ?
           </span>
-          {title}
+          {heading}
           <span className="text-[12.5px] font-normal text-[var(--text-faint)]">
-            共 {questions.length} 题
+            {T('共 {0} 题', questions.length)}
           </span>
         </h3>
         <div className="flex items-center gap-3 text-[12.5px]">
           {best ? (
             <span className="text-[var(--text-faint)]">
-              最好成绩 {best.score}/{best.total}
+              {T('最好成绩 {0}/{1}', best.score, best.total)}
             </span>
           ) : null}
           {checkedCount > 0 ? (
@@ -120,7 +125,7 @@ export default function Quiz({ questions, title = '自测', sectionId }: Props) 
               onClick={retry}
               className="no-print rounded-md border border-[var(--border)] px-2 py-0.5 text-[var(--text-muted)] hover:text-[var(--text)]"
             >
-              重做
+              {T('重做')}
             </button>
           ) : null}
         </div>
@@ -136,21 +141,20 @@ export default function Quiz({ questions, title = '自测', sectionId }: Props) 
             onPick={(picked) => update(q.id, { picked })}
             onText={(text) => update(q.id, { text })}
             onCheck={() => check(q)}
+            T={T}
           />
         ))}
       </ol>
 
       {allChecked ? (
         <footer className="border-t border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-3 text-[13.5px]">
-          <strong>
-            本次 {score} / {questions.length}
-          </strong>
+          <strong>{T('本次 {0} / {1}', score, questions.length)}</strong>
           <span className="ml-2 text-[var(--text-muted)]">
             {score === questions.length
-              ? '全对。可以往下一节了。'
+              ? T('全对。可以往下一节了。')
               : score >= questions.length * 0.6
-                ? '基本掌握。错的那题回头看一下对应的推导。'
-                : '建议重读本节的推导部分，尤其是被折叠起来的那几段。'}
+                ? T('基本掌握。错的那题回头看一下对应的推导。')
+                : T('建议重读本节的推导部分，尤其是被折叠起来的那几段。')}
           </span>
         </footer>
       ) : null}
@@ -165,6 +169,7 @@ function QuestionRow({
   onPick,
   onText,
   onCheck,
+  T,
 }: {
   index: number
   question: Question
@@ -172,6 +177,7 @@ function QuestionRow({
   onPick: (picked: number[]) => void
   onText: (t: string) => void
   onCheck: () => void
+  T: (zh: string, ...args: (string | number)[]) => string
 }) {
   const a = answer ?? { picked: [], text: '', checked: false, correct: false }
   const isMulti = question.type !== 'numeric' && Array.isArray(question.answer)
@@ -192,7 +198,7 @@ function QuestionRow({
         <div className="min-w-0 flex-1">
           <p className="text-[14.5px] leading-relaxed text-[var(--text)]">{question.prompt}</p>
           {isMulti ? (
-            <p className="mt-0.5 text-[12px] text-[var(--text-faint)]">多选题</p>
+            <p className="mt-0.5 text-[12px] text-[var(--text-faint)]">{T('多选题')}</p>
           ) : null}
 
           {question.type === 'numeric' ? (
@@ -206,14 +212,14 @@ function QuestionRow({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && canCheck && !a.checked) onCheck()
                 }}
-                placeholder="输入数值"
+                placeholder={T('输入数值')}
                 className="w-40 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 font-mono text-[14px] outline-none focus:border-[var(--accent)] disabled:opacity-70"
               />
               {question.unit ? (
                 <span className="text-[13px] text-[var(--text-muted)]">{question.unit}</span>
               ) : null}
               <span className="text-[12px] text-[var(--text-faint)]">
-                允许 {((question.tolerance ?? 0.02) * 100).toFixed(0)}% 相对误差
+                {T('允许 {0}% 相对误差', ((question.tolerance ?? 0.02) * 100).toFixed(0))}
               </span>
             </div>
           ) : (
@@ -277,7 +283,7 @@ function QuestionRow({
               disabled={!canCheck}
               className="no-print mt-3 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[13px] font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-35"
             >
-              提交
+              {T('提交')}
             </button>
           ) : (
             <div className="mt-3 rounded-lg bg-[var(--bg-subtle)] px-3 py-2.5 text-[13.5px] leading-relaxed">
@@ -285,18 +291,17 @@ function QuestionRow({
                 className="mb-1 font-medium"
                 style={{ color: a.correct ? 'var(--c-energy)' : 'var(--c-danger)' }}
               >
-                {a.correct ? '正确' : '不对'}
+                {a.correct ? T('正确') : T('不对')}
                 {question.type === 'numeric' && !a.correct ? (
                   <span className="ml-2 font-normal text-[var(--text-muted)]">
-                    正确答案 ≈ {question.answer}
-                    {question.unit ? ` ${question.unit}` : ''}
+                    {T('正确答案 ≈ {0}', `${question.answer}${question.unit ? ` ${question.unit}` : ''}`)}
                   </span>
                 ) : null}
               </p>
               {wrongPicks.map((p) =>
                 question.type !== 'numeric' && question.distractors?.[p] ? (
                   <p key={p} className="mb-1 text-[var(--text-muted)]">
-                    <span className="text-[var(--c-danger)]">你选的 </span>
+                    <span className="text-[var(--c-danger)]">{T('你选的')} </span>
                     {question.distractors[p]}
                   </p>
                 ) : null,

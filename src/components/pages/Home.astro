@@ -3,7 +3,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import { getToc } from '@/lib/toc'
 import { getLabModules, countScenes } from '@/lib/lab'
 import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
-import { CHAPTER_EN } from '@/i18n/sections-en'
 
 interface Props {
   lang?: Lang
@@ -11,12 +10,11 @@ interface Props {
 
 const { lang = DEFAULT_LANG } = Astro.props
 const t = translator(lang)
-const toc = await getToc()
+const toc = await getToc(lang)
 const modules = await getLabModules(lang)
 const sceneCount = await countScenes()
 const base = import.meta.env.BASE_URL
 const L = (p: string) => localePath(lang, p, base)
-const chapterTitle = (id: string, zh: string) => (lang === 'en' ? (CHAPTER_EN[id]?.title ?? zh) : zh)
 
 const allSections = toc.flatMap((c) => c.sections)
 const doneSections = allSections.filter((s) => s.status === 'done')
@@ -246,17 +244,17 @@ const PATHS = [
               doneSections.length,
             )
           }
-          {lang === 'en' && <span class="text-[var(--text-faint)]"> (textbook text is in Chinese)</span>}
+
         </p>
         <div class="mt-4 flex flex-wrap gap-2">
           {
             toc.slice(0, 8).map((c) => (
               <a
-                href={`${base}${c.href.replace(/^\//, '')}`}
+                href={L(c.path)}
                 class="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[12.5px] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
               >
                 <span class="mr-1 font-mono text-[11px] text-[var(--text-faint)]">{c.num}</span>
-                {chapterTitle(c.id, c.title)}
+                {c.title}
               </a>
             ))
           }

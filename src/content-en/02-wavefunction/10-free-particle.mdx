@@ -1,0 +1,315 @@
+---
+title: The free particle and Gaussian wave packets
+section: '2.10'
+order: 10
+summary: 'The simplest potential (no potential at all) turns out to be the most awkward: the stationary states are not normalisable. The fix is to superpose them, and the price is that the packet spreads.'
+status: done
+prereqs:
+  - 02-wavefunction/06-expectation-and-uncertainty
+  - 02-wavefunction/09-harmonic-oscillator
+objectives:
+  - Explain why free-particle stationary states are not normalisable, and why they are still useful
+  - Distinguish phase velocity from group velocity and say which one is the particle's speed
+  - Explain packet spreading from the dispersion relation and estimate the spreading time
+sims: ['wave-packet-scattering']
+---
+
+$$
+V(x)=0
+$$
+
+It looks like the simplest case. In fact it raises the subtlest question in the chapter.
+
+## Stationary states: not normalisable
+
+The stationary equation gives
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}=E\psi
+\;\Longrightarrow\;
+\psi_k(x)=A\ee^{\ii kx},\qquad k=\pm\frac{\sqrt{2mE}}{\hbar}
+$$
+
+With the time factor:
+
+$$
+\Psi_k(x,t)=A\,\ee^{\ii\left(kx-\frac{\hbar k^2}{2m}t\right)}
+$$
+
+$k>0$ travels right, $k<0$ left, and $E=\hbar^2k^2/2m$ is allowed for every real $k$ — **the spectrum is continuous**.
+
+The trouble is that
+
+$$
+\int_{-\infty}^{\infty}|\Psi_k|^2\dd x=|A|^2\int_{-\infty}^{\infty}\dd x=\infty
+$$
+
+<Callout type="misconception" title='What "the free particle has no stationary states" actually means'>
+The precise statement is: **a free particle has no normalisable energy eigenstates**.
+
+That does not mean free particles do not exist, nor that $\ee^{\ii kx}$ is useless. It means there is no physical state of exactly definite momentum. $\ee^{\ii kx}$ has $\sigma_p=0$, so the uncertainty principle forces $\sigma_x=\infty$ — the particle is spread uniformly over the entire universe.
+
+A real particle is always localised somewhere, so its momentum necessarily has some spread. $\ee^{\ii kx}$ is an **idealised limit**, like the point mass in mechanics.
+</Callout>
+
+## Wave packets: superposing plane waves
+
+The equation is linear, so we can superpose. Since $k$ is continuous, the sum becomes an integral:
+
+$$
+\Psi(x,t)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\phi(k)\,\ee^{\ii\left(kx-\frac{\hbar k^2}{2m}t\right)}\dd k
+$$
+
+$\phi(k)$ is the **momentum-space wavefunction**. Given an initial state, it comes from a Fourier transform:
+
+$$
+\phi(k)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\Psi(x,0)\,\ee^{-\ii kx}\dd x
+$$
+
+<DualView>
+<div slot="left">
+
+**Two representations, one state.**
+
+$\Psi(x)$ and $\phi(k)$ carry exactly the same information; they differ only in the basis used for the expansion. $|\Psi(x)|^2$ gives the position distribution, $|\phi(k)|^2$ the momentum distribution (strictly $|\phi(k)|^2\dd k$, with $p=\hbar k$).
+
+This is one of the central structures of quantum mechanics: **one state can be expanded in different bases**. [Sections 3.1–3.2](/en/ch/03-formalism/01-from-wavefunction-to-vector/) abstract it into "the components of one vector in different coordinate systems".
+
+</div>
+<div slot="right">
+
+Parseval's theorem guarantees that normalisation agrees in both representations:
+
+$$
+\int|\Psi(x)|^2\dd x=\int|\phi(k)|^2\dd k=1
+$$
+
+The basic Fourier property
+
+$$
+\sigma_x\sigma_k\ge\frac12
+$$
+
+combined with $p=\hbar k$ immediately gives
+
+$$
+\sigma_x\sigma_p\ge\frac{\hbar}{2}
+$$
+
+**The uncertainty principle is a theorem of Fourier analysis plus the de Broglie relation.**
+
+</div>
+</DualView>
+
+## Phase velocity and group velocity
+
+Points of constant phase in a plane wave $\ee^{\ii(kx-\omega t)}$ move at
+
+$$
+v_\text{phase}=\frac{\omega}{k}=\frac{\hbar k}{2m}=\frac{p}{2m}
+$$
+
+**Half** the classical speed $p/m$ — if that were the particle's velocity, quantum mechanics would have been wrong from the start.
+
+<Derivation title="Derivation: the packet as a whole moves at the group velocity" level="进阶" minutes={6}>
+
+Suppose $\phi(k)$ is concentrated in a narrow range around $k_0$. Expand the dispersion relation about $k_0$:
+
+$$
+\omega(k)=\omega_0+\omega'(k_0)(k-k_0)+\frac12\omega''(k_0)(k-k_0)^2+\cdots
+$$
+
+Keep only the first order for now. With $q=k-k_0$ and $v_g\equiv\omega'(k_0)$:
+
+$$
+\Psi(x,t)\approx\frac{\ee^{\ii(k_0x-\omega_0t)}}{\sqrt{2\pi}}\int\phi(k_0+q)\,\ee^{\ii q(x-v_gt)}\dd q
+$$
+
+The integral depends on $x$ and $t$ only through the combination $x-v_gt$. That is,
+
+$$
+|\Psi(x,t)|^2\approx|\Psi(x-v_gt,\,0)|^2
+$$
+
+**The envelope translates rigidly at $v_g$ with its shape unchanged.** And
+
+$$
+v_g=\left.\frac{\dd\omega}{\dd k}\right|_{k_0}=\frac{\dd}{\dd k}\frac{\hbar k^2}{2m}=\frac{\hbar k_0}{m}=\frac{p_0}{m}
+$$
+
+**That is the classical speed.** The phase velocity describes the motion of the internal fringes, which carry no particle.
+
+</Derivation>
+
+<Callout type="insight" title="Check it directly in the simulation">
+In the simulation below set the barrier height $V_0$ to 0 (a free particle), turn on "show Re ψ", and press play.
+
+Two motions happen at once: the **envelope** (the purple $|\psi|^2$) translates to the right, while the **internal fringes** (the blue Re ψ) move more slowly. The envelope moves twice as fast as the fringes — exactly $v_g=2v_\text{phase}$.
+</Callout>
+
+## The packet spreads
+
+Now keep the second-order term. $\omega''=\hbar/m\ne0$ means **dispersion**: different $k$ components travel at different speeds.
+
+<Derivation title="Derivation: the spreading formula for a Gaussian packet" level="进阶" minutes={8}>
+
+Take the initial Gaussian packet
+
+$$
+\Psi(x,0)=(2\pi\sigma_0^2)^{-1/4}\ee^{-x^2/4\sigma_0^2}\ee^{\ii k_0x}
+$$
+
+Its Fourier transform is again a Gaussian (a special property of Gaussians):
+
+$$
+\phi(k)\propto\ee^{-\sigma_0^2(k-k_0)^2}
+$$
+
+with width $\sigma_k=1/2\sigma_0$, so $\sigma_x\sigma_p=\sigma_0\cdot\frac{\hbar}{2\sigma_0}=\frac{\hbar}{2}$ — **the Gaussian packet saturates the uncertainty bound exactly**. That is what makes it special.
+
+Substituting into the evolution integral (complete the square and do a Gaussian integral: tedious algebra, no tricks) gives
+
+$$
+|\Psi(x,t)|^2=\frac{1}{\sqrt{2\pi}\,\sigma(t)}\exp\left[-\frac{(x-v_gt)^2}{2\sigma(t)^2}\right]
+$$
+
+$$
+\boxed{\ \sigma(t)=\sigma_0\sqrt{1+\left(\frac{\hbar t}{2m\sigma_0^2}\right)^2}\ }
+$$
+
+Define the **spreading time**
+
+$$
+\tau=\frac{2m\sigma_0^2}{\hbar}
+$$
+
+For $t\ll\tau$ the packet barely changes; for $t\gg\tau$, $\sigma\approx\sigma_0 t/\tau=\frac{\hbar t}{2m\sigma_0}$, growing **linearly**.
+
+</Derivation>
+
+<Callout type="insight" title="The reason for spreading is not mysterious">
+$\sigma_p=\hbar/2\sigma_0$ means the velocity has a spread $\sigma_v=\sigma_p/m=\hbar/2m\sigma_0$. After a time $t$ the fast components have separated from the slow ones by $\sigma_v t$ — which is exactly the asymptotic behaviour for $t\gg\tau$.
+
+The narrower the initial packet, the larger the momentum spread and the faster it disperses. Nothing mysterious is going on; it is the same as a group of runners with slightly different speeds gradually spreading out along the track.
+</Callout>
+
+<Derivation title="Orders of magnitude: when does spreading matter" level="基础" minutes={4}>
+
+$$
+\tau=\frac{2m\sigma_0^2}{\hbar}
+$$
+
+**An electron with $\sigma_0=1\ \text{nm}$**:
+
+$$
+\tau=\frac{2\times9.11\times10^{-31}\times(10^{-9})^2}{1.055\times10^{-34}}\approx1.7\times10^{-14}\ \text{s}
+$$
+
+About 17 femtoseconds. Electron packets spread very fast — which is why electron microscopy and quantum-device design have to take it seriously.
+
+**A dust grain, $m=10^{-15}$ kg, $\sigma_0=10^{-6}$ m**:
+
+$$
+\tau=\frac{2\times10^{-15}\times10^{-12}}{1.055\times10^{-34}}\approx1.9\times10^{7}\ \text{s}
+$$
+
+About seven months. And in practice the grain would have been [decohered](/en/ch/10-open-systems/05-decoherence/) by air molecules long before that, so the spreading never gets a chance to happen.
+
+**Conclusion**: quantum spreading is invisible in the macroscopic world not because the formula fails, but because $\tau\propto m\sigma_0^2$ is absurdly large at macroscopic parameters.
+
+</Derivation>
+
+<Sim name="wave-packet-scattering" />
+
+<Callout type="check" title="Verify the spreading in the simulation">
+Drag $V_0$ to 0 and set $\sigma$ to 1 (the narrowest), press play and watch the "packet width Δx" readout. It keeps growing.
+
+Then set $\sigma$ to 8 and try again — the wide packet spreads far more slowly. Since $\tau\propto\sigma_0^2$, multiplying $\sigma_0$ by 8 multiplies $\tau$ by 64.
+</Callout>
+
+<Callout type="warning" title="The exception inside a harmonic oscillator">
+A free packet must spread, but that is not a universal law.
+
+In a harmonic potential, a **coherent state** (the third view in [section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/)) oscillates back and forth forever while keeping its Gaussian shape exactly. The reason is that the oscillator's levels are equally spaced, so the relative phases of the components return exactly to their starting values after each period — the potential compensates the dispersion.
+
+Another elegant consequence of the equally spaced spectrum.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Free-particle stationary state', latex: '\\Psi_k(x,t)=A\\,\\ee^{\\ii(kx-\\hbar k^2t/2m)}', note: 'Not normalisable; usable only as an expansion basis' },
+    { name: 'Wave-packet expansion', latex: '\\Psi(x,t)=\\frac{1}{\\sqrt{2\\pi}}\\int\\phi(k)\\ee^{\\ii(kx-\\omega(k)t)}\\dd k', note: 'φ(k) is the Fourier transform of Ψ(x,0)' },
+    { name: 'Group velocity', latex: 'v_g=\\frac{\\dd\\omega}{\\dd k}=\\frac{\\hbar k_0}{m}=\\frac{p_0}{m}=2v_{\\text{phase}}', note: "The envelope's speed is the particle's speed" },
+    { name: 'Gaussian packet spreading', latex: '\\sigma(t)=\\sigma_0\\sqrt{1+\\left(\\frac{\\hbar t}{2m\\sigma_0^2}\\right)^2}', note: 'Spreading time τ = 2mσ₀²/ħ' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fp-1',
+      prompt: 'The plane-wave solution e^{ikx} for a free particle is not normalisable. The correct reading is:',
+      options: [
+        'It is an idealised limit: perfectly definite momentum means completely indefinite position',
+        'Free particles do not physically exist',
+        'The Schrödinger equation does not apply to free particles',
+        'The normalisation condition does not hold for free particles',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Free particles certainly exist; their states just have to be wave packets rather than single plane waves.',
+        2: 'The equation applies perfectly well; it is the eigenfunctions that fall outside L².',
+        3: 'Every physical state must be normalised.',
+      },
+      explain: 'e^{ikx} has σ_p = 0, so σₓσ_p ≥ ħ/2 forces σₓ = ∞. It is a useful expansion basis (much like the delta function) but not a physical state.',
+    },
+    {
+      id: 'fp-2',
+      prompt: 'For a non-relativistic free particle, the relation between phase and group velocity is:',
+      options: [
+        'v_group = 2 v_phase, and the group velocity equals the classical speed p/m',
+        'v_phase = 2 v_group',
+        'They are equal',
+        'The relation depends on the particle mass',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is backwards: v_phase = ω/k = ħk/2m, v_group = dω/dk = ħk/m.',
+        2: 'They coincide only for a linear dispersion relation, such as light in vacuum.',
+      },
+      explain: 'ω = ħk²/2m, so v_phase = ω/k = ħk/2m and v_group = dω/dk = ħk/m = p/m. It is the group velocity that carries the particle, its energy and its information.',
+    },
+    {
+      id: 'fp-3',
+      prompt: 'A free Gaussian packet of initial width σ₀ has spreading time τ = 2mσ₀²/ħ. If σ₀ is tripled, τ changes by a factor of:',
+      options: ['9', '3', '1/3', '1/9'],
+      answer: 0,
+      distractors: {
+        1: 'τ goes as σ₀², not σ₀.',
+        2: 'A wider packet spreads more slowly, not faster.',
+      },
+      explain: 'τ ∝ σ₀², so σ₀ → 3σ₀ gives τ → 9τ. Physically: a wider packet has a smaller momentum spread σ_p = ħ/2σ₀, so its components differ less in speed.',
+    },
+    {
+      id: 'fp-4',
+      prompt: 'Why does a coherent state in a harmonic oscillator not spread while a free packet does?',
+      options: [
+        'Because the oscillator levels are equally spaced, so the relative phases of the components return exactly after each period',
+        'Because the harmonic potential "squeezes" the packet — it is purely a geometric constraint',
+        'Because a coherent state is not a superposition',
+        'Because there is no dispersion in a harmonic oscillator',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The intuition points the right way but the mechanism is wrong — confinement alone does not preserve the shape; in an anharmonic potential a packet distorts anyway.',
+        2: 'A coherent state is precisely a superposition of infinitely many energy eigenstates.',
+        3: 'Dispersion means a non-linear ω(k); in the oscillator its counterpart is the dependence of Eₙ on n — which happens to be linear.',
+      },
+      explain: 'Eₙ = (n+½)ħω is strictly linear in n, so all the phases e^{−iEₙt/ħ} come back into step after t = 2π/ω. In an anharmonic potential (non-linear Eₙ) a coherent state spreads and then periodically reassembles — quantum revival.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The last section of the chapter aims a wave packet at a concrete target: a wall it "should not" be able to pass through.

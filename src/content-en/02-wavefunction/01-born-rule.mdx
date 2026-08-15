@@ -1,0 +1,222 @@
+---
+title: The probability interpretation of the wavefunction
+section: '2.1'
+order: 1
+summary: The wavefunction is not the shape of the particle, nor a density of particle stuff. It is a complex function, and only its modulus squared connects to experiment.
+status: done
+prereqs:
+  - 01-history/05-de-broglie
+  - 01-history/06-double-slit
+objectives:
+  - State the relation between Ψ, |Ψ|² and what an experiment actually measures
+  - Use the Born rule to compute the probability of finding a particle in a given interval
+  - Say precisely what is wrong with "an electron is a diffuse cloud"
+sims: ['infinite-well']
+---
+
+The last chapter ended in an awkward place: de Broglie says particles have a wavelength, and the double slit says electrons really do interfere. So — **what is waving?**
+
+In a water wave it is the height of the surface; in sound it is air pressure; in an electromagnetic wave it is the electric and magnetic fields. All of those can be measured directly. What about an electron wave? When Schrödinger wrote his equation in 1926 he had no answer either. He guessed that the wavefunction described the actual smeared-out distribution of the electron's charge in space. That guess was disproved almost immediately.
+
+The right answer came from Max Born, the same year, in a footnote.
+
+## The Born rule
+
+<Callout type="insight" title="The one-line version">
+The wavefunction $\Psi(x,t)$ is not itself observable and has no direct physical meaning. What is observable is its **modulus squared** $|\Psi(x,t)|^2$, which gives "the probability density for finding the particle near $x$".
+</Callout>
+
+Precisely: for a particle in the state $\Psi(x,t)$, one position measurement returns a result in $[a,b]$ with probability
+
+$$
+P(a \le x \le b) = \int_a^b |\Psi(x,t)|^2 \,\dd x
+$$
+
+Here $|\Psi|^2 = \Psi^*\Psi$, because $\Psi$ is generally complex. We call
+
+$$
+\rho(x,t) \equiv |\Psi(x,t)|^2
+$$
+
+the **probability density**. Watch its dimensions: in one dimension it is $1/\text{length}$, so $\rho$ itself is not a probability — $\rho\,\dd x$ is.
+
+<DualView>
+<div slot="left">
+
+Imagine you could repeat the same experiment a hundred million times: prepare an electron in exactly the same way, then measure its position. You would get a hundred million numbers. Plot them as a histogram and the shape of that histogram is $|\Psi|^2$.
+
+A single measurement gives you **one definite position** — not a blurred cloud. What is blurred is "where the next one will land", not the electron itself.
+
+</div>
+<div slot="right">
+
+$$
+\rho(x,t) = |\Psi(x,t)|^2 \ge 0
+$$
+
+$$
+\int_{-\infty}^{\infty}\rho(x,t)\,\dd x = 1
+$$
+
+The second equation is the <Term id="normalization">normalisation</Term> condition, discussed in the next section. It guarantees that "the particle is somewhere".
+
+</div>
+</DualView>
+
+## Why it has to be the modulus squared
+
+Squaring the modulus of a complex number looks like a technicality. In fact it solves two problems at once.
+
+<Derivation title="Why |Ψ|², and not Ψ or Re Ψ" level="基础" minutes={4}>
+
+A probability density has to satisfy two hard requirements:
+
+1. **Non-negativity**: $\rho(x) \ge 0$. A probability cannot be negative.
+2. **Room for interference**: when contributions from two paths are added, cancellation must be possible.
+
+Could we use $\Psi$ directly? Solutions of the Schrödinger equation are generally complex, and $\Psi$ can be negative or even imaginary, so requirement 1 is dead on arrival.
+
+What about $\operatorname{Re}\Psi$ or $|\Psi|$? Non-negativity can be forced by taking an absolute value, but that destroys requirement 2. The key point is that **superposition happens at the level of $\Psi$, not at the level of $\rho$**. In the double slit,
+
+$$
+\Psi = \Psi_1 + \Psi_2
+$$
+
+so that
+
+$$
+\rho = |\Psi_1+\Psi_2|^2 = |\Psi_1|^2 + |\Psi_2|^2 + 2\operatorname{Re}(\Psi_1^*\Psi_2)
+$$
+
+The last term is the interference term. In polar form $\Psi_j = |\Psi_j|\ee^{\ii\varphi_j}$ it equals
+
+$$
+2|\Psi_1||\Psi_2|\cos(\varphi_2-\varphi_1)
+$$
+
+and the phase difference decides whether it reinforces or cancels. If we added $|\Psi|$ directly, $\rho = (|\Psi_1|+|\Psi_2|)^2$ would always exceed the sum of the parts and fringes could never appear.
+
+So: **complex numbers supply the phase, the phase supplies interference, and the modulus squared supplies a non-negative probability.** All three are needed. This is also why quantum mechanics cannot do without complex numbers — they are not a mathematical convenience but a physical necessity.
+
+</Derivation>
+
+<Callout type="misconception" title="An electron is not a cloud">
+The phrase "electron cloud" has done a lot of damage. It invites the belief that the electron's charge really is smeared through space, exactly as Schrödinger first thought.
+
+The refutation is simple: if the electron really were spread out, one measurement should find "part of the electron" here and "another part" there. Nobody has ever measured half an electron. Every measurement finds one whole electron at one definite position.
+
+$|\Psi|^2$ describes the **statistical distribution over many repetitions**, not the spatial shape of a single electron. What is distinctive about quantum mechanics is that this distribution does not come from "we do not know where the electron is" but from "it had no definite position before the measurement" — a claim that can only be made properly in [3.8 Measurement and the projection postulate](/en/ch/03-formalism/08-measurement/).
+</Callout>
+
+## Have a look
+
+The simulation below shows a particle in a one-dimensional infinite square well. The purple curve is $|\Psi|^2$, and the area under it over any interval is the probability of finding the particle there. The well itself is not solved until [section 2.7](/en/ch/02-wavefunction/07-infinite-well/); here only one thing matters: **the blue curve ($\psi$) can be positive or negative, the purple one ($|\psi|^2$) never is**.
+
+<Sim name="infinite-well" />
+
+Turn the quantum number $n$ up to 3 and you will see $\psi$ cross zero twice inside the well. At those zeros the probability of finding the particle is **exactly zero** — even though there is substantial probability on both sides. A classical particle bouncing around a box could never manage to "never pass through some intermediate position". That is already a strong quantum effect.
+
+## A concrete calculation
+
+<Derivation title="Worked example: probability over an interval" level="基础" minutes={5}>
+
+Take a particle with wavefunction
+
+$$
+\Psi(x) = \begin{cases} A\,x(L-x), & 0 \le x \le L\\ 0, & \text{otherwise}\end{cases}
+$$
+
+**Step 1: fix the normalisation constant $A$.**
+
+$$
+1 = \int_0^L |A|^2 x^2(L-x)^2\,\dd x = |A|^2\int_0^L (L^2x^2 - 2Lx^3 + x^4)\,\dd x
+$$
+
+Term by term:
+
+$$
+\int_0^L L^2x^2\dd x = \frac{L^5}{3},\quad \int_0^L 2Lx^3\dd x = \frac{L^5}{2},\quad \int_0^L x^4\dd x = \frac{L^5}{5}
+$$
+
+$$
+1 = |A|^2 L^5\left(\frac13-\frac12+\frac15\right) = |A|^2\frac{L^5}{30}
+\;\Longrightarrow\; A = \sqrt{\frac{30}{L^5}}
+$$
+
+**Step 2: find the probability in the left quarter.**
+
+$$
+P\left(0\le x\le \tfrac{L}{4}\right) = \frac{30}{L^5}\int_0^{L/4}x^2(L-x)^2\dd x
+$$
+
+$$
+= \frac{30}{L^5}\left[\frac{L^2x^3}{3}-\frac{Lx^4}{2}+\frac{x^5}{5}\right]_0^{L/4}
+= \frac{30}{L^5}\cdot L^5\left(\frac{1}{192}-\frac{1}{512}+\frac{1}{5120}\right)
+$$
+
+Over the common denominator 15360: $\frac{80}{15360}-\frac{30}{15360}+\frac{3}{15360}=\frac{53}{15360}$, so
+
+$$
+P = 30\cdot\frac{53}{15360} = \frac{53}{512}\approx 0.1035
+$$
+
+About 10.4%. For comparison, a uniform distribution would give 25% over the same interval — this wavefunction pushes the particle towards the middle, because it vanishes at both ends.
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'Born rule', latex: 'P(a\\le x\\le b)=\\int_a^b|\\Psi(x,t)|^2\\,\\dd x', note: 'The only bridge between the wavefunction and experiment' },
+    { name: 'Probability density', latex: '\\rho(x,t)=|\\Psi(x,t)|^2=\\Psi^*\\Psi\\ \\ge 0', note: 'Dimensions of 1/length; ρ dx is the probability' },
+    { name: 'Interference term', latex: '|\\Psi_1+\\Psi_2|^2=|\\Psi_1|^2+|\\Psi_2|^2+2|\\Psi_1||\\Psi_2|\\cos(\\varphi_2-\\varphi_1)', note: 'Superposition acts on Ψ; interference comes from the phase difference' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'born-1',
+      prompt: 'A wavefunction satisfies Ψ(x₀) = −0.4 (units suppressed). Which statement about the probability density near x₀ is correct?',
+      options: [
+        'The density is 0.16; the minus sign does not affect the probability',
+        'The density is −0.4, so there is negative probability there',
+        'The density is 0.4; you just take the absolute value',
+        'A negative wavefunction means the particle cannot be found there',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'By definition the density is |Ψ|² = Ψ*Ψ, which is necessarily non-negative. Negative probabilities do not exist.',
+        2: 'It is the modulus *squared*, not the modulus: (−0.4)² = 0.16.',
+        3: 'The probability vanishes where the wavefunction is zero; where it is negative the density is positive.',
+      },
+      explain: 'ρ = |Ψ|² = (−0.4)² = 0.16. The sign of the wavefunction (more generally, its phase) does not enter the density of a single state, but it shows up through the interference term when two wavefunctions are superposed.',
+    },
+    {
+      id: 'born-2',
+      prompt: 'Why must a quantum wavefunction be allowed to take complex values? (Select all that apply.)',
+      options: [
+        'A phase is needed to produce interference',
+        'Because probabilities have to be complex',
+        'A real non-negative function cannot satisfy non-negativity and allow interference at once',
+        'The Schrödinger equation contains i, so real solutions generally do not exist',
+      ],
+      answer: [0, 2, 3],
+      distractors: {
+        1: 'Probabilities are real and non-negative — which is exactly why the modulus is squared.',
+      },
+      explain: 'The phase carries the interference; a real non-negative function leaves no room for an interference term; and the time-dependent equation iħ∂Ψ/∂t = ĤΨ itself contains i, so its solutions are generally complex.',
+    },
+    {
+      id: 'born-3',
+      type: 'numeric',
+      prompt: 'For Ψ(x) = A·x(L−x) on 0 ≤ x ≤ L (zero elsewhere) with L = 1, find the probability of the particle lying in [0, 0.25] (three decimal places).',
+      answer: 0.1035,
+      tolerance: 0.03,
+      explain: 'Normalisation gives A = √(30/L⁵), and the integral gives P = 53/512 ≈ 0.1035. Note that it is well below the uniform value of 0.25, because this wavefunction is pinned to zero at the endpoints.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The condition $\int|\Psi|^2 = 1$ in the Born rule is not something imposed by hand — it has to hold **at every instant**, or particles would vanish into thin air. The next section proves that the Schrödinger equation guarantees exactly this, and picks up a quantity describing "where the probability is flowing" along the way.

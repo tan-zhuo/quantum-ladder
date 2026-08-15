@@ -1,0 +1,253 @@
+---
+title: The one-dimensional finite square well
+section: '2.8'
+order: 8
+summary: 'Lower the walls to a finite height and three new things happen: the bound states become finite in number, the wavefunction leaks outside, and a transcendental equation enters the picture.'
+status: done
+prereqs:
+  - 02-wavefunction/07-infinite-well
+objectives:
+  - Solve region by region and derive the transcendental energy condition from the matching conditions
+  - Count the bound states of a well of given depth graphically
+  - Explain why an arbitrarily shallow symmetric well in 1D always has at least one bound state
+---
+
+$$
+V(x)=\begin{cases}-V_0,&-a<x<a\\ 0,&\lvert x\rvert>a\end{cases}\qquad (V_0>0)
+$$
+
+We put the zero of energy outside the well, so bound states are those with $-V_0<E<0$.
+
+<Callout type="insight" title="Guess the answer first">
+Before doing any algebra, think about what will change:
+
+1. Outside the well $E<V=0$, a classically forbidden region — but the wavefunction no longer has to vanish there; it **decays exponentially** outward. The particle has a non-zero probability of being found where it classically could never go.
+2. Since the wavefunction leaks out, the effective width of confinement exceeds $2a$, and from $E\propto1/L^2$ we should expect levels **below** those of the infinite well.
+3. The well is only $V_0$ deep, so it can hold only a **finite number** of bound states.
+</Callout>
+
+## Solving region by region
+
+<Derivation title="Full solution: the even-parity bound states" level="进阶" minutes={10} open={true}>
+
+The potential is symmetric, $V(-x)=V(x)$, so the eigenstates have definite parity (the reason is in [section 4.1](/en/ch/04-1d-problems/01-symmetry-parity/); we simply use it here). Start with even parity.
+
+**The regions.** Write
+
+$$
+k=\frac{\sqrt{2m(E+V_0)}}{\hbar}\ (\text{inside}),\qquad
+\kappa=\frac{\sqrt{-2mE}}{\hbar}\ (\text{outside})
+$$
+
+A bound state $-V_0<E<0$ guarantees that $k$ and $\kappa$ are both positive real.
+
+- Inside ($|x|<a$): $\psi''=-k^2\psi$; the even solution is $\psi=D\cos kx$
+- Right ($x>a$): $\psi''=\kappa^2\psi$; normalisability keeps only $\psi=F\ee^{-\kappa x}$
+- The left side is fixed automatically by even parity
+
+**Matching conditions.** $V$ is finite, so both $\psi$ and $\psi'$ must be continuous at $x=a$:
+
+$$
+D\cos ka=F\ee^{-\kappa a}
+$$
+
+$$
+-Dk\sin ka=-\kappa F\ee^{-\kappa a}
+$$
+
+**Eliminate the constants.** Divide the second by the first (a standard trick that kills both unknown coefficients at once):
+
+$$
+k\tan ka=\kappa
+$$
+
+That is the condition determining the energy levels.
+
+**Non-dimensionalise.** Let
+
+$$
+z\equiv ka,\qquad z_0\equiv\frac{a}{\hbar}\sqrt{2mV_0}
+$$
+
+$z_0$ is the **only** dimensionless parameter; it packages depth and width into a single number. From the definitions,
+
+$$
+(ka)^2+(\kappa a)^2=\frac{2mV_0a^2}{\hbar^2}=z_0^2
+\;\Longrightarrow\;\kappa a=\sqrt{z_0^2-z^2}
+$$
+
+Substituting gives the **transcendental equation**
+
+$$
+\tan z=\frac{\sqrt{z_0^2-z^2}}{z}
+$$
+
+</Derivation>
+
+<Callout type="warning" title="This equation has no closed-form solution">
+$\tan z=\sqrt{z_0^2-z^2}/z$ has no solution in elementary functions. That is not for lack of cleverness — transcendental equations are usually like this.
+
+There are two ways to proceed: **graphically** (count the solutions and estimate where they are) and **numerically** (root-finding). Most "solvable" models in quantum mechanics end up here; the infinite well and the harmonic oscillator, with their tidy closed forms, are the exceptions.
+</Callout>
+
+## Graphical method: counting the bound states
+
+Treat each side as a function of $z$ and plot them together:
+
+- $y_1=\tan z$: a family of branches diverging at $z=\pi/2,\ 3\pi/2,\ \dots$
+- $y_2=\sqrt{z_0^2-z^2}/z$: falls monotonically from $+\infty$ as $z\to0$ and vanishes at $z=z_0$
+
+The number of intersections is the number of even-parity bound states.
+
+<DualView>
+<div slot="left">
+
+$y_2$ only exists for $0<z<z_0$. The $n$-th rising branch of $\tan z$ starts at $z=(n-1)\pi$. So every time $z_0$ crosses an integer multiple of $\pi$, one more even-parity bound state appears.
+
+For odd parity (redo everything with $\psi=D\sin kx$) the condition becomes $-k\cot ka=\kappa$, and a new bound state appears whenever $z_0$ crosses an odd multiple of $\pi/2$.
+
+**Together**, the total number of bound states is
+
+$$
+N=\left\lceil \frac{2z_0}{\pi}\right\rceil
+$$
+
+</div>
+<div slot="right">
+
+**Key limits**
+
+$z_0\to\infty$ (very deep and wide): the intersections approach the poles of $\tan z$, $z\to n\pi/2$, so $k\to n\pi/2a$ — exactly the infinite well of width $2a$. **The limit checks out.**
+
+$z_0\to0$ (very shallow and narrow): the $y_2$ curve collapses towards the origin, but $\tan z$ also goes to 0 as $z\to0$, and $\tan z\approx z$ rises more slowly than $y_2$ falls — so **there is always at least one intersection**.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="A 1D well always has at least one bound state">
+This is a peculiarity of one dimension: **an arbitrarily shallow symmetric well still binds at least one state**.
+
+Three dimensions is completely different — there the well must be deep enough to bind anything at all. The difference has real consequences: the deuteron (proton + neutron) has exactly one bound state, and it very nearly fails to exist, with a binding energy of only 2.2 MeV. The strength of the nuclear force sits right near the critical point, and that fact matters enormously for nucleosynthesis.
+
+The 1D-versus-3D contrast belongs to a general theme: dimensionality controls how fast probability gets diluted. [Section 6.2](/en/ch/06-hydrogen/02-radial-equation/) revisits it through the effective potential.
+</Callout>
+
+## Penetration depth
+
+Outside the well $\psi\propto\ee^{-\kappa|x|}$, with characteristic decay length
+
+$$
+\delta=\frac{1}{\kappa}=\frac{\hbar}{\sqrt{2m\lvert E\rvert}}
+$$
+
+The more weakly bound the state (the smaller $|E|$), the further it leaks. This $\delta$ is the key quantity for understanding tunnelling: if a barrier's thickness is comparable to $\delta$, the wavefunction can emerge on the far side — [section 2.11](/en/ch/02-wavefunction/11-tunneling/) works that out quantitatively.
+
+<Derivation title="Worked example: a concrete well" level="进阶" minutes={6}>
+
+Take an electron, $a=0.5\ \text{nm}$ (well width 1 nm), $V_0=5\ \text{eV}$.
+
+$$
+z_0=\frac{a\sqrt{2mV_0}}{\hbar}=\frac{a}{\hbar c}\sqrt{2(mc^2)V_0}
+=\frac{0.5}{197.3}\sqrt{2\times511000\times5}
+$$
+
+$$
+=\frac{0.5}{197.3}\times2260=5.73
+$$
+
+Number of bound states: $N=\lceil 2\times5.73/\pi\rceil=\lceil3.65\rceil=4$.
+
+**Ground state.** Solving $\tan z=\sqrt{5.73^2-z^2}/z$ on $(0,\pi/2)$ numerically gives $z\approx1.31$, so
+
+$$
+E+V_0=\frac{\hbar^2z^2}{2ma^2}=\frac{(\hbar c)^2z^2}{2(mc^2)a^2}
+=\frac{197.3^2\times1.31^2}{2\times511000\times0.25}\ \text{eV}\approx0.26\ \text{eV}
+$$
+
+$$
+E\approx-4.74\ \text{eV}
+$$
+
+**Compare with the infinite well** of width $2a=1$ nm: $E_1^{\infty}=0.376$ eV (the numeric quiz question of the previous section), **higher** than the 0.26 eV here. Just as expected: the wavefunction leaks out, the effective width grows, and the energy drops.
+
+**Penetration depth**: with $|E|=4.74$ eV,
+
+$$
+\delta=\frac{\hbar c}{\sqrt{2(mc^2)\lvert E\rvert}}=\frac{197.3}{\sqrt{2\times511000\times4.74}}\approx0.09\ \text{nm}
+$$
+
+About 0.9 Å, close to the size of an atom. So if two such wells are placed within 2 Å of each other their wavefunctions overlap appreciably — which is exactly where chemical bonding and band formation begin.
+
+</Derivation>
+
+<Callout type="note" title="Why this section has no dedicated simulation">
+The core work in the finite well is **finding the roots of a transcendental equation**, and the most useful interaction would be "drag $V_0$ and $a$, watch the number of intersections change". That overlaps heavily with the [custom-potential numerical solver in section 4.5](/en/ch/04-1d-problems/05-custom-potential-solver/), which handles arbitrary potentials and returns all the eigenstates directly — a strict superset of the specialised tool.
+
+As for the wavefunction penetrating the classically forbidden region, you can see it immediately in the [harmonic-oscillator simulation of section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/): switch to "single eigenstate" view and look at the tails beyond the two dashed lines.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Even-parity level condition', latex: 'k\\tan ka=\\kappa,\\qquad k=\\frac{\\sqrt{2m(E+V_0)}}{\\hbar},\\ \\kappa=\\frac{\\sqrt{-2mE}}{\\hbar}', note: 'Odd parity gives −k cot ka = κ' },
+    { name: 'Dimensionless form', latex: '\\tan z=\\frac{\\sqrt{z_0^2-z^2}}{z},\\qquad z_0=\\frac{a}{\\hbar}\\sqrt{2mV_0}', note: 'z₀ packages depth and width into the single parameter' },
+    { name: 'Number of bound states', latex: 'N=\\left\\lceil\\frac{2z_0}{\\pi}\\right\\rceil', note: 'A 1D symmetric well has at least one, however shallow' },
+    { name: 'Penetration depth', latex: '\\delta=\\frac{1}{\\kappa}=\\frac{\\hbar}{\\sqrt{2m\\lvert E\\rvert}}', note: 'Weaker binding leaks further; the key length scale for tunnelling' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fw-1',
+      prompt: 'Compared with an infinite well of the same width, the ground-state energy of a finite well (measured from the bottom of the well) is:',
+      options: [
+        'Lower, because the wavefunction leaks outside and the effective width of confinement is larger',
+        'Higher, because the well is shallower',
+        'The same, because the width is the same',
+        'Not comparable',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Shallowness does not directly raise the energy relative to the bottom of the well; what matters is the spatial extent of the wavefunction.',
+        2: 'The effective width is not the geometric width.',
+      },
+      explain: 'The wavefunction leaks out as e^{−κ|x|}, so the region of confinement exceeds 2a. Since E ∝ 1/L², the energy drops. The worked example above gives 0.26 eV versus 0.376 eV.',
+    },
+    {
+      id: 'fw-2',
+      prompt: 'In a symmetric one-dimensional finite well, if V₀ is made very small (a very shallow well), the number of bound states:',
+      options: [
+        'Is still at least one',
+        'Becomes zero',
+        'Becomes infinite',
+        'Depends on the sign of the particle mass',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the three-dimensional situation; one dimension is different.',
+        2: 'A shallower well holds fewer bound states, not more.',
+      },
+      explain: 'N = ⌈2z₀/π⌉, and as z₀ → 0⁺ we get N → 1. This is special to one dimension: in three dimensions a well must be deep enough to bind anything, and the weak binding of the deuteron is a real instance of that threshold behaviour.',
+    },
+    {
+      id: 'fw-3',
+      prompt: 'Why must both ψ and ψ′ be continuous at x = a here, when only ψ was required to be continuous in the infinite well?',
+      options: [
+        'Because for a finite potential, integrating the Schrödinger equation across the jump gives zero jump in ψ′',
+        'Because the wavefunction of a finite well is smoother',
+        "Because ψ′ does not exist in the infinite well",
+        'It is just a convention',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That describes the result rather than the reason.',
+        2: 'ψ′ exists on each side; it is simply discontinuous at the wall.',
+      },
+      explain: 'Integrating ψ″ = 2m(V−E)ψ/ħ² over [a−ε, a+ε] gives Δψ′ ∝ ∫V dx. For finite V this vanishes as ε→0, so ψ′ is continuous; when V = ∞ or V contains a delta function the integral does not vanish and ψ′ may jump.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The next exactly solvable potential is a parabola. Its importance goes far beyond "one more exercise": every potential looks parabolic near a minimum, which makes the harmonic oscillator the single most reused model in physics.

@@ -34,6 +34,6 @@ const section = toc.flatMap((c) => c.sections).find((s) => s.id === entryId) as 
 const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Sim, Term }
 ---
 
-<ChapterLayout section={section} headings={headings}>
+<ChapterLayout section={section} headings={headings} lang="zh">
   <Content components={components} />
 </ChapterLayout>

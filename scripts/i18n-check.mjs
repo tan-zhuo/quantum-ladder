@@ -26,14 +26,15 @@ const files = walk('src')
 
 const msgids = new Set()
 const callRe = /\b[tT]\(\s*'((?:[^'\\]|\\.)*)'/gs
-const presetRe = /(?:label|title):\s*'((?:[^'\\]|\\.)*)'/g
+const presetRe = /(?:label|title|name|note):\s*'((?:[^'\\]|\\.)*)'/g
 
 for (const f of files) {
   if (f.includes('/i18n/')) continue
   const src = readFileSync(f, 'utf8')
   for (const m of src.matchAll(callRe)) if (CJK.test(m[1])) msgids.add(m[1])
-  // 预设视角的文案由 SceneCanvas 统一翻译，也要算进来
-  if (f.includes('/canvas/')) {
+  // 预设视角的文案由 SceneCanvas 统一翻译；公式速查表由 FormulaPanel 统一翻译。
+  // 两处都是「数据里存中文原文、渲染时才翻」，扫 t('…') 抓不到，单独补上。
+  if (f.includes('/canvas/') || f.endsWith('data/formulas.ts')) {
     for (const m of src.matchAll(presetRe)) if (CJK.test(m[1])) msgids.add(m[1])
   }
 }

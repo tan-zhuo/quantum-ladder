@@ -2,19 +2,24 @@
 import BaseLayout from './BaseLayout.astro'
 import MasteryPicker from '@/components/progress/MasteryPicker'
 import { CHAPTER_BY_ID } from '@/data/chapters'
-import { getNeighbours, resolvePrereqs, type TocSection } from '@/lib/toc'
+import { getNeighbours, resolvePrereqs, getChapter, type TocSection } from '@/lib/toc'
+import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
 import type { MarkdownHeading } from 'astro'
 
 interface Props {
   section: TocSection
   headings: MarkdownHeading[]
+  lang?: Lang
 }
 
-const { section, headings } = Astro.props
-const chapter = CHAPTER_BY_ID.get(section.chapterId)!
-const { prev, next, index, total } = await getNeighbours(section.id)
-const prereqs = await resolvePrereqs(section.prereqs)
+const { section, headings, lang = DEFAULT_LANG } = Astro.props
+const t = translator(lang)
+const chapterMeta = CHAPTER_BY_ID.get(section.chapterId)!
+const chapter = (await getChapter(section.chapterId, lang)) ?? { ...chapterMeta, path: `ch/${section.chapterId}/` }
+const { prev, next, index, total } = await getNeighbours(section.id, lang)
+const prereqs = await resolvePrereqs(section.prereqs, lang)
 const base = import.meta.env.BASE_URL
+const L = (p: string) => localePath(lang, p, base)
 
 // 只取 h2/h3：h4 通常是推导内部的小标题，列出来右栏会太吵
 const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
@@ -25,6 +30,7 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
   description={section.summary}
   currentId={section.id}
   currentChapter={section.chapterId}
+  lang={lang}
 >
   {/* 阅读进度条：固定在顶栏下沿 */}
   <div
@@ -34,15 +40,15 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
     <div id="ql-reading-bar" class="h-full w-0 bg-[var(--accent)] transition-[width] duration-75"></div>
   </div>
 
-  {prev && <link rel="prev" href={prev.href} slot="head" />}
-  {next && <link rel="next" href={next.href} slot="head" />}
+  {prev && <link rel="prev" href={L(prev.path)} slot="head" />}
+  {next && <link rel="next" href={L(next.path)} slot="head" />}
 
   <div class="mx-auto flex w-full max-w-[1180px] gap-10 px-5 py-8 lg:px-8 xl:max-w-[1320px]">
     <article class="min-w-0 flex-1">
-      <nav aria-label="面包屑" class="mb-4 flex flex-wrap items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]">
-        <a href={base} class="hover:text-[var(--accent-text)]">首页</a>
+      <nav aria-label={t("面包屑")} class="mb-4 flex flex-wrap items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]">
+        <a href={L('')} class="hover:text-[var(--accent-text)]">{t('首页')}</a>
         <span aria-hidden="true">/</span>
-        <a href={`${base}ch/${chapter.id}/`} class="hover:text-[var(--accent-text)]">
+        <a href={L(`ch/${chapter.id}/`)} class="hover:text-[var(--accent-text)]">
           {chapter.num}. {chapter.title}
         </a>
         <span aria-hidden="true">/</span>
@@ -68,8 +74,8 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
           section.status !== 'done' && (
             <p class="mt-4 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-3 py-2 text-[13px] text-[var(--text-muted)]">
               {section.status === 'stub'
-                ? '本节尚未撰写，当前只有大纲。内容结构与交互模拟的规格见下方。'
-                : '本节为草稿，推导与措辞可能还会调整。'}
+                ? t('本节尚未撰写，当前只有大纲。内容结构与交互模拟的规格见下方。')
+                : t('本节为草稿，推导与措辞可能还会调整。')}
             </p>
           )
         }
@@ -80,7 +86,7 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
               {prereqs.length > 0 && (
                 <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
                   <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
-                    建议先掌握
+                    {t('建议先掌握')}
                   </h2>
                   <ul class="space-y-1 text-[13.5px]">
                     {prereqs.map((p) => (
@@ -88,8 +94,8 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
                         <span aria-hidden="true" class="text-[var(--text-faint)]">
                           ·
                         </span>
-                        {p.href ? (
-                          <a href={p.href} class="text-[var(--accent-text)] hover:underline">
+                        {p.path ? (
+                          <a href={L(p.path)} class="text-[var(--accent-text)] hover:underline">
                             {p.text}
                           </a>
                         ) : (
@@ -104,7 +110,7 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
               {section.objectives.length > 0 && (
                 <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
                   <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
-                    学完本节你应该能
+                    {t('学完本节你应该能')}
                   </h2>
                   <ul class="space-y-1 text-[13.5px] text-[var(--text-muted)]">
                     {section.objectives.map((o) => (
@@ -123,23 +129,31 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
         }
       </header>
 
+      {
+        lang === 'en' && !section.translated && (
+          <p class="mb-6 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-[13px] text-[var(--text-muted)]">
+            This section has not been translated yet — the text below is in Chinese.
+          </p>
+        )
+      }
+
       <div class="prose">
         <slot />
       </div>
 
       <div class="mt-12">
-        <MasteryPicker client:visible sectionId={section.id} />
+        <MasteryPicker client:visible sectionId={section.id} lang={lang} />
       </div>
 
-      <nav class="no-print mt-8 grid gap-3 sm:grid-cols-2" aria-label="上一节 / 下一节">
+      <nav class="no-print mt-8 grid gap-3 sm:grid-cols-2" aria-label={t("上一节 / 下一节")}>
         {
           prev ? (
             <a
-              href={prev.href}
+              href={L(prev.path)}
               rel="prev"
               class="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 transition-colors hover:border-[var(--border-strong)]"
             >
-              <span class="text-[11.5px] text-[var(--text-faint)]">← 上一节</span>
+              <span class="text-[11.5px] text-[var(--text-faint)]">← {t('上一节')}</span>
               <span class="mt-0.5 block text-[14px] font-medium group-hover:text-[var(--accent-text)]">
                 {prev.label}
               </span>
@@ -151,11 +165,11 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
         {
           next && (
             <a
-              href={next.href}
+              href={L(next.path)}
               rel="next"
               class="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-right transition-colors hover:border-[var(--border-strong)] sm:col-start-2"
             >
-              <span class="text-[11.5px] text-[var(--text-faint)]">下一节 →</span>
+              <span class="text-[11.5px] text-[var(--text-faint)]">{t('下一节')} →</span>
               <span class="mt-0.5 block text-[14px] font-medium group-hover:text-[var(--accent-text)]">
                 {next.label}
               </span>
@@ -165,15 +179,15 @@ const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
       </nav>
 
       <p class="mt-6 text-center text-[12px] text-[var(--text-faint)]">
-        全站第 {index + 1} / {total} 节 · 用 <kbd class="font-mono">←</kbd> <kbd class="font-mono">→</kbd> 翻页
+        <Fragment set:html={t('全站第 {0} / {1} 节 · 用 {2} {3} 翻页', index + 1, total, '<kbd class="font-mono">←</kbd>', '<kbd class="font-mono">→</kbd>')} />
       </p>
     </article>
 
     {
       outline.length > 1 && (
-        <aside class="no-print sticky top-20 hidden h-fit w-[200px] shrink-0 xl:block" aria-label="本页目录">
+        <aside class="no-print sticky top-20 hidden h-fit w-[200px] shrink-0 xl:block" aria-label={t("本页目录")}>
           <h2 class="mb-2 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
-            本页内容
+            {t('本页内容')}
           </h2>
           <ul class="space-y-0.5 border-l border-[var(--border)]">
             {outline.map((h) => (

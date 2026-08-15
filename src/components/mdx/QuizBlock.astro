@@ -1,16 +1,24 @@
 ---
 import Quiz, { type Question } from '@/components/quiz/Quiz'
+import { getLangFromPath, type Lang } from '@/i18n'
 
 interface Props {
   questions: Question[]
   title?: string
+  /** 显式指定界面语言；不传就按路由判断 */
+  lang?: Lang
 }
 
 const { questions, title } = Astro.props
+const _base = import.meta.env.BASE_URL
+const _rel = Astro.url.pathname.startsWith(_base)
+  ? Astro.url.pathname.slice(_base.length)
+  : Astro.url.pathname
+const lang: Lang = Astro.props.lang ?? getLangFromPath(_rel)
 ---
 
 <!--
   MDX 里写 <QuizBlock questions={[...]} />。
   和 Sim.astro 同理：需要水合的组件必须静态导入，这层壳让作者免去 import。
 -->
-<Quiz client:visible questions={questions} title={title} />
+<Quiz client:visible questions={questions} title={title} lang={lang} />

@@ -1,0 +1,12 @@
+---
+import ChapterIndex from '@/components/pages/ChapterIndex.astro'
+import { CHAPTERS } from '@/data/chapters'
+
+export async function getStaticPaths() {
+  return CHAPTERS.map((c) => ({ params: { chapter: c.id }, props: { chapterId: c.id } }))
+}
+
+const { chapterId } = Astro.props
+---
+
+<ChapterIndex chapterId={chapterId} lang="en" />

@@ -1,0 +1,300 @@
+---
+title: Barrier penetration and quantum tunnelling
+section: '2.11'
+order: 11
+summary: 'A particle gets through a wall it does not have the energy to climb. This is no theoretical curiosity: alpha decay, the scanning tunnelling microscope and flash memory all run on it.'
+status: done
+prereqs:
+  - 02-wavefunction/08-finite-well
+  - 02-wavefunction/10-free-particle
+objectives:
+  - Derive the transmission coefficient of a rectangular barrier by region matching
+  - Use the thick-barrier approximation for estimates and explain the exponential sensitivity of T to the width
+  - Explain why reflection persists even for E > V₀, and what makes resonant transmission happen
+  - Name three real technologies or phenomena that depend on tunnelling
+sims: ['wave-packet-scattering']
+---
+
+$$
+V(x)=\begin{cases}V_0,&0<x<a\\0,&\text{otherwise}\end{cases}\qquad(V_0>0)
+$$
+
+A particle of energy $E<V_0$ comes in from the left. Classical mechanics says: it hits the wall, bounces back, and the transmission probability is exactly zero.
+
+The quantum answer is not zero.
+
+## Solving region by region
+
+<Derivation title="Derivation: the transmission coefficient of a rectangular barrier" level="进阶" minutes={12} open={true}>
+
+**General solutions in the three regions** (for $E<V_0$):
+
+$$
+\psi_\text{I}=A\ee^{\ii kx}+B\ee^{-\ii kx}\quad(x<0),\qquad k=\frac{\sqrt{2mE}}{\hbar}
+$$
+
+$$
+\psi_\text{II}=C\ee^{\kappa x}+D\ee^{-\kappa x}\quad(0<x<a),\qquad \kappa=\frac{\sqrt{2m(V_0-E)}}{\hbar}
+$$
+
+$$
+\psi_\text{III}=F\ee^{\ii kx}\quad(x>a)
+$$
+
+$A$ is the incident wave, $B$ the reflected wave, $F$ the transmitted wave. Region III has no $\ee^{-\ii kx}$ term because there is no source on the right — **that is the only place where physical input enters**; everything else is mathematics.
+
+<Callout type="warning" title="Both exponentials must be kept in region II">
+When we handled bound states in [section 2.8](/en/ch/02-wavefunction/08-finite-well/) we threw away the growing exponential. Here it **must be kept**: region II has finite width, so $\ee^{\kappa x}$ is merely a finite number at $x=a$ and does nothing to normalisation.
+
+Dropping this term is the single most common mistake in problems of this type.
+</Callout>
+
+**Matching conditions.** $V$ is finite, so $\psi$ and $\psi'$ are continuous at both $x=0$ and $x=a$, giving four equations:
+
+$$
+A+B=C+D
+$$
+
+$$
+\ii k(A-B)=\kappa(C-D)
+$$
+
+$$
+C\ee^{\kappa a}+D\ee^{-\kappa a}=F\ee^{\ii ka}
+$$
+
+$$
+\kappa\left(C\ee^{\kappa a}-D\ee^{-\kappa a}\right)=\ii kF\ee^{\ii ka}
+$$
+
+Four equations for four ratios ($B/A$, $C/A$, $D/A$, $F/A$) — solvable.
+
+**Elimination.** The last two give $C$ and $D$:
+
+$$
+C\ee^{\kappa a}=\frac{F\ee^{\ii ka}}{2}\left(1+\frac{\ii k}{\kappa}\right),\qquad
+D\ee^{-\kappa a}=\frac{F\ee^{\ii ka}}{2}\left(1-\frac{\ii k}{\kappa}\right)
+$$
+
+Substitute into the first two and eliminate $B$ (multiply the first by $\ii k$ and add the second):
+
+$$
+2\ii kA=(\ii k+\kappa)C+(\ii k-\kappa)D
+$$
+
+Insert $C$ and $D$ and tidy up:
+
+$$
+\frac{A}{F}=\ee^{\ii ka}\left[\cosh\kappa a+\frac{\ii}{2}\left(\frac{\kappa}{k}-\frac{k}{\kappa}\right)\sinh\kappa a\right]
+$$
+
+**Transmission coefficient** $T=|F/A|^2$:
+
+$$
+T^{-1}=\cosh^2\kappa a+\frac14\left(\frac{\kappa}{k}-\frac{k}{\kappa}\right)^2\sinh^2\kappa a
+$$
+
+Using $\cosh^2=1+\sinh^2$ and converting $k,\kappa$ back to $E,V_0$ (after some algebra):
+
+$$
+\boxed{\ T=\left[1+\frac{V_0^2\sinh^2(\kappa a)}{4E(V_0-E)}\right]^{-1}\ }
+$$
+
+</Derivation>
+
+## The thick-barrier approximation
+
+For $\kappa a\gg1$, $\sinh\kappa a\approx\frac12\ee^{\kappa a}$, so
+
+$$
+T\approx\frac{16E(V_0-E)}{V_0^2}\,\ee^{-2\kappa a}
+$$
+
+<Callout type="insight" title="The exponential factor decides everything">
+The prefactor lies between 0 and 4 — a number of order one. **All the physics is in $\ee^{-2\kappa a}$.**
+
+That makes $T$ **exponentially sensitive** to the barrier's width and height:
+
+$$
+\frac{\dd\ln T}{\dd a}=-2\kappa
+$$
+
+For an electron with $V_0-E=4$ eV, $\kappa=\sqrt{2m(V_0-E)}/\hbar\approx1.02\ \text{Å}^{-1}$. Every extra ångström of barrier thickness costs a factor of $\ee^{-2}\approx1/7.4$ in $T$.
+
+**This is exactly how the scanning tunnelling microscope works**: pull the tip 1 Å further from the surface and the tunnelling current drops by almost an order of magnitude. That extreme distance sensitivity is what lets an STM resolve height differences of single atoms.
+</Callout>
+
+<Derivation title="Orders of magnitude: three real examples" level="基础" minutes={6}>
+
+**1. Scanning tunnelling microscope.** A metal work function $\phi\approx4$ eV and a tip–sample gap $a\approx5$ Å:
+
+$$
+\kappa=\frac{\sqrt{2m\phi}}{\hbar}=\frac{\sqrt{2\times511000\times4}}{197.3}\ \text{nm}^{-1}=10.2\ \text{nm}^{-1}
+$$
+
+$$
+2\kappa a=2\times10.2\times0.5=10.2\quad\Longrightarrow\quad \ee^{-10.2}\approx3.7\times10^{-5}
+$$
+
+A transmission probability around $10^{-4}$–$10^{-5}$. That sounds tiny, but around $10^{15}$ electrons try every second, so the tunnelling current is in the nanoamp range — comfortably measurable.
+
+**2. Alpha decay.** An alpha particle is bound by the nuclear force inside a well of radius about 7 fm and has to get through the Coulomb barrier (peaking near 25 MeV, while the alpha's energy is only 4–9 MeV). Approximating the Coulomb barrier as a stack of rectangular barriers and summing (this is the [WKB approximation](/en/ch/07-approximation/04-wkb/)) gives
+
+$$
+\ln T\propto-\frac{Z}{\sqrt{E}}
+$$
+
+This is the **Gamow factor**, and it explains the Geiger–Nuttall law: a small change in alpha energy sweeps the half-life across **24 orders of magnitude** (14 billion years for $^{232}$Th versus 0.3 microseconds for $^{212}$Po). Exponential sensitivity taken to its extreme.
+
+Gamow's 1928 calculation of alpha decay was one of the earliest major successes of quantum mechanics.
+
+**3. Flash memory.** Writing to NAND flash pushes electrons by tunnelling through an oxide layer about 8 nm thick into the floating gate. On read, the same oxide is thick enough to keep the electrons in place (ten-year data retention). Writing raises $T$ by applying a high voltage that "tilts" the barrier (Fowler–Nordheim tunnelling).
+
+**Every single bit in your phone's storage chip is one controlled act of tunnelling.**
+
+</Derivation>
+
+## E > V₀: there is still reflection
+
+The formula above stays valid for $E>V_0$; simply set $\kappa\to\ii k_2$ (with $k_2=\sqrt{2m(E-V_0)}/\hbar$), which turns $\sinh$ into $\ii\sin$:
+
+$$
+T=\left[1+\frac{V_0^2\sin^2(k_2a)}{4E(E-V_0)}\right]^{-1}
+$$
+
+Classically the particle slows down, crosses, and transmission is 100%. Quantum mechanically $T<1$: **there is reflection**.
+
+<DualView>
+<div slot="left">
+
+**This should not really be a surprise.** Waves partially reflect at any abrupt change of medium: light going from air into glass reflects about 4%, and sound going from air into water reflects almost completely. An abrupt change in potential does exactly the same thing to a matter wave.
+
+Reflection comes from **impedance mismatch**, and has nothing to do with whether the particle has enough energy to get over the top.
+
+</div>
+<div slot="right">
+
+**Resonant transmission.** When
+
+$$
+k_2a=n\pi\quad(n=1,2,\dots)
+$$
+
+we get $\sin(k_2a)=0$ and $T=1$ — the barrier becomes perfectly transparent.
+
+The condition says the barrier width holds an exact whole number of half-wavelengths, so the reflections from the two interfaces cancel — exactly like an anti-reflection coating in optics.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The Ramsauer–Townsend effect">
+In 1921 Ramsauer and Townsend independently found that slow electrons passing through argon, krypton or xenon have a scattering cross-section that **drops nearly to zero** near a particular energy around 1 eV — the gas is almost transparent to electrons.
+
+Classically inexplicable. The quantum answer is resonant transmission: a noble-gas atom acts on an electron like a potential **well**, and at particular energies the width of the well satisfies the resonance condition so that the reflections cancel.
+
+This was among the earliest experimental evidence for quantum scattering theory. In the simulation below, set $V_0$ negative and switch to the transmission-curve view to see those $T=1$ spikes.
+</Callout>
+
+<Sim name="wave-packet-scattering" />
+
+<Callout type="check" title="Four experiments worth doing yourself">
+1. **Default parameters** ($E\approx2.0<V_0=2.5$): press play and see how much of the packet gets through. The classical answer is zero.
+2. **Widen the barrier**: take $a$ from 1.5 to 4 and replay. $T$ collapses — exponential sensitivity.
+3. **$E>V_0$**: set $V_0$ to 1.0 and replay. A clear reflected wave still travels back to the left.
+4. **Resonance**: switch to the transmission curve, set $V_0$ negative, and find the spikes that return to 1.
+
+The "measured T for this run" (filled dot) and the "plane-wave analytic value" (open circle) generally differ by a few percent, because a Gaussian packet is not monoenergetic — it averages over a spread of energies. Increasing $\sigma$ brings the two closer.
+</Callout>
+
+<Callout type="misconception" title="How long does tunnelling take?">
+The question looks simple and has been argued over for seventy years without a fully settled answer.
+
+The difficulty is that quantum mechanics has no time operator, so "how long the particle spent inside the barrier" cannot be defined directly. Different definitions (Wigner phase time, Büttiker–Landauer time, the Larmor clock, and others) give different answers, some of them apparently "superluminal" and independent of barrier width — though it can be shown that none of them can be used to send information, so causality is safe.
+
+Around 2020 several ultracold-atom and attosecond experiments produced measured values, but the argument over what "tunnelling time" even means is not over. It is one of the few genuinely foundational questions still actively debated; see [section 13.7](/en/ch/13-frontier/07-foundations/).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Rectangular-barrier transmission (E < V₀)', latex: 'T=\\left[1+\\frac{V_0^2\\sinh^2(\\kappa a)}{4E(V_0-E)}\\right]^{-1},\\quad\\kappa=\\frac{\\sqrt{2m(V_0-E)}}{\\hbar}', note: 'Exact, no approximation' },
+    { name: 'Thick-barrier approximation', latex: 'T\\approx\\frac{16E(V_0-E)}{V_0^2}\\ee^{-2\\kappa a}', note: 'For κa ≫ 1; the exponential dominates everything' },
+    { name: 'The E > V₀ case', latex: 'T=\\left[1+\\frac{V_0^2\\sin^2(k_2a)}{4E(E-V_0)}\\right]^{-1},\\quad k_2=\\frac{\\sqrt{2m(E-V_0)}}{\\hbar}', note: 'Generally T < 1; resonant transmission T = 1 when k₂a = nπ' },
+    { name: 'Gamow factor', latex: '\\ln T\\propto-\\frac{Z}{\\sqrt{E}}', note: 'The origin of the 24 orders of magnitude in alpha-decay half-lives' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tun-1',
+      prompt: 'When solving the rectangular-barrier problem, why must region II (inside the barrier) keep both e^{κx} and e^{−κx}?',
+      options: [
+        'Because region II has finite width, so the growing term is merely a finite number at x = a and does not spoil normalisation',
+        'Because κ may be negative',
+        'Because the particle energy is negative inside the barrier',
+        'Because four boundary conditions must be satisfied',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'κ = √(2m(V₀−E))/ħ is a positive real number whenever E < V₀.',
+        2: 'The energy E > 0; it is merely smaller than V₀.',
+        3: 'The number of boundary conditions determines how many unknowns can be found, not which solutions to keep.',
+      },
+      explain: 'In bound-state problems the growing solution is dropped because the region extends to infinity; here region II has width only a, so e^{κa} is a finite number. Dropping this term is the most common error and gives a completely wrong T.',
+    },
+    {
+      id: 'tun-2',
+      prompt: 'In the thick-barrier approximation T ≈ (prefactor)·e^{−2κa}. If the barrier width a is doubled, the transmission coefficient roughly:',
+      options: [
+        'Decays like the square of e^{−2κa}, i.e. to the order of the original T squared',
+        'Halves',
+        'Falls to a quarter',
+        'Stays the same, since the prefactor contains no a',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The decay is exponential, not linear.',
+        2: 'Same reason.',
+        3: 'The prefactor indeed has no a, but the exponential does.',
+      },
+      explain: 'a → 2a sends e^{−2κa} → e^{−4κa} = (e^{−2κa})². This exponential sensitivity is what lets an STM resolve single-atom height differences and what spreads alpha-decay half-lives over 24 orders of magnitude.',
+    },
+    {
+      id: 'tun-3',
+      prompt: 'For E > V₀, quantum mechanics still predicts partial reflection. Which physical reason is closest to correct?',
+      options: [
+        'Waves partially reflect at any abrupt change of medium, regardless of whether the energy suffices to clear the barrier',
+        'The particle slows down above the barrier and does not have time to cross',
+        'Some of the particles actually have energy below V₀',
+        'It is measurement error',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Slowing down does not produce reflection; a classical particle slows down and still crosses completely.',
+        2: 'A plane wave is monoenergetic; the energy spread of a packet is only a secondary correction.',
+      },
+      explain: 'This is a general property of waves: light going from air into glass reflects about 4% even though the photons have "plenty of energy". An abrupt potential creates an impedance mismatch. When k₂a = nπ the reflections from the two interfaces cancel and T = 1 — the same physics as an anti-reflection coating.',
+    },
+    {
+      id: 'tun-4',
+      type: 'numeric',
+      prompt: 'An electron tunnels through a barrier with V₀ − E = 4.0 eV and width a = 0.50 nm. Compute the exponential factor e^{−2κa} (give the value itself; for example enter 0.000037 for 3.7e-5). (ħc = 197.3 eV·nm, mc² = 511000 eV)',
+      answer: 0.000037,
+      tolerance: 0.35,
+      explain: 'κ = √(2mc²(V₀−E))/(ħc) = √(2×511000×4)/197.3 = 2021.4/197.3 ≈ 10.2 nm⁻¹. Then 2κa = 2×10.2×0.5 = 10.2 and e^{−10.2} ≈ 3.7×10⁻⁵. That is the typical STM operating point: the probability is small, but the attempt rate is enormous and the current reaches nanoamps.',
+    },
+  ]}
+/>
+
+## End of the chapter
+
+Look back at what one complex-valued function and one equation accomplished:
+
+- Derived energy quantisation (infinite well, harmonic oscillator) with no extra assumptions
+- Explained why atoms are stable (stationary states do not radiate)
+- Predicted a phenomenon classically forbidden outright (tunnelling), which now supports an entire field of technology
+- Absorbed classical mechanics as a limiting case (Ehrenfest's theorem, the correspondence principle)
+
+It also left a pile of things unexplained: why do observables correspond to operators? What actually happens in a measurement? What entitles $|c_n|^2$ to be a probability?
+
+Answering those requires a different language. [Chapter 3](/en/ch/03-formalism/) abstracts the wavefunction into a vector in Hilbert space — after which you will find that most of the long integral derivations of this chapter take two or three lines.

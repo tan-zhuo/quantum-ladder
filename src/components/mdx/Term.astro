@@ -1,5 +1,6 @@
 ---
 import { GLOSSARY } from '@/data/glossary'
+import { getLangFromPath, translator } from '@/i18n'
 
 interface Props {
   /** 术语键，见 src/data/glossary.ts；省略时用 slot 文本 */
@@ -9,6 +10,16 @@ interface Props {
 const { id } = Astro.props
 const entry = GLOSSARY[id]
 const base = import.meta.env.BASE_URL
+
+// 语言按路由推断，和 Callout / Derivation 一致
+const _rel = Astro.url.pathname.startsWith(base)
+  ? Astro.url.pathname.slice(base.length)
+  : Astro.url.pathname
+const lang = getLangFromPath(_rel)
+const t = translator(lang)
+// 英文页面用 en 当词条名、definitionEn 当释义；缺省时退回中文
+const label = (lang === 'en' ? entry?.en : entry?.term) ?? entry?.term
+const definition = (lang === 'en' ? entry?.definitionEn : entry?.definition) ?? entry?.definition
 ---
 
 {
@@ -19,19 +30,21 @@ const base = import.meta.env.BASE_URL
         class="cursor-help border-b border-dotted border-[var(--text-faint)] text-inherit"
         aria-describedby={`tip-${id}`}
       >
-        <slot>{entry.term}</slot>
+        <slot>{label}</slot>
       </button>
       <span
         id={`tip-${id}`}
         role="tooltip"
         class="ql-tooltip pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-[min(20rem,70vw)] -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[13px] leading-relaxed font-normal text-[var(--text-muted)] opacity-0 shadow-lg transition-opacity duration-150"
       >
-        <strong class="text-[var(--text)]">{entry.term}</strong>
-        {entry.en && <span class="ml-1.5 text-[11.5px] text-[var(--text-faint)]">{entry.en}</span>}
-        <span class="mt-1 block">{entry.definition}</span>
+        <strong class="text-[var(--text)]">{label}</strong>
+        {lang === 'zh' && entry.en && (
+          <span class="ml-1.5 text-[11.5px] text-[var(--text-faint)]">{entry.en}</span>
+        )}
+        <span class="mt-1 block">{definition}</span>
         {entry.ref && (
           <span class="mt-1 block text-[11.5px] text-[var(--accent-text)]">
-            详见 {entry.refLabel ?? entry.ref}
+            {t('详见')} {entry.refLabel ?? entry.ref}
           </span>
         )}
       </span>

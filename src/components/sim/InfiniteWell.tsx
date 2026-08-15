@@ -13,6 +13,8 @@ import {
   niceTicks,
 } from '@/lib/plot'
 import { infiniteWellEigenstate, infiniteWellEnergy } from '@/lib/numerics'
+import { rich } from './rich'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 一维无限深势阱：改变宽度 L 与量子数 n，实时看波函数、概率密度与能级。
@@ -29,7 +31,8 @@ const LEVELS_SHOWN = 8
 
 type Mode = 'single' | 'superposition'
 
-export default function InfiniteWell() {
+export default function InfiniteWell({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const [L, setL] = useState(1)
   const [n, setN] = useState(1)
   const [mode, setMode] = useState<Mode>('single')
@@ -155,7 +158,7 @@ export default function InfiniteWell() {
       drawBand(f, sx, L, 1.12 * L, f.colors.subtle)
 
       drawAxes(f, sx, sy, {
-        xLabel: 'x  （势阱宽度 L 为单位长度）',
+        xLabel: T('x  （势阱宽度 L 为单位长度）'),
         grid: true,
         zeroLine: true,
       })
@@ -207,7 +210,7 @@ export default function InfiniteWell() {
         f.ctx.restore()
       }
     },
-    [L, n, mode, showPsi, showProb, coeffs, xs, energies],
+    [L, n, mode, showPsi, showProb, coeffs, xs, energies, lang],
     { animate, padding: { left: 52, bottom: 34 } },
   )
 
@@ -243,7 +246,7 @@ export default function InfiniteWell() {
       f.ctx.font = '9.5px var(--font-sans, sans-serif)'
       f.ctx.textAlign = 'left'
       f.ctx.textBaseline = 'top'
-      f.ctx.fillText('纵轴按 √E 均匀', pad.left, 5)
+      f.ctx.fillText(T('纵轴按 √E 均匀'), pad.left, 5)
       f.ctx.restore()
 
       // 固定在 E₁(L=1) 的参考线：坐标轴随 L 缩放，能级相对它的位置才是
@@ -281,7 +284,7 @@ export default function InfiniteWell() {
         })
       }
     },
-    [L, n, mode, coeffs, meanEnergy],
+    [L, n, mode, coeffs, meanEnergy, lang],
     { animate: false },
   )
 
@@ -290,23 +293,19 @@ export default function InfiniteWell() {
   return (
     <SimShell
       id="infinite-well"
-      title="一维无限深势阱"
-      subtitle={
-        <>
-          拖动宽度 <code>L</code> 与量子数 <code>n</code>，看能量、波形与概率分布怎么一起变。
-          单位取 ħ = m = 1。
-        </>
-      }
+      lang={lang}
+      title={T('一维无限深势阱')}
+      subtitle={rich(T('拖动宽度 `L` 与量子数 `n`，看能量、波形与概率分布怎么一起变。单位取 ħ = m = 1。'))}
       onReset={reset}
       readout={
         <Readout
           items={[
             {
-              label: mode === 'single' ? `能量 Eₙ (n=${n})` : '平均能量 ⟨E⟩',
+              label: mode === 'single' ? T('能量 Eₙ (n={0})', n) : T('平均能量 ⟨E⟩'),
               value: meanEnergy.toFixed(3),
               color: 'var(--c-energy)',
             },
-            { label: '相对 E₁(L=1)', value: `${(meanEnergy / E1).toFixed(2)} ×` },
+            { label: T('相对 E₁(L=1)'), value: `${(meanEnergy / E1).toFixed(2)} ×` },
             { label: '⟨x⟩ / L', value: stats.xMean.toFixed(3) },
             { label: 'Δx / L', value: stats.xSpread.toFixed(3) },
           ]}
@@ -316,36 +315,28 @@ export default function InfiniteWell() {
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <Slider
-              label={
-                <>
-                  阱宽 <span className="font-mono">L</span>
-                </>
-              }
+              label={rich(T('阱宽 `L`'))}
               value={L}
               min={0.6}
               max={2.5}
               step={0.05}
               onChange={setL}
-              hint="缩小盒子，所有能级一起被顶上去：E ∝ 1/L²"
+              hint={T('缩小盒子，所有能级一起被顶上去：E ∝ 1/L²')}
             />
             {mode === 'single' ? (
               <Slider
-                label={
-                  <>
-                    量子数 <span className="font-mono">n</span>
-                  </>
-                }
+                label={rich(T('量子数 `n`'))}
                 value={n}
                 min={1}
                 max={MAX_N}
                 step={1}
                 onChange={(v) => setN(Math.round(v))}
-                hint={`节点数 = n − 1 = ${n - 1}（不含两端）`}
+                hint={T('节点数 = n − 1 = {0}（不含两端）', n - 1)}
               />
             ) : (
               <div className="flex flex-col gap-1">
                 <span className="text-[13px] font-medium text-[var(--text-muted)]">
-                  叠加系数 c₁…c₄（自动归一化）
+                  {T('叠加系数 c₁…c₄（自动归一化）')}
                 </span>
                 <div className="mt-1 grid grid-cols-4 gap-2">
                   {weights.map((w, i) => (
@@ -376,24 +367,28 @@ export default function InfiniteWell() {
 
           <div className="flex flex-wrap items-end justify-between gap-4">
             <Segmented
-              label="状态"
+              label={T('状态')}
               value={mode}
               onChange={(v) => {
                 setMode(v)
                 timeRef.current = 0
               }}
               options={[
-                { value: 'single', label: '定态 ψₙ', title: '单个能量本征态' },
-                { value: 'superposition', label: '叠加态', title: '多个本征态的线性组合，随时间演化' },
+                { value: 'single', label: T('定态 ψₙ'), title: T('单个能量本征态') },
+                {
+                  value: 'superposition',
+                  label: T('叠加态'),
+                  title: T('多个本征态的线性组合，随时间演化'),
+                },
               ]}
             />
             <div className="flex flex-wrap items-center gap-4">
-              <Toggle label="显示 ψ" checked={showPsi} onChange={setShowPsi} />
-              <Toggle label="显示 |ψ|²" checked={showProb} onChange={setShowProb} />
+              <Toggle label={T('显示 ψ')} checked={showPsi} onChange={setShowPsi} />
+              <Toggle label={T('显示 |ψ|²')} checked={showProb} onChange={setShowProb} />
               {mode === 'superposition' ? (
                 <>
                   <Button onClick={() => setPlaying((p) => !p)} variant="primary">
-                    {playing ? '暂停' : '播放'}
+                    {playing ? T('暂停') : T('播放')}
                   </Button>
                   <Button onClick={() => (timeRef.current = 0)}>t = 0</Button>
                 </>
@@ -403,24 +398,26 @@ export default function InfiniteWell() {
         </div>
       }
       prompts={[
-        <>
-          把 <code>L</code> 从 2.5 拖到 0.6，盯住能级图上那条虚线（固定在 E₁(L=1) 的参考能量）：
-          它会一路沉到图的底部，也就是说所有能级都远远升到了它上面。读数区的「相对 E₁(L=1)」
-          会从 0.16 涨到 2.78 —— 「把粒子关得越紧，它的动能越大」，
-          这就是 <code>ΔxΔp ≥ ħ/2</code> 的一个直接后果。
-        </>,
-        <>
-          在定态下改变 <code>n</code>，注意 <code>|ψ|²</code> 始终不随时间变化（曲线是静止的）；
-          切到叠加态并播放，<code>|ψ|²</code> 立刻开始左右晃。「定态」定的就是这件事。
-        </>,
-        <>
-          叠加态里只留 c₁（其余拖到 0），播放——概率密度又不动了。
-          单个本征态无论怎么演化都只是整体乘一个相位 <code>e^{'{−iEₙt/ħ}'}</code>，观测量看不见它。
-        </>,
-        <>
-          让 n 取 10 以上再看 <code>|ψ|²</code>：条纹密到接近均匀分布，
-          正是经典粒子在盒子里「哪儿都可能」的图像——对应原理在这里现身。
-        </>,
+        rich(
+          T(
+            '把 `L` 从 2.5 拖到 0.6，盯住能级图上那条虚线（固定在 E₁(L=1) 的参考能量）：它会一路沉到图的底部，也就是说所有能级都远远升到了它上面。读数区的「相对 E₁(L=1)」会从 0.16 涨到 2.78 ——「把粒子关得越紧，它的动能越大」，这就是 `ΔxΔp ≥ ħ/2` 的一个直接后果。',
+          ),
+        ),
+        rich(
+          T(
+            '在定态下改变 `n`，注意 `|ψ|²` 始终不随时间变化（曲线是静止的）；切到叠加态并播放，`|ψ|²` 立刻开始左右晃。「定态」定的就是这件事。',
+          ),
+        ),
+        rich(
+          T(
+            '叠加态里只留 c₁（其余拖到 0），播放——概率密度又不动了。单个本征态无论怎么演化都只是整体乘一个相位 `e^(−iEₙt/ħ)`，观测量看不见它。',
+          ),
+        ),
+        rich(
+          T(
+            '让 n 取 10 以上再看 `|ψ|²`：条纹密到接近均匀分布，正是经典粒子在盒子里「哪儿都可能」的图像——对应原理在这里现身。',
+          ),
+        ),
       ]}
     >
       <div className="grid gap-0 md:grid-cols-[1fr_200px]">
@@ -428,7 +425,7 @@ export default function InfiniteWell() {
           ref={canvasRef}
           className="h-[300px] w-full sm:h-[340px]"
           role="img"
-          aria-label={`无限深势阱波函数，阱宽 ${L.toFixed(2)}，量子数 ${n}`}
+          aria-label={T('无限深势阱波函数，阱宽 {0}，量子数 {1}', L.toFixed(2), n)}
         />
         {/* md:h-full 而不是 h-auto：canvas 的 h-auto 会退回内部 width/height 属性
             决定的固有比例，在网格里被压成一条窄带 */}
@@ -436,7 +433,7 @@ export default function InfiniteWell() {
           ref={ladderRef.canvasRef}
           className="h-[170px] w-full border-t border-[var(--border)] md:h-full md:border-l md:border-t-0"
           role="img"
-          aria-label="能级图"
+          aria-label={T('能级图')}
         />
       </div>
     </SimShell>

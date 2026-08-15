@@ -1,5 +1,5 @@
 ---
-import { getLangFromPath, type Lang } from '@/i18n'
+import { getLangFromPath, translator, type Lang } from '@/i18n'
 import BlochSphereScene from './BlochSphere/BlochSphereScene'
 import WavefunctionScene from './Wavefunction/WavefunctionScene'
 import HydrogenOrbitalScene from './HydrogenOrbital/HydrogenOrbitalScene'
@@ -57,6 +57,7 @@ const rel = Astro.url.pathname.startsWith(base)
   : Astro.url.pathname
 const lang: Lang = Astro.props.lang ?? getLangFromPath(rel)
 const { name } = Astro.props
+const t = translator(lang)
 
 if (!SCENE_NAMES.includes(name)) {
   throw new Error(
@@ -85,6 +86,6 @@ if (!SCENE_NAMES.includes(name)) {
   <div
     class="my-8 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-4 py-6 text-center text-[13.5px] text-[var(--text-muted)]"
   >
-    这里是一个 3D 交互场景（{name}），需要启用 JavaScript 与 WebGL 才能运行。
+    {t('这里是一个 3D 交互场景（{0}），需要启用 JavaScript 与 WebGL 才能运行。', name)}
   </div>
 </noscript>

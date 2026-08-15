@@ -24,4 +24,5 @@ export const DICT_EXTRA: Record<string, string> = {
   '解析值 {0}（误差 {1}%）': 'analytic {0} (error {1}%)',
   '解析式预言还有一条能级，但它弱束缚到尾巴远超出计算窗口，数值上被硬边界推成了正能量。这不是 bug，而是「临界束缚态」的真实特征。':
     'The analytic formula predicts one more level, but it is bound so weakly that its tail runs far outside the computational window, and the hard boundary pushes it up to positive energy. This is not a bug — it is what a marginally bound state genuinely looks like.',
+  详见: 'See',
 }

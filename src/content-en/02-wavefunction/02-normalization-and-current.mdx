@@ -1,0 +1,258 @@
+---
+title: Normalisation and probability current
+section: '2.2'
+order: 2
+summary: The total probability has to stay 1 forever. Proving that also hands us a quantity describing where the probability is flowing.
+status: done
+prereqs:
+  - 02-wavefunction/01-born-rule
+objectives:
+  - Normalise a given wavefunction and explain why the phase of the constant is irrelevant
+  - Prove that normalisation is preserved automatically under time evolution
+  - Write down the probability current and read the continuity equation physically
+  - Decide whether a given function is a legitimate wavefunction
+---
+
+The Born rule requires
+
+$$
+\int_{-\infty}^{\infty}|\Psi(x,t)|^2\,\dd x = 1
+$$
+
+This is a strong constraint, and it has to hold **at every instant**. The Schrödinger equation tells us how $\Psi$ changes with time — what guarantees that this integral does not?
+
+If it could change, quantum mechanics would be finished: particles would appear and disappear as time went on. This section proves that it cannot, and digs out a useful new quantity along the way.
+
+## Normalisation
+
+Given a solution $\Psi$, linearity of the equation guarantees that $A\Psi$ is also a solution for any complex constant $A$. Choose $A$ so that the integral equals 1:
+
+$$
+|A|^2\int_{-\infty}^{\infty}|\Psi|^2\,\dd x = 1
+$$
+
+<Callout type="note" title="The global phase is free">
+That equation fixes only $|A|$, not the phase of $A$. In other words $\Psi$ and $\ee^{\ii\theta}\Psi$ describe **exactly the same physical state** — identical $|\Psi|^2$, identical expectation values for everything.
+
+This is the statement that the **global phase is unobservable**. But note carefully: *relative* phases are observable. $\psi_1+\psi_2$ and $\psi_1+\ee^{\ii\pi}\psi_2$ are completely different states, with exactly opposite interference patterns.
+</Callout>
+
+Not every function can be normalised. For $\int|\Psi|^2$ to converge, $\Psi$ must go to zero fast enough as $x\to\pm\infty$. Such functions are called **square-integrable** and form the Hilbert space $L^2$.
+
+<Callout type="warning" title="Plane waves cannot be normalised">
+For $\Psi = A\ee^{\ii kx}$ the modulus squared is the constant $|A|^2$ and the integral diverges. Strictly speaking it is not a legitimate physical state.
+
+It is far too useful to discard, though. The trick is to use it as a **basis** in which to expand genuinely normalisable wave packets, which is exactly what [section 2.10](/en/ch/02-wavefunction/10-free-particle/) does. "Non-normalisable solutions are still useful" is a pattern that recurs throughout quantum mechanics.
+</Callout>
+
+## Normalisation does not change with time
+
+<Derivation title="Proof that d/dt ∫|Ψ|²dx = 0" level="基础" minutes={6}>
+
+We want to show that
+
+$$
+\frac{\dd}{\dd t}\int_{-\infty}^{\infty}|\Psi(x,t)|^2\,\dd x = 0
+$$
+
+The limits do not depend on time, so the derivative can move inside the integral and become a partial derivative:
+
+$$
+\frac{\dd}{\dd t}\int|\Psi|^2\dd x = \int \frac{\partial}{\partial t}\left(\Psi^*\Psi\right)\dd x
+= \int\left(\Psi^*\frac{\partial\Psi}{\partial t}+\frac{\partial\Psi^*}{\partial t}\Psi\right)\dd x
+$$
+
+Now use the Schrödinger equation (take its form on trust here; section 2.4 discusses it properly):
+
+$$
+\frac{\partial\Psi}{\partial t} = \frac{\ii\hbar}{2m}\frac{\partial^2\Psi}{\partial x^2}-\frac{\ii}{\hbar}V\Psi
+$$
+
+Take the complex conjugate — and note that $V$ being a *real* function is essential here:
+
+$$
+\frac{\partial\Psi^*}{\partial t} = -\frac{\ii\hbar}{2m}\frac{\partial^2\Psi^*}{\partial x^2}+\frac{\ii}{\hbar}V\Psi^*
+$$
+
+Substituting back, the two terms containing $V$ have opposite signs and **cancel outright**:
+
+$$
+\Psi^*\frac{\partial\Psi}{\partial t}+\frac{\partial\Psi^*}{\partial t}\Psi
+=\frac{\ii\hbar}{2m}\left(\Psi^*\frac{\partial^2\Psi}{\partial x^2}-\frac{\partial^2\Psi^*}{\partial x^2}\Psi\right)
+$$
+
+What is left inside the bracket happens to be a total derivative:
+
+$$
+\frac{\partial}{\partial x}\left(\Psi^*\frac{\partial\Psi}{\partial x}-\frac{\partial\Psi^*}{\partial x}\Psi\right)
+=\Psi^*\frac{\partial^2\Psi}{\partial x^2}-\frac{\partial^2\Psi^*}{\partial x^2}\Psi
+$$
+
+(the cross terms $\frac{\partial\Psi^*}{\partial x}\frac{\partial\Psi}{\partial x}$ appear twice and cancel). Hence
+
+$$
+\frac{\dd}{\dd t}\int|\Psi|^2\dd x
+=\frac{\ii\hbar}{2m}\left[\Psi^*\frac{\partial\Psi}{\partial x}-\frac{\partial\Psi^*}{\partial x}\Psi\right]_{-\infty}^{+\infty}
+$$
+
+and normalisability requires $\Psi\to 0$ (with bounded derivative) as $|x|\to\infty$, so the boundary term vanishes. ∎
+
+**What did the proof rely on?** Only on $V$ being **real**. Introduce a complex potential — which condensed-matter and nuclear physics really do, to describe absorption phenomenologically — and the normalisation decays with time. That decay *is* the mathematics of absorption. The absorbing boundary layer in the wave-packet simulations on this site uses exactly this trick.
+</Derivation>
+
+## The probability current
+
+The combination that appeared in that proof is important enough to deserve a name. Define the **probability current density**
+
+$$
+j(x,t) \equiv \frac{\ii\hbar}{2m}\left(\Psi\frac{\partial\Psi^*}{\partial x}-\Psi^*\frac{\partial\Psi}{\partial x}\right)
+=\frac{\hbar}{m}\operatorname{Im}\left(\Psi^*\frac{\partial\Psi}{\partial x}\right)
+$$
+
+(the two forms are equivalent; the second is easier to remember and to compute with). The proof above then amounts to
+
+$$
+\frac{\partial\rho}{\partial t}+\frac{\partial j}{\partial x}=0
+$$
+
+which is the **continuity equation**, identical in form to the ones in fluid mechanics and electrodynamics.
+
+<DualView>
+<div slot="left">
+
+Think of $\rho$ as the density of an incompressible fluid and $j$ as its flux. The continuity equation says: however much "probability" a small interval loses, exactly that much must have **flowed** out through its ends. Probability is never created or destroyed, only moved.
+
+That is also why normalisation is conserved: conservation of total probability is the global version of a local conservation law.
+
+</div>
+<div slot="right">
+
+$$
+\frac{\dd}{\dd t}\int_a^b\rho\,\dd x = j(a,t)-j(b,t)
+$$
+
+The left side is the rate of change of probability inside the interval; the right side is "flux in at the left minus flux out at the right".
+
+For a stationary state ($\Psi=\psi\ee^{-\ii Et/\hbar}$ with real $\psi$) we get $j\equiv 0$ — not because nothing moves, but because the leftward and rightward currents cancel exactly.
+
+</div>
+</DualView>
+
+<Derivation title="Example: the current of a plane wave" level="基础" minutes={3}>
+
+Take $\Psi = A\ee^{\ii(kx-\omega t)}$. Then
+
+$$
+\frac{\partial\Psi}{\partial x}=\ii k\Psi,\qquad
+\Psi^*\frac{\partial\Psi}{\partial x}=\ii k|A|^2
+$$
+
+$$
+j=\frac{\hbar}{m}\operatorname{Im}(\ii k|A|^2)=\frac{\hbar k}{m}|A|^2
+$$
+
+Since $\hbar k/m = p/m = v$,
+
+$$
+j = \rho\, v
+$$
+
+— density times velocity, exactly "flux = density × speed". This matches classical fluid intuition perfectly.
+
+It also shows in passing that if $\psi$ is a **real** function (an infinite-well stationary state, say), then $\Psi^*\partial_x\Psi$ is real, its imaginary part vanishes, and $j = 0$. In a stationary state the distribution does not move and neither does the current.
+
+</Derivation>
+
+<Callout type="misconception" title="j = 0 does not mean the particle is at rest">
+An infinite-well stationary state has $j\equiv 0$, yet the particle's kinetic energy is $E_n>0$, so it is plainly not at rest.
+
+The correct reading: the stationary state $\sin(n\pi x/L)$ can be written as a sum of two counter-propagating plane waves, $\frac{1}{2\ii}(\ee^{\ii n\pi x/L}-\ee^{-\ii n\pi x/L})$. The rightward and leftward currents are equal and opposite, so the net current is zero. It is a standing wave on a string fixed at both ends: the string moves, but no energy is transported.
+</Callout>
+
+## What counts as a legitimate wavefunction
+
+Not every mathematical function will do. The requirements come from two directions: the Born rule must be usable, and the Schrödinger equation must make sense.
+
+| Requirement | Reason |
+| --- | --- |
+| Square-integrable, $\int\lvert\Psi\rvert^2\dd x<\infty$ | Otherwise it cannot be normalised and the Born rule fails |
+| $\Psi$ single-valued | $\lvert\Psi\rvert^2$ must give a unique probability |
+| $\Psi$ continuous | Otherwise $\partial_x\Psi$ contains a delta function and the kinetic energy diverges |
+| $\partial_x\Psi$ continuous (for finite potentials) | Follows from integrating the Schrödinger equation; it may jump where the potential is infinite or contains a delta function |
+
+<Callout type="warning" title="The last row has exceptions, and they are common">
+At the walls of an infinite well, and at the location of a delta potential, $\partial_x\Psi$ **is allowed** to jump.
+
+This is not a loophole granted by hand; it follows from the equation itself. Integrate the Schrödinger equation across the discontinuity over a width $\varepsilon\to 0$ and the jump in $\partial_x\Psi$ is proportional to $\int V\dd x$. For finite $V$ that integral vanishes; for a delta function it does not.
+
+This will be needed immediately in sections [2.7](/en/ch/02-wavefunction/07-infinite-well/) and [2.8](/en/ch/02-wavefunction/08-finite-well/).
+</Callout>
+
+<Callout type="note" title="Why this section has no simulation">
+Visualising the probability current needs an animated flow field, and the case where it is genuinely convincing is a wave packet hitting a barrier, where the reflected and transmitted currents separate. That demonstration belongs in [section 2.11](/en/ch/02-wavefunction/11-tunneling/); here it would be a flat line at zero. Everything in this section is analytic and can be checked with pen and paper.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Normalisation', latex: '\\int_{-\\infty}^{\\infty}|\\Psi(x,t)|^2\\,\\dd x=1', note: 'Once true, the Schrödinger equation keeps it true' },
+    { name: 'Probability current', latex: 'j=\\frac{\\hbar}{m}\\operatorname{Im}\\left(\\Psi^*\\frac{\\partial\\Psi}{\\partial x}\\right)', note: 'Reduces to j = ρv for a plane wave' },
+    { name: 'Continuity equation', latex: '\\frac{\\partial\\rho}{\\partial t}+\\frac{\\partial j}{\\partial x}=0', note: 'Local conservation of probability' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'norm-1',
+      prompt: 'Does the condition ∫|Ψ|²dx = 1 determine the constant A in front of the wavefunction uniquely?',
+      options: [
+        'No — it fixes only |A|; the phase of A is free',
+        'Yes — A is uniquely a positive real number',
+        'Yes, because probabilities must be positive',
+        'No, because the integral itself diverges',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Only |A|² appears in the condition, so any A = |A|e^{iθ} satisfies it.',
+        2: 'Positivity requires only |A|² > 0 and says nothing about the phase.',
+      },
+      explain: 'The global phase is unobservable: Ψ and e^{iθ}Ψ give identical results for every measurement. Relative phases between superposed states, however, are observable.',
+    },
+    {
+      id: 'norm-2',
+      prompt: 'Which condition does the proof of conservation of normalisation depend on?',
+      options: [
+        'The potential V(x) is real',
+        'The potential V(x) is time-independent',
+        'The wavefunction is a stationary state',
+        'The particle mass is constant',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'V may depend on time in the derivation, as long as it is real; the two V terms still cancel.',
+        2: 'The proof holds for any wavefunction, stationary or not.',
+      },
+      explain: 'The key step is the cancellation of Ψ*(−i/ħ)VΨ against Ψ(+i/ħ)V*Ψ*, which requires V* = V. Complex potentials are introduced precisely to model absorption, and then the normalisation does decay.',
+    },
+    {
+      id: 'norm-3',
+      prompt: 'What is the probability current j of a real stationary wavefunction ψ(x), such as an infinite-well eigenstate, and what does that mean?',
+      options: [
+        'j = 0, because the rightward and leftward currents cancel exactly',
+        'j = 0, because the particle is at rest',
+        'j = ρv ≠ 0, because the particle moves uniformly inside the well',
+        'j oscillates in time',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The kinetic energy Eₙ > 0, so it is not at rest; expand the sine into two counter-propagating plane waves to see it.',
+        2: 'A real wavefunction makes Ψ*∂ₓΨ real, so its imaginary part vanishes.',
+      },
+      explain: 'j ∝ Im(Ψ*∂ₓΨ), which vanishes for real ψ. The picture is a standing wave: two counter-propagating waves superposed, zero net current but non-zero energy.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We have been using the Schrödinger equation without ever introducing it properly. The next section deals with the **stationary** case first — which is what the overwhelming majority of calculations actually amount to: solving an eigenvalue problem.

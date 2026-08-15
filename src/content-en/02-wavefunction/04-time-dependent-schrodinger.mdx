@@ -1,0 +1,253 @@
+---
+title: The time-dependent Schrödinger equation
+section: '2.4'
+order: 4
+summary: Stationary states are only particular solutions. The general one is a linear superposition of them — and once the coefficients are fixed, the entire future is fixed with them.
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+objectives:
+  - Write the complete time evolution of an arbitrary initial state
+  - Compute the expansion coefficients cₙ from an initial wavefunction and say what |cₙ|² means
+  - Explain why the Schrödinger equation is first order in time, and what follows from that
+---
+
+The previous section produced a family of particular solutions, $\Psi_n=\psi_n\ee^{-\ii E_nt/\hbar}$. But physically you cannot expect an initial state to be exactly one of them. Real initial states are arbitrary — "the particle is confined to the left half of the well", say. What then?
+
+The answer is hidden in one property of the equation: **linearity**.
+
+## Superposition and the general solution
+
+The Schrödinger equation is linear: if $\Psi_1$ and $\Psi_2$ are solutions, so is $c_1\Psi_1+c_2\Psi_2$. So we may stack infinitely many stationary states:
+
+$$
+\Psi(x,t)=\sum_n c_n\,\psi_n(x)\,\ee^{-\ii E_n t/\hbar}
+$$
+
+This is the general solution. **Fix the coefficients $c_n$ and you know $\Psi$ at every future time.**
+
+<Callout type="insight" title="The causal structure of quantum mechanics">
+The Schrödinger equation is **first order** in time. That means $\Psi(x,0)$ alone determines $\Psi(x,t)$ uniquely — no "initial velocity" is required.
+
+Compare Newton's equation $m\ddot x=F$, which is second order and needs both an initial position and an initial velocity. In quantum mechanics the wavefunction carries all the information by itself.
+
+It is also why the evolution of a quantum state is **completely deterministic**. Indeterminacy enters at **measurement**, not during evolution — two things that are constantly conflated.
+</Callout>
+
+## Finding the coefficients
+
+The stationary states $\psi_n$ form a **complete orthonormal basis** (proved in [section 3.5](/en/ch/03-formalism/05-hermitian-operators/); used here on trust):
+
+$$
+\int_{-\infty}^{\infty}\psi_m^*(x)\psi_n(x)\,\dd x=\delta_{mn}
+$$
+
+<Derivation title="Extracting cₙ with orthogonality" level="基础" minutes={4}>
+
+At $t=0$,
+
+$$
+\Psi(x,0)=\sum_n c_n\psi_n(x)
+$$
+
+Multiply both sides by $\psi_m^*(x)$ and integrate over all space:
+
+$$
+\int\psi_m^*\Psi(x,0)\,\dd x=\sum_n c_n\int\psi_m^*\psi_n\,\dd x=\sum_n c_n\delta_{mn}=c_m
+$$
+
+so that
+
+$$
+c_n=\int_{-\infty}^{\infty}\psi_n^*(x)\,\Psi(x,0)\,\dd x
+$$
+
+This manoeuvre is called the **Fourier trick**. It works entirely because orthogonality annihilates every term in the sum but one. In Dirac notation it becomes $c_n=\braket{\psi_n}{\Psi(0)}$, which reads simply as "take the component" — exactly isomorphic to projecting a three-dimensional vector onto a basis vector.
+
+</Derivation>
+
+The coefficients also satisfy
+
+$$
+\sum_n|c_n|^2=1
+$$
+
+<Derivation title="Proof that Σ|cₙ|² = 1" level="进阶" minutes={3}>
+
+$$
+1=\int|\Psi|^2\dd x=\int\left(\sum_m c_m\psi_m\right)^{\!*}\left(\sum_n c_n\psi_n\right)\dd x
+=\sum_{m,n}c_m^*c_n\int\psi_m^*\psi_n\,\dd x
+$$
+
+$$
+=\sum_{m,n}c_m^*c_n\,\delta_{mn}=\sum_n|c_n|^2
+$$
+
+Note that the result is time-independent: including the time factors sends $c_n\to c_n\ee^{-\ii E_nt/\hbar}$, which leaves the moduli untouched. So **if the initial state is normalised, it stays normalised forever** — the same conclusion reached in [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/) via the continuity equation, obtained here with far less work.
+
+</Derivation>
+
+<Callout type="insight" title="What |cₙ|² is">
+$|c_n|^2$ is the **probability of obtaining $E_n$ when you measure the energy**.
+
+This section cannot prove that — it belongs to the measurement postulate ([section 3.8](/en/ch/03-formalism/08-measurement/)). But you can already check its consistency: $\sum_n|c_n|^2=1$ says exactly that "measuring the energy always returns some $E_n$".
+
+Moreover $\langle E\rangle=\sum_n|c_n|^2E_n$ does not change with time (because the $|c_n|$ do not), which is the quantum version of **energy conservation**.
+</Callout>
+
+## A complete example
+
+<Derivation title="Example: an initially localised state in an infinite well" level="进阶" minutes={7}>
+
+Take an infinite square well of width $L$, whose stationary states are (see [section 2.7](/en/ch/02-wavefunction/07-infinite-well/))
+
+$$
+\psi_n(x)=\sqrt{\frac{2}{L}}\sin\frac{n\pi x}{L},\qquad E_n=\frac{n^2\pi^2\hbar^2}{2mL^2}
+$$
+
+Let the initial state be an equal-weight superposition of the two lowest states:
+
+$$
+\Psi(x,0)=\frac{1}{\sqrt2}\left[\psi_1(x)+\psi_2(x)\right]
+$$
+
+so $c_1=c_2=1/\sqrt2$ and everything else vanishes. Evolving,
+
+$$
+\Psi(x,t)=\frac{1}{\sqrt2}\left[\psi_1\ee^{-\ii E_1t/\hbar}+\psi_2\ee^{-\ii E_2t/\hbar}\right]
+$$
+
+and the probability density is
+
+$$
+|\Psi|^2=\frac12\left[\psi_1^2+\psi_2^2+2\psi_1\psi_2\cos\frac{(E_2-E_1)t}{\hbar}\right]
+$$
+
+<strong>Look carefully at the cross term.</strong> The first two terms do not move; the third oscillates at angular frequency
+
+$$
+\omega_{21}=\frac{E_2-E_1}{\hbar}=\frac{3\pi^2\hbar}{2mL^2}
+$$
+
+so the probability density **sloshes from side to side** inside the well with period $T=2\pi\hbar/(E_2-E_1)$.
+
+Three things worth noting:
+
+1. The frequency depends only on the **level difference**, not on where the energy zero is. Shift every $E_n$ by a constant and nothing physical changes — the choice of zero really is arbitrary.
+2. If only one $c_n$ is non-zero (a pure stationary state) there is no cross term and $|\Psi|^2$ is static.
+3. This $\omega_{21}$ is exactly the frequency at which the system absorbs or emits a photon ([section 7.5](/en/ch/07-approximation/05-time-dependent-perturbation/)). **Bohr's frequency condition $\Delta E=\hbar\omega$ has appeared on its own.**
+
+</Derivation>
+
+## Why first order in time
+
+Schrödinger actually wrote down a relativistic second-order equation first — later called the Klein–Gordon equation — and retreated to the non-relativistic first-order form only after finding that it gave the wrong fine structure for hydrogen.
+
+<DualView>
+<div slot="left">
+
+Being first order in time buys two crucial properties:
+
+- **Probability conservation** works. The conserved quantity of the second-order equation is not positive definite and cannot be read as a probability — this is precisely the "negative probability" difficulty of the Klein–Gordon equation.
+- **The initial condition is just $\Psi(x,0)$**, which makes the notion of a state very clean.
+
+The price is that the equation is second order in space and first order in time, so **space and time are not on the same footing** — unacceptable relativistically, and eventually fixed by the Dirac equation.
+
+</div>
+<div slot="right">
+
+$$
+\ii\hbar\frac{\partial\Psi}{\partial t}=\hat H\Psi
+$$
+
+Formal solution:
+
+$$
+\Psi(t)=\hat U(t)\Psi(0),\qquad \hat U(t)=\ee^{-\ii\hat Ht/\hbar}
+$$
+
+$\hat U$ is **unitary** ($\hat U^\dagger\hat U=1$), which is the operator version of probability conservation. See [section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/).
+
+The relativistic generalisation is [chapter 12](/en/ch/12-relativistic/).
+
+</div>
+</DualView>
+
+<Callout type="misconception" title="The i is not optional">
+You will occasionally read that the $\ii$ in the equation is a convention. It is not.
+
+Delete the $\ii$ from $\ii\hbar\partial_t\Psi=\hat H\Psi$ and you have a **diffusion equation**, $\partial_t\Psi\propto\partial_x^2\Psi$. Its solutions decay exponentially; they do not oscillate and they do not interfere. That equation describes ink spreading in water, not an electron.
+
+The $\ii$ turns exponential solutions from $\ee^{-\lambda t}$ (decay) into $\ee^{-\ii\omega t}$ (oscillation), and all wave behaviour and interference follows from that. Incidentally, substituting $t\to-\ii\tau$ really does turn the Schrödinger equation into a diffusion equation; that trick is called Wick rotation and it underpins quantum Monte Carlo and the [path integral](/en/ch/11-path-integral/).
+</Callout>
+
+<Callout type="note" title="Why this section has no simulation">
+The central claim here — that $|\Psi|^2$ oscillates for a superposition and does not for a stationary state — is exactly what the well simulation in the next section, [2.5](/en/ch/02-wavefunction/05-stationary-states/), is built to show, complete with a stationary/superposition toggle. Repeating the same simulation here would add nothing.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Time-dependent Schrödinger equation', latex: '\\ii\\hbar\\frac{\\partial\\Psi}{\\partial t}=\\hat H\\Psi', note: 'First order in time: Ψ(x,0) determines the future uniquely' },
+    { name: 'General solution', latex: '\\Psi(x,t)=\\sum_n c_n\\psi_n(x)\\,\\ee^{-\\ii E_n t/\\hbar}', note: 'Each component turns its phase at its own energy' },
+    { name: 'Expansion coefficients', latex: 'c_n=\\int\\psi_n^*(x)\\,\\Psi(x,0)\\,\\dd x', note: 'The Fourier trick; |cₙ|² is the probability of measuring Eₙ' },
+    { name: 'Bohr frequency', latex: '\\omega_{mn}=\\frac{E_m-E_n}{\\hbar}', note: 'Oscillation frequency of the cross term, and of the emitted photon' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tdse-1',
+      prompt: 'You know a particle\'s wavefunction Ψ(x,0) at t = 0. What extra information is needed to predict Ψ at t > 0?',
+      options: [
+        'None — Ψ(x,0) plus the Hamiltonian fixes the future completely',
+        'The value of ∂Ψ/∂t at t = 0 as well',
+        'The results of measurements',
+        'It cannot be predicted; quantum evolution is inherently random',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is what a second-order equation (Newton, the wave equation) needs; the Schrödinger equation is first order in time.',
+        3: 'Evolution is completely deterministic; randomness enters only at measurement.',
+      },
+      explain: 'Being first order in time, the equation takes Ψ(x,0) as its complete initial condition. Formally Ψ(t) = e^{−iĤt/ħ}Ψ(0).',
+    },
+    {
+      id: 'tdse-2',
+      prompt: 'Shift every energy level by a constant E₀ (that is, choose a different zero of energy). Which quantities change? (Select all that apply.)',
+      options: [
+        'The phase factor e^{−iEₙt/ħ} of each stationary state',
+        'The oscillation frequency of the probability density in a superposition',
+        'The spatial wavefunctions ψₙ(x)',
+        'The probabilities |cₙ|² of measuring each eigenvalue',
+      ],
+      answer: [0],
+      distractors: {
+        1: 'The frequency is set by the difference (Eₘ−Eₙ)/ħ, which a common shift leaves alone.',
+        2: 'The equation becomes Ĥ′ψ = (E+E₀)ψ, and the same ψ still solves it.',
+        3: 'The coefficients come from the overlap of the initial state with the eigenstates; the energy zero does not enter.',
+      },
+      explain: 'A global energy shift multiplies every component by the same phase e^{−iE₀t/ħ}, which is a global phase and unobservable. Every observable — the oscillation frequency included — depends only on level differences.',
+    },
+    {
+      id: 'tdse-3',
+      prompt: 'An infinite well starts in Ψ(x,0) = (ψ₁ + ψ₂)/√2. How does |Ψ(x,t)|² behave?',
+      options: [
+        'It sloshes from side to side at angular frequency (E₂−E₁)/ħ',
+        'It stays fixed, because each ψₙ is a stationary state',
+        'It drifts steadily to the right',
+        'It oscillates at angular frequency (E₂+E₁)/ħ',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A superposition of stationary states is not stationary; the cross term 2ψ₁ψ₂cos[(E₂−E₁)t/ħ] moves.',
+        3: 'No sum frequency appears: the cross term comes from e^{−iE₁t/ħ} times e^{+iE₂t/ħ}, so the exponents subtract.',
+      },
+      explain: '|Ψ|² = ½[ψ₁² + ψ₂² + 2ψ₁ψ₂cos(ω₂₁t)] with ω₂₁ = (E₂−E₁)/ħ. The simulation in the next section shows this oscillation directly.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We now have the full picture of the evolution. The next section lays out the difference between stationary and non-stationary states completely — and lets you watch it in a simulation.

@@ -4,6 +4,8 @@ import { Button, Readout, Segmented, Slider, Toggle } from './controls'
 import { useCanvasFrame } from './useCanvas'
 import { drawAxes, drawCurve, drawLegend, makeScale, niceTicks } from '@/lib/plot'
 import { SplitOperator, barrierTransmission, rectBarrierOnGrid } from '@/lib/numerics'
+import { rich } from './rich'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 波包演化与散射：高斯波包撞上矩形势垒 / 势阱。
@@ -23,7 +25,8 @@ const X_MAX = 60
 const DT = 0.005
 const X0 = -26
 
-export default function WavePacketScattering() {
+export default function WavePacketScattering({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const [k0, setK0] = useState(2)
   const [V0, setV0] = useState(2.5)
   const [width, setWidth] = useState(1.5)
@@ -126,7 +129,8 @@ export default function WavePacketScattering() {
       const xR = b.width / 2
       let R = 0
       let inside = 0
-      let T = 0
+      // 局部变量不叫 T：这个作用域里 T 已经是翻译函数了
+      let trans = 0
       let m1 = 0
       let m2 = 0
       let tot = 0
@@ -134,7 +138,7 @@ export default function WavePacketScattering() {
         const p = prob[i]!
         const x = so.x[i]!
         if (x < xL) R += p
-        else if (x > xR) T += p
+        else if (x > xR) trans += p
         else inside += p
         tot += p
         m1 += p * x
@@ -143,7 +147,7 @@ export default function WavePacketScattering() {
       // 四个累加量都还是「格点求和」，统一乘 dx 变成积分。
       // 漏掉 m1/m2 的话 ⟨x⟩ 会被放大 1/dx 倍，Δx² 变成大负数再被钳成 0。
       R *= dx
-      T *= dx
+      trans *= dx
       inside *= dx
       tot *= dx
       m1 *= dx
@@ -156,7 +160,7 @@ export default function WavePacketScattering() {
       // 只看 inside < ε 会在 t 刚过阈值时立刻锁定，给出 R = 1、T = 0 的假结果。
       if (inside > 1e-4) interactedRef.current = true
       if (!latchedRef.current && interactedRef.current && inside < 1e-6 && tot > 0.98) {
-        latchedRef.current = { R: R / tot, T: T / tot }
+        latchedRef.current = { R: R / tot, T: trans / tot }
         setLatched(latchedRef.current)
         setPlaying(false)
       }
@@ -164,7 +168,7 @@ export default function WavePacketScattering() {
       const now = performance.now()
       if (now - lastPushRef.current > 100) {
         lastPushRef.current = now
-        setLive({ t: timeRef.current, R, T, inside, norm: tot, xMean, dx: spread })
+        setLive({ t: timeRef.current, R, T: trans, inside, norm: tot, xMean, dx: spread })
       }
 
       // ── 绘制 ──
@@ -243,7 +247,10 @@ export default function WavePacketScattering() {
 
       const legend = [{ color: f.colors.prob, label: '|ψ(x,t)|²' }]
       if (showRe) legend.push({ color: f.colors.wave, label: 'Re ψ' })
-      legend.push({ color: f.colors.potential, label: V0 >= 0 ? '势垒 V(x)' : '势阱 V(x)' })
+      legend.push({
+        color: f.colors.potential,
+        label: V0 >= 0 ? T('势垒 V(x)') : T('势阱 V(x)'),
+      })
       drawLegend(f, legend, 'top-left')
 
       f.ctx.save()
@@ -254,7 +261,7 @@ export default function WavePacketScattering() {
       f.ctx.fillText(`t = ${timeRef.current.toFixed(2)}`, f.width - pad.right - 4, pad.top + 2)
       f.ctx.restore()
     },
-    [showRe, energy, V0, width, speed, playing, view],
+    [showRe, energy, V0, width, speed, playing, view, lang],
     { animate: view === 'space', padding: { left: 46, bottom: 34 } },
   )
 
@@ -269,7 +276,7 @@ export default function WavePacketScattering() {
       const sx = makeScale([0, eMax], [pad.left, f.width - pad.right])
       const sy = makeScale([0, 1.05], [f.height - pad.bottom, pad.top])
       drawAxes({ ...f, padding: pad }, sx, sy, {
-        xLabel: '入射能量 E',
+        xLabel: T('入射能量 E'),
         yLabel: 'T',
         grid: true,
         zeroLine: false,
@@ -320,19 +327,19 @@ export default function WavePacketScattering() {
       drawLegend(
         { ...f, padding: pad },
         [
-          { color: f.colors.accent, label: '平面波解析解 T(E)' },
-          { color: f.colors.energy, label: '当前 E 的解析值' },
-          ...(latched ? [{ color: f.colors.prob, label: '本次模拟测得 T' }] : []),
+          { color: f.colors.accent, label: T('平面波解析解 T(E)') },
+          { color: f.colors.energy, label: T('当前 E 的解析值') },
+          ...(latched ? [{ color: f.colors.prob, label: T('本次模拟测得 T') }] : []),
         ],
         'top-right',
       )
     },
-    [V0, width, energy, latched, view],
+    [V0, width, energy, latched, view, lang],
     { animate: false },
   )
 
   const classicalPrediction =
-    V0 <= 0 ? '经典：完全透射' : energy < V0 ? '经典：完全反射' : '经典：完全透射'
+    V0 > 0 && energy < V0 ? T('经典：完全反射') : T('经典：完全透射')
 
   const readout = useMemo(() => {
     const shown = latched ?? { R: live.norm > 0 ? live.R / live.norm : 0, T: live.norm > 0 ? live.T / live.norm : 0 }
@@ -341,51 +348,54 @@ export default function WavePacketScattering() {
         <Readout
           items={[
             { label: 'E / V₀', value: V0 === 0 ? '—' : (energy / V0).toFixed(2) },
-            { label: `反射 R${latched ? '（已锁定）' : ''}`, value: shown.R.toFixed(3), color: 'var(--c-warn)' },
-            { label: `透射 T${latched ? '（已锁定）' : ''}`, value: shown.T.toFixed(3), color: 'var(--c-prob)' },
-            { label: '波包宽度 Δx', value: live.dx.toFixed(2) },
+            {
+              label: latched ? T('反射 R（已锁定）') : T('反射 R'),
+              value: shown.R.toFixed(3),
+              color: 'var(--c-warn)',
+            },
+            {
+              label: latched ? T('透射 T（已锁定）') : T('透射 T'),
+              value: shown.T.toFixed(3),
+              color: 'var(--c-prob)',
+            },
+            { label: T('波包宽度 Δx'), value: live.dx.toFixed(2) },
           ]}
         />
         <p className="text-[12.5px] leading-relaxed text-[var(--text-muted)]">
-          {latched ? (
-            <>
-              散射结束：<strong>R + T = {(shown.R + shown.T).toFixed(3)}</strong>。
-              {classicalPrediction}，量子给出 T = {shown.T.toFixed(3)}、R = {shown.R.toFixed(3)}。
-              解析平面波在 E = {energy.toFixed(2)} 处给出 T ={' '}
-              {barrierTransmission(energy, V0, barrierRef.current.width).toFixed(3)}
-              （波包有能量展宽，两者会有几个百分点的差别）。
-            </>
-          ) : (
-            <>
-              点「播放」让波包撞上势垒。波包完全离开势垒区后 R、T 会自动锁定。
-              势垒在网格上的实际宽度 a = {barrierRef.current.width.toFixed(3)}。
-            </>
-          )}
+          {latched
+            ? rich(
+                T(
+                  '散射结束：`R + T = {0}`。{1}，量子给出 T = {2}、R = {3}。解析平面波在 E = {4} 处给出 T = {5}（波包有能量展宽，两者会有几个百分点的差别）。',
+                  (shown.R + shown.T).toFixed(3),
+                  classicalPrediction,
+                  shown.T.toFixed(3),
+                  shown.R.toFixed(3),
+                  energy.toFixed(2),
+                  barrierTransmission(energy, V0, barrierRef.current.width).toFixed(3),
+                ),
+              )
+            : T(
+                '点「播放」让波包撞上势垒。波包完全离开势垒区后 R、T 会自动锁定。势垒在网格上的实际宽度 a = {0}。',
+                barrierRef.current.width.toFixed(3),
+              )}
         </p>
       </div>
     )
-  }, [latched, live, energy, V0, classicalPrediction])
+  }, [latched, live, energy, V0, classicalPrediction, lang])
 
   return (
     <SimShell
       id="wave-packet-scattering"
-      title="波包演化与散射"
-      subtitle={
-        <>
-          高斯波包撞上矩形势垒。用分步算符法实时求解含时薛定谔方程，ħ = m = 1。
-        </>
-      }
+      lang={lang}
+      title={T('波包演化与散射')}
+      subtitle={T('高斯波包撞上矩形势垒。用分步算符法实时求解含时薛定谔方程，ħ = m = 1。')}
       onReset={reset}
       readout={readout}
       controls={
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Slider
-              label={
-                <>
-                  入射动量 <span className="font-mono">k₀</span>
-                </>
-              }
+              label={rich(T('入射动量 `k₀`'))}
               value={k0}
               min={0.6}
               max={4}
@@ -394,60 +404,48 @@ export default function WavePacketScattering() {
               hint={`E = k₀²/2 = ${energy.toFixed(2)}`}
             />
             <Slider
-              label={
-                <>
-                  势垒高度 <span className="font-mono">V₀</span>
-                </>
-              }
+              label={rich(T('势垒高度 `V₀`'))}
               value={V0}
               min={-4}
               max={8}
               step={0.1}
               onChange={setV0}
-              hint={V0 < 0 ? '负值 = 势阱' : '正值 = 势垒'}
+              hint={V0 < 0 ? T('负值 = 势阱') : T('正值 = 势垒')}
             />
             <Slider
-              label={
-                <>
-                  势垒宽度 <span className="font-mono">a</span>
-                </>
-              }
+              label={rich(T('势垒宽度 `a`'))}
               value={width}
               min={0.3}
               max={6}
               step={0.1}
               onChange={setWidth}
-              hint="T 随 a 指数衰减：T ~ e^(−2κa)"
+              hint={T('T 随 a 指数衰减：T ~ e^(−2κa)')}
             />
             <Slider
-              label={
-                <>
-                  初始波包宽度 <span className="font-mono">σ</span>
-                </>
-              }
+              label={rich(T('初始波包宽度 `σ`'))}
               value={sigma}
               min={1}
               max={8}
               step={0.25}
               onChange={setSigma}
-              hint="σ 越大动量越确定，越接近平面波"
+              hint={T('σ 越大动量越确定，越接近平面波')}
             />
           </div>
 
           <div className="flex flex-wrap items-end justify-between gap-4">
             <Segmented
-              label="视图"
+              label={T('视图')}
               value={view}
               onChange={setView}
               options={[
-                { value: 'space', label: '实时演化' },
-                { value: 'transmission', label: '透射率曲线 T(E)' },
+                { value: 'space', label: T('实时演化') },
+                { value: 'transmission', label: T('透射率曲线 T(E)') },
               ]}
             />
             <div className="flex flex-wrap items-center gap-3">
-              <Toggle label="显示 Re ψ" checked={showRe} onChange={setShowRe} />
+              <Toggle label={T('显示 Re ψ')} checked={showRe} onChange={setShowRe} />
               <Slider
-                label="速度"
+                label={T('速度')}
                 value={speed}
                 min={1}
                 max={24}
@@ -463,7 +461,7 @@ export default function WavePacketScattering() {
                 }}
                 variant="primary"
               >
-                {playing ? '暂停' : latched ? '重放' : '播放'}
+                {playing ? T('暂停') : latched ? T('重放') : T('播放')}
               </Button>
               <Button
                 onClick={() => {
@@ -471,33 +469,38 @@ export default function WavePacketScattering() {
                   setPlaying(false)
                 }}
               >
-                回到 t = 0
+                {T('回到 t = 0')}
               </Button>
             </div>
           </div>
         </div>
       }
       prompts={[
-        <>
-          默认参数下 <code>E ≈ 2.0 &lt; V₀ = 2.5</code>，经典粒子 100% 被弹回。播放看看：
-          有一部分波包穿过去了。这就是<strong>隧道效应</strong>，也是扫描隧道显微镜与 α 衰变的原理。
-        </>,
-        <>
-          把 <code>a</code> 从 1.5 加到 4，重放。透射率暴跌——<code>T ~ e^(−2κa)</code> 是指数衰减，
-          势垒稍微加宽一点，隧穿概率就掉几个数量级。
-        </>,
-        <>
-          把 <code>V₀</code> 调到 1.0（此时 E &gt; V₀，经典应当 100% 透射），重放：
-          仍然有明显的反射峰跑回左边。<strong>波遇到势的突变就会部分反射</strong>，跟光在玻璃表面一样。
-        </>,
-        <>
-          切到「透射率曲线」，把 <code>V₀</code> 设成负值（势阱）：曲线在某些能量处回到 T = 1。
-          这是<strong>共振透射</strong>，历史上表现为惰性气体对慢电子近乎透明的 Ramsauer–Townsend 效应。
-        </>,
-        <>
-          把 <code>σ</code> 调到 8 再散射，测得的 T 会更贴近解析曲线上的空心圆点——
-          波包越接近平面波，「单一能量」的近似就越好。
-        </>,
+        rich(
+          T(
+            '默认参数下 `E ≈ 2.0 < V₀ = 2.5`，经典粒子 100% 被弹回。播放看看：有一部分波包穿过去了。这就是隧道效应，也是扫描隧道显微镜与 α 衰变的原理。',
+          ),
+        ),
+        rich(
+          T(
+            '把 `a` 从 1.5 加到 4，重放。透射率暴跌——`T ~ e^(−2κa)` 是指数衰减，势垒稍微加宽一点，隧穿概率就掉几个数量级。',
+          ),
+        ),
+        rich(
+          T(
+            '把 `V₀` 调到 1.0（此时 E > V₀，经典应当 100% 透射），重放：仍然有明显的反射峰跑回左边。波遇到势的突变就会部分反射，跟光在玻璃表面一样。',
+          ),
+        ),
+        rich(
+          T(
+            '切到「透射率曲线」，把 `V₀` 设成负值（势阱）：曲线在某些能量处回到 T = 1。这是共振透射，历史上表现为惰性气体对慢电子近乎透明的 Ramsauer–Townsend 效应。',
+          ),
+        ),
+        rich(
+          T(
+            '把 `σ` 调到 8 再散射，测得的 T 会更贴近解析曲线上的空心圆点——波包越接近平面波，「单一能量」的近似就越好。',
+          ),
+        ),
       ]}
     >
       {view === 'space' ? (
@@ -505,14 +508,14 @@ export default function WavePacketScattering() {
           ref={canvasRef}
           className="h-[320px] w-full sm:h-[380px]"
           role="img"
-          aria-label="波包散射实时演化"
+          aria-label={T('波包散射实时演化')}
         />
       ) : (
         <canvas
           ref={tCanvasRef}
           className="h-[320px] w-full sm:h-[380px]"
           role="img"
-          aria-label="矩形势垒透射率随能量的变化"
+          aria-label={T('矩形势垒透射率随能量的变化')}
         />
       )}
     </SimShell>
