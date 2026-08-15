@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
-import { Line } from '@react-three/drei'
 import { SceneCanvas, SceneLabel, type SceneApi, type ViewPreset } from '../core/SceneCanvas'
 import SceneShell from '../core/SceneShell'
 import { useScenePalette } from '../core/theme'

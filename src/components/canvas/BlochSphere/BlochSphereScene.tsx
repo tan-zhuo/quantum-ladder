@@ -255,6 +255,120 @@ function PrecessionCone({
   return <Line points={pts} color={p.classical} lineWidth={1.6} dashed dashSize={0.06} gapSize={0.045} transparent opacity={0.9} />
 }
 
+/** 读数区里可点击的一项公式。点亮之后 3D 里会画出对应的几何量。 */
+function FormulaTerm({
+  children,
+  active,
+  onToggle,
+  title,
+}: {
+  children: React.ReactNode
+  active: boolean
+  onToggle: () => void
+  title: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      title={title}
+      className={
+        'rounded-md px-1 transition-colors ' +
+        (active
+          ? 'bg-[var(--accent-soft)] text-[var(--accent-text)] ring-1 ring-[var(--accent)]/40'
+          : 'hover:bg-[var(--bg-subtle)]')
+      }
+    >
+      {children}
+    </button>
+  )
+}
+
+/**
+ * θ 与 φ 的角度弧。
+ *
+ * 这是规格里「点击公式高亮对应 3D 元素」的落点：θ 是矢量与 +z 轴的夹角，
+ * φ 是它在赤道面上的投影与 +x 轴的夹角。两个角在公式里各占一项，
+ * 在球上各是一段弧——点一下就把这层对应关系摆出来。
+ */
+function AngleArcs({
+  highlight,
+  theta,
+  phi,
+}: {
+  highlight: 'theta' | 'phi' | null
+  theta: number
+  phi: number
+}) {
+  const p = useScenePalette()
+  const arcs = useMemo(() => {
+    const R = 0.42
+    const thetaArc: [number, number, number][] = []
+    for (let i = 0; i <= 48; i++) {
+      const a = (theta * i) / 48
+      // 从 +z（three 的 +y）转向矢量所在的那个竖直平面
+      thetaArc.push([
+        R * Math.sin(a) * Math.cos(phi),
+        R * Math.cos(a),
+        R * Math.sin(a) * Math.sin(phi),
+      ])
+    }
+    const phiArc: [number, number, number][] = []
+    for (let i = 0; i <= 48; i++) {
+      const a = (phi * i) / 48
+      phiArc.push([R * 1.35 * Math.cos(a), 0, R * 1.35 * Math.sin(a)])
+    }
+    return { thetaArc, phiArc, R }
+  }, [theta, phi])
+
+  if (!highlight) return null
+
+  if (highlight === 'theta') {
+    const mid = arcs.thetaArc[24]!
+    return (
+      <group>
+        <Line points={arcs.thetaArc} color={p.accent} lineWidth={2.6} />
+        <Line
+          points={[
+            [0, 0, 0],
+            [Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)],
+          ]}
+          color={p.accent}
+          lineWidth={1.2}
+          transparent
+          opacity={0.5}
+        />
+        <SceneLabel position={[mid[0] * 1.35, mid[1] * 1.35, mid[2] * 1.35]} tone="accent">
+          θ = {((theta * 180) / Math.PI).toFixed(0)}°
+        </SceneLabel>
+      </group>
+    )
+  }
+
+  const mid = arcs.phiArc[24]!
+  return (
+    <group>
+      <Line points={arcs.phiArc} color={p.imag} lineWidth={2.6} />
+      <Line
+        points={[
+          [0, 0, 0],
+          [Math.sin(theta) * Math.cos(phi), 0, Math.sin(theta) * Math.sin(phi)],
+        ]}
+        color={p.imag}
+        lineWidth={1.2}
+        transparent
+        opacity={0.55}
+        dashed
+        dashSize={0.05}
+        gapSize={0.04}
+      />
+      <SceneLabel position={[mid[0] * 1.2, 0.08, mid[2] * 1.2]} tone="custom">
+        <span style={{ color: p.imag }}>φ = {((phi * 180) / Math.PI).toFixed(0)}°</span>
+      </SceneLabel>
+    </group>
+  )
+}
+
 export default function BlochSphereScene() {
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
@@ -272,6 +386,8 @@ export default function BlochSphereScene() {
   const [showProjection, setShowProjection] = useState(true)
   const [tally, setTally] = useState({ plus: 0, minus: 0 })
   const [outcome, setOutcome] = useState<null | { value: 1 | -1; at: number }>(null)
+  /** 公式与 3D 的联动：点公式里的某一项，就在球上把对应的几何量画出来 */
+  const [highlight, setHighlight] = useState<'theta' | 'phi' | null>(null)
 
   // 实时矢量放在 ref 里逐帧更新；React state 只保存 12 Hz 的采样，用于读数
   const live = useRef<LiveState>({
@@ -355,14 +471,6 @@ export default function BlochSphereScene() {
 
   const total = tally.plus + tally.minus
   const empirical = total > 0 ? tally.plus / total : 0
-
-  const stateTex = useMemo(() => {
-    const t = displayAngles.theta
-    const f = displayAngles.phi
-    const c = Math.cos(t / 2)
-    const s = Math.sin(t / 2)
-    return `\\ket{\\psi} = ${c.toFixed(3)}\\,\\ket{0} + ${s.toFixed(3)}\\,\\ee^{${f.toFixed(2)}\\ii}\\ket{1}`
-  }, [displayAngles])
 
   return (
     <SceneShell
@@ -503,8 +611,19 @@ export default function BlochSphereScene() {
       }
       readout={
         <div className="space-y-2">
-          <div className="overflow-x-auto text-[15px]">
-            <Tex>{stateTex}</Tex>
+          <div className="flex flex-wrap items-center gap-x-1 gap-y-1 overflow-x-auto text-[15px]">
+            <Tex>{'\\ket{\\psi} ='}</Tex>
+            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title="点一下：在球上画出 θ（与 +z 轴的夹角）">
+              <Tex>{`\\cos\\tfrac{\\theta}{2} = ${Math.cos(displayAngles.theta / 2).toFixed(3)}`}</Tex>
+            </FormulaTerm>
+            <Tex>{'\\ket{0} +'}</Tex>
+            <FormulaTerm active={highlight === 'phi'} onToggle={() => setHighlight((h) => (h === 'phi' ? null : 'phi'))} title="点一下：在赤道面上画出 φ（相对相位）">
+              <Tex>{`\\ee^{\\ii\\varphi} = \\ee^{${displayAngles.phi.toFixed(2)}\\ii}`}</Tex>
+            </FormulaTerm>
+            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title="点一下：在球上画出 θ">
+              <Tex>{`\\sin\\tfrac{\\theta}{2} = ${Math.sin(displayAngles.theta / 2).toFixed(3)}`}</Tex>
+            </FormulaTerm>
+            <Tex>{'\\ket{1}'}</Tex>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
             <span>
@@ -527,6 +646,7 @@ export default function BlochSphereScene() {
         </div>
       }
       guide={[
+        '读数区的公式是可以点的：点 cos(θ/2) 那一项，球上会画出 θ 这个夹角；点 e^{iφ} 那一项，赤道面上会画出 φ。公式里的每个符号在球上都有一个对应的几何量。',
         '先把 θ 拖到 90°：状态落在赤道上，此时沿 z 测量得到 0 和 1 的概率各一半——「等概率叠加」在球面上就是「站在赤道」。',
         '保持 θ 不变、只拖 φ：沿 z 测量的概率完全不变。φ 是相对相位，它在 z 基下不可见，却决定了沿 x、y 测量的结果。切到 σx 再拖一次 φ，看读数怎么变。',
         '打开磁场按播放：注意矢量与磁场方向的夹角始终不变，只有 φ 在均匀增加。这就是 Larmor 进动。',
@@ -603,6 +723,8 @@ export default function BlochSphereScene() {
         ) : null}
 
         <PrecessionCone axis={bVec} cosAngle={cosAngleToB} visible={showCone && bMag > 0} />
+
+        <AngleArcs highlight={highlight} theta={displayAngles.theta} phi={displayAngles.phi} />
 
         <StateVector live={live} measureAxis={mVec} showProjection={showProjection} onDrag={onDrag} />
 
