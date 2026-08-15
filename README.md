@@ -1,6 +1,11 @@
 # Quantum Ladder · 量子力学阶梯
 
-以 **3D 交互为主要教学语言**的量子力学学习平台。纯前端、可静态部署、支持离线。
+以 **3D 交互为主要教学语言**的量子力学学习平台。纯前端、可静态部署、支持离线、中英双语。
+
+*A quantum-mechanics learning platform where interactive 3D scenes do the teaching. Static, offline-capable, bilingual (中文 / English).*
+
+- 博客 Blog：<https://tanzhuo.xyz>
+- 源码 Source：<https://github.com/tan-zhuo/quantum-ladder>
 
 > 这不是电子书。12 个 3D 场景是这里的主讲人——每一个重要原理都尽可能用三维把物理图像讲透，
 > 让人先「看见」量子世界在发生什么，再谈公式。所有计算都在浏览器里实时进行。
@@ -15,6 +20,24 @@ npm run preview  # 本地预览构建结果
 ```
 
 部署在子路径（如 GitHub Pages 的 `/quantum-ladder/`）时，把 `astro.config.mjs` 里的 `base` 打开。
+
+## 双语
+
+中文在根路径，英文在 `/en/` 下，页眉右侧的 `EN` / `中` 按钮在两者之间对折当前页面。
+
+| 部分 | 中文 | English |
+| --- | --- | --- |
+| 12 个 3D 场景（标题、控件、观察指南、误解卡、思考题、读数） | ✅ | ✅ |
+| 16 个模块正文 | ✅ | ✅ |
+| 站点框架（导航、首页、目录、搜索、页脚） | ✅ | ✅ |
+| 教材 106 节的**正文** | ✅ | ❌ 仍是中文（标题与目录已英译，入口处有标注） |
+
+翻译机制是 gettext 式的：**中文原文即 msgid**，译文放在 `src/i18n/dict.*.ts`。
+漏翻会原样退回中文而不是露出裸键名；`npm run i18n:check` 会把漏掉的列出来。
+
+```bash
+npm run i18n:check   # 648 msgids, all translated
+```
 
 ## 两条内容轴
 

@@ -1,0 +1,130 @@
+---
+num: '03'
+title: 'Bound states in one dimension: wells and the oscillator'
+goal: 'See where energy levels come from, and why a state that is visibly spinning is called stationary.'
+youWillSee:
+  - 'The blue ψ tube turns in the complex plane while the purple |ψ|² curtain does not move at all'
+  - 'Each increment of the quantum number adds one node; level spacings go as n² or stay constant'
+  - 'In a finite well the wavefunction leaks through the wall and decays exponentially — the seed of tunnelling'
+prereqs:
+  - 'The wavefunction and the Born rule (module 02)'
+  - 'Boundary conditions for second-order differential equations'
+scenes:
+  - potential-well
+related:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - 02-wavefunction/05-stationary-states
+  - 02-wavefunction/07-infinite-well
+  - 02-wavefunction/08-finite-well
+  - 02-wavefunction/09-harmonic-oscillator
+phase: 1
+status: done
+---
+
+"Energy is quantised" is probably the best-known sentence in quantum mechanics, and the one most often memorised as an incantation.
+
+It is not mysterious. Trap a wave in a box and only certain waves fit. Guitar strings, drum heads and organ pipes all do this. What actually needs explaining is not the quantisation but why it took so long to notice that electrons are waves.
+
+<Scene name="potential-well" />
+
+## Stationary states: the phase turns, the probability does not
+
+The time-dependent Schrödinger equation
+
+$$
+\ii\hbar\,\partial_t\Psi = \hat H \Psi
+$$
+
+acting on a solution of $\hat H\psi_n = E_n\psi_n$ gives
+
+$$
+\Psi_n(x,t) = \psi_n(x)\,\ee^{-\ii E_n t/\hbar}.
+$$
+
+The exponential has modulus one, so
+
+$$
+|\Psi_n(x,t)|^2 = |\psi_n(x)|^2 \quad\text{independent of } t.
+$$
+
+That is the central image of the scene: **the tube spins, the shadow does not**. Switch to the "Along x" view and you are facing the complex plane, watching the whole curve rotate like a twisted rope. The rate is proportional to $E_n$.
+
+<Callout type="insight" title="Why a single state's rotation is unobservable">
+With one level occupied, the phase $\ee^{-\ii E t/\hbar}$ is global and nothing can detect it — you cannot even tell that it is turning.
+
+Superpose two levels and the relative phase $\ee^{-\ii(E_2-E_1)t/\hbar}$ appears; the probability density starts to flow, at frequency $\omega = (E_2-E_1)/\hbar$. That is exactly the frequency of light an atom emits. Bohr's frequency condition is not an assumption here, it is a consequence.
+
+To watch this happen, go to [module 09](/en/lab/09-time-evolution/).
+</Callout>
+
+## Three wells, three patterns of levels
+
+| Well | Levels | Spacing | Index |
+| --- | --- | --- | --- |
+| Infinite square well | $E_n = \dfrac{n^2\pi^2\hbar^2}{2mL^2}$ | grows with n | $n = 1,2,3\ldots$ |
+| Harmonic oscillator | $E_n = \hbar\omega\left(n+\tfrac12\right)$ | perfectly even | $n = 0,1,2\ldots$ |
+| Finite square well | no closed form (transcendental) | finitely many, thinning out | depth sets the count |
+
+Switch between the three in the scene while watching the level ruler on the left, and the difference is immediate.
+
+<Derivation title="The infinite well in three lines">
+
+Inside the well $V=0$, so the stationary equation is $-\frac{\hbar^2}{2m}\psi'' = E\psi$ with general solution $\psi = A\sin kx + B\cos kx$, where $k=\sqrt{2mE}/\hbar$.
+
+The boundary conditions $\psi(0)=\psi(L)=0$ force $B=0$ and $kL = n\pi$, so
+
+$$
+k_n = \frac{n\pi}{L},\qquad E_n = \frac{\hbar^2k_n^2}{2m} = \frac{n^2\pi^2\hbar^2}{2mL^2},\qquad
+\psi_n = \sqrt{\frac{2}{L}}\sin\frac{n\pi x}{L}.
+$$
+
+"An integer number of half-wavelengths must fit" is, mathematically, just $kL=n\pi$.
+
+</Derivation>
+
+## Zero-point energy: uncertainty, directly
+
+$E_1 \ne 0$, and the oscillator even has $\tfrac12\hbar\omega$ left over. Why can the particle not simply sit still at the bottom?
+
+Because sitting still means $\Delta p = 0$, while $\Delta x \le L$ is finite, and that violates $\Delta x\Delta p\ge\hbar/2$. A rough estimate:
+
+$$
+E \sim \frac{(\Delta p)^2}{2m} \sim \frac{\hbar^2}{2mL^2},
+$$
+
+which differs from the exact $\pi^2\hbar^2/2mL^2$ only by the factor $\pi^2 \approx 10$. Narrow the well in the scene and the ground-state energy shoots up as $1/L^2$. That cost of confinement is the same reason atoms do not collapse and white dwarfs resist gravity.
+
+## The finite well: the wavefunction leaks
+
+This is the picture to take away from the module.
+
+In the classically forbidden region ($E < V(x)$) the stationary equation becomes
+
+$$
+\psi'' = \kappa^2\psi,\qquad \kappa = \frac{\sqrt{2m(V_0-E)}}{\hbar},
+$$
+
+whose solutions are $\ee^{\pm\kappa x}$ — not oscillation, but exponential decay. So outside the wall the wavefunction is not zero; it trails off with an exponential tail.
+
+Join that tail to the far side of the wall and you have [tunnelling, module 04](/en/lab/04-tunneling/).
+
+<Callout type="check" title="Count the nodes">
+The nth state has exactly n nodes (numbering the infinite well from 1 gives n−1 interior nodes). This is not a coincidence but a general result of Sturm–Liouville theory: order one-dimensional bound states by energy and the node count increases strictly.
+
+The readout displays the node count live. Check it as you change the quantum number.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Stationary state', latex: '\\Psi_n(x,t)=\\psi_n(x)\\ee^{-\\ii E_n t/\\hbar}', note: 'Only the phase moves' },
+    { name: 'Infinite well', latex: 'E_n = n^2\\pi^2\\hbar^2/2mL^2', note: '∝ n², ∝ 1/L²' },
+    { name: 'Harmonic oscillator', latex: 'E_n = \\hbar\\omega(n+\\tfrac12)', note: 'Even spacing plus zero-point energy' },
+    { name: 'Forbidden region', latex: '\\psi \\sim \\ee^{-\\kappa x},\\ \\kappa=\\sqrt{2m(V_0-E)}/\\hbar', note: 'Exponential decay, not zero' },
+  ]}
+/>
+
+## Think it through
+
+1. Double the width of an infinite well. By what factor does the ground-state energy drop? Measure it in the scene, then check against the formula.
+2. The oscillator has evenly spaced levels. What does that have to do with an electromagnetic field being allowed to contain n photons?
+3. A one-dimensional finite well always holds at least one bound state, however shallow. Try a depth of 0.5. This fails in three dimensions — at which step did dimensionality enter?

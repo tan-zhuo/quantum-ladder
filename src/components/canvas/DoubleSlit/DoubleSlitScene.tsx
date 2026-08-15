@@ -1,3 +1,5 @@
+import { useT } from '@/i18n/react'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -118,6 +120,7 @@ function FieldMesh({ setup, visible }: { setup: SlitSetup; visible: boolean }) {
 /** 挡板：两片（或三片）不透光的板，中间留出缝 */
 function Barrier({ setup, whichPath }: { setup: SlitSetup; whichPath: boolean }) {
   const p = useScenePalette()
+  const T = useT()
   const half = setup.separation / 2
   const a = setup.slitWidth
   const H = 2.2
@@ -162,7 +165,7 @@ function Barrier({ setup, whichPath }: { setup: SlitSetup; whichPath: boolean })
           ))
         : null}
       <SceneLabel position={[-HALF_WIDTH - 0.4, 1.4, 0]} tone="muted" size="xs">
-        挡板
+        {T('挡板')}
       </SceneLabel>
     </group>
   )
@@ -235,7 +238,8 @@ function Emitter({
   return null
 }
 
-export default function DoubleSlitScene() {
+export default function DoubleSlitScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -336,14 +340,15 @@ export default function DoubleSlitScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="double-slit"
-      title="双缝：一个一个打上去的粒子，怎么会长出条纹"
-      subtitle="屏上每一个亮点都是一次独立的探测。看着它们一颗颗落下，条纹是自己浮现出来的——没有任何一个粒子「知道」条纹在哪。"
+      title={T('双缝：一个一个打上去的粒子，怎么会长出条纹')}
+      subtitle={T('屏上每一个亮点都是一次独立的探测。看着它们一颗颗落下，条纹是自己浮现出来的——没有任何一个粒子「知道」条纹在哪。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="实验模式">
+          <ControlGroup title={T('实验模式')}>
             <Segmented
               value={mode}
               onChange={(v) => {
@@ -351,63 +356,63 @@ export default function DoubleSlitScene() {
                 reset()
               }}
               options={[
-                { value: 'particle', label: '单粒子累积' },
-                { value: 'wave', label: '经典波' },
+                { value: 'particle', label: T('单粒子累积') },
+                { value: 'wave', label: T('经典波') },
               ]}
             />
             <Segmented
-              label="开着的缝"
+              label={T('开着的缝')}
               value={open}
               onChange={(v) => setOpen(v as 'both' | 'left' | 'right')}
               options={[
-                { value: 'both', label: '双缝' },
-                { value: 'left', label: '只开左' },
-                { value: 'right', label: '只开右' },
+                { value: 'both', label: T('双缝') },
+                { value: 'left', label: T('只开左') },
+                { value: 'right', label: T('只开右') },
               ]}
             />
             <Toggle
-              label="在缝口安放探测器（知道走哪条）"
+              label={T('在缝口安放探测器（知道走哪条）')}
               checked={whichPath}
               onChange={setWhichPath}
             />
           </ControlGroup>
 
-          <ControlGroup title="参数" hint={`条纹间距 Δy = λL/d ≈ ${fringeSpacing.toFixed(2)}`}>
-            <Slider label="波长 λ" value={lambda} min={0.03} max={0.22} step={0.005} onChange={setLambda} />
-            <Slider label="缝间距 d" value={separation} min={0.25} max={1.8} step={0.01} onChange={setSeparation} />
-            <Slider label="单缝宽 a" value={slitWidth} min={0.05} max={0.5} step={0.01} onChange={setSlitWidth} />
+          <ControlGroup title={T('参数')} hint={T('条纹间距 Δy = λL/d ≈ {0}', fringeSpacing.toFixed(2))}>
+            <Slider label={T('波长 λ')} value={lambda} min={0.03} max={0.22} step={0.005} onChange={setLambda} />
+            <Slider label={T('缝间距 d')} value={separation} min={0.25} max={1.8} step={0.01} onChange={setSeparation} />
+            <Slider label={T('单缝宽 a')} value={slitWidth} min={0.05} max={0.5} step={0.01} onChange={setSlitWidth} />
             <Slider
-              label="缝到屏距离 L"
+              label={T('缝到屏距离 L')}
               value={screenDistance}
               min={2}
               max={16}
               step={0.1}
               onChange={setScreenDistance}
-              hint="改变 L 只改变条纹的疏密，不改变干涉本身"
+              hint={T('改变 L 只改变条纹的疏密，不改变干涉本身')}
             />
           </ControlGroup>
 
           {mode === 'particle' ? (
-            <ControlGroup title="发射">
+            <ControlGroup title={T('发射')}>
               <TimeBar
                 playing={running}
                 onPlay={setRunning}
                 onReset={reset}
                 speed={speed}
                 onSpeed={setSpeed}
-                timeLabel={`${hitCount} 个`}
+                timeLabel={T('{0} 个', hitCount)}
               />
               <div className="flex gap-1.5">
-                <Button onClick={reset}>清空屏幕</Button>
+                <Button onClick={reset}>{T('清空屏幕')}</Button>
               </div>
             </ControlGroup>
           ) : null}
 
-          <ControlGroup title="显示">
-            <Toggle label="缝后的波场" checked={showField} onChange={setShowField} />
+          <ControlGroup title={T('显示')}>
+            <Toggle label={T('缝后的波场')} checked={showField} onChange={setShowField} />
           </ControlGroup>
 
-          <ControlGroup title="屏上分布">
+          <ControlGroup title={T('屏上分布')}>
             <MiniPlot
               series={[
                 { points: theoryPts, color: p.real },
@@ -416,10 +421,10 @@ export default function DoubleSlitScene() {
                   : []),
               ]}
               height={76}
-              ariaLabel="屏上的强度分布与实测直方图"
+              ariaLabel={T('屏上的强度分布与实测直方图')}
             />
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              细线是理论强度 I(y)，填充是实测落点直方图。粒子数越多，两者越贴合。
+              {T('细线是理论强度 I(y)，填充是实测落点直方图。粒子数越多，两者越贴合。')}
             </p>
           </ControlGroup>
         </>
@@ -429,50 +434,53 @@ export default function DoubleSlitScene() {
           <div className="overflow-x-auto text-[15px]">
             <Tex>
               {whichPath && open === 'both'
-                ? 'I(y) = |\\psi_1|^2 + |\\psi_2|^2 \\quad(\\text{干涉项消失})'
+                ? T('I(y) = |\\psi_1|^2 + |\\psi_2|^2 \\quad(\\text{干涉项消失})')
                 : 'I(y) = |\\psi_1 + \\psi_2|^2 = |\\psi_1|^2 + |\\psi_2|^2 + 2\\,\\mathrm{Re}(\\psi_1^*\\psi_2)'}
             </Tex>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
             <span>Δy = λL/d = {fringeSpacing.toFixed(3)}</span>
-            <span>已探测 {hitCount.toLocaleString()} 个</span>
-            <span>可见度 {whichPath && open === 'both' ? '0（无条纹）' : open === 'both' ? '高' : '单缝包络'}</span>
+            <span>{T('已探测 {0} 个', hitCount.toLocaleString())}</span>
+            <span>
+              {T('可见度')}{' '}
+              {whichPath && open === 'both' ? T('0（无条纹）') : open === 'both' ? T('高') : T('单缝包络')}
+            </span>
           </div>
           <Legend
             items={[
-              { color: p.real, label: '波场强度 / 理论 I(y)' },
-              { color: p.hit, label: '单个粒子的落点' },
-              { color: p.potential, label: '挡板与屏' },
-              ...(whichPath ? [{ color: p.danger, label: '路径探测器' }] : []),
+              { color: p.real, label: T('波场强度 / 理论 I(y)') },
+              { color: p.hit, label: T('单个粒子的落点') },
+              { color: p.potential, label: T('挡板与屏') },
+              ...(whichPath ? [{ color: p.danger, label: T('路径探测器') }] : []),
             ]}
           />
         </div>
       }
       guide={[
-        '先什么都别动，盯着屏看 10 秒：前几十个点看上去毫无规律，几百个之后条纹开始浮现。这就是「概率」两个字的实际含义。',
-        '切到「只开左」：条纹消失，只剩一个宽包络（单缝衍射）。再切回双缝——注意双缝的暗纹位置，恰恰是单缝时有粒子到达的地方。「多开一条缝反而让某些地方没有粒子」，经典粒子图像在这里彻底失效。',
-        '打开「在缝口安放探测器」：条纹当场消失，分布变成两条缝各自贡献的简单叠加。关掉它，条纹回来。获取路径信息与看到干涉，二者不可兼得。',
-        '拖动波长 λ 与缝距 d，验证 Δy = λL/d：λ 变大条纹变疏，d 变大条纹变密。',
-        '切到「经典波」并用俯视视角：看缝后的波场如何从两个点源扩散、交叠、形成放射状的亮暗扇形。屏上的条纹只是这个扇形与屏的交线。',
+        T('先什么都别动，盯着屏看 10 秒：前几十个点看上去毫无规律，几百个之后条纹开始浮现。这就是「概率」两个字的实际含义。'),
+        T('切到「只开左」：条纹消失，只剩一个宽包络（单缝衍射）。再切回双缝——注意双缝的暗纹位置，恰恰是单缝时有粒子到达的地方。「多开一条缝反而让某些地方没有粒子」，经典粒子图像在这里彻底失效。'),
+        T('打开「在缝口安放探测器」：条纹当场消失，分布变成两条缝各自贡献的简单叠加。关掉它，条纹回来。获取路径信息与看到干涉，二者不可兼得。'),
+        T('拖动波长 λ 与缝距 d，验证 Δy = λL/d：λ 变大条纹变疏，d 变大条纹变密。'),
+        T('切到「经典波」并用俯视视角：看缝后的波场如何从两个点源扩散、交叠、形成放射状的亮暗扇形。屏上的条纹只是这个扇形与屏的交线。'),
       ]}
       pitfalls={[
         {
-          title: '“粒子分裂了，一半走一条缝”',
-          body: '不会。每次探测到的都是一个完整的粒子，从不是半个。干涉的是概率幅，不是粒子本身。',
+          title: T('“粒子分裂了，一半走一条缝”'),
+          body: T('不会。每次探测到的都是一个完整的粒子，从不是半个。干涉的是概率幅，不是粒子本身。'),
         },
         {
-          title: '“粒子之间互相干涉”',
-          body: '把发射速率降到每秒一个、粒子在装置里绝不相遇，条纹照样出现。干涉发生在单个粒子的两条可能路径之间。',
+          title: T('“粒子之间互相干涉”'),
+          body: T('把发射速率降到每秒一个、粒子在装置里绝不相遇，条纹照样出现。干涉发生在单个粒子的两条可能路径之间。'),
         },
         {
-          title: '“探测器把粒子撞歪了，所以条纹没了”',
-          body: '这个解释在某些具体装置里成立，但不是本质。即使用不交换动量的方式获取路径信息，条纹同样消失。真正的原因是路径信息被环境记录后，两条路径不再相干。',
+          title: T('“探测器把粒子撞歪了，所以条纹没了”'),
+          body: T('这个解释在某些具体装置里成立，但不是本质。即使用不交换动量的方式获取路径信息，条纹同样消失。真正的原因是路径信息被环境记录后，两条路径不再相干。'),
         },
       ]}
       reflect={[
-        '把 λ 调到最小、d 调到最大，条纹密到几乎看不见。宏观物体（比如一颗子弹）的德布罗意波长约 10⁻³⁴ m，估算一下它的条纹间距，说明为什么我们从未在日常生活中见过干涉。',
-        '若在两条缝后各放一个可以事后擦除的路径标记（量子擦除），条纹能否恢复？这对「测量在什么时刻发生」意味着什么？',
-        '单缝包络的宽度由 a 决定，条纹间距由 d 决定。为什么这两个长度控制的是完全不同的两件事？',
+        T('把 λ 调到最小、d 调到最大，条纹密到几乎看不见。宏观物体（比如一颗子弹）的德布罗意波长约 10⁻³⁴ m，估算一下它的条纹间距，说明为什么我们从未在日常生活中见过干涉。'),
+        T('若在两条缝后各放一个可以事后擦除的路径标记（量子擦除），条纹能否恢复？这对「测量在什么时刻发生」意味着什么？'),
+        T('单缝包络的宽度由 a 决定，条纹间距由 d 决定。为什么这两个长度控制的是完全不同的两件事？'),
       ]}
     >
       <SceneCanvas
@@ -483,8 +491,8 @@ export default function DoubleSlitScene() {
         maxDistance={60}
         overlay={
           <CanvasStat>
-            {mode === 'particle' ? `已探测 ${hitCount.toLocaleString()} 个粒子` : '经典波场'}
-            {whichPath ? <span style={{ color: p.danger }} className="ml-2">路径探测器：开</span> : null}
+            {mode === 'particle' ? T('已探测 {0} 个粒子', hitCount.toLocaleString()) : T('经典波场')}
+            {whichPath ? <span style={{ color: p.danger }} className="ml-2">{T('路径探测器：开')}</span> : null}
           </CanvasStat>
         }
       >
@@ -494,7 +502,7 @@ export default function DoubleSlitScene() {
           <meshStandardMaterial color={p.accent} emissive={p.accent} emissiveIntensity={0.45} roughness={0.3} />
         </mesh>
         <SceneLabel position={[0, 0.42, -2.2]} tone="muted" size="xs">
-          源
+          {T('源')}
         </SceneLabel>
         <Line
           points={[
@@ -520,7 +528,7 @@ export default function DoubleSlitScene() {
           <meshStandardMaterial color={p.potential} roughness={0.9} side={THREE.DoubleSide} opacity={0.35} transparent />
         </mesh>
         <SceneLabel position={[HALF_WIDTH + 0.35, 0.9, screenDistance]} tone="muted" size="xs">
-          屏
+          {T('屏')}
         </SceneLabel>
 
         {/* 屏上的理论强度曲线：让「条纹」与「曲线」是同一件事 */}

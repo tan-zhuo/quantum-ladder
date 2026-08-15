@@ -1,0 +1,104 @@
+---
+num: '12'
+title: Open systems and decoherence
+goal: 'Answer one concrete question: why does the macroscopic world look classical?'
+youWillSee:
+  - 'The Bloch vector shrinking from the surface towards the centre — a pure state becoming mixed'
+  - 'Phase damping flattens the equator; energy relaxation drags everything towards the north pole'
+  - 'More environmental degrees of freedom means faster loss of coherence — far too fast to measure'
+prereqs:
+  - 'Density matrices, pure versus mixed states (module 07)'
+  - 'The Bloch sphere (module 05)'
+scenes:
+  - decoherence
+related:
+  - 10-open-systems/01-why-density-matrix
+  - 10-open-systems/03-cptp-maps
+  - 10-open-systems/04-lindblad
+  - 10-open-systems/05-decoherence
+phase: 2
+status: done
+---
+
+Everything so far has dealt with **closed** systems: unitary evolution, pure states staying pure, no information lost.
+
+Real systems are never closed. Air molecules hit them, thermal radiation shines on them, their own vibrations join in. This module asks what happens once the environment is included.
+
+The answer is short — **coherences disappear extremely fast, and classical probabilities survive**.
+
+<Scene name="decoherence" />
+
+## From pure to mixed
+
+A qubit's density matrix can be written
+
+$$
+\rho = \frac12\left(\hat I + \vec r\cdot\vec\sigma\right),\qquad
+\mathrm{Tr}(\rho^2) = \frac{1+|\vec r|^2}{2}.
+$$
+
+- $|\vec r| = 1$: pure, on the surface;
+- $|\vec r| < 1$: mixed, inside;
+- $|\vec r| = 0$: maximally mixed, at the centre, carrying no information at all.
+
+**Decoherence is the process of $|\vec r|$ getting shorter.** The arrow contracting in the scene is exactly that.
+
+## Two decays, two time scales
+
+| Process | What it does | Time constant | Geometric picture |
+| --- | --- | --- | --- |
+| Phase damping (dephasing) | Destroys $\rho_{01}$, the relative phase | $T_2$ | The ball is squashed into a vertical needle |
+| Amplitude damping (relaxation) | System dumps energy and falls to the ground state | $T_1$ | The ball is dragged towards the north pole |
+
+In general $T_2 \le 2T_1$: coherence goes at least as fast as energy. In quantum computing it is usually $T_2$ that limits you.
+
+Switch the two channels on separately in the scene and watch whether the arrow is **squashed** or **dragged** — the two geometries are entirely different.
+
+<Callout type="insight" title="Why macroscopic objects are not in superpositions">
+The decoherence rate scales roughly with the number of environmental degrees of freedom coupled to the system. Rough magnitudes:
+
+| System | Decoherence time |
+| --- | --- |
+| A single ion in vacuum | seconds to minutes |
+| A superconducting qubit at 10 mK | 100 μs to ms |
+| Large-molecule interferometry (C₆₀) | requires extreme vacuum to maintain |
+| A dust grain (1 μm, room-temperature air) | $\sim 10^{-31}$ s |
+
+The last line is the point: a dust grain's superposition decoheres in $10^{-31}$ seconds. It is not that superposition is forbidden, but that **it exists for far too short a time for any instrument to catch**.
+
+So "the macroscopic world is classical" is not an extra rule bolted onto quantum mechanics. It is a conclusion quantum mechanics derives about itself.
+</Callout>
+
+## The Lindblad equation
+
+Demand only that the evolution keep the density matrix positive and trace-preserving (a completely positive trace-preserving map), and assume the environment has no memory (the Markov approximation). The most general form is then
+
+$$
+\frac{\dd\rho}{\dd t} = -\frac{\ii}{\hbar}[\hat H,\rho]
++ \sum_k \gamma_k\left(\hat L_k\rho \hat L_k^\dagger - \tfrac12\{\hat L_k^\dagger \hat L_k,\rho\}\right).
+$$
+
+The first term is the familiar unitary evolution; the second (the dissipator) is the environment's contribution. Taking $\hat L = \hat\sigma_z$ gives pure dephasing; $\hat L = \hat\sigma_-$ gives amplitude damping. The two sliders in the scene are these two $\gamma_k$.
+
+<Callout type="warning" title="Decoherence is not collapse">
+Decoherence explains why we no longer see interference, and turns a superposition into something that **looks like** a classical probability mixture.
+
+It does not explain why **one** outcome occurs each time. After the density matrix becomes $\mathrm{diag}(p_1,p_2)$, that object still describes an ensemble; getting from "a probability mixture" to "this run gave 1" is still the measurement problem.
+
+The honest summary: decoherence solved the preferred-basis problem (why position, and not some superposition basis, gets singled out) and shrank the measurement problem considerably, but did not eliminate it.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Bloch form', latex: '\\rho = \\tfrac12(\\hat I + \\vec r\\cdot\\vec\\sigma)', note: 'Purity = (1+|r|²)/2' },
+    { name: 'Coherence decay', latex: '\\rho_{01}(t) = \\rho_{01}(0)\\ee^{-t/T_2}', note: 'Dephasing' },
+    { name: 'Population relaxation', latex: '\\rho_{11}(t)=\\rho_{11}(0)\\ee^{-t/T_1}', note: 'Energy flowing to the environment' },
+    { name: 'Lindblad equation', latex: '\\dot\\rho = -\\tfrac{\\ii}{\\hbar}[\\hat H,\\rho]+\\sum_k\\gamma_k\\mathcal{D}[\\hat L_k]\\rho', note: 'The most general Markovian evolution' },
+  ]}
+/>
+
+## Think it through
+
+1. Include the environment and the whole thing evolves unitarily as a pure state. Where, then, does the system's entropy come from? (Keywords: entanglement entropy, reduced density matrix.)
+2. What does $T_2 \le 2T_1$ mean geometrically? (Hint: compare the shrinking rates of the ellipsoid along the equator and along the vertical.)
+3. Error correction has to finish before decoherence destroys the information. If a single gate takes 20 ns and $T_2 = 100$ μs, roughly how many operations fit?

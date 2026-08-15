@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -47,7 +48,8 @@ interface Stats {
   t: number
 }
 
-export default function WavefunctionScene() {
+export default function WavefunctionScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -166,26 +168,27 @@ export default function WavefunctionScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="wavefunction"
-      title="波函数：一条在复平面里扭动的曲线"
-      subtitle="中间那根管子是 ψ 本身。两面墙上的曲线是它的实部与虚部影子，右侧的幕布是 |ψ|²——唯一能直接对应实验的量。"
+      title={T('波函数：一条在复平面里扭动的曲线')}
+      subtitle={T('中间那根管子是 ψ 本身。两面墙上的曲线是它的实部与虚部影子，右侧的幕布是 |ψ|²——唯一能直接对应实验的量。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="制备波包">
-            <Slider label="中心位置 x₀" value={x0} min={-20} max={0} step={0.5} onChange={setX0} />
-            <Slider label="宽度 σ" value={sigma0} min={0.8} max={7} step={0.1} onChange={setSigma0} />
-            <Slider label="平均动量 k₀" value={k0} min={-3} max={3} step={0.05} onChange={setK0} />
-            <Toggle label="加一个反向波包（看干涉）" checked={second} onChange={setSecond} />
+          <ControlGroup title={T('制备波包')}>
+            <Slider label={T('中心位置 x₀')} value={x0} min={-20} max={0} step={0.5} onChange={setX0} />
+            <Slider label={T('宽度 σ')} value={sigma0} min={0.8} max={7} step={0.1} onChange={setSigma0} />
+            <Slider label={T('平均动量 k₀')} value={k0} min={-3} max={3} step={0.05} onChange={setK0} />
+            <Toggle label={T('加一个反向波包（看干涉）')} checked={second} onChange={setSecond} />
           </ControlGroup>
 
           <ControlGroup
-            title="归一化"
-            hint="拖动整体幅度，形状完全不变，只有高度在缩放。点「归一化」把 ∫|ψ|²dx 拉回 1——这就是「粒子总在某处」。"
+            title={T('归一化')}
+            hint={T('拖动整体幅度，形状完全不变，只有高度在缩放。点「归一化」把 ∫|ψ|²dx 拉回 1——这就是「粒子总在某处」。')}
           >
             <Slider
-              label="整体幅度"
+              label={T('整体幅度')}
               value={amplitude}
               min={0.3}
               max={2.5}
@@ -195,9 +198,9 @@ export default function WavefunctionScene() {
             />
             <div className="flex gap-1.5">
               <Button variant="primary" onClick={normalize}>
-                归一化
+                {T('归一化')}
               </Button>
-              <Button onClick={prepare}>重新制备</Button>
+              <Button onClick={prepare}>{T('重新制备')}</Button>
             </div>
             <div
               className={
@@ -211,9 +214,9 @@ export default function WavefunctionScene() {
             </div>
           </ControlGroup>
 
-          <ControlGroup title="测量位置">
+          <ControlGroup title={T('测量位置')}>
             <Slider
-              label="仪器分辨率 δ"
+              label={T('仪器分辨率 δ')}
               value={resolution}
               min={0.35}
               max={4}
@@ -221,15 +224,16 @@ export default function WavefunctionScene() {
               onChange={setResolution}
             />
             <Button variant="primary" onClick={measure}>
-              测量一次位置
+              {T('测量一次位置')}
             </Button>
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              测量后波包被压到宽度 δ，然后立刻开始迅速展开——δ 越小，展开越快。
-              这不是仪器的毛病，是 Δx·Δp ≥ ħ/2。
+              {T(
+                '测量后波包被压到宽度 δ，然后立刻开始迅速展开——δ 越小，展开越快。这不是仪器的毛病，是 Δx·Δp ≥ ħ/2。',
+              )}
             </p>
           </ControlGroup>
 
-          <ControlGroup title="演化与显示">
+          <ControlGroup title={T('演化与显示')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
@@ -238,9 +242,9 @@ export default function WavefunctionScene() {
               onSpeed={setSpeed}
               timeLabel={`t = ${stats.t.toFixed(1)}`}
             />
-            <Toggle label="实部影子 Re ψ" checked={showRe} onChange={setShowRe} />
-            <Toggle label="虚部影子 Im ψ" checked={showIm} onChange={setShowIm} />
-            <Toggle label="概率密度 |ψ|²" checked={showProb} onChange={setShowProb} />
+            <Toggle label={T('实部影子 Re ψ')} checked={showRe} onChange={setShowRe} />
+            <Toggle label={T('虚部影子 Im ψ')} checked={showIm} onChange={setShowIm} />
+            <Toggle label={T('概率密度 |ψ|²')} checked={showProb} onChange={setShowProb} />
           </ControlGroup>
         </>
       }
@@ -253,43 +257,43 @@ export default function WavefunctionScene() {
             <span>⟨x⟩ = {stats.mean.toFixed(3)}</span>
             <span>Δx = {stats.sigma.toFixed(3)}</span>
             <span>Δp ≈ {stats.sigmaP.toFixed(3)}</span>
-            <span>ΔxΔp ≈ {(stats.sigma * stats.sigmaP).toFixed(3)}（下限 0.5）</span>
-            {lastMeasure !== null ? <span>上次测得 x = {lastMeasure.toFixed(2)}</span> : null}
+            <span>{T('ΔxΔp ≈ {0}（下限 0.5）', (stats.sigma * stats.sigmaP).toFixed(3))}</span>
+            {lastMeasure !== null ? <span>{T('上次测得 x = {0}', lastMeasure.toFixed(2))}</span> : null}
           </div>
           <Legend
             items={[
-              { color: p.real, label: 'ψ（复数管）与实部影子' },
-              { color: p.imag, label: '虚部影子' },
+              { color: p.real, label: T('ψ（复数管）与实部影子') },
+              { color: p.imag, label: T('虚部影子') },
               { color: p.prob, label: '|ψ|²' },
             ]}
           />
         </div>
       }
       guide={[
-        '先切到「沿 x 看」视角：你正对复平面，每个 x 上的 ψ 就是一个复数（一个箭头）。管子的扭转就是相位沿 x 的变化。',
-        '再切到「看实部」：得到的正是教科书上那条上下振荡的曲线。它只是三维曲线的一个影子——虚部的信息在这个视角下完全丢失了。',
-        '把 k₀ 拖到 0：管子不再扭转（相位处处相同），实部还在、虚部变成零。此时波包不再整体移动，只是原地展开。',
-        '拖动「整体幅度」：形状不变，∫|ψ|² 偏离 1 并变红。点「归一化」，高度被拉回来——这就是归一化的全部内容。',
-        '按几次「测量一次位置」：落点每次不同，但集中在 |ψ|² 大的地方；测完波包被压窄，然后迅速展开。把分辨率 δ 调到最小再测，展开会快得多。',
+        T('先切到「沿 x 看」视角：你正对复平面，每个 x 上的 ψ 就是一个复数（一个箭头）。管子的扭转就是相位沿 x 的变化。'),
+        T('再切到「看实部」：得到的正是教科书上那条上下振荡的曲线。它只是三维曲线的一个影子——虚部的信息在这个视角下完全丢失了。'),
+        T('把 k₀ 拖到 0：管子不再扭转（相位处处相同），实部还在、虚部变成零。此时波包不再整体移动，只是原地展开。'),
+        T('拖动「整体幅度」：形状不变，∫|ψ|² 偏离 1 并变红。点「归一化」，高度被拉回来——这就是归一化的全部内容。'),
+        T('按几次「测量一次位置」：落点每次不同，但集中在 |ψ|² 大的地方；测完波包被压窄，然后迅速展开。把分辨率 δ 调到最小再测，展开会快得多。'),
       ]}
       pitfalls={[
         {
-          title: '“实部是波函数，虚部是数学技巧”',
-          body: '两者地位完全对等。只看实部会丢掉相位信息，而相位决定概率流与一切干涉。场景里把视角切到「看实部」时，虚部影子的存在就是提醒。',
+          title: T('“实部是波函数，虚部是数学技巧”'),
+          body: T('两者地位完全对等。只看实部会丢掉相位信息，而相位决定概率流与一切干涉。场景里把视角切到「看实部」时，虚部影子的存在就是提醒。'),
         },
         {
-          title: '“|ψ(x)|² 是粒子在 x 处的概率”',
-          body: '是概率**密度**。单点概率为零，只有在区间上积分才是概率。量纲上 |ψ|² 是 1/长度。',
+          title: T('“|ψ(x)|² 是粒子在 x 处的概率”'),
+          body: T('是概率**密度**。单点概率为零，只有在区间上积分才是概率。量纲上 |ψ|² 是 1/长度。'),
         },
         {
-          title: '“测量把波函数变成一个点”',
-          body: '真实测量的分辨率有限，波包被压到分辨率宽度而不是 δ 函数。压得越窄，动量越不确定，展开越快。',
+          title: T('“测量把波函数变成一个点”'),
+          body: T('真实测量的分辨率有限，波包被压到分辨率宽度而不是 δ 函数。压得越窄，动量越不确定，展开越快。'),
         },
       ]}
       reflect={[
-        '把 k₀ 设为正、σ 设得很小，观察 Δp 的读数。为什么波包越窄、动量越不确定？（提示：窄高斯的傅里叶变换是宽高斯。）',
-        '打开「加一个反向波包」：两团概率相遇时中间出现条纹。这些条纹会不会出现在「两个经典粒子概率分布之和」里？',
-        '自由粒子的 |ψ|² 一直在展开，永不收缩。这与「时间反演对称」矛盾吗？（提示：把时间倒过来放，看到的是什么？）',
+        T('把 k₀ 设为正、σ 设得很小，观察 Δp 的读数。为什么波包越窄、动量越不确定？（提示：窄高斯的傅里叶变换是宽高斯。）'),
+        T('打开「加一个反向波包」：两团概率相遇时中间出现条纹。这些条纹会不会出现在「两个经典粒子概率分布之和」里？'),
+        T('自由粒子的 |ψ|² 一直在展开，永不收缩。这与「时间反演对称」矛盾吗？（提示：把时间倒过来放，看到的是什么？）'),
       ]}
     >
       <SceneCanvas

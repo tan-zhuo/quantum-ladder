@@ -1,0 +1,114 @@
+---
+num: '07'
+title: Measurement, superposition and collapse
+goal: 'Separate two things that are constantly confused: being in a superposition, and not knowing which one it is.'
+youWillSee:
+  - 'The same state, a different measurement basis, and a definite outcome turns into fifty-fifty'
+  - 'Repeating a measurement changes nothing; measuring a different axis and coming back revives what was filtered out'
+  - 'Pure states on the sphere, mixed states inside — some statistics agree, the states do not'
+prereqs:
+  - 'The Bloch sphere and projective measurement (module 05)'
+  - 'Elementary probability'
+scenes:
+  - bloch-sphere
+  - stern-gerlach
+related:
+  - 03-formalism/07-postulates
+  - 03-formalism/08-measurement
+  - 03-formalism/10-density-operator
+  - 10-open-systems/02-mixed-states
+phase: 2
+status: done
+---
+
+"Schrödinger's cat is both dead and alive" is the most repeated and most misread sentence in the subject.
+
+The misreading is that it sounds like the cat is in some blurred condition and we merely do not know which. Quantum superposition is **precisely not that**. This module separates the two.
+
+## Superposition is relative to a basis
+
+$$
+\ket{+} = \frac{1}{\sqrt2}\left(\ket{0}+\ket{1}\right).
+$$
+
+In the $z$ basis this is a superposition: measuring $\sigma_z$ gives $\pm1$ half the time each.
+
+In the $x$ basis it is an **eigenstate** of $\hat\sigma_x$: measuring $\sigma_x$ gives $+1$ with certainty and no randomness whatsoever.
+
+One state, and changing the basis turns "superposition" into "definite". So "the system is in a superposition" carries no information unless you say with respect to which basis.
+
+<Scene name="bloch-sphere" />
+
+On the Bloch sphere this becomes obvious: the state is a **fixed arrow** on the sphere, and the measurement basis is an **axis you can point wherever you like**. When the arrow lies along the axis the outcome is certain; when it is perpendicular it is fifty-fifty. Nothing changed except the question you asked.
+
+## Superposition ≠ mixture
+
+Now compare two statements that sound similar:
+
+- **A (superposition)**: the system is in $\ket{+} = \tfrac{1}{\sqrt2}(\ket{0}+\ket{1})$.
+- **B (mixture)**: the system is $\ket{0}$ with probability 50% and $\ket{1}$ with probability 50%, and we do not know which.
+
+Measured along $z$, the two give identical statistics: half and half.
+
+Measured along $x$, they could not be more different: A gives $+1$ every time; B is still fifty-fifty.
+
+In density-matrix form:
+
+$$
+\rho_A = \frac12\begin{pmatrix}1&1\\1&1\end{pmatrix},
+\qquad
+\rho_B = \frac12\begin{pmatrix}1&0\\0&1\end{pmatrix}.
+$$
+
+The whole difference sits in the **off-diagonal** elements, the coherences. On the Bloch sphere, A is on the surface at the equator ($|\vec r|=1$) while B is at the centre ($|\vec r|=0$).
+
+<Callout type="insight" title="This is the cat's actual problem">
+If the cat were genuinely in a state of type A, some (absurdly complicated) measurement could in principle distinguish it from B. In practice the cat is already entangled with air molecules, photons and every atom of itself; the coherences decay in far less than $10^{-20}$ seconds. It **is** B.
+
+So the answer to "why do we never see macroscopic superpositions" is not "superposition is forbidden up there" but [decoherence](/en/lab/12-decoherence/) — too fast to measure.
+</Callout>
+
+## Measurements in sequence: order has consequences
+
+<Scene name="stern-gerlach" />
+
+Chaining Stern–Gerlach analysers is the sharpest way to see what measurement does:
+
+1. Split along $Z$, block the lower beam → everything left is $\ket{0}$;
+2. Another $Z$ → 100% upper. Measurement is **repeatable**.
+3. Switch to $X$ → fifty-fifty. $\ket{0}$ is a superposition in the $x$ basis.
+4. Add a third analyser along $Z$ → **the lower beam is back**.
+
+Step 4 is the point. Step 1 removed "lower" cleanly, and the $X$ measurement in step 3 put it back. So the $X$ measurement was not passively reading a property; it changed the state.
+
+Algebraically this is just $[\hat\sigma_x,\hat\sigma_z]\ne0$: non-commuting observables share no eigenstates and cannot both be definite.
+
+## An honest word about "collapse"
+
+The projection postulate is a **rule for calculating**: after obtaining eigenvalue $a_n$, continue with $\hat P_n\ket{\psi}/\|\hat P_n\ket{\psi}\|$. It has survived every experimental test.
+
+Whether collapse is a **physical process** is another matter, and the interpretations differ sharply:
+
+| Interpretation | What collapse is |
+| --- | --- |
+| Copenhagen | A postulate; the mechanism is not discussed |
+| Many worlds | Nothing collapses; there is only unitary evolution and branching |
+| Decoherence + epistemic views | Branches lose coherence rapidly; an observer only ever sees one |
+| Objective collapse (GRW etc.) | A real stochastic physical process, and therefore falsifiable |
+
+The good news is that **all of them predict the same experimental results so far**. So you can learn to use the projection postulate as a tool first and pick a side later.
+
+<KeyFormulas
+  items={[
+    { name: 'Projection postulate', latex: '\\ket{\\psi} \\to \\hat P_n\\ket{\\psi}/\\|\\hat P_n\\ket{\\psi}\\|', note: 'How to continue after obtaining aₙ' },
+    { name: 'Born probability', latex: 'P(a_n) = \\|\\hat P_n\\ket{\\psi}\\|^2', note: 'Modulus squared, always' },
+    { name: 'Purity test', latex: '\\mathrm{Tr}(\\rho^2)=1', note: 'Strictly less than 1 for a mixed state' },
+    { name: 'Uncertainty', latex: '\\Delta A\\,\\Delta B \\ge \\tfrac12|\\langle[\\hat A,\\hat B]\\rangle|', note: 'Non-commuting ⇒ not simultaneously definite' },
+  ]}
+/>
+
+## Think it through
+
+1. In the Bloch scene set the state to $\ket{0}$ and the axis to σx, then measure once. Switch back to σz — what is the probability of $\ket{1}$ now? Map that onto step 4 of the Stern–Gerlach chain.
+2. $\rho_A$ and $\rho_B$ are indistinguishable along $z$. Which axes do you need to measure to tell them apart? (Hint: you have to reconstruct the whole Bloch vector.)
+3. If "measurement" is just the apparatus becoming entangled with the system, then the apparatus should also end up in a superposition. Why have we never seen a pointer in one? [Module 12](/en/lab/12-decoherence/) gives a partial answer.

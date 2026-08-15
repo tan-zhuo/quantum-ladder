@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useScenePalette } from './theme'
+import { useUiT } from '@/i18n/react'
 
 /**
  * 控制面板里的通用小部件。基础控件（滑块、开关、分段选择）复用
@@ -50,6 +51,7 @@ export function TimeBar({
   onSeek?: (v: number) => void
   timeLabel?: ReactNode
 }) {
+  const T = useUiT()
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-1.5">
@@ -67,12 +69,12 @@ export function TimeBar({
               <path d="M7 4l13 8-13 8z" />
             </svg>
           )}
-          {playing ? '暂停' : '播放'}
+          {playing ? T('暂停') : T('播放')}
         </button>
         <button
           type="button"
           onClick={onReset}
-          title="回到 t = 0"
+          title={T('回到 t = 0')}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1.5 text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -96,12 +98,12 @@ export function TimeBar({
           value={progress}
           onChange={(e) => onSeek(Number(e.target.value))}
           className="ql-range"
-          aria-label="演化进度"
+          aria-label={T('演化进度')}
         />
       ) : null}
 
       <div className="flex items-center gap-2">
-        <span className="text-[12px] text-[var(--text-faint)]">速度</span>
+        <span className="text-[12px] text-[var(--text-faint)]">{T('速度')}</span>
         <div className="flex gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--bg-subtle)] p-0.5">
           {[0.25, 0.5, 1, 2, 4].map((s) => (
             <button
@@ -322,6 +324,7 @@ export function EnergyLadder({
   formatter?: (v: number) => string
 }) {
   const palette = useScenePalette()
+  const T = useUiT()
   const [lo, hi] = range
   const span = hi - lo || 1
   return (
@@ -335,7 +338,7 @@ export function EnergyLadder({
             key={i}
             type="button"
             onClick={() => onPick(i)}
-            title={`n = ${i}，E = ${formatter(l.energy)}`}
+            title={T('n = {0}，E = {1}', i, formatter(l.energy))}
             className="group absolute right-1 left-1 -translate-y-1/2 cursor-pointer"
             style={{ top: `${Math.min(100, Math.max(0, t * 100))}%`, height: 12 }}
           >

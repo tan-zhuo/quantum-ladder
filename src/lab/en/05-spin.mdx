@@ -1,0 +1,164 @@
+---
+num: '05'
+title: Spin and the Bloch sphere
+goal: 'Turn a spin state from a pile of complex numbers into a geometric object you can drag, watch precess, and watch collapse.'
+youWillSee:
+  - 'A sphere on which every point is a pure state; drag it and the |ψ⟩ in the readout follows'
+  - 'A spin in a magnetic field precesses about the field, with the angle between them never changing'
+  - 'Measurement snaps the vector to a pole; single outcomes are random, hundreds of repeats converge on (1 ± r⃗·n̂)/2'
+prereqs:
+  - 'Complex numbers and Euler''s formula'
+  - 'Two-dimensional complex vectors, inner products, modulus squared'
+  - 'The Born rule: modulus squared gives probability'
+scenes:
+  - bloch-sphere
+  - stern-gerlach
+related:
+  - 05-angular-momentum/03-spin-half
+  - 05-angular-momentum/04-stern-gerlach
+  - 05-angular-momentum/05-spin-precession
+  - 09-quantum-information/01-qubit-bloch-sphere
+phase: 1
+status: done
+---
+
+Spin 1/2 is the **smallest** non-trivial system in quantum mechanics: its state space is two-dimensional.
+
+How small is that? Small enough that we can draw **every** state at once, leaving nothing out. No other system allows this — hydrogen's state space is infinite-dimensional and you can only look at one orbital at a time. The pure states of a spin-1/2 form exactly a sphere, and suddenly the abstract notion of "quantum state" is something you can push around with a finger.
+
+Look first, calculate second.
+
+<Scene name="bloch-sphere" />
+
+## Why one point on a sphere is enough
+
+A two-dimensional complex vector has four real parameters:
+
+$$
+\ket{\psi} = \begin{pmatrix} a \\ b \end{pmatrix},\qquad a, b \in \mathbb{C}.
+$$
+
+Two of them are fake. Normalisation $|a|^2 + |b|^2 = 1$ removes one; the global phase — $\ket{\psi}$ and $\ee^{\ii\alpha}\ket{\psi}$ give identical results for every possible measurement — removes another. Two real parameters remain, and they are precisely the two angles of a sphere:
+
+$$
+\ket{\psi} = \cos\frac{\theta}{2}\ket{0} + \ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}.
+$$
+
+<Callout type="warning" title="The half-angle is not a typo">
+The angle in the exponent is $\theta$; the angle in the coefficients is $\theta/2$. That factor of two is the signature of spin 1/2: **going once around the Bloch sphere ($\theta: 0 \to 2\pi$) turns the state vector only half way round**, and you need two full turns to return. When you drag θ from 0 to 180° in the scene you travel half way around the sphere while the state goes all the way from $\ket{0}$ to $\ket{1}$ — orthogonal states sit at **antipodes**, not at right angles.
+</Callout>
+
+The matching geometric object is the **Bloch vector**
+
+$$
+\vec{r} = \braket{\psi}{\vec{\sigma}\,\psi} = (\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta),
+$$
+
+which is the arrow in the scene. Pure states always satisfy $|\vec r| = 1$ and lie on the surface; points **inside** the ball mean something too — they are mixed states, and they wait until [module 12](/en/lab/12-decoherence/).
+
+## Precession: the field does not do what you expect
+
+Put the spin in a field along $z$, so $H = -\tfrac{\hbar\omega}{2}\sigma_z$. The resulting equation of motion is remarkably clean:
+
+$$
+\frac{\dd \vec r}{\dd t} = \vec\omega \times \vec r .
+$$
+
+A cross product means the rate of change is **always perpendicular to both $\vec r$ and $\vec\omega$**. Hence:
+
+- $|\vec r|$ is constant (the state stays pure);
+- $\vec r \cdot \hat\omega$ is constant (the angle to the field is locked);
+- only the azimuth around the field increases, at a constant rate.
+
+That is the cone in the scene. Classical intuition usually expects the field to bend the spin round until it points along the field — but that is what a **dissipative** system does (a compass needle in air with friction). Unitary evolution of an isolated quantum system does no such thing; it only turns. Laying the spin down along the field requires coupling to an environment, which is [module 12](/en/lab/12-decoherence/).
+
+<Derivation title="Precession from the Schrödinger equation">
+
+Take $H = -\tfrac{\hbar\omega}{2}\sigma_z$. In the Heisenberg picture operators obey
+
+$$
+\frac{\dd \hat\sigma_i}{\dd t} = \frac{\ii}{\hbar}[H, \hat\sigma_i].
+$$
+
+Using the Pauli commutators $[\sigma_i, \sigma_j] = 2\ii\,\epsilon_{ijk}\sigma_k$:
+
+$$
+[\sigma_z, \sigma_x] = 2\ii\sigma_y, \qquad [\sigma_z, \sigma_y] = -2\ii\sigma_x, \qquad [\sigma_z,\sigma_z]=0 .
+$$
+
+Substituting gives
+
+$$
+\dot\sigma_x = -\omega\,\sigma_y,\qquad \dot\sigma_y = \omega\,\sigma_x,\qquad \dot\sigma_z = 0,
+$$
+
+and taking expectation values yields $\dot{\vec r} = \vec\omega\times\vec r$ with $\vec\omega = \omega\hat z$. The third equation, $\dot\sigma_z = 0$, is exactly the statement that the angle to the field never changes.
+
+</Derivation>
+
+## Measurement: projection, not inspection
+
+Measuring the spin along a unit axis $\hat n$ can only return $\pm 1$, with probabilities
+
+$$
+P_\pm = \frac{1 \pm \vec r\cdot\hat n}{2}.
+$$
+
+The dashed line dropping from the arrowhead onto the measurement axis in the scene draws exactly the projection $\vec r \cdot \hat n$. After the measurement the state **collapses** onto the corresponding eigenstate — the arrow jumps to one end of the axis.
+
+There is a trap here that catches nearly everyone: measuring again along the same axis necessarily repeats the first result. To see the statistics of $P_\pm$ you must **re-prepare** the same $\ket{\psi}$ every time. That is what the "Re-prepare ×200" button does, and the label spells it out on purpose.
+
+<KeyFormulas
+  items={[
+    {
+      name: 'Sphere parameterisation',
+      latex: '\\ket{\\psi} = \\cos\\frac{\\theta}{2}\\ket{0} + \\ee^{\\ii\\varphi}\\sin\\frac{\\theta}{2}\\ket{1}',
+      note: 'Two real parameters: normalisation and global phase eat one each',
+    },
+    {
+      name: 'Bloch vector',
+      latex: '\\vec r = (\\sin\\theta\\cos\\varphi,\\ \\sin\\theta\\sin\\varphi,\\ \\cos\\theta)',
+      note: 'Pure states have |r| = 1; mixed states live inside',
+    },
+    {
+      name: 'Larmor precession',
+      latex: '\\dot{\\vec r} = \\vec\\omega \\times \\vec r',
+      note: 'A cross product conserves both length and angle; only the azimuth moves',
+    },
+    {
+      name: 'Measurement probability',
+      latex: 'P_\\pm = \\tfrac{1}{2}\\left(1 \\pm \\vec r\\cdot\\hat n\\right)',
+      note: 'The length of that dashed projection',
+    },
+  ]}
+/>
+
+## Taking the sphere into the laboratory: Stern–Gerlach
+
+The Bloch sphere is a mathematical picture. What Stern and Gerlach did in 1922 was the first time that picture hit people in a visible form: a beam of silver atoms crossing an inhomogeneous magnetic field did **not** smear into a continuous band. It split cleanly into two.
+
+<Scene name="stern-gerlach" />
+
+Chaining the apparatus makes it more interesting. Split along $z$ with the first magnet and block the lower beam; measure $z$ again with a second and everything still comes out upper — measurement repeats itself. But make the second one measure along $x$ and the output is fifty-fifty again; add a third along $z$ and the lower beam, supposedly filtered away, **is back**.
+
+Nothing classical does this. It says that measuring along $x$ is not reading off a pre-existing property; it genuinely changes the state.
+
+## Three standard misreadings
+
+<Callout type="misconception" title="“A direction on the Bloch sphere is the direction the spin points in space”">
+No. The sphere is **state space**, not real space. $\theta = 90°$ does not mean the spin "lies flat"; it means that measuring along $z$ gives up and down equally often. A direction in real space only appears once a measurement axis is chosen.
+</Callout>
+
+<Callout type="misconception" title="“The electron is spinning”">
+The name is a historical accident. Treat the electron as a classical rotating ball and its equator would move far faster than light. Spin is intrinsic angular momentum, and its existence follows naturally from the relativistic wave equation (the Dirac equation) — see [module 14](/en/lab/14-frontier/) and chapter 12 of the textbook.
+</Callout>
+
+<Callout type="misconception" title="“It was already up or down; we simply did not know”">
+That is the local hidden-variable assumption, and it can be tested experimentally. Bell inequalities give the criterion, and in [module 08](/en/lab/08-entanglement/) you get to refute it yourself.
+</Callout>
+
+## Check yourself
+
+1. Set the state to $\ket{+}$ (θ = 90°, φ = 0) and the axis to σx. What will one measurement give, and with what probability? What about σz?
+2. With the field along z and the initial state $\ket{0}$, pressing play changes nothing on screen. Explain it using "an eigenstate only accumulates a global phase". What if the initial state is $\ket{+}$?
+3. The states $\ket{\psi_1} = \ket{+}$ and $\ket{\psi_2} = \ee^{\ii\pi/3}\ket{+}$ are the same point on the sphere. How do "the phase is unobservable" and "the relative phase φ is observable" both hold at once?

@@ -2,17 +2,25 @@
 import { getToc } from '@/lib/toc'
 import { getLabModules } from '@/lib/lab'
 import { TRACK_LABEL, type Track } from '@/data/chapters'
+import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
+import { SECTION_TITLES_EN, CHAPTER_EN } from '@/i18n/sections-en'
 
 interface Props {
   /** 当前小节 id，用于高亮与自动展开。3D 模块的 id 形如 `lab/05-spin` */
   currentId?: string
   currentChapter?: string
+  lang?: Lang
 }
 
-const { currentId, currentChapter } = Astro.props
+const { currentId, currentChapter, lang = DEFAULT_LANG } = Astro.props
+const t = translator(lang)
 const toc = await getToc()
-const modules = await getLabModules()
+const modules = await getLabModules(lang)
 const base = import.meta.env.BASE_URL
+const L = (p: string) => localePath(lang, p, base)
+/** 教材部分的标题：英文界面下用译名，正文仍是中文（入口处有标注） */
+const chTitle = (id: string, zh: string) => (lang === 'en' ? (CHAPTER_EN[id]?.title ?? zh) : zh)
+const secTitle = (id: string, zh: string) => (lang === 'en' ? (SECTION_TITLES_EN[id] ?? zh) : zh)
 
 const groups: { track: Track; chapters: typeof toc }[] = (
   ['main', 'branch', 'appendix'] as Track[]
@@ -22,22 +30,22 @@ const groups: { track: Track; chapters: typeof toc }[] = (
 const inTextbook = !!currentChapter
 ---
 
-<nav class="ql-sidebar-nav" aria-label="目录">
+<nav class="ql-sidebar-nav" aria-label={t('目录')}>
   {/* ── 3D 实验室：平台主轴 ───────────────────────────── */}
   <section class="mb-5">
     <h2 class="mb-2 flex items-center gap-1.5 px-3 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
       <span aria-hidden="true" class="text-[var(--accent)]">◆</span>
-      3D 实验室
+      {t('3D 实验室')}
     </h2>
     <ul class="space-y-px">
       {
         modules.map((m) => {
-          const id = `lab/${m.id}`
+          const id = `lab/${m.slug}`
           const active = id === currentId
           return (
             <li>
               <a
-                href={`${base}${m.href.replace(/^\//, '')}`}
+                href={L(m.path)}
                 data-section-link={id}
                 aria-current={active ? 'page' : undefined}
                 class={
@@ -51,7 +59,7 @@ const inTextbook = !!currentChapter
                 <span class="font-mono text-[11.5px] text-[var(--text-faint)]">{m.num}</span>
                 <span class="min-w-0 flex-1 truncate">{m.title}</span>
                 {m.scenes.length > 0 && (
-                  <span class="shrink-0 font-mono text-[10px] text-[var(--accent)]" title={`${m.scenes.length} 个 3D 场景`}>
+                  <span class="shrink-0 font-mono text-[10px] text-[var(--accent)]" title={t('{0} 个 3D 场景', m.scenes.length)}>
                     {m.scenes.length}◆
                   </span>
                 )}
@@ -73,7 +81,7 @@ const inTextbook = !!currentChapter
       >
         <path d="M4 2l4 4-4 4z"></path>
       </svg>
-      教材（深入阅读）
+      {t('教材（深入阅读）')}
     </summary>
     <div>
   {
@@ -81,7 +89,7 @@ const inTextbook = !!currentChapter
       chapters.length === 0 ? null : (
         <section class="mb-5">
           <h2 class="mb-2 px-3 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
-            {TRACK_LABEL[track]}
+            {t(TRACK_LABEL[track])}
           </h2>
           <ul class="space-y-0.5">
             {chapters.map((chapter) => {
@@ -111,12 +119,12 @@ const inTextbook = !!currentChapter
                           (open ? 'font-semibold text-[var(--text)]' : 'text-[var(--text-muted)]')
                         }
                       >
-                        {chapter.title}
+                        {chTitle(chapter.id, chapter.title)}
                       </a>
                       {chapter.sections.length > 0 && (
                         <span
                           class="shrink-0 font-mono text-[10.5px] text-[var(--text-faint)]"
-                          title={`${chapter.doneCount} / ${chapter.sections.length} 节已定稿`}
+                          title={t('{0} / {1} 节已定稿', chapter.doneCount, chapter.sections.length)}
                         >
                           {chapter.doneCount}/{chapter.sections.length}
                         </span>
@@ -150,12 +158,12 @@ const inTextbook = !!currentChapter
                                       {s.section}
                                     </span>
                                   )}
-                                  {s.title}
+                                  {secTitle(s.id, s.title)}
                                 </span>
                                 {s.sims.length > 0 && (
                                   <span
                                     class="shrink-0 text-[10px] text-[var(--accent)]"
-                                    title="含交互模拟"
+                                    title={t('含交互模拟')}
                                   >
                                     ◈
                                   </span>
@@ -163,9 +171,9 @@ const inTextbook = !!currentChapter
                                 {s.status === 'stub' && (
                                   <span
                                     class="shrink-0 rounded bg-[var(--bg-subtle)] px-1 text-[9.5px] text-[var(--text-faint)]"
-                                    title="待撰写"
+                                    title={t('待撰写')}
                                   >
-                                    待写
+                                    {t('待写')}
                                   </span>
                                 )}
                               </a>
@@ -175,7 +183,7 @@ const inTextbook = !!currentChapter
                       </ul>
                     ) : (
                       <p class="mt-0.5 mb-1 ml-[1.4rem] border-l border-[var(--border)] px-2 py-1 pl-2 text-[12px] text-[var(--text-faint)]">
-                        待撰写
+                        {t('待撰写')}
                       </p>
                     )}
                   </details>

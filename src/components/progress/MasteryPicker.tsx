@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react'
 import { MASTERY_LABEL, getSection, markRead, setMastery, type Mastery } from '@/lib/progress'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 
 /**
  * 小节末尾的「掌握程度」自评 + 已读标记。
  * 只写 localStorage，没有账号也没有上传——这也是本站能纯静态部署的前提。
  */
-export default function MasteryPicker({ sectionId }: { sectionId: string }) {
+export default function MasteryPicker({
+  sectionId,
+  lang = DEFAULT_LANG,
+}: {
+  sectionId: string
+  lang?: Lang
+}) {
+  const T = translator(lang)
   const [level, setLevel] = useState<Mastery>(0)
   const [read, setRead] = useState(false)
   const [ready, setReady] = useState(false)
@@ -40,16 +48,16 @@ export default function MasteryPicker({ sectionId }: { sectionId: string }) {
     <div className="no-print rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-3.5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[13px] font-medium text-[var(--text)]">这一节你掌握到什么程度？</p>
+          <p className="text-[13px] font-medium text-[var(--text)]">{T('这一节你掌握到什么程度？')}</p>
           <p className="mt-0.5 text-[11.5px] text-[var(--text-faint)]">
-            记录只保存在这台设备上，用于目录树标记与学习进度页
+            {T('记录只保存在这台设备上，用于目录树标记与学习进度页')}
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <div
             role="radiogroup"
-            aria-label="掌握程度"
+            aria-label={T('掌握程度')}
             className="inline-flex gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5"
           >
             {([1, 2, 3] as Mastery[]).map((l) => (
@@ -66,7 +74,7 @@ export default function MasteryPicker({ sectionId }: { sectionId: string }) {
                     : 'text-[var(--text-muted)] hover:text-[var(--text)]')
                 }
               >
-                {MASTERY_LABEL[l]}
+                {T(MASTERY_LABEL[l])}
               </button>
             ))}
           </div>
@@ -81,7 +89,7 @@ export default function MasteryPicker({ sectionId }: { sectionId: string }) {
                 : 'border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)]')
             }
           >
-            {read ? '✓ 已读' : '标记已读'}
+            {read ? T('✓ 已读') : T('标记已读')}
           </button>
         </div>
       </div>

@@ -1,4 +1,6 @@
 ---
+import { getLangFromPath, translator } from '@/i18n'
+
 interface Props {
   /** 折叠标题，例如「推导：从连续性方程得到概率流」 */
   title: string
@@ -11,6 +13,13 @@ interface Props {
 }
 
 const { title, open = false, level, minutes } = Astro.props
+
+/** 语言按路由推断：MDX 里不必给每个组件都传 lang */
+const _base = import.meta.env.BASE_URL
+const _rel = Astro.url.pathname.startsWith(_base)
+  ? Astro.url.pathname.slice(_base.length)
+  : Astro.url.pathname
+const t = translator(getLangFromPath(_rel))
 ---
 
 <details
@@ -32,7 +41,7 @@ const { title, open = false, level, minutes } = Astro.props
     {
       level && (
         <span class="shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text-faint)]">
-          {level}
+          {t(level)}
         </span>
       )
     }
@@ -43,7 +52,7 @@ const { title, open = false, level, minutes } = Astro.props
     }
     <span
       class="shrink-0 text-[11.5px] text-[var(--text-faint)] group-open:hidden"
-      aria-hidden="true">展开</span
+      aria-hidden="true">{t('展开')}</span
     >
   </summary>
 

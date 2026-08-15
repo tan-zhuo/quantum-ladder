@@ -1,0 +1,125 @@
+---
+num: '06'
+title: Angular momentum and hydrogen orbitals
+goal: 'Actually see what 1s, 2p and 3d look like, and work out which part of the picture n, l and m each control.'
+youWillSee:
+  - 'The probability cloud developing dot by dot — each dot a possible outcome of a position measurement'
+  - 'n sets the size and the radial node spheres, l sets the shape, m sets the orientation'
+  - 'Slicing a 3d orbital open reveals that the cloverleaf is hollow in the middle'
+prereqs:
+  - 'Spherical coordinates'
+  - 'Stationary states and eigenvalue problems (module 03)'
+  - 'Basic ideas about angular momentum (module 05 helps but is not required)'
+scenes:
+  - hydrogen-orbital
+related:
+  - 06-hydrogen/01-central-force
+  - 06-hydrogen/02-radial-equation
+  - 06-hydrogen/03-hydrogen-solution
+  - 06-hydrogen/05-orbital-visualization
+  - 05-angular-momentum/02-spherical-harmonics
+phase: 1
+status: done
+---
+
+Hydrogen was the first real victory of quantum mechanics: a two-particle three-dimensional problem solved completely and exactly, with spectral lines matching experiment to several decimal places.
+
+It is also **where chemistry starts** — the shape of the periodic table, the directionality of covalent bonds and the geometry of molecules are all written into the lobes below.
+
+<Scene name="hydrogen-orbital" />
+
+## Three quantum numbers, three jobs
+
+Any central-force stationary state separates:
+
+$$
+\psi_{n\ell m}(r,\theta,\varphi) = R_{n\ell}(r)\,Y_\ell^m(\theta,\varphi).
+$$
+
+Each quantum number then owns one aspect of the picture, and you can verify each in the scene:
+
+| Number | Range | What it controls |
+| --- | --- | --- |
+| $n$ | $1,2,3,\ldots$ | **Size** ($\langle r\rangle \sim n^2 a_0$) and energy; $n-\ell-1$ radial node spheres |
+| $\ell$ | $0 \ldots n-1$ | **Shape**: sphere, dumbbell, cloverleaf…; $\ell$ angular nodes |
+| $m$ | $-\ell \ldots \ell$ | **Orientation** of the lobes, or (for complex orbitals) the phase circulation about $z$ |
+
+The total node count is always $n-1$ — the three-dimensional version of "the nth state of a one-dimensional well has n nodes".
+
+## Energy depends only on n: an unusual degeneracy
+
+$$
+E_n = -\frac{13.6\ \mathrm{eV}}{n^2}.
+$$
+
+$2s$ and $2p$ look nothing alike yet have identical energy. This is **not** true for central forces in general — in a many-electron atom $2s$ sits below $2p$.
+
+The Coulomb potential is special because it has an extra conserved quantity: the Laplace–Runge–Lenz vector. Classically that is "the major axis of the ellipse does not precess"; quantum mechanically it enlarges the symmetry group from $SO(3)$ to $SO(4)$ and lifts the degeneracy from $2\ell+1$ to $n^2$.
+
+<Callout type="insight" title="Real versus complex orbitals">
+The toggle in the scene matters.
+
+**Complex spherical harmonics** $Y_\ell^m$ are eigenstates of $\hat L_z$ with definite angular-momentum projection $m$. But their $|\psi|^2$ is symmetric about $z$ and draws a doughnut with no azimuthal structure at all.
+
+**Real orbitals** are linear combinations of $m$ and $-m$:
+
+$$
+p_x = \tfrac{1}{\sqrt2}\left(Y_1^{-1}-Y_1^{1}\right),\qquad
+p_y = \tfrac{\ii}{\sqrt2}\left(Y_1^{-1}+Y_1^{1}\right).
+$$
+
+They are no longer eigenstates of $\hat L_z$, but they have **the same energy**, so they are perfectly legitimate stationary states. Every dumbbell and cloverleaf in a chemistry course is one of these, because bonding cares about direction.
+
+Both pictures describe the same set of states in different bases. Use complex ones for angular-momentum algebra, real ones for chemical bonds.
+</Callout>
+
+## The radial distribution: why atoms grow
+
+Do not read $|R_{n\ell}(r)|^2$ as "the probability of finding the electron at radius r". The area of a spherical shell grows as $r^2$, so the correct radial density is
+
+$$
+P(r) = r^2\left|R_{n\ell}(r)\right|^2 .
+$$
+
+For $1s$ the peak of $P(r)$ sits exactly at $r=a_0$ — the Bohr radius reappears as the **most probable radius** rather than an actual orbit.
+
+The $P(r)$ inset in the control panel marks the radial nodes with dashed lines. Change $n$ and watch how quickly the peak moves outward.
+
+<Derivation title="The radial equation and the effective potential" level="进阶">
+
+Set $u(r) = rR(r)$ and the radial equation takes a one-dimensional form:
+
+$$
+-\frac{\hbar^2}{2m}u'' + \left[\underbrace{-\frac{e^2}{4\pi\epsilon_0 r} + \frac{\hbar^2\ell(\ell+1)}{2mr^2}}_{V_{\text{eff}}(r)}\right]u = Eu .
+$$
+
+The second term is the **centrifugal barrier**. For $\ell>0$ it diverges near the origin and pushes the wavefunction away from it. That is why only $s$ orbitals ($\ell=0$) are non-zero at the nucleus — and hence why only $s$ electrons feel the contact interaction with nuclear spin (hyperfine structure, the Fermi contact term in NMR).
+
+Compare $3s$ and $3d$ in the scene: the first still has noticeable density near the nucleus, the second is completely hollow there.
+
+</Derivation>
+
+## Common misreadings
+
+<Callout type="misconception" title="“The electron orbits the nucleus”">
+A stationary state has no trajectory and no circulation (the probability current of a real orbital vanishes). The cloud is not a path; it is the distribution of outcomes if you measured position now. The Bohr circular orbit was a useful historical scaffold, but the picture it gives is wrong.
+</Callout>
+
+<Callout type="misconception" title="“Orbitals have a boundary the electron cannot leave”">
+$|\psi|^2$ is non-zero beyond any finite radius; it merely decays exponentially. The apparent edge is where the sampled dots thin out. The "90% surface" in chemistry books is a chosen threshold, not a physical wall.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Separation of variables', latex: '\\psi_{n\\ell m} = R_{n\\ell}(r)Y_\\ell^m(\\theta,\\varphi)', note: 'True for any central force' },
+    { name: 'Hydrogen levels', latex: 'E_n = -13.6\\,\\mathrm{eV}/n^2', note: 'Depends on n alone — special to the Coulomb potential' },
+    { name: 'Radial probability', latex: 'P(r) = r^2|R_{n\\ell}(r)|^2', note: 'Do not forget the r² volume factor' },
+    { name: 'Counting nodes', latex: '(n-\\ell-1)\\ \\text{radial} + \\ell\\ \\text{angular} = n-1', note: 'Same origin as the one-dimensional node theorem' },
+  ]}
+/>
+
+## Think it through
+
+1. In hydrogen $3s$, $3p$ and $3d$ are degenerate; in sodium $3s < 3p < 3d$. Explain the ordering using "an s electron penetrates inside the screening of the inner electrons".
+2. Take n from 1 to 5 in the scene and the camera pulls back automatically. Without that, $1s$ would be almost invisible on the scale of $5g$ — estimate $\langle r\rangle_{n=5}/\langle r\rangle_{n=1}$.
+3. $2p_z$ and $2p_x$ differ only by a rotation and have the same energy. Does "the electron is in $2p_z$" have any absolute meaning? When does that statement become meaningful?

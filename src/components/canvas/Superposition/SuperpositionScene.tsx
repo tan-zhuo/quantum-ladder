@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -37,7 +38,8 @@ const PRESETS: ViewPreset[] = [
 
 const MAX_LEVELS = 4
 
-export default function SuperpositionScene() {
+export default function SuperpositionScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -83,32 +85,33 @@ export default function SuperpositionScene() {
     const parts = norm
       .map((c, i) => (Math.abs(c) > 1e-6 ? `${c.toFixed(2)}\\,\\ket{${i}}` : null))
       .filter(Boolean)
-    return `\\ket{\\Psi(t)} = ${parts.join(' + ')}` + (parts.length > 1 ? '\\quad(\\text{各项还要乘 } \\ee^{-\\ii E_n t/\\hbar})' : '')
+    return `\\ket{\\Psi(t)} = ${parts.join(' + ')}` + (parts.length > 1 ? T('\\quad(\\text{各项还要乘 } \\ee^{-\\ii E_n t/\\hbar})') : '')
   }, [norm])
 
   return (
     <SceneShell
+      lang={lang}
       id="superposition"
-      title="叠加态：为什么本征态不动，而叠加会晃"
-      subtitle="第三个维度是时间。当前的 |ψ|² 在最前面，它的历史往后堆成一张时空曲面——本征态是笔直的沟壑，叠加态是荡开的波纹。"
+      title={T('叠加态：为什么本征态不动，而叠加会晃')}
+      subtitle={T('第三个维度是时间。当前的 |ψ|² 在最前面，它的历史往后堆成一张时空曲面——本征态是笔直的沟壑，叠加态是荡开的波纹。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="势阱">
+          <ControlGroup title={T('势阱')}>
             <Segmented
               value={kind}
               onChange={(v) => setKind(v as WellKind)}
               options={[
-                { value: 'infinite', label: '无限深阱' },
-                { value: 'harmonic', label: '谐振子' },
+                { value: 'infinite', label: T('无限深阱') },
+                { value: 'harmonic', label: T('谐振子') },
               ]}
             />
           </ControlGroup>
 
           <ControlGroup
-            title="叠加系数 cₙ"
-            hint="只有一个非零系数时画面完全静止；两个及以上才开始晃。"
+            title={T('叠加系数 cₙ')}
+            hint={T('只有一个非零系数时画面完全静止；两个及以上才开始晃。')}
           >
             {coeffs.map((c, i) => (
               <Slider
@@ -126,21 +129,21 @@ export default function SuperpositionScene() {
               />
             ))}
             <div className="flex flex-wrap gap-1.5">
-              <Button onClick={() => setCoeffs([1, 0, 0, 0])}>基态</Button>
+              <Button onClick={() => setCoeffs([1, 0, 0, 0])}>{T('基态')}</Button>
               <Button onClick={() => setCoeffs([1, 1, 0, 0])}>0+1</Button>
               <Button onClick={() => setCoeffs([1, 0, 1, 0])}>0+2</Button>
               {kind === 'harmonic' ? (
                 <Button
                   onClick={() => setCoeffs([1, 1, 0.707, 0.408])}
-                  title="谐振子的相干态：波包形状不变，整体来回振荡"
+                  title={T('谐振子的相干态：波包形状不变，整体来回振荡')}
                 >
-                  相干态
+                  {T('相干态')}
                 </Button>
               ) : null}
             </div>
           </ControlGroup>
 
-          <ControlGroup title="演化">
+          <ControlGroup title={T('演化')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
@@ -149,18 +152,19 @@ export default function SuperpositionScene() {
               onSpeed={setSpeed}
               timeLabel={`t = ${stats.t.toFixed(2)}`}
             />
-            <Toggle label="显示时间历史（瀑布图）" checked={showHistory} onChange={setShowHistory} />
+            <Toggle label={T('显示时间历史（瀑布图）')} checked={showHistory} onChange={setShowHistory} />
           </ControlGroup>
 
-          <ControlGroup title="⟨x⟩ 随时间">
+          <ControlGroup title={T('⟨x⟩ 随时间')}>
             <MiniPlot
               series={[{ points: meanTrace, color: p.energy }]}
               height={70}
-              ariaLabel="位置期望值随时间"
+              ariaLabel={T('位置期望值随时间')}
             />
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              这条曲线就是「原子这根天线」的摆动。只留一个能级时它是一条死平的直线——
-              本征态不辐射，所以原子稳定。
+              {T(
+                '这条曲线就是「原子这根天线」的摆动。只留一个能级时它是一条死平的直线—— 本征态不辐射，所以原子稳定。',
+              )}
             </p>
           </ControlGroup>
         </>
@@ -173,42 +177,46 @@ export default function SuperpositionScene() {
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
             <span>⟨x⟩ = {stats.mean.toFixed(3)}</span>
             <span>⟨E⟩ = {norm.reduce((a, c, i) => a + c * c * (sol.states[i]?.energy ?? 0), 0).toFixed(3)}</span>
-            {beat ? <span>拍频周期 T = 2πħ/ΔE = {beat.toFixed(2)}</span> : <span>单一能级：无振荡</span>}
+            {beat ? (
+              <span>{T('拍频周期 T = 2πħ/ΔE = {0}', beat.toFixed(2))}</span>
+            ) : (
+              <span>{T('单一能级：无振荡')}</span>
+            )}
           </div>
           <Legend
             items={[
-              { color: p.real, label: 'ψ（复数管）' },
-              { color: p.prob, label: '当前 |ψ|²' },
-              { color: p.faint, label: '|ψ|² 的历史（时间往后）' },
+              { color: p.real, label: T('ψ（复数管）') },
+              { color: p.prob, label: T('当前 |ψ|²') },
+              { color: p.faint, label: T('|ψ|² 的历史（时间往后）') },
             ]}
           />
         </div>
       }
       guide={[
-        '先只留 c₀（点「基态」）：管子在转，但 |ψ|² 完全不动，历史曲面是一条条笔直的沟。这就是「定态」。',
-        '点「0+1」：概率密度开始左右晃，历史曲面变成斜向的波纹。晃动周期由能级差决定——读数里的 T = 2πħ/ΔE 可以拿秒表核对。',
-        '点「0+2」：晃动频率变了（因为 ΔE 变了），而且形状是「呼吸」而不是「左右晃」——奇偶宇称决定了它怎么动。',
-        '切到谐振子并点「相干态」：波包形状保持不变、像经典小球一样来回振荡。这是谐振子能级等间距的特权，换成方阱就会散架。',
-        '切到「看历史」视角俯视瀑布图：整段时间演化被压成一张静止的图，比盯着动画更容易看清周期。',
+        T('先只留 c₀（点「基态」）：管子在转，但 |ψ|² 完全不动，历史曲面是一条条笔直的沟。这就是「定态」。'),
+        T('点「0+1」：概率密度开始左右晃，历史曲面变成斜向的波纹。晃动周期由能级差决定——读数里的 T = 2πħ/ΔE 可以拿秒表核对。'),
+        T('点「0+2」：晃动频率变了（因为 ΔE 变了），而且形状是「呼吸」而不是「左右晃」——奇偶宇称决定了它怎么动。'),
+        T('切到谐振子并点「相干态」：波包形状保持不变、像经典小球一样来回振荡。这是谐振子能级等间距的特权，换成方阱就会散架。'),
+        T('切到「看历史」视角俯视瀑布图：整段时间演化被压成一张静止的图，比盯着动画更容易看清周期。'),
       ]}
       pitfalls={[
         {
-          title: '“叠加态的能量是各能级的平均”',
-          body: '能量期望值确实是加权平均，但单次测量只会得到某个 Eₙ，永远测不到那个平均值。',
+          title: T('“叠加态的能量是各能级的平均”'),
+          body: T('能量期望值确实是加权平均，但单次测量只会得到某个 Eₙ，永远测不到那个平均值。'),
         },
         {
-          title: '“本征态不随时间变化”',
-          body: '态矢量一直在变（相位在转），不变的是所有可观测量。区别在于整体相位不可观测。',
+          title: T('“本征态不随时间变化”'),
+          body: T('态矢量一直在变（相位在转），不变的是所有可观测量。区别在于整体相位不可观测。'),
         },
         {
-          title: '“晃动频率是 E/ħ”',
-          body: '是能级**差**除以 ħ。绝对能量零点可以任意平移而不影响任何观测——这也是为什么只有能级差有物理意义。',
+          title: T('“晃动频率是 E/ħ”'),
+          body: T('是能级**差**除以 ħ。绝对能量零点可以任意平移而不影响任何观测——这也是为什么只有能级差有物理意义。'),
         },
       ]}
       reflect={[
-        '把 c₀ 设为 0.99、c₁ 设为 0.14，晃动的频率变不变？幅度变不变？先猜再试。',
-        '无限深阱里 E ∝ n²，所以叠加 0+1 与叠加 2+3 的晃动频率不同。哪个更快？',
-        '如果叠加的两个态宇称相同（比如 0 和 2），⟨x⟩ 会振荡吗？看看 ⟨x⟩ 曲线，再想想矩阵元 ⟨0|x|2⟩ 的宇称。',
+        T('把 c₀ 设为 0.99、c₁ 设为 0.14，晃动的频率变不变？幅度变不变？先猜再试。'),
+        T('无限深阱里 E ∝ n²，所以叠加 0+1 与叠加 2+3 的晃动频率不同。哪个更快？'),
+        T('如果叠加的两个态宇称相同（比如 0 和 2），⟨x⟩ 会振荡吗？看看 ⟨x⟩ 曲线，再想想矩阵元 ⟨0|x|2⟩ 的宇称。'),
       ]}
     >
       <SceneCanvas
@@ -219,7 +227,7 @@ export default function SuperpositionScene() {
         overlay={
           <CanvasStat>
             t = {stats.t.toFixed(2)}　⟨x⟩ = {stats.mean.toFixed(3)}
-            {beat ? `　T = ${beat.toFixed(2)}` : '　定态'}
+            {beat ? `　T = ${beat.toFixed(2)}` : T('　定态')}
           </CanvasStat>
         }
       >
@@ -238,7 +246,7 @@ export default function SuperpositionScene() {
           x
         </SceneLabel>
         <SceneLabel position={[-X_SPAN / 2 - 0.5, 0, -HIST_DEPTH]} tone="muted" size="xs">
-          ← 时间
+          ← {T('时间演化')}
         </SceneLabel>
 
         <Evolve

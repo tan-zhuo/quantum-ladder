@@ -1,4 +1,5 @@
 ---
+import { getLangFromPath, type Lang } from '@/i18n'
 import BlochSphereScene from './BlochSphere/BlochSphereScene'
 import WavefunctionScene from './Wavefunction/WavefunctionScene'
 import HydrogenOrbitalScene from './HydrogenOrbital/HydrogenOrbitalScene'
@@ -42,8 +43,19 @@ export type SceneName = (typeof SCENE_NAMES)[number]
 
 interface Props {
   name: SceneName
+  /** 显式指定界面语言；不传就按路由判断 */
+  lang?: Lang
 }
 
+/**
+ * 语言默认从路由推断，这样 MDX 里只写 <Scene name="…" /> 就够了——
+ * 中英两份内容用的是同一段写法，不必各写一遍带 lang 的版本。
+ */
+const base = import.meta.env.BASE_URL
+const rel = Astro.url.pathname.startsWith(base)
+  ? Astro.url.pathname.slice(base.length)
+  : Astro.url.pathname
+const lang: Lang = Astro.props.lang ?? getLangFromPath(rel)
 const { name } = Astro.props
 
 if (!SCENE_NAMES.includes(name)) {
@@ -55,18 +67,18 @@ if (!SCENE_NAMES.includes(name)) {
 ---
 
 <div class="ql-canvas-host">
-  {name === 'bloch-sphere' && <BlochSphereScene client:visible />}
-  {name === 'wavefunction' && <WavefunctionScene client:visible />}
-  {name === 'hydrogen-orbital' && <HydrogenOrbitalScene client:visible />}
-  {name === 'potential-well' && <PotentialWellScene client:visible />}
-  {name === 'double-slit' && <DoubleSlitScene client:visible />}
-  {name === 'tunneling' && <TunnelingScene client:visible />}
-  {name === 'stern-gerlach' && <SternGerlachScene client:visible />}
-  {name === 'entanglement' && <EntanglementScene client:visible />}
-  {name === 'superposition' && <SuperpositionScene client:visible />}
-  {name === 'decoherence' && <DecoherenceScene client:visible />}
-  {name === 'path-integral' && <PathIntegralScene client:visible />}
-  {name === 'identical-particles' && <IdenticalParticlesScene client:visible />}
+  {name === 'bloch-sphere' && <BlochSphereScene lang={lang} client:visible />}
+  {name === 'wavefunction' && <WavefunctionScene lang={lang} client:visible />}
+  {name === 'hydrogen-orbital' && <HydrogenOrbitalScene lang={lang} client:visible />}
+  {name === 'potential-well' && <PotentialWellScene lang={lang} client:visible />}
+  {name === 'double-slit' && <DoubleSlitScene lang={lang} client:visible />}
+  {name === 'tunneling' && <TunnelingScene lang={lang} client:visible />}
+  {name === 'stern-gerlach' && <SternGerlachScene lang={lang} client:visible />}
+  {name === 'entanglement' && <EntanglementScene lang={lang} client:visible />}
+  {name === 'superposition' && <SuperpositionScene lang={lang} client:visible />}
+  {name === 'decoherence' && <DecoherenceScene lang={lang} client:visible />}
+  {name === 'path-integral' && <PathIntegralScene lang={lang} client:visible />}
+  {name === 'identical-particles' && <IdenticalParticlesScene lang={lang} client:visible />}
 </div>
 
 <noscript>

@@ -1,0 +1,118 @@
+---
+num: '04'
+title: Tunnelling and scattering
+goal: 'Watch a wave packet hit a wall it cannot climb, and find part of it on the other side.'
+youWillSee:
+  - 'The classical ball rebounds along its own path while the packet splits into reflected and transmitted parts'
+  - 'Inside the barrier |ψ|² decays exponentially — it is not zero'
+  - 'Doubling the barrier width costs several orders of magnitude in transmission'
+prereqs:
+  - 'Stationary states and exponential solutions in the forbidden region (module 03)'
+  - 'A wave packet as a superposition of momenta'
+scenes:
+  - tunneling
+related:
+  - 02-wavefunction/11-tunneling
+  - 04-1d-problems/02-scattering-phase-shift
+  - 04-1d-problems/03-transfer-matrix
+  - appendix-c-numerics/02-split-operator
+phase: 1
+status: done
+---
+
+Module 03 ended with an exponential tail: in the classically forbidden region the wavefunction is not zero, merely decaying.
+
+Now make the wall thin. The tail has not finished decaying by the time it reaches the far side, so an outgoing wave appears beyond the wall. The particle has gone through.
+
+<Scene name="tunneling" />
+
+## This scene really is solving the equation
+
+The earlier scenes had either closed-form solutions or eigenvalue problems. This one is different: it integrates the time-dependent Schrödinger equation
+
+$$
+\ii\hbar\,\partial_t\psi = \left[-\frac{\hbar^2}{2m}\partial_x^2 + V(x)\right]\psi
+$$
+
+frame by frame in your browser, using the split-operator method: the evolution operator is split symmetrically,
+
+$$
+\ee^{-\ii\hat H \dd t/\hbar} \approx \ee^{-\ii\hat V \dd t/2\hbar}\;\ee^{-\ii\hat T \dd t/\hbar}\;\ee^{-\ii\hat V \dd t/2\hbar} + O(\dd t^3),
+$$
+
+with the kinetic part diagonal in momentum space, so an FFT there and back does the work. The scheme is **exactly unitary**: run it for ten thousand steps and the norm does not drift. That is what the "remaining norm" readout is watching (the absorbing layer at the edges does show up honestly as a decrease).
+
+The algorithm is documented in [appendix C](/ch/appendix-c-numerics/02-split-operator/).
+
+## Transmission: exponentially sensitive
+
+For a plane wave on a rectangular barrier with $E<V_0$ the exact result is
+
+$$
+T = \left[1 + \frac{V_0^2\sinh^2(\kappa a)}{4E(V_0-E)}\right]^{-1},
+\qquad \kappa = \frac{\sqrt{2m(V_0-E)}}{\hbar}.
+$$
+
+When $\kappa a \gg 1$, $\sinh \approx \tfrac12\ee^{\kappa a}$ and
+
+$$
+T \approx \frac{16E(V_0-E)}{V_0^2}\,\ee^{-2\kappa a}.
+$$
+
+**Exponential** in the width and in $\sqrt{V_0-E}$. That single fact underlies three apparently unrelated things:
+
+| Phenomenon | Mechanism |
+| --- | --- |
+| An STM resolving single atoms | 0.1 nm of tip height changes the tunnelling current by an order of magnitude |
+| α-decay half-lives spanning 30 orders of magnitude | A few MeV of energy, exponentially amplified |
+| The Sun burning at all | Protons only get through the Coulomb barrier by tunnelling |
+
+<Callout type="misconception" title="“The particle borrows energy from the wall and pays it back”">
+This story is usually dressed up with the time–energy uncertainty relation. It sounds smooth and it will lead you into a ditch.
+
+In a stationary state the energy is definite; there is nothing to borrow. The honest picture is that the stationary equation has real exponential solutions $\ee^{-\kappa x}$ in the forbidden region, and they are simply there. Inside the barrier there is neither oscillation nor propagation, so asking about "the particle's speed in the wall" has already left the theory.
+
+If you want a replacement intuition, use this one: **the wavefunction is continuous and differentiable**. It cannot drop to zero at the wall; it can only decay smoothly. Make the wall thin enough and it has not finished decaying.
+</Callout>
+
+## Above the barrier: quantum reflection and resonances
+
+Push the energy above the barrier height. Classically everything passes, yet part of the packet still comes back — because an abrupt change in potential reflects waves, exactly as light partially reflects entering glass.
+
+Keep raising the energy and $T$ does not climb monotonically to 1: it oscillates towards it, hitting exactly 1 whenever $k_2 a = n\pi$. That is destructive interference between the waves reflected at the two faces — **resonant transmission** (the Ramsauer–Townsend effect is its three-dimensional cousin).
+
+The $T(E)$ curve in the control panel draws all of this, with the current working point marked.
+
+<Derivation title="Why the packet's T disagrees with the plane-wave formula" level="进阶">
+
+The $T(E)$ above is for a **plane wave** at a single energy. The scene launches a Gaussian packet, which is a superposition of many $k$:
+
+$$
+\psi(x,0) = \int \dd k\; a(k)\,\ee^{\ii kx},\qquad
+a(k) \propto \ee^{-\sigma^2 (k-k_0)^2}.
+$$
+
+Each component has its own $T(k)$, so the measured transmission is a weighted average
+
+$$
+T_{\text{packet}} = \int \dd k\,|a(k)|^2\,T(k).
+$$
+
+Since $T(E)$ rises exponentially with energy for $E<V_0$, the high-energy tail of the distribution is amplified out of proportion, and $T_{\text{packet}}$ generally comes out **above** $T(E_0)$. Increase $\sigma$ in the scene (sharper momentum) and the two converge. The discrepancy is quantitative and checkable — it is not numerical error.
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'Decay constant', latex: '\\kappa = \\sqrt{2m(V_0-E)}/\\hbar', note: 'The rate of decay in the forbidden region' },
+    { name: 'Thin-barrier limit', latex: 'T \\approx \\ee^{-2\\kappa a}', note: 'Double the width and T is squared' },
+    { name: 'Exact transmission', latex: 'T = [1+\\tfrac{V_0^2\\sinh^2\\kappa a}{4E(V_0-E)}]^{-1}', note: 'Rectangular barrier, E < V₀' },
+    { name: 'Resonance condition', latex: 'k_2 a = n\\pi', note: 'T = 1 above the barrier' },
+  ]}
+/>
+
+## Think it through
+
+1. Take the barrier width from 1.6 to 3.2 and read off how much $T$ falls. Predict the ratio from $\ee^{-2\kappa a}$ first, then compare.
+2. As the barrier height goes to infinity, $T\to 0$. How does that connect to the infinite square well's boundary condition that ψ vanishes at the wall?
+3. Reflection and transmission should sum to one, yet the readout often falls short. Look at the middle segment of the bar labelled "still near the barrier" and explain the deficit.

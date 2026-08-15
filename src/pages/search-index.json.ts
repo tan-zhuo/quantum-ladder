@@ -20,11 +20,15 @@ export const GET: APIRoute = async () => {
   const labDocs: SearchDoc[] = labs
     .map((entry: { id: string; body?: string; data: Record<string, any> }) => {
       const source = entry.body ?? ''
+      // id 形如 `zh/05-spin`；进度与「继续上次」按语言无关的 slug 归档
+      const [lng, ...rest] = entry.id.split('/')
+      const slug = rest.join('/')
+      const prefix = lng === 'en' ? 'en/' : ''
       return {
-        id: `lab/${entry.id}`,
-        href: `${import.meta.env.BASE_URL}lab/${entry.id}/`.replace(/\/{2,}/g, '/'),
-        label: `模块 ${entry.data.num}`,
-        chapter: '3D 实验室',
+        id: `lab/${slug}`,
+        href: `${import.meta.env.BASE_URL}${prefix}lab/${slug}/`.replace(/\/{2,}/g, '/'),
+        label: lng === 'en' ? `Module ${entry.data.num}` : `模块 ${entry.data.num}`,
+        chapter: lng === 'en' ? '3D Lab' : '3D 实验室',
         title: entry.data.title,
         summary: entry.data.goal ?? '',
         headings: extractHeadings(source),

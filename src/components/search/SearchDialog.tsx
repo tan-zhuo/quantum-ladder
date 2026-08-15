@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useT } from '@/i18n/react'
 import { search, type SearchDoc, type SearchHit } from '@/lib/search'
 
 /**
@@ -6,6 +7,7 @@ import { search, type SearchDoc, type SearchHit } from '@/lib/search'
  * 不打开就一个字节都不下载。
  */
 export default function SearchDialog() {
+  const T = useT()
   const [open, setOpen] = useState(false)
   const [docs, setDocs] = useState<SearchDoc[] | null>(null)
   const [loading, setLoading] = useState(false)
@@ -53,7 +55,15 @@ export default function SearchDialog() {
 
   const hits: SearchHit[] = useMemo(() => {
     if (!docs || !query.trim()) return []
-    return search(docs, query, 24)
+    // 只搜当前语言的内容：索引里中英两份都在，混在一起搜会得到成对的重复结果。
+    // 教材小节只有中文，所以英文界面下仍然让它们参与搜索（标题已是英文）。
+    const lang = typeof document !== 'undefined' && document.documentElement.lang.startsWith('en') ? 'en' : 'zh'
+    const scoped = docs.filter((d) => {
+      const isLab = d.id.startsWith('lab/')
+      if (!isLab) return true
+      return lang === 'en' ? d.href.includes('/en/') : !d.href.includes('/en/')
+    })
+    return search(scoped, query, 24)
   }, [docs, query])
 
   useEffect(() => setCursor(0), [query])
@@ -90,7 +100,7 @@ export default function SearchDialog() {
       className="no-print fixed inset-0 z-50 flex items-start justify-center px-4 pt-[8vh]"
       role="dialog"
       aria-modal="true"
-      aria-label="搜索"
+      aria-label={T('搜索')}
     >
       <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} aria-hidden />
 
@@ -115,7 +125,7 @@ export default function SearchDialog() {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="搜索章节、概念、公式…（试试「隧道」「Ehrenfest」「归一化」）"
+            placeholder={T('搜索章节、概念、公式…（试试「隧道」「Ehrenfest」「归一化」）')}
             className="h-12 w-full bg-transparent text-[15px] outline-none placeholder:text-[var(--text-faint)]"
             autoComplete="off"
             spellCheck={false}
@@ -131,14 +141,14 @@ export default function SearchDialog() {
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           {loading ? (
-            <p className="px-4 py-8 text-center text-[13.5px] text-[var(--text-faint)]">正在加载索引…</p>
+            <p className="px-4 py-8 text-center text-[13.5px] text-[var(--text-faint)]">{T('正在加载索引…')}</p>
           ) : !query.trim() ? (
             <p className="px-4 py-8 text-center text-[13.5px] text-[var(--text-faint)]">
-              输入关键词开始搜索。支持中文与英文，公式里的命令名（如 psi、hbar）也能搜到。
+              {T('输入关键词开始搜索。支持中文与英文，公式里的命令名（如 psi、hbar）也能搜到。')}
             </p>
           ) : hits.length === 0 ? (
             <p className="px-4 py-8 text-center text-[13.5px] text-[var(--text-faint)]">
-              没有匹配的内容。换个说法试试？
+              {T('没有匹配的内容。换个说法试试？')}
             </p>
           ) : (
             <ul ref={listRef} className="p-2">
@@ -175,15 +185,15 @@ export default function SearchDialog() {
 
         <div className="flex items-center gap-4 border-t border-[var(--border)] px-4 py-2 text-[11.5px] text-[var(--text-faint)]">
           <span>
-            <kbd className="font-mono">↑↓</kbd> 选择
+            <kbd className="font-mono">↑↓</kbd> {T('选择')}
           </span>
           <span>
-            <kbd className="font-mono">↵</kbd> 打开
+            <kbd className="font-mono">↵</kbd> {T('打开')}
           </span>
           <span>
-            <kbd className="font-mono">esc</kbd> 关闭
+            <kbd className="font-mono">esc</kbd> {T('关闭')}
           </span>
-          {docs ? <span className="ml-auto">{docs.length} 个小节已索引</span> : null}
+          {docs ? <span className="ml-auto">{T('{0} 个条目已索引', docs.length)}</span> : null}
         </div>
       </div>
     </div>

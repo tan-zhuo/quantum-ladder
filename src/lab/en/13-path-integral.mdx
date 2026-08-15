@@ -1,0 +1,102 @@
+---
+num: '13'
+title: Getting a feel for the path integral
+goal: 'Build the picture that every path contributes, and watch the classical path emerge from the interference.'
+youWillSee:
+  - 'Hundreds of ragged paths connecting the same two points, each carrying a phase'
+  - 'Phase encoded as colour: far from the classical path the colour spins fast and contributions cancel'
+  - 'Shrink ħ and only a thin bundle around the classical path survives'
+prereqs:
+  - 'Complex phases and interference (module 01)'
+  - 'Action and the principle of least action in classical mechanics (helpful)'
+scenes:
+  - path-integral
+related:
+  - 11-path-integral/01-path-integral-idea
+  - 11-path-integral/02-propagator
+  - 11-path-integral/03-to-schrodinger
+phase: 3
+status: done
+---
+
+The Schrödinger equation tells you how the wavefunction evolves. Feynman gave a second account of the same physics, and it sounds far more outrageous:
+
+> To go from A to B, the particle takes **every possible path**. Each path contributes an amplitude $\ee^{\ii S/\hbar}$, and the total amplitude is their sum.
+
+Every path — including the one that loops around the Earth first, the one that doubles back, the one whose velocity jumps.
+
+<Scene name="path-integral" />
+
+## The propagator is a sum
+
+$$
+K(x_b,t_b;x_a,t_a) = \int \mathcal{D}[x(t)]\ \ee^{\ii S[x]/\hbar},
+\qquad
+S[x] = \int_{t_a}^{t_b} L(x,\dot x)\,\dd t .
+$$
+
+Every path has **exactly the same amplitude magnitude**; only the phase differs. That is deeply counter-intuitive: an absurd path contributes as much amplitude as the classical one.
+
+So what makes the classical path special?
+
+## Stationary phase: cancelling and not cancelling
+
+Near the classical path the action $S$ is **stationary**, meaning its first variation vanishes: neighbouring paths have nearly the same phase, so their amplitudes add **in phase** and reinforce.
+
+Far from it, $S$ changes rapidly, neighbouring phases are scrambled, and the contributions **cancel**.
+
+The scene encodes phase as colour. You will see a band around the classical path where the colour changes gently, and beyond it the colour spinning into noise. Almost all of the sum comes from that band.
+
+<Callout type="insight" title="ħ is the only switch here">
+The phase is $S/\hbar$. The smaller $\hbar$, the larger the phase difference for the same $\Delta S$, the more complete the cancellation, and the narrower the surviving bundle.
+
+In the limit $\hbar\to0$ only the exact classical path is left: **the principle of least action is not an independent law of physics, it is the classical limit of the path integral**.
+
+The ħ slider in the scene turns that statement into something you can drag: shrink it and the bundle tightens to a line; enlarge it and quantum fluctuations bring the whole bundle back to life.
+</Callout>
+
+## Why the formulation is worth learning
+
+The path integral is fully equivalent to the Schrödinger equation (you can derive one from the other), but it wins outright in several places:
+
+- **Field theory**: quantising gauge fields and deriving Feynman rules is far more natural this way;
+- **Statistical mechanics**: substitute $t\to-\ii\tau$ and the path integral becomes a partition function, making quantum mechanics and statistical physics the same mathematics;
+- **Topological effects**: Aharonov–Bohm phases, instantons and θ-vacua are cleanest when you sum by topological class;
+- **Numerics**: quantum Monte Carlo samples directly in path space.
+
+<Derivation title="From the path integral back to the Schrödinger equation" level="选读">
+
+For an infinitesimal time $\epsilon$, the single-step propagator is
+
+$$
+K(x',t+\epsilon;x,t) \approx \sqrt{\frac{m}{2\pi\ii\hbar\epsilon}}
+\exp\left\{\frac{\ii}{\hbar}\left[\frac{m(x'-x)^2}{2\epsilon} - \epsilon V\!\left(\tfrac{x+x'}{2}\right)\right]\right\}.
+$$
+
+Substituting into $\psi(x',t+\epsilon)=\int K\,\psi(x,t)\dd x$, writing $\eta = x'-x$ and expanding to second order, the Gaussian integrals give
+
+$$
+\langle\eta^2\rangle = \frac{\ii\hbar\epsilon}{m},
+$$
+
+so that
+
+$$
+\psi(x,t+\epsilon) = \psi + \frac{\ii\hbar\epsilon}{2m}\partial_x^2\psi - \frac{\ii\epsilon}{\hbar}V\psi + O(\epsilon^2),
+$$
+
+which rearranges into
+
+$$
+\ii\hbar\,\partial_t\psi = -\frac{\hbar^2}{2m}\partial_x^2\psi + V\psi .
+$$
+
+Note that $\langle\eta^2\rangle \propto \epsilon$ rather than $\epsilon^2$: the typical path is **continuous everywhere and differentiable nowhere**, just like Brownian motion. "Velocity" is simply not a well-defined quantity in this framework.
+
+</Derivation>
+
+## Think it through
+
+1. How would you describe the double slit in this language? (Hint: the barrier kills almost every path and leaves two families.)
+2. If a path has an action $100\hbar$ larger than the classical one, is its contribution "small" or "cancelled"? What is the difference between those two statements?
+3. Typical paths are nowhere differentiable. What, then, is "the velocity of the particle" in the path integral, and how does that connect to the uncertainty principle?

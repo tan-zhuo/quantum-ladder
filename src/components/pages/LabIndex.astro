@@ -1,0 +1,130 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getLabModules, countScenes } from '@/lib/lab'
+import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = DEFAULT_LANG } = Astro.props
+const t = translator(lang)
+const modules = await getLabModules(lang)
+const sceneCount = await countScenes()
+const base = import.meta.env.BASE_URL
+const L = (p: string) => localePath(lang, p, base)
+
+const PHASE_LABEL: Record<number, string> = { 1: '核心', 2: '扩展', 3: '补充' }
+---
+
+<BaseLayout
+  title={t('3D 实验室')}
+  description={t('{0} 个模块、{1} 个 3D 场景。', modules.length, sceneCount)}
+  currentId="lab"
+  lang={lang}
+>
+  <div class="mx-auto w-full max-w-[1080px] px-5 py-10 lg:px-8">
+    <nav aria-label="breadcrumb" class="mb-4 flex items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]">
+      <a href={L('')} class="hover:text-[var(--accent-text)]">{t('首页')}</a>
+      <span aria-hidden="true">/</span>
+      <span class="text-[var(--text-muted)]">{t('3D 实验室')}</span>
+    </nav>
+
+    <header class="mb-10">
+      <h1 class="text-[32px] leading-tight font-bold tracking-tight">{t('3D 实验室')}</h1>
+      <p class="mt-3 max-w-[64ch] text-[16px] leading-relaxed text-[var(--text-muted)]">
+        {
+          t(
+            '{0} 个模块、{1} 个 3D 场景。每个场景都在你的浏览器里实时求解—— 波函数、能级、透射率、Bell 关联都是当场算出来的，拖动参数立刻重算，不是预渲染的动画。',
+            modules.length,
+            sceneCount,
+          )
+        }
+      </p>
+      <p class="mt-2 text-[13.5px] text-[var(--text-faint)]">
+        {t('第一次来？先看')}
+        <a href={L('lab/00-intro/')} class="text-[var(--accent-text)] underline underline-offset-2">
+          {t('模块 00：如何使用这个平台')}
+        </a>{t('，两分钟。')}
+      </p>
+    </header>
+
+    <ul class="grid gap-3 sm:grid-cols-2">
+      {
+        modules.map((m) => (
+          <li>
+            <a
+              href={L(m.path)}
+              data-section-link={`lab/${m.slug}`}
+              class="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3.5 transition-colors hover:border-[var(--border-strong)]"
+            >
+              <div class="mb-1.5 flex items-center gap-2">
+                <span class="font-mono text-[12px] text-[var(--accent-text)]">{m.num}</span>
+                <span class="ql-read-dot size-1.5 rounded-full bg-transparent" aria-hidden="true" />
+                <span class="flex-1" />
+                {m.scenes.length > 0 ? (
+                  <span
+                    class="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 font-mono text-[10.5px] text-[var(--accent-text)]"
+                    title={t('{0} 个 3D 场景', m.scenes.length)}
+                  >
+                    {m.scenes.length} ◆
+                  </span>
+                ) : (
+                  <span class="rounded-full bg-[var(--bg-subtle)] px-2 py-0.5 text-[10.5px] text-[var(--text-faint)]">
+                    {t('无场景')}
+                  </span>
+                )}
+                <span class="rounded-full bg-[var(--bg-subtle)] px-2 py-0.5 text-[10.5px] text-[var(--text-faint)]">
+                  {t(PHASE_LABEL[m.phase] ?? '')}
+                </span>
+              </div>
+              <h2 class="text-[16px] font-semibold tracking-tight text-[var(--text)] group-hover:text-[var(--accent-text)]">
+                {m.title}
+              </h2>
+              <p class="mt-1.5 flex-1 text-[13.5px] leading-relaxed text-[var(--text-muted)]">{m.goal}</p>
+              {m.youWillSee.length > 0 && (
+                <p class="mt-2.5 border-t border-[var(--border)] pt-2 text-[12.5px] leading-snug text-[var(--text-faint)]">
+                  <span class="text-[var(--accent)]">◆</span> {m.youWillSee[0]}
+                </p>
+              )}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="mt-12 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] px-5 py-4">
+      <h2 class="text-[15px] font-semibold">{t('想要完整的推导与习题？')}</h2>
+      <p class="mt-1.5 text-[13.5px] leading-relaxed text-[var(--text-muted)]">
+        {
+          t(
+            '3D 模块负责建立物理图像，教材部分负责把它算清楚。每个模块页面底部都有对应章节的直达链接， 也可以直接从侧栏的「教材」进入。',
+          )
+        }
+        {lang === 'en' && <span class="text-[var(--text-faint)]"> (textbook text is in Chinese)</span>}
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import { loadProgress, onProgressChange, type ProgressState } from '@/lib/progress'
+
+  function paint(state: ProgressState) {
+    document.querySelectorAll<HTMLElement>('[data-section-link]').forEach((el) => {
+      const id = el.dataset.sectionLink!
+      const dot = el.querySelector<HTMLElement>('.ql-read-dot')
+      if (!dot) return
+      const p = state[id]
+      const level = p?.mastery ?? 0
+      if (p?.read || level > 0) {
+        dot.style.background = level >= 2 ? 'var(--c-energy)' : 'var(--accent)'
+      } else {
+        dot.style.background = 'transparent'
+      }
+    })
+  }
+
+  paint(loadProgress())
+  onProgressChange(paint)
+</script>

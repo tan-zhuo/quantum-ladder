@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -48,7 +49,8 @@ interface Sim {
   xBarrierRight: number
 }
 
-export default function TunnelingScene() {
+export default function TunnelingScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -145,35 +147,36 @@ export default function TunnelingScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="tunneling"
-      title="隧道效应：波包撞上一堵它「翻不过」的墙"
-      subtitle="经典小球在 E < V₀ 时必然弹回。看着波包撞上势垒——一部分反射，一部分渗进墙里指数衰减，还有一部分真的出现在了另一侧。"
+      title={T('隧道效应：波包撞上一堵它「翻不过」的墙')}
+      subtitle={T('经典小球在 E < V₀ 时必然弹回。看着波包撞上势垒——一部分反射，一部分渗进墙里指数衰减，还有一部分真的出现在了另一侧。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="势垒">
-            <Slider label="高度 V₀" value={v0} min={0.2} max={6} step={0.05} onChange={setV0} />
-            <Slider label="宽度 a" value={barrierWidth} min={0.2} max={6} step={0.05} onChange={setBarrierWidth} />
+          <ControlGroup title={T('势垒')}>
+            <Slider label={T('高度 V₀')} value={v0} min={0.2} max={6} step={0.05} onChange={setV0} />
+            <Slider label={T('宽度 a')} value={barrierWidth} min={0.2} max={6} step={0.05} onChange={setBarrierWidth} />
           </ControlGroup>
 
           <ControlGroup
-            title="入射波包"
-            hint={energy < v0 ? `E < V₀：经典上完全禁止穿透` : `E > V₀：经典上必定穿过，但量子仍有反射`}
+            title={T('入射波包')}
+            hint={energy < v0 ? T('E < V₀：经典上完全禁止穿透') : T('E > V₀：经典上必定穿过，但量子仍有反射')}
           >
-            <Slider label="平均能量 E" value={energy} min={0.2} max={6} step={0.05} onChange={setEnergy} />
+            <Slider label={T('平均能量 E')} value={energy} min={0.2} max={6} step={0.05} onChange={setEnergy} />
             <Slider
-              label="波包宽度 σ"
+              label={T('波包宽度 σ')}
               value={sigma}
               min={2}
               max={9}
               step={0.1}
               onChange={setSigma}
-              hint="σ 越大动量越确定，透射率越接近平面波的解析值"
+              hint={T('σ 越大动量越确定，透射率越接近平面波的解析值')}
             />
           </ControlGroup>
 
-          <ControlGroup title="演化">
+          <ControlGroup title={T('演化')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
@@ -182,21 +185,21 @@ export default function TunnelingScene() {
               onSpeed={setSpeed}
               timeLabel={`t = ${stats.t.toFixed(1)}`}
             />
-            <Toggle label="经典粒子对照" checked={showClassical} onChange={setShowClassical} />
-            <Toggle label="显示 ψ（复数管）" checked={showPsi} onChange={setShowPsi} />
+            <Toggle label={T('经典粒子对照')} checked={showClassical} onChange={setShowClassical} />
+            <Toggle label={T('显示 ψ（复数管）')} checked={showPsi} onChange={setShowPsi} />
             <Slider
-              label="纵向放大"
+              label={T('纵向放大')}
               value={gain}
               min={1}
               max={25}
               step={0.5}
               onChange={setGain}
               display={`×${gain.toFixed(1)}`}
-              hint="纵向尺度固定在初始波包上，所以透射出来的那一小团是真的小。放大只是为了看清它的形状。"
+              hint={T('纵向尺度固定在初始波包上，所以透射出来的那一小团是真的小。放大只是为了看清它的形状。')}
             />
           </ControlGroup>
 
-          <ControlGroup title="透射率 T(E)">
+          <ControlGroup title={T('透射率 T(E)')}>
             <MiniPlot
               series={[{ points: tCurve.pts, color: p.energy, fill: true }]}
               markers={[
@@ -208,11 +211,12 @@ export default function TunnelingScene() {
                 [1, 0, `E = ${tCurve.eMax.toFixed(1)}`],
               ]}
               height={80}
-              ariaLabel="透射率随能量变化"
+              ariaLabel={T('透射率随能量变化')}
             />
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              蓝线是当前能量，灰线是势垒高度。注意 E &gt; V₀ 之后 T 并不等于 1，而是振荡着逼近 1——
-              那是势垒两端反射波的干涉（共振透射）。
+              {T(
+                '蓝线是当前能量，灰线是势垒高度。注意 E > V₀ 之后 T 并不等于 1，而是振荡着逼近 1—— 那是势垒两端反射波的干涉（共振透射）。',
+              )}
             </p>
           </ControlGroup>
         </>
@@ -222,23 +226,23 @@ export default function TunnelingScene() {
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="space-y-1">
               <div className="flex justify-between text-[12.5px] text-[var(--text-muted)]">
-                <span>数值：反射 R / 透射 T</span>
+                <span>{T('数值：反射 R / 透射 T')}</span>
                 <span className="font-mono tabular-nums text-[var(--text)]">
                   {stats.R.toFixed(3)} / {stats.T.toFixed(3)}
                 </span>
               </div>
               <ProbabilityBar
                 segments={[
-                  { value: stats.R, color: p.imag, label: '反射' },
-                  { value: Math.max(0, 1 - stats.R - stats.T), color: p.faint, label: '仍在势垒附近' },
-                  { value: stats.T, color: p.energy, label: '透射' },
+                  { value: stats.R, color: p.imag, label: T('反射') },
+                  { value: Math.max(0, 1 - stats.R - stats.T), color: p.faint, label: T('仍在势垒附近') },
+                  { value: stats.T, color: p.energy, label: T('透射') },
                 ]}
               />
             </div>
             <div className="flex flex-col justify-center gap-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-              <span>解析（平面波）T = {analyticT.toExponential(2)}</span>
+              <span>{T('解析（平面波）T = {0}', analyticT.toExponential(2))}</span>
               <span>κ = √(2(V₀−E)) = {energy < v0 ? Math.sqrt(2 * (v0 - energy)).toFixed(3) : '—'}</span>
-              <span>剩余归一化 {stats.norm.toFixed(4)}</span>
+              <span>{T('剩余归一化 {0}', stats.norm.toFixed(4))}</span>
             </div>
           </div>
           <div className="overflow-x-auto text-[14px]">
@@ -246,39 +250,39 @@ export default function TunnelingScene() {
           </div>
           <Legend
             items={[
-              { color: p.real, label: 'ψ（复数管，扭转即相位）' },
+              { color: p.real, label: T('ψ（复数管，扭转即相位）') },
               { color: p.prob, label: '|ψ|²' },
-              { color: p.potential, label: '势垒 V(x)' },
-              ...(showClassical ? [{ color: p.classical, label: '经典粒子' }] : []),
+              { color: p.potential, label: T('势垒 V(x)') },
+              ...(showClassical ? [{ color: p.classical, label: T('经典粒子') }] : []),
             ]}
           />
         </div>
       }
       guide={[
-        '默认参数下 E < V₀。按播放，盯住势垒右侧：会有一小团概率密度从墙里钻出来继续向右跑。它的面积就是透射率 T。',
-        '暂停在波包刚好压在势垒上的时刻，切到「看势垒」视角：墙内部的 |ψ|² 不是零，而是指数衰减 e^{−2κx}。墙越宽，钻出来的越少——这就是 T ≈ e^{−2κa} 的来历。',
-        '把势垒宽度 a 从 1.6 调到 3.2（只翻一倍），看 T 掉了多少个数量级。指数依赖意味着扫描隧道显微镜能分辨单个原子台阶。',
-        '把 E 调到略大于 V₀：经典上应当 100% 通过，但你会看到仍有一部分被反射回去。「量子反射」是波动性的另一面。',
-        '打开经典粒子对照：小球撞墙原路弹回，永远不会出现在右侧。两者并排跑一次，差别一目了然。',
+        T('默认参数下 E < V₀。按播放，盯住势垒右侧：会有一小团概率密度从墙里钻出来继续向右跑。它的面积就是透射率 T。'),
+        T('暂停在波包刚好压在势垒上的时刻，切到「看势垒」视角：墙内部的 |ψ|² 不是零，而是指数衰减 e^{−2κx}。墙越宽，钻出来的越少——这就是 T ≈ e^{−2κa} 的来历。'),
+        T('把势垒宽度 a 从 1.6 调到 3.2（只翻一倍），看 T 掉了多少个数量级。指数依赖意味着扫描隧道显微镜能分辨单个原子台阶。'),
+        T('把 E 调到略大于 V₀：经典上应当 100% 通过，但你会看到仍有一部分被反射回去。「量子反射」是波动性的另一面。'),
+        T('打开经典粒子对照：小球撞墙原路弹回，永远不会出现在右侧。两者并排跑一次，差别一目了然。'),
       ]}
       pitfalls={[
         {
-          title: '“粒子从墙里借了能量翻过去”',
-          body: '不需要借。定态里能量是确定的，波函数本来就在经典禁区有非零值——它是指数衰减的实指数解，不是「翻越」。把「借能量」当成正式解释会在计算里立刻出错。',
+          title: T('“粒子从墙里借了能量翻过去”'),
+          body: T('不需要借。定态里能量是确定的，波函数本来就在经典禁区有非零值——它是指数衰减的实指数解，不是「翻越」。把「借能量」当成正式解释会在计算里立刻出错。'),
         },
         {
-          title: '“势垒里的粒子速度是虚数”',
-          body: '势垒内部没有定义良好的经典速度。那里的波数 k = i κ 是纯虚的，对应的是衰减而不是传播，谈「速度」已经越界了。',
+          title: T('“势垒里的粒子速度是虚数”'),
+          body: T('势垒内部没有定义良好的经典速度。那里的波数 k = i κ 是纯虚的，对应的是衰减而不是传播，谈「速度」已经越界了。'),
         },
         {
-          title: '“透射率随宽度线性下降”',
-          body: '是指数下降。宽度翻倍，T 平方级地掉。这个差别是隧道效应一切应用（STM、α 衰变、核聚变）的关键。',
+          title: T('“透射率随宽度线性下降”'),
+          body: T('是指数下降。宽度翻倍，T 平方级地掉。这个差别是隧道效应一切应用（STM、α 衰变、核聚变）的关键。'),
         },
       ]}
       reflect={[
-        '把 σ 调大（动量更确定），数值 T 会更接近平面波解析值；σ 小的时候两者偏离。为什么？（提示：波包是很多不同 k 的叠加，每个 k 有自己的 T。）',
-        'α 衰变的半衰期能从 10⁻⁷ 秒跨到 10¹⁷ 年，跨了 30 多个数量级，而对应的能量只差几个 MeV。用 T ≈ e^{−2κa} 解释这个夸张的敏感性。',
-        '如果势垒高度是无穷大，T 严格为零吗？把 V₀ 拉到最大试试，再想想「无限深方阱」的边界条件是怎么来的。',
+        T('把 σ 调大（动量更确定），数值 T 会更接近平面波解析值；σ 小的时候两者偏离。为什么？（提示：波包是很多不同 k 的叠加，每个 k 有自己的 T。）'),
+        T('α 衰变的半衰期能从 10⁻⁷ 秒跨到 10¹⁷ 年，跨了 30 多个数量级，而对应的能量只差几个 MeV。用 T ≈ e^{−2κa} 解释这个夸张的敏感性。'),
+        T('如果势垒高度是无穷大，T 严格为零吗？把 V₀ 拉到最大试试，再想想「无限深方阱」的边界条件是怎么来的。'),
       ]}
     >
       <SceneCanvas
@@ -289,7 +293,7 @@ export default function TunnelingScene() {
         overlay={
           <CanvasStat>
             t = {stats.t.toFixed(1)}　R = {stats.R.toFixed(3)}　T = {stats.T.toFixed(3)}
-            {energy < v0 ? <span className="ml-2 opacity-70">E &lt; V₀（经典禁止）</span> : null}
+            {energy < v0 ? <span className="ml-2 opacity-70">{T('E < V₀（经典禁止）')}</span> : null}
           </CanvasStat>
         }
       >
@@ -439,8 +443,8 @@ function WavePacket({
       report.current = 0
       const R = op.probabilityLeftOf(sim.xBarrierLeft)
       const total = op.norm()
-      const T = Math.max(0, total - op.probabilityLeftOf(sim.xBarrierRight))
-      onStats({ t: time.current, R, T, norm: total, done: false })
+      const trans = Math.max(0, total - op.probabilityLeftOf(sim.xBarrierRight))
+      onStats({ t: time.current, R, T: trans, norm: total, done: false })
     }
   })
 

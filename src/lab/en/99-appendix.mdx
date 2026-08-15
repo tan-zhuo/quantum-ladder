@@ -1,0 +1,72 @@
+---
+num: '99'
+title: 'Appendix: notation, units and numerical methods'
+goal: 'One place for the symbols, units and algorithms used across the site.'
+youWillSee:
+  - 'The notation and unit conventions used everywhere on this site'
+  - 'The numerical method behind each 3D scene and where its error comes from'
+prereqs: []
+scenes: []
+related:
+  - appendix-a-math/01-linear-algebra
+  - appendix-a-math/02-fourier
+  - appendix-b-formulas/01-formula-table
+  - appendix-c-numerics/01-finite-difference
+  - appendix-c-numerics/02-split-operator
+phase: 3
+status: done
+---
+
+## Notation
+
+| Symbol | Meaning |
+| --- | --- |
+| $\ket{\psi}$, $\bra{\psi}$ | A state vector and its dual |
+| $\braket{\phi}{\psi}$ | Inner product (conjugate-linear in the first slot) |
+| $\hat A$ | An operator (hatted) |
+| $\vec r$ | Bloch vector |
+| $\rho$ | Density matrix |
+| $\psi_{n\ell m}$ | Hydrogen wavefunction; principal, angular and magnetic quantum numbers |
+| $a_0$ | Bohr radius |
+
+## Units
+
+To keep the numbers readable, every 3D scene uses **natural units**:
+
+- One-dimensional problems: $\hbar = m = 1$. Energies and lengths are dimensionless; only ratios mean anything.
+- Hydrogen: $\hbar = m_e = e = 1$ (atomic units). Length is in Bohr radii, $a_0 = 0.529$ Å; energy is in hartree, $27.211$ eV.
+- Spin: in units of $\hbar/2$, so the Pauli matrices have eigenvalues $\pm1$.
+
+Every number displayed in a scene is in these units. Multiply by the appropriate constants to return to SI.
+
+## The numerical method behind each scene
+
+| Scene | Method | Main source of error |
+| --- | --- | --- |
+| Bloch sphere | Rodrigues finite rotations | None (the norm is conserved exactly) |
+| Hydrogen orbitals | Radial inverse CDF plus angular rejection sampling | Monte Carlo noise $\sim 1/\sqrt N$ |
+| One-dimensional wells | Three-point differences, QL for eigenvalues, inverse iteration for eigenvectors | Grid discretisation $O(\dd x^2)$; a finite window squeezes weakly bound states |
+| Double slit | Direct Huygens summation (no far-field approximation) | A finite number of sub-sources (11 per slit) |
+| Tunnelling | Split-operator, symmetric splitting | Time step $O(\dd t^3)$; the absorbing layer at the edges |
+| Path integral | Monte Carlo sampling over paths | Sample size; discrete time steps |
+
+Full derivations of the numerical methods are in [appendix C](/ch/appendix-c-numerics/01-finite-difference/) (in Chinese).
+
+## Mathematical toolbox
+
+- **Linear algebra**: Hermitian operators, eigendecomposition, tensor products → [appendix A.1](/ch/appendix-a-math/01-linear-algebra/)
+- **Fourier analysis**: position–momentum duality, and where the uncertainty relation comes from mathematically → [appendix A.2](/ch/appendix-a-math/02-fourier/)
+- **Special functions**: Hermite (oscillator), Laguerre (hydrogen radial), Legendre and spherical harmonics (angular) → [appendix A.3](/ch/appendix-a-math/03-special-functions/)
+
+## Constants
+
+| Constant | Value |
+| --- | --- |
+| $\hbar$ | $1.0546\times10^{-34}$ J·s $= 6.582\times10^{-16}$ eV·s |
+| $m_e$ | $9.109\times10^{-31}$ kg $= 511$ keV/$c^2$ |
+| $a_0$ | $5.292\times10^{-11}$ m |
+| Hartree | $27.211$ eV |
+| Rydberg | $13.606$ eV |
+| $k_B$ | $8.617\times10^{-5}$ eV/K |
+
+The full table is in [appendix B](/ch/appendix-b-formulas/01-formula-table/), or press <kbd>f</kbd> anywhere on the site for the quick-reference panel.

@@ -9,12 +9,18 @@ import Term from '@/components/mdx/Term.astro'
 import Scene from '@/components/canvas/Scene.astro'
 import Sim from '@/components/mdx/Sim.astro'
 
+/**
+ * 中文模块页。英文在 /en/lab/<slug>/，见 src/pages/en/lab/[module].astro——
+ * 两个页面共用 LabLayout 与同一套 MDX 组件，只是取不同语言的内容。
+ */
 export async function getStaticPaths() {
   const entries = await getCollection('lab')
-  return entries.map((entry: { id: string }) => ({
-    params: { module: entry.id },
-    props: { entryId: entry.id },
-  }))
+  return entries
+    .filter((e: { id: string }) => e.id.startsWith('zh/'))
+    .map((entry: { id: string }) => ({
+      params: { module: entry.id.slice(3) },
+      props: { entryId: entry.id },
+    }))
 }
 
 const { entryId } = Astro.props
@@ -22,13 +28,13 @@ const entries = await getCollection('lab')
 const entry = entries.find((e: { id: string }) => e.id === entryId)!
 const { Content, headings } = await render(entry)
 
-const modules = await getLabModules()
+const modules = await getLabModules('zh')
 const module = modules.find((m) => m.id === entryId)!
 
 /** MDX 里可直接使用这些组件，不必 import。3D 场景一律走 <Scene name="…" />。 */
 const components = { Callout, Derivation, KeyFormulas, Term, Scene, Sim }
 ---
 
-<LabLayout module={module} headings={headings}>
+<LabLayout module={module} headings={headings} lang="zh">
   <Content components={components} />
 </LabLayout>

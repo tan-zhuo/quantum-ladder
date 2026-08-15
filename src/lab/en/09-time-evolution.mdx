@@ -1,0 +1,105 @@
+---
+num: '09'
+title: Time evolution and energy eigenstates
+goal: 'Settle one thing: eigenstates do nothing, superpositions move, and the rate at which they move is the level spacing.'
+youWillSee:
+  - 'A single eigenstate: the tube turns, the probability density does not budge'
+  - 'Two levels superposed: the density sloshes with period exactly 2πħ/ΔE'
+  - 'Widen the gap and it sloshes faster; keep one level and everything freezes'
+prereqs:
+  - 'Stationary states and energy levels (module 03)'
+  - 'Complex phases and beats'
+scenes:
+  - superposition
+related:
+  - 02-wavefunction/04-time-dependent-schrodinger
+  - 02-wavefunction/05-stationary-states
+  - 03-formalism/09-time-evolution-pictures
+phase: 2
+status: done
+---
+
+"Stationary states do not change" and "quantum systems evolve" are usually stated in the same breath, which sounds contradictory to a beginner.
+
+Both are right; they simply have different subjects.
+
+<Scene name="superposition" />
+
+## The general solution is a weighted sum
+
+Any initial state can be expanded in energy eigenstates:
+
+$$
+\ket{\Psi(0)} = \sum_n c_n \ket{n},
+\qquad\Longrightarrow\qquad
+\ket{\Psi(t)} = \sum_n c_n\,\ee^{-\ii E_n t/\hbar}\ket{n}.
+$$
+
+In this basis time evolution is **trivial**: every coefficient just rotates in phase, its modulus untouched. That is why finding energy eigenstates is worth so much effort — once you have them, evolving any initial state is a matter of multiplying term by term.
+
+The probability density
+
+$$
+|\Psi(x,t)|^2 = \sum_{n,m} c_n^* c_m\,\psi_n^*\psi_m\,\ee^{-\ii(E_m-E_n)t/\hbar}
+$$
+
+therefore has time-independent diagonal terms, and only the **cross terms** oscillate, at
+
+$$
+\omega_{nm} = \frac{E_m - E_n}{\hbar}.
+$$
+
+<Callout type="insight" title="Bohr's frequency condition is not an assumption">
+Bohr had to postulate $h\nu = E_2-E_1$ to explain spectral lines.
+
+In Schrödinger's framework it is **derived**: the electric dipole moment $\langle x\rangle(t)$ of a superposition oscillates at $\omega_{21}$, and an oscillating dipole radiates — at that frequency, naturally.
+
+Switch on the $\langle x\rangle(t)$ trace in the scene and you are watching that antenna swing. Keep a single level and it flatlines: eigenstates do not radiate, which is why atoms are stable.
+</Callout>
+
+## Three statements worth separating
+
+| Claim | Verdict |
+| --- | --- |
+| "An eigenstate does not change in time" | Sloppy. The state vector changes (the phase turns); the **observables** do not. |
+| "The global phase of $\ket{\Psi}$ is meaningless" | Correct. But the **relative** phase between terms does mean something, and it runs. |
+| "A superposition has the average of the two energies" | Dangerous. The expectation value is $\sum|c_n|^2E_n$, but **every single measurement** returns some $E_n$; the average is never an outcome. |
+
+## Beats: the difference of two frequencies
+
+Superposing two eigenstates makes the density oscillate at the difference frequency. It is exactly the mathematics of two tuning forks beating.
+
+$$
+T = \frac{2\pi\hbar}{|E_2-E_1|}.
+$$
+
+You can check this directly in the scene: change which levels are superposed, or change the well parameters to move the gap, and time the period against the formula. The larger the gap, the faster it sloshes.
+
+<Derivation title="Coherent states: the most classical quantum states" level="选读">
+
+The oscillator has a special family of superpositions:
+
+$$
+\ket{\alpha} = \ee^{-|\alpha|^2/2}\sum_n \frac{\alpha^n}{\sqrt{n!}}\ket{n}.
+$$
+
+Because the oscillator's levels are evenly spaced ($E_n = \hbar\omega(n+\tfrac12)$), every cross term oscillates at an integer multiple of $\omega$, and the superposition **does not disperse**: it keeps its Gaussian shape and swings back and forth like a classical ball, saturating the uncertainty relation at $\Delta x\Delta p=\hbar/2$ throughout.
+
+This is the quantum state of a laser field and the cleanest example of a classical limit. The "Coherent state" preset in the scene loads it — note that it is the only superposition whose shape is preserved. Do the same in a square well and the packet falls apart, then partially reassembles much later (a quantum revival).
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'General solution', latex: '\\ket{\\Psi(t)}=\\sum_n c_n\\ee^{-\\ii E_n t/\\hbar}\\ket{n}', note: 'In the eigenbasis, evolution is phase rotation term by term' },
+    { name: 'Bohr frequency', latex: '\\omega_{nm}=(E_m-E_n)/\\hbar', note: 'Only differences are observable' },
+    { name: 'Beat period', latex: 'T = 2\\pi\\hbar/|E_2-E_1|', note: 'Time it with a stopwatch in the scene' },
+    { name: 'Mean energy', latex: '\\langle E\\rangle = \\sum_n |c_n|^2 E_n', note: 'But a single measurement returns some Eₙ' },
+  ]}
+/>
+
+## Think it through
+
+1. Set $c_1 = 0.99$ and $c_2 = 0.14$. Does the **frequency** of the sloshing change? Does the **amplitude**? Guess first.
+2. In the infinite well $E_n\propto n^2$, so the gaps are not constant. Which sloshes faster, 1+2 or 3+4?
+3. An atom in an energy eigenstate does not radiate. Why, then, does a real excited atom decay spontaneously? (Hint: quantise the electromagnetic field too; the stationary state belongs to atom **plus** field.)

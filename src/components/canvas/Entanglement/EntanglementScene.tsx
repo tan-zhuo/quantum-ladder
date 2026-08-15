@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -62,7 +63,8 @@ interface Tally {
 
 const EMPTY: Tally = { n: 0, sums: [0, 0, 0, 0], counts: [0, 0, 0, 0], singleA: 0, singleB: 0 }
 
-export default function EntanglementScene() {
+export default function EntanglementScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -133,32 +135,33 @@ export default function EntanglementScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="entanglement"
-      title="纠缠与 Bell：把「测量前就定好了」这个假设做掉"
-      subtitle="每一对粒子飞向两端，各自给出 ±1。单边看完全随机，合起来看却严格相关。CHSH 的 S 越过 2，局域实在论就出局了。"
+      title={T('纠缠与 Bell：把「测量前就定好了」这个假设做掉')}
+      subtitle={T('每一对粒子飞向两端，各自给出 ±1。单边看完全随机，合起来看却严格相关。CHSH 的 S 越过 2，局域实在论就出局了。')}
       apiRef={apiRef}
       height={540}
       controls={
         <>
           <ControlGroup
-            title="模型"
+            title={T('模型')}
             hint={
               mode === 'quantum'
-                ? '按量子力学抽样：P(B|A) = (1 − A·â·b̂)/2'
-                : '每对粒子携带一个共同的隐变量 λ，两端各自按 sign(λ·n̂) 独立决定结果'
+                ? T('按量子力学抽样：P(B|A) = (1 − A·â·b̂)/2')
+                : T('每对粒子携带一个共同的隐变量 λ，两端各自按 sign(λ·n̂) 独立决定结果')
             }
           >
             <Segmented
               value={mode}
               onChange={(v) => setMode(v as Mode)}
               options={[
-                { value: 'quantum', label: '量子力学' },
-                { value: 'lhv', label: '局域隐变量' },
+                { value: 'quantum', label: T('量子力学') },
+                { value: 'lhv', label: T('局域隐变量') },
               ]}
             />
           </ControlGroup>
 
-          <ControlGroup title="测量角度" hint="默认给的是让 S 最大的那组角度（0°, 90°, 45°, 135°）。自旋的关联是 −cos θ，所以最优角度间隔是 45°。">
+          <ControlGroup title={T('测量角度')} hint={T('默认给的是让 S 最大的那组角度（0°, 90°, 45°, 135°）。自旋的关联是 −cos θ，所以最优角度间隔是 45°。')}>
             <Slider label="Alice a" value={a1} min={0} max={180} step={1} onChange={setA1} display={`${a1}°`} />
             <Slider label="Alice a′" value={a2} min={0} max={180} step={1} onChange={setA2} display={`${a2}°`} />
             <Slider label="Bob b" value={b1} min={0} max={180} step={0.5} onChange={setB1} display={`${b1}°`} />
@@ -172,7 +175,7 @@ export default function EntanglementScene() {
                   setB2(135)
                 }}
               >
-                最优角度
+                {T('最优角度')}
               </Button>
               <Button
                 onClick={() => {
@@ -181,24 +184,24 @@ export default function EntanglementScene() {
                   setB1(0)
                   setB2(0)
                 }}
-                title="全部同向：S = 0，这组角度检验不出任何非经典性"
+                title={T('全部同向：S = 0，这组角度检验不出任何非经典性')}
               >
-                全部同向
+                {T('全部同向')}
               </Button>
             </div>
           </ControlGroup>
 
-          <ControlGroup title="运行">
+          <ControlGroup title={T('运行')}>
             <div className="flex flex-wrap gap-1.5">
               <Button variant="primary" onClick={() => setRunning((v) => !v)}>
-                {running ? '暂停' : '继续'}
+                {running ? T('暂停') : T('继续')}
               </Button>
-              <Button onClick={reset}>清空统计</Button>
+              <Button onClick={reset}>{T('清空统计')}</Button>
             </div>
-            <Toggle label="显示两端的约化态球" checked={showSpheres} onChange={setShowSpheres} />
+            <Toggle label={T('显示两端的约化态球')} checked={showSpheres} onChange={setShowSpheres} />
           </ControlGroup>
 
-          <ControlGroup title="关联 E(θ)">
+          <ControlGroup title={T('关联 E(θ)')}>
             <MiniPlot
               series={[
                 { points: curves.qm, color: p.real },
@@ -211,11 +214,12 @@ export default function EntanglementScene() {
                 [0.5, 0, '90°'],
                 [1, 0, '180°'],
               ]}
-              ariaLabel="关联随夹角变化"
+              ariaLabel={T('关联随夹角变化')}
             />
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              蓝色是量子预言 −cos θ，橙虚线是局域隐变量模型能给出的折线，绿点是当前四组设置的实测值。
-              两条曲线在 0°、90°、180° 重合，在 45° 附近差得最多——CHSH 的四个角度就挑在这里。
+              {T(
+                '蓝色是量子预言 −cos θ，橙虚线是局域隐变量模型能给出的折线，绿点是当前四组设置的实测值。 两条曲线在 0°、90°、180° 重合，在 45° 附近差得最多——CHSH 的四个角度就挑在这里。',
+              )}
             </p>
           </ControlGroup>
         </>
@@ -225,7 +229,7 @@ export default function EntanglementScene() {
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="space-y-1">
               <div className="flex items-baseline justify-between text-[13px]">
-                <span className="text-[var(--text-muted)]">CHSH 值 |S|</span>
+                <span className="text-[var(--text-muted)]">{T('CHSH 值 |S|')}</span>
                 <span
                   className="font-mono text-[18px] tabular-nums"
                   style={{ color: violated ? p.danger : p.ink }}
@@ -235,29 +239,29 @@ export default function EntanglementScene() {
               </div>
               <ProbabilityBar
                 segments={[
-                  { value: Math.min(Math.abs(S), 2), color: p.energy, label: '经典可解释部分' },
-                  { value: Math.max(0, Math.abs(S) - 2), color: p.danger, label: '超出经典上界' },
-                  { value: Math.max(0, 2 * Math.SQRT2 - Math.max(2, Math.abs(S))), color: p.faint, label: '余量' },
+                  { value: Math.min(Math.abs(S), 2), color: p.energy, label: T('经典可解释部分') },
+                  { value: Math.max(0, Math.abs(S) - 2), color: p.danger, label: T('超出经典上界') },
+                  { value: Math.max(0, 2 * Math.SQRT2 - Math.max(2, Math.abs(S))), color: p.faint, label: T('余量') },
                 ]}
                 height={10}
               />
               <p className="text-[11.5px] text-[var(--text-faint)]">
-                经典上界 2　·　量子上界 2√2 ≈ 2.828　·　理论预期 {Math.abs(theoryS).toFixed(3)}
+                {T('经典上界 2　·　量子上界 2√2 ≈ 2.828　·　理论预期 {0}', Math.abs(theoryS).toFixed(3))}
               </p>
             </div>
             <div className="flex flex-col justify-center gap-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-              <span>样本数 {tally.n.toLocaleString()}</span>
+              <span>{T('样本数 {0}', tally.n.toLocaleString())}</span>
               <span>
-                Alice 单边 +1 比例 {tally.n > 0 ? (tally.singleA / tally.n).toFixed(3) : '—'}
+                {T('Alice 单边 +1 比例 {0}', tally.n > 0 ? (tally.singleA / tally.n).toFixed(3) : '—')}
               </span>
               <span>
-                Bob 单边 +1 比例 {tally.n > 0 ? (tally.singleB / tally.n).toFixed(3) : '—'}
+                {T('Bob 单边 +1 比例 {0}', tally.n > 0 ? (tally.singleB / tally.n).toFixed(3) : '—')}
               </span>
             </div>
           </div>
           {violated ? (
             <p className="rounded-lg border border-[var(--c-danger)]/35 bg-[color-mix(in_srgb,var(--c-danger)_7%,transparent)] px-3 py-2 text-[13px] text-[var(--text-muted)]">
-              |S| &gt; 2：这组数据无法用任何「测量前结果已确定 + 定域」的模型解释。
+              {T('|S| > 2：这组数据无法用任何「测量前结果已确定 + 定域」的模型解释。')}
             </p>
           ) : null}
           <div className="overflow-x-auto text-[14px]">
@@ -265,38 +269,38 @@ export default function EntanglementScene() {
           </div>
           <Legend
             items={[
-              { color: p.energy, label: '结果 +1' },
-              { color: p.imag, label: '结果 −1' },
-              { color: p.accent, label: '测量轴' },
+              { color: p.energy, label: T('结果 +1') },
+              { color: p.imag, label: T('结果 −1') },
+              { color: p.accent, label: T('测量轴') },
             ]}
           />
         </div>
       }
       guide={[
-        '先看两端的球：两个约化态都缩在球心（最大混合），说明单看任何一边都是纯粹的随机噪声，一点信息也没有。信息全在关联里。',
-        '默认角度下让它跑几百对，|S| 会稳定在 2.8 附近，明显越过经典上界 2。',
-        '切到「局域隐变量」模式：同样的角度，|S| 卡在 2 以下上不去。这不是模型没调好——任何局域隐变量模型都过不去，这正是 Bell 的定理。',
-        '点「全部同向」：S 掉到 0。角度选错的话，这个实验什么也检验不出来——这解释了为什么 Bell 实验的角度必须精心设计。',
-        '把关联曲线里的两条对照看：量子是 cos，局域隐变量最多是折线，两者在 45° 附近差得最多——这正是四个测量角度都相隔 45° 的原因。',
+        T('先看两端的球：两个约化态都缩在球心（最大混合），说明单看任何一边都是纯粹的随机噪声，一点信息也没有。信息全在关联里。'),
+        T('默认角度下让它跑几百对，|S| 会稳定在 2.8 附近，明显越过经典上界 2。'),
+        T('切到「局域隐变量」模式：同样的角度，|S| 卡在 2 以下上不去。这不是模型没调好——任何局域隐变量模型都过不去，这正是 Bell 的定理。'),
+        T('点「全部同向」：S 掉到 0。角度选错的话，这个实验什么也检验不出来——这解释了为什么 Bell 实验的角度必须精心设计。'),
+        T('把关联曲线里的两条对照看：量子是 cos，局域隐变量最多是折线，两者在 45° 附近差得最多——这正是四个测量角度都相隔 45° 的原因。'),
       ]}
       pitfalls={[
         {
-          title: '“纠缠可以超光速传信息”',
-          body: 'Alice 无法控制自己得到 +1 还是 −1，Bob 单边看永远是 50/50。要看到关联必须把两边的记录用经典信道送到一起比对。无信号定理保证了这一点。',
+          title: T('“纠缠可以超光速传信息”'),
+          body: T('Alice 无法控制自己得到 +1 还是 −1，Bob 单边看永远是 50/50。要看到关联必须把两边的记录用经典信道送到一起比对。无信号定理保证了这一点。'),
         },
         {
-          title: '“Alice 的测量改变了 Bob 的粒子”',
-          body: '换个惯性系，两次测量的先后顺序会反过来。「谁导致谁」在类空间隔的事件之间没有不变的含义。可靠的说法只是：联合分布不能被分解成两个独立的定域分布。',
+          title: T('“Alice 的测量改变了 Bob 的粒子”'),
+          body: T('换个惯性系，两次测量的先后顺序会反过来。「谁导致谁」在类空间隔的事件之间没有不变的含义。可靠的说法只是：联合分布不能被分解成两个独立的定域分布。'),
         },
         {
-          title: '“纠缠就是很强的关联”',
-          body: '经典关联可以很强（两只手套分装两地，看一只就知道另一只）。区别在于：经典关联的强度随角度是折线，量子是 cos，而这个差别是可以测出来的。',
+          title: T('“纠缠就是很强的关联”'),
+          body: T('经典关联可以很强（两只手套分装两地，看一只就知道另一只）。区别在于：经典关联的强度随角度是折线，量子是 cos，而这个差别是可以测出来的。'),
         },
       ]}
       reflect={[
-        '手套的例子里，若两端都只测「左还是右」，关联同样是 100%。要区分「手套」和「纠缠」，为什么必须测量至少两组不同的方向？',
-        '量子上界是 2√2（Tsirelson 界），代数上界是 4。存在既不能超光速通信、又能达到 4 的理论吗？（关键词：PR box。）',
-        '若探测效率只有 50%，且丢失的样本与隐变量相关，局域模型能否伪造出 |S| > 2？这就是「探测漏洞」，2015 年的实验才彻底封上。',
+        T('手套的例子里，若两端都只测「左还是右」，关联同样是 100%。要区分「手套」和「纠缠」，为什么必须测量至少两组不同的方向？'),
+        T('量子上界是 2√2（Tsirelson 界），代数上界是 4。存在既不能超光速通信、又能达到 4 的理论吗？（关键词：PR box。）'),
+        T('若探测效率只有 50%，且丢失的样本与隐变量相关，局域模型能否伪造出 |S| > 2？这就是「探测漏洞」，2015 年的实验才彻底封上。'),
       ]}
     >
       <SceneCanvas
@@ -306,7 +310,8 @@ export default function EntanglementScene() {
         maxDistance={22}
         overlay={
           <CanvasStat>
-            {mode === 'quantum' ? '量子力学' : '局域隐变量'}　|S| = {Math.abs(S).toFixed(3)}　样本 {tally.n}
+            {mode === 'quantum' ? T('量子力学') : T('局域隐变量')}　|S| = {Math.abs(S).toFixed(3)}
+            {T('样本 {0}', tally.n)}
           </CanvasStat>
         }
       >
@@ -316,7 +321,7 @@ export default function EntanglementScene() {
           <meshStandardMaterial color={p.accent} emissive={p.accent} emissiveIntensity={0.4} />
         </mesh>
         <SceneLabel position={[0, 0.45, 0]} tone="muted" size="xs">
-          纠缠源
+          {T('纠缠源')}
         </SceneLabel>
 
         {([[A_X, 'Alice'], [B_X, 'Bob']] as [number, string][]).map(([x, name]) => (

@@ -1,3 +1,5 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
+import { useT } from '@/i18n/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Line } from '@react-three/drei'
@@ -53,11 +55,11 @@ function makePaths(count: number, roughness: number, seed: number): { paths: Pat
     return s / 4294967296
   }
   const paths: PathData[] = []
-  const T = 1
-  const dt = T / STEPS
+  const TOTAL_TIME = 1
+  const dt = TOTAL_TIME / STEPS
   const mass = 1
-  const vx = (B_X - A_X) / T
-  const classical = 0.5 * mass * vx * vx * T
+  const vx = (B_X - A_X) / TOTAL_TIME
+  const classical = 0.5 * mass * vx * vx * TOTAL_TIME
 
   for (let k = 0; k < count; k++) {
     // 前 4 个傅里叶模式足够撑出丰富的路径形状，又不至于让曲线变成噪声
@@ -98,7 +100,8 @@ function phaseColor(phase: number, out: THREE.Color): THREE.Color {
   return out.setHSL(h, 0.72, 0.5)
 }
 
-export default function PathIntegralScene() {
+export default function PathIntegralScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -196,19 +199,20 @@ export default function PathIntegralScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="path-integral"
-      title="路径积分：所有路径都在贡献，经典路径只是活下来的那条"
-      subtitle="每条路径带一个相位 e^{iS/ħ}，颜色就是相位。把所有振幅首尾相接得到右上角那条链——它卷成螺旋的地方，就是路径互相抵消的地方。"
+      title={T('路径积分：所有路径都在贡献，经典路径只是活下来的那条')}
+      subtitle={T('每条路径带一个相位 e^{iS/ħ}，颜色就是相位。把所有振幅首尾相接得到右上角那条链——它卷成螺旋的地方，就是路径互相抵消的地方。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
           <ControlGroup
             title="ħ"
-            hint="这是整个场景唯一的开关。ħ 越小，同样的 ΔS 对应的相位差越大，抵消越彻底，能活下来的路径束越窄。"
+            hint={T('这是整个场景唯一的开关。ħ 越小，同样的 ΔS 对应的相位差越大，抵消越彻底，能活下来的路径束越窄。')}
           >
             <Slider
-              label="普朗克常数 ħ"
+              label={T('普朗克常数 ħ')}
               value={hbar}
               min={0.05}
               max={4}
@@ -217,31 +221,31 @@ export default function PathIntegralScene() {
               display={hbar.toFixed(2)}
             />
             <div className="flex flex-wrap gap-1.5">
-              <Button onClick={() => setHbar(3)}>量子（大 ħ）</Button>
-              <Button onClick={() => setHbar(1)}>中间</Button>
-              <Button onClick={() => setHbar(0.1)} title="经典极限：只剩经典路径附近的一小束">
-                经典极限
+              <Button onClick={() => setHbar(3)}>{T('量子（大 ħ）')}</Button>
+              <Button onClick={() => setHbar(1)}>{T('中间')}</Button>
+              <Button onClick={() => setHbar(0.1)} title={T('经典极限：只剩经典路径附近的一小束')}>
+                {T('经典极限')}
               </Button>
             </div>
           </ControlGroup>
 
-          <ControlGroup title="路径样本">
-            <Slider label="路径条数" value={count} min={20} max={220} step={10} onChange={setCount} />
+          <ControlGroup title={T('路径样本')}>
+            <Slider label={T('路径条数')} value={count} min={20} max={220} step={10} onChange={setCount} />
             <Slider
-              label="路径粗糙度"
+              label={T('路径粗糙度')}
               value={roughness}
               min={0.2}
               max={2.5}
               step={0.05}
               onChange={setRoughness}
-              hint="控制随机路径偏离直线的幅度"
+              hint={T('控制随机路径偏离直线的幅度')}
             />
-            <Button onClick={() => setSeed((v) => v + 1)}>换一批路径</Button>
+            <Button onClick={() => setSeed((v) => v + 1)}>{T('换一批路径')}</Button>
           </ControlGroup>
 
-          <ControlGroup title="显示">
-            <Toggle label="相量链（振幅求和）" checked={showPhasor} onChange={setShowPhasor} />
-            <Toggle label="高亮经典路径" checked={showClassical} onChange={setShowClassical} />
+          <ControlGroup title={T('显示')}>
+            <Toggle label={T('相量链（振幅求和）')} checked={showPhasor} onChange={setShowPhasor} />
+            <Toggle label={T('高亮经典路径')} checked={showClassical} onChange={setShowClassical} />
           </ControlGroup>
         </>
       }
@@ -253,46 +257,46 @@ export default function PathIntegralScene() {
             </Tex>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-            <span>经典作用量 S_cl = {classical.toFixed(3)}</span>
+            <span>{T('经典作用量 S_cl = {0}', classical.toFixed(3))}</span>
             <span>ħ = {hbar.toFixed(2)}</span>
-            <span>相位灵敏度 S_cl/ħ = {(classical / hbar).toFixed(1)} rad</span>
-            <span>|ΔS| &lt; πħ 的路径占 {(surviving * 100).toFixed(0)}%</span>
-            <span>总振幅 |ΣA|/N = {phasor.total.toFixed(3)}</span>
+            <span>{T('相位灵敏度 S_cl/ħ = {0} rad', (classical / hbar).toFixed(1))}</span>
+            <span>{T('|ΔS| < πħ 的路径占 {0}%', (surviving * 100).toFixed(0))}</span>
+            <span>{T('总振幅 |ΣA|/N = {0}', phasor.total.toFixed(3))}</span>
           </div>
           <Legend
             items={[
-              { color: p.ink, label: '经典路径（S 取极值）' },
-              { color: p.accent, label: '相量链' },
-              { color: p.faint, label: '路径颜色 = 相位（色环）' },
+              { color: p.ink, label: T('经典路径（S 取极值）') },
+              { color: p.accent, label: T('相量链') },
+              { color: p.faint, label: T('路径颜色 = 相位（色环）') },
             ]}
           />
         </div>
       }
       guide={[
-        '先把 ħ 设成 3（量子）：路径的颜色变化很缓和，说明相邻路径的相位差不大，它们都在有效地贡献。相量链几乎是一条直线——同相叠加。',
-        '把 ħ 拖到 0.1（经典极限）：颜色开始高速旋转，相量链立刻卷成一个小螺旋并原地打转。只有紧贴经典路径的那几条还在同相叠加。',
-        '注意读数里的「|ΔS| < πħ 的路径占比」：ħ 越小，这个比例越低。存活的路径束就是经典轨迹的宽度。',
-        '把「路径粗糙度」调大：偏离更远的路径出现，它们的相位更混乱，对总和几乎没有净贡献——但它们确实参与了。',
-        '切到「看相量链」视角正对螺旋：这条链的**端点到起点的连线**就是总振幅。链越直，振幅越大。',
+        T('先把 ħ 设成 3（量子）：路径的颜色变化很缓和，说明相邻路径的相位差不大，它们都在有效地贡献。相量链几乎是一条直线——同相叠加。'),
+        T('把 ħ 拖到 0.1（经典极限）：颜色开始高速旋转，相量链立刻卷成一个小螺旋并原地打转。只有紧贴经典路径的那几条还在同相叠加。'),
+        T('注意读数里的「|ΔS| < πħ 的路径占比」：ħ 越小，这个比例越低。存活的路径束就是经典轨迹的宽度。'),
+        T('把「路径粗糙度」调大：偏离更远的路径出现，它们的相位更混乱，对总和几乎没有净贡献——但它们确实参与了。'),
+        T('切到「看相量链」视角正对螺旋：这条链的**端点到起点的连线**就是总振幅。链越直，振幅越大。'),
       ]}
       pitfalls={[
         {
-          title: '“粒子真的同时走了所有路径”',
-          body: '路径积分是一种计算振幅的方法，不是对「粒子做了什么」的字面描述。可靠的说法是：不指定路径时，必须把所有路径的振幅相加。',
+          title: T('“粒子真的同时走了所有路径”'),
+          body: T('路径积分是一种计算振幅的方法，不是对「粒子做了什么」的字面描述。可靠的说法是：不指定路径时，必须把所有路径的振幅相加。'),
         },
         {
-          title: '“远离经典的路径贡献小”',
-          body: '每条路径的振幅**模长完全相同**。差别只在相位。远处的路径不是贡献小，而是彼此抵消。这两种说法给出的直觉完全不同。',
+          title: T('“远离经典的路径贡献小”'),
+          body: T('每条路径的振幅**模长完全相同**。差别只在相位。远处的路径不是贡献小，而是彼此抵消。这两种说法给出的直觉完全不同。'),
         },
         {
-          title: '“典型路径是光滑的”',
-          body: '路径积分里占主导的路径处处连续但处处不可微（⟨Δx²⟩ ∝ Δt，和布朗运动一样）。「速度」在这个框架里不是良定义的量。',
+          title: T('“典型路径是光滑的”'),
+          body: T('路径积分里占主导的路径处处连续但处处不可微（⟨Δx²⟩ ∝ Δt，和布朗运动一样）。「速度」在这个框架里不是良定义的量。'),
         },
       ]}
       reflect={[
-        '最小作用量原理在经典力学里是一条基本假设。在路径积分里它是什么？（提示：看 ħ → 0 时相量链发生了什么。）',
-        '双缝实验在这套语言里怎么说？（提示：挡板杀掉了绝大多数路径，只留下两类。）',
-        '若某条路径的 S 比经典路径大 100ħ，它「被抵消」的意思是：总有另一条路径与它反相。这个配对在 ħ 很大时还存在吗？',
+        T('最小作用量原理在经典力学里是一条基本假设。在路径积分里它是什么？（提示：看 ħ → 0 时相量链发生了什么。）'),
+        T('双缝实验在这套语言里怎么说？（提示：挡板杀掉了绝大多数路径，只留下两类。）'),
+        T('若某条路径的 S 比经典路径大 100ħ，它「被抵消」的意思是：总有另一条路径与它反相。这个配对在 ħ 很大时还存在吗？'),
       ]}
     >
       <SceneCanvas
@@ -302,7 +306,7 @@ export default function PathIntegralScene() {
         maxDistance={26}
         overlay={
           <CanvasStat>
-            ħ = {hbar.toFixed(2)}　路径 {paths.length}　|ΣA|/N = {phasor.total.toFixed(3)}
+            ħ = {hbar.toFixed(2)}　{T('路径 {0}', paths.length)}　|ΣA|/N = {phasor.total.toFixed(3)}
           </CanvasStat>
         }
       >
@@ -351,7 +355,7 @@ export default function PathIntegralScene() {
               gapSize={0.09}
             />
             <SceneLabel position={[PHASOR_ORIGIN[0], PHASOR_ORIGIN[1] + 0.5, PHASOR_ORIGIN[2]]} tone="accent" size="xs">
-              相量链：Σ e^{'{iS/ħ}'}
+              {T('相量链')}：Σ e^{'{iS/ħ}'}
             </SceneLabel>
             <SceneLabel
               position={phasor.pts[phasor.pts.length - 1]!}
@@ -359,13 +363,13 @@ export default function PathIntegralScene() {
               size="xs"
               offset={[0, -14]}
             >
-              <span style={{ color: p.energy }}>总振幅</span>
+              <span style={{ color: p.energy }}>{T('总振幅')}</span>
             </SceneLabel>
           </group>
         ) : null}
 
         <SceneLabel position={[0, -2.4, 0]} tone="muted" size="xs">
-          颜色 = 相位 S/ħ（转一圈 = 2π）
+          {T('颜色 = 相位 S/ħ（转一圈 = 2π）')}
         </SceneLabel>
       </SceneCanvas>
     </SceneShell>

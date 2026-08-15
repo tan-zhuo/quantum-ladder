@@ -1,0 +1,117 @@
+---
+num: '01'
+title: Wave–particle duality and the double slit
+goal: Watch particles arrive one at a time and pile up into interference fringes that nobody drew in advance.
+youWillSee:
+  - The first few dozen dots look random; after a few hundred the fringes surface on their own
+  - Places that received particles with one slit open go empty once the second slit is opened
+  - A which-path detector at the slits kills the fringes instantly; remove it and they return
+prereqs:
+  - Superposition and interference of waves (high-school level is enough)
+  - The relation between probability and frequency
+scenes:
+  - double-slit
+related:
+  - 01-history/05-de-broglie
+  - 01-history/06-double-slit
+  - 01-history/03-photoelectric-effect
+  - 02-wavefunction/01-born-rule
+phase: 1
+status: done
+---
+
+Feynman said the double slit "contains the only mystery" of quantum mechanics. That sounds like rhetoric; it is meant literally. Understand this one experiment properly and everything strange that follows is a variation on it.
+
+So do not reach for the formulas yet. Open the scene below, press play, and watch the screen for thirty seconds.
+
+<Scene name="double-slit" />
+
+## Three things you just saw
+
+**One: every detection is a whole particle.** What appears on the screen is always a single dot — never half a dot, never a smear. In that sense it is a particle.
+
+**Two: the landing point is unpredictable.** Same apparatus, same emission conditions, and there is no way to compute where the next dot goes. Only the probability can be computed.
+
+**Three: that probability carries fringes.** This is the wave side. But be careful: it is not the particles that interfere, it is the **probability amplitudes**.
+
+<Callout type="insight" title="All three in one line">
+Quantum mechanics does not say "particles sometimes behave like waves". It says: every possible path carries a complex amplitude, all amplitudes are **added first**, and only then is the modulus squared taken to get the probability.
+
+$$
+P(y) = \left|\psi_1(y) + \psi_2(y)\right|^2 = |\psi_1|^2 + |\psi_2|^2 + \underbrace{2\,\mathrm{Re}\!\left(\psi_1^*\psi_2\right)}_{\text{interference term}}.
+$$
+
+Classical probability theory only lets you write the first two terms. That third term is the entire difference.
+</Callout>
+
+## Fringe spacing: a formula you can verify with a slider
+
+In the far field ($L \gg d$) the path difference from the two slits to a point on the screen is $\Delta = d\sin\theta \approx d\,y/L$. Constructive interference needs $\Delta = m\lambda$, so neighbouring bright fringes are separated by
+
+$$
+\Delta y = \frac{\lambda L}{d}.
+$$
+
+The readout shows this number live. Drag $\lambda$, $d$ and $L$ in turn and measure the spacing by eye each time to confirm it really does follow the formula.
+
+<Derivation title="Where the broader envelope comes from" level="进阶">
+
+The argument above treats each slit as a point source. A real slit has width $a$, every point inside it radiates, and those contributions interfere too. Integrating across the slit gives the single-slit diffraction factor:
+
+$$
+I(y) \propto \underbrace{\cos^2\!\left(\frac{\pi d y}{\lambda L}\right)}_{\text{two-slit interference}} \cdot \underbrace{\mathrm{sinc}^2\!\left(\frac{\pi a y}{\lambda L}\right)}_{\text{single-slit envelope}}.
+$$
+
+So there are two length scales on screen: the **fine fringes** set by the separation $d$, and the **overall envelope** set by the width $a$. Increase $a$ and the envelope narrows, killing the outer fringes first.
+
+Incidentally, this scene does not use that formula. It sums the true optical paths from eleven sub-sources per slit. The benefit is that when you drag $L$ down to something small (the near field), the fringe curvature and envelope distortion appear honestly — the analytic formula has already failed there.
+
+</Derivation>
+
+## The price of knowing which slit
+
+That one switch in the scene is the heart of this module.
+
+Turn it on: detectors appear at the slits, the fringes vanish, and the distribution collapses to a plain sum of the two single-slit patterns. Turn it off and they come back.
+
+<Callout type="misconception" title="It is not “the detector knocks the particle sideways”">
+The usual story is that a photon from the detector hits the electron and scrambles its momentum, blurring the fringes. That story works in Heisenberg's original microscope argument, but it is **not** the underlying reason.
+
+Later experiments (micromaser which-path markers, for instance) extract path information with essentially no momentum transfer, and the fringes still die. The real reason is that once the environment records the path, particle and detector are in an entangled state
+
+$$
+\ket{\Psi} = \tfrac{1}{\sqrt2}\left(\ket{\text{left}}\ket{D_\text{left}} + \ket{\text{right}}\ket{D_\text{right}}\right),
+$$
+
+and looking at the particle alone leaves an interference term proportional to $\braket{D_\text{left}}{D_\text{right}} = 0$. It is gone.
+
+This is the first appearance of [decoherence (module 12)](/en/lab/12-decoherence/). It is also why erasing the detector's record afterwards (a quantum eraser) can bring the fringes back in coincidence counts — the interference was never physically destroyed, only hidden behind path information.
+</Callout>
+
+## Scale: why daily life shows none of this
+
+De Broglie ties momentum to wavelength:
+
+$$
+\lambda = \frac{h}{p}.
+$$
+
+- An electron at 100 eV: $\lambda \approx 0.12\ \mathrm{nm}$ — a crystal makes a fine "slit", which is exactly what Davisson and Germer used in 1927.
+- A 10 g bullet at 500 m/s: $\lambda \approx 1.3\times10^{-34}\ \mathrm{m}$.
+
+The second number is nineteen orders of magnitude smaller than a nucleus. To get a resolvable 0.1 mm fringe spacing you would need slits closer than $10^{-30}$ m. That is why you have never seen a bullet diffract — not because macroscopic objects are somehow non-quantum, but because no slit can match their wavelength.
+
+<KeyFormulas
+  items={[
+    { name: 'De Broglie relation', latex: '\\lambda = h/p', note: 'Everything has a wavelength; for macroscopic objects it is unmeasurably small' },
+    { name: 'Interference intensity', latex: 'P = |\\psi_1 + \\psi_2|^2', note: 'Add amplitudes first, then square — the order matters' },
+    { name: 'Fringe spacing', latex: '\\Delta y = \\lambda L / d', note: 'Measurable directly in the scene' },
+    { name: 'Single-slit envelope', latex: 'I \\propto \\mathrm{sinc}^2(\\pi a y/\\lambda L)', note: 'The second length scale, set by slit width' },
+  ]}
+/>
+
+## Think it through
+
+1. Drop the emission rate to one particle per minute, so only ever one particle is inside the apparatus. Do the fringes still appear? (They do. The experiment has been done.) What, then, is that particle interfering with?
+2. With only the left slit open, point $y_0$ on the screen receives particles. Open both slits and $y_0$ becomes a dark fringe. Adding a route makes the destination unreachable — say why that is impossible in classical probability theory.
+3. The scene deliberately draws no trajectory from source to screen. What would you be led to believe if it did?

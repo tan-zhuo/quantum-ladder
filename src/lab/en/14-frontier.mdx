@@ -1,0 +1,84 @@
+---
+num: '14'
+title: Frontier topics
+goal: 'A set of signposts for going further, and what each direction needs first.'
+youWillSee:
+  - 'One-line pictures for each direction, and which modules they build on'
+prereqs:
+  - 'Modules 01–09 recommended first'
+scenes: []
+related:
+  - 13-frontier/01-topological-matter
+  - 13-frontier/03-cqed-superconducting
+  - 13-frontier/05-fault-tolerance
+  - 13-frontier/07-foundations
+  - 12-relativistic/03-dirac-equation
+phase: 3
+status: draft
+---
+
+<Callout type="note" title="This module is a signpost, not a destination">
+Each item below could carry an entire platform of its own. This page gives only a one-line picture, the prerequisite modules and where to read next. The corresponding 3D scenes will be added as implementation proceeds.
+</Callout>
+
+## Topological phases and topological matter
+
+**The picture in one line**: take a parameter around a closed loop back to where it started, and the wavefunction remembers having gone around — it picks up a phase that depends on nothing but how many times it wound.
+
+The Berry phase
+
+$$
+\gamma = \ii\oint \braket{n(\vec R)}{\nabla_{\vec R} n(\vec R)}\cdot \dd\vec R
+$$
+
+is geometric, not dynamical. It is why the conductance in the integer quantum Hall effect is quantised **exactly** (to one part in $10^{9}$): a topological number is an integer, and smooth perturbations from disorder cannot shift it.
+
+**Builds on**: module 05 (the Bloch sphere is itself a parameter space you can loop around), module 11.
+
+## Superconducting qubits and cavity QED
+
+**The picture in one line**: make an LC circuit cold enough and lossless enough, then add a Josephson junction so the levels are no longer evenly spaced, and the lowest two become a controllable qubit.
+
+The uneven spacing is the crux. A harmonic oscillator has evenly spaced levels, so you cannot drive $0\to1$ without also driving $1\to2$. Non-linearity separates the two frequencies and makes the two-level approximation legitimate.
+
+**Builds on**: module 03 (the oscillator), module 05 (single-qubit operations are exactly the Bloch sphere), module 12 ($T_1$ and $T_2$ decide everything).
+
+## Quantum error correction and the surface code
+
+**The picture in one line**: do not try to prevent errors. Encode the information in the **correlations** among many physical qubits, and keep asking "has an error occurred?" — never "what is the value?".
+
+A single qubit can suffer a continuum of errors (any small rotation), yet correcting just $X$ and $Z$ errors automatically corrects all of them; that is the first counter-intuitive fact of the subject. The surface code lays qubits on a two-dimensional lattice and diagnoses errors with local stabiliser measurements. Its threshold is around 1%, which is why it is currently the favoured route.
+
+**Builds on**: module 08 (entanglement as a resource), module 12.
+
+## Relativistic quantum mechanics and the origin of spin
+
+**The picture in one line**: rewrite the Schrödinger equation so that it respects Lorentz transformations, and spin 1/2 shows up uninvited.
+
+The Dirac equation
+
+$$
+\left(\ii\hbar\gamma^\mu\partial_\mu - mc\right)\psi = 0
+$$
+
+has four-component solutions: two spin states times particle/antiparticle. Spin is no longer an assumption bolted on by hand but an inevitable consequence of combining relativity with quantum mechanics. Antiparticles arrive the same way.
+
+**Builds on**: modules 05 and 06; a little special relativity.
+
+## Foundations: what is still open
+
+Bell's theorem killed local hidden variables, but the measurement problem itself remains:
+
+- **Many worlds**: only unitary evolution, branches never disappear. The cost is explaining where the Born rule comes from.
+- **Pilot wave (de Broglie–Bohm)**: particles have definite trajectories guided by the wavefunction. The cost is explicit non-locality.
+- **Objective collapse (GRW, Penrose)**: collapse is a real stochastic process. The benefit is that it is **falsifiable**, and experiments are steadily squeezing its parameter space.
+- **Relational / QBism**: the quantum state describes an observer's information, not the world itself.
+
+Worth emphasising: none of this changes any calculation. But it does decide the language you use when you teach or write, and language quietly decides which questions occur to you.
+
+**Builds on**: modules 07, 08 and 12.
+
+## Where to go next
+
+- Chapter 13 of the textbook has fuller treatments of each direction (in Chinese).
+- [Appendix D](/ch/appendix-d-resources/01-resources/) lists textbooks, lecture notes, courses and open-source projects.

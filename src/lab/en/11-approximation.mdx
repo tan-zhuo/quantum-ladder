@@ -1,0 +1,84 @@
+---
+num: '11'
+title: The physical picture behind approximation methods
+goal: 'Work out what perturbation theory, the variational method and WKB each actually change, and where each one breaks.'
+youWillSee:
+  - 'Levels and wavefunctions before and after a perturbation, and how corrections accumulate order by order'
+  - 'A trial wavefunction being pushed down towards the true ground state'
+  - 'The WKB phase integral, and why it fails at a turning point'
+prereqs:
+  - 'Bound states and energy levels (module 03)'
+  - 'Eigenvalue problems in linear algebra'
+scenes: []
+related:
+  - 07-approximation/01-nondegenerate-perturbation
+  - 07-approximation/02-degenerate-perturbation
+  - 07-approximation/03-variational-method
+  - 07-approximation/04-wkb
+phase: 3
+status: draft
+---
+
+<Callout type="note" title="The 3D scene for this module is still being built">
+It sits in Phase 3 of the implementation order. What follows is the specification and the key points; the full derivations and the interactive 2D simulations are already available in [chapter 07 of the textbook](/ch/07-approximation/), written in Chinese.
+</Callout>
+
+Almost no real quantum system can be solved exactly. Hydrogen is a lucky exception, and adding a single electron (helium) already puts closed-form solutions out of reach.
+
+So a large part of practical quantum mechanics is about computing accurately when you cannot solve. Three workhorses:
+
+## Perturbation theory: write the hard problem as easy plus a bit
+
+$$
+\hat H = \hat H_0 + \lambda \hat V,\qquad
+E_n = E_n^{(0)} + \lambda\langle n|\hat V|n\rangle + \lambda^2\sum_{m\ne n}\frac{|\langle m|\hat V|n\rangle|^2}{E_n^{(0)}-E_m^{(0)}} + \cdots
+$$
+
+The first-order correction is just the expectation value of the perturbation in the unperturbed state — no new wavefunction needed. The second-order correction always pushes the ground state **down** (the denominator is negative for the ground state), which is where "levels repel" comes from.
+
+**Where it fails**: when a denominator goes to zero, that is, for degenerate or nearly degenerate levels. Then you must first diagonalise within the degenerate subspace (degenerate perturbation theory), or the expansion diverges.
+
+## The variational method: guess, then optimise
+
+For any normalised trial wavefunction,
+
+$$
+E[\psi_{\text{trial}}] = \frac{\langle\psi|\hat H|\psi\rangle}{\langle\psi|\psi\rangle} \ \ge\ E_0 .
+$$
+
+The inequality holds unconditionally, so pushing the expectation value down is guaranteed to approach the true ground-state energy.
+
+**The advantage**: no small parameter is needed, so it works at strong coupling too.
+**The price**: it gives only an upper bound and no error estimate; and because the energy is stationary with respect to the trial function (errors enter at second order), a very accurate energy can come from a rather poor wavefunction.
+
+A single "effective nuclear charge" trial function gets the helium ground-state energy within 2% of experiment.
+
+## WKB: the semiclassical limit of a slowly varying wavelength
+
+$$
+\psi(x) \approx \frac{C}{\sqrt{p(x)}}\exp\!\left[\pm\frac{\ii}{\hbar}\int^x p(x')\,\dd x'\right],\qquad p=\sqrt{2m(E-V)} .
+$$
+
+It is valid when the de Broglie wavelength changes little over one wavelength: $\left|\dd\lambda/\dd x\right|\ll 1$.
+
+At a **classical turning point** ($E=V$, $p\to0$) that condition necessarily fails, and the solutions must be connected through Airy functions. The connection formulas produce the quantisation condition
+
+$$
+\oint p\,\dd x = \left(n+\tfrac12\right)h,
+$$
+
+the modern form of Bohr–Sommerfeld quantisation, where the $\tfrac12$ comes from a $\pi/4$ phase at each turning point.
+
+WKB also gives the general tunnelling formula behind [module 04](/en/lab/04-tunneling/):
+
+$$
+T \approx \exp\!\left[-\frac{2}{\hbar}\int_{x_1}^{x_2}\sqrt{2m(V-E)}\,\dd x\right],
+$$
+
+valid for any barrier shape. The Gamow factor for α decay is this integral.
+
+## Think it through
+
+1. The second-order correction to the ground state is always negative. What does that imply about the ground state relative to that of $H_0$? Does the same hold for excited states?
+2. Can the variational method reach excited states? (Hint: add an orthogonality constraint.)
+3. WKB is excellent at large $n$ and often poor for the ground state. Is that consistent with the correspondence principle, or in tension with it?

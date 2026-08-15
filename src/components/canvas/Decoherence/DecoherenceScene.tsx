@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -32,7 +33,8 @@ interface LiveState {
   t: number
 }
 
-export default function DecoherenceScene() {
+export default function DecoherenceScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -78,14 +80,15 @@ export default function DecoherenceScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="decoherence"
-      title="退相干：球面上的点如何掉进球里"
-      subtitle="纯态在球面上，混合态在球内。打开与环境的耦合，看着箭头一点点缩短——以及整个单位球被压成一个椭球。"
+      title={T('退相干：球面上的点如何掉进球里')}
+      subtitle={T('纯态在球面上，混合态在球内。打开与环境的耦合，看着箭头一点点缩短——以及整个单位球被压成一个椭球。')}
       apiRef={apiRef}
       height={540}
       controls={
         <>
-          <ControlGroup title="初态">
+          <ControlGroup title={T('初态')}>
             <Slider
               label="θ"
               value={theta}
@@ -104,15 +107,15 @@ export default function DecoherenceScene() {
               onChange={setPhi}
               display={`${((phi * 180) / Math.PI).toFixed(0)}°`}
             />
-            <Button onClick={reset}>重新制备</Button>
+            <Button onClick={reset}>{T('重新制备')}</Button>
           </ControlGroup>
 
           <ControlGroup
-            title="与环境的耦合"
-            hint="相位阻尼只吃掉相干项（赤道方向），能量弛豫还会把布居拽向基态（北极）。"
+            title={T('与环境的耦合')}
+            hint={T('相位阻尼只吃掉相干项（赤道方向），能量弛豫还会把布居拽向基态（北极）。')}
           >
             <Slider
-              label="相位阻尼 γφ"
+              label={T('相位阻尼 γφ')}
               value={gammaPhase}
               min={0}
               max={2}
@@ -120,17 +123,17 @@ export default function DecoherenceScene() {
               onChange={setGammaPhase}
             />
             <Slider
-              label="能量弛豫 γ₁"
+              label={T('能量弛豫 γ₁')}
               value={gammaAmp}
               min={0}
               max={2}
               step={0.02}
               onChange={setGammaAmp}
             />
-            <Slider label="Larmor 频率 ω" value={omega} min={0} max={4} step={0.05} onChange={setOmega} />
+            <Slider label={T('Larmor 频率 ω')} value={omega} min={0} max={4} step={0.05} onChange={setOmega} />
           </ControlGroup>
 
-          <ControlGroup title="演化与显示">
+          <ControlGroup title={T('演化与显示')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
@@ -139,18 +142,18 @@ export default function DecoherenceScene() {
               onSpeed={setSpeed}
               timeLabel={`t = ${sample.t.toFixed(2)}`}
             />
-            <Toggle label="信道椭球（整个球的像）" checked={showEllipsoid} onChange={setShowEllipsoid} />
-            <Toggle label="轨迹" checked={showTrail} onChange={setShowTrail} />
+            <Toggle label={T('信道椭球（整个球的像）')} checked={showEllipsoid} onChange={setShowEllipsoid} />
+            <Toggle label={T('轨迹')} checked={showTrail} onChange={setShowTrail} />
           </ControlGroup>
 
-          <ControlGroup title="时间常数">
+          <ControlGroup title={T('时间常数')}>
             <div className="space-y-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
               <div className="flex justify-between">
-                <span>T₁（能量弛豫）</span>
+                <span>{T('T₁（能量弛豫）')}</span>
                 <span>{t1 === Infinity ? '∞' : t1.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span>T₂（退相干）</span>
+                <span>{T('T₂（退相干）')}</span>
                 <span>{t2 === Infinity ? '∞' : t2.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-[11.5px] text-[var(--text-faint)]">
@@ -168,44 +171,44 @@ export default function DecoherenceScene() {
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
             <span>|r⃗| = {Math.hypot(...sample.r).toFixed(4)}</span>
-            <span>纯度 Tr(ρ²) = {purity.toFixed(4)}</span>
-            <span>相干项 |ρ₀₁| = {coherence.toFixed(4)}</span>
-            <span>布居 ρ₁₁ = {((1 - sample.r[1]) / 2).toFixed(4)}</span>
+            <span>{T('纯度 Tr(ρ²) = {0}', purity.toFixed(4))}</span>
+            <span>{T('相干项 |ρ₀₁| = {0}', coherence.toFixed(4))}</span>
+            <span>{T('布居 ρ₁₁ = {0}', ((1 - sample.r[1]) / 2).toFixed(4))}</span>
           </div>
           <Legend
             items={[
-              { color: p.accent, label: 'Bloch 矢量 r⃗' },
-              { color: p.prob, label: '信道椭球（单位球的像）' },
-              { color: p.classical, label: '轨迹' },
+              { color: p.accent, label: T('Bloch 矢量 r⃗') },
+              { color: p.prob, label: T('信道椭球（单位球的像）') },
+              { color: p.classical, label: T('轨迹') },
             ]}
           />
         </div>
       }
       guide={[
-        '先把两个耦合都设为 0：箭头在球面上匀速进动，永远不缩短。这是封闭系统的幺正演化。',
-        '只开「相位阻尼」：箭头的水平分量迅速缩短，竖直分量一动不动。椭球被压成一根竖直的针——相干性没了，但「上还是下」的概率一点没变。',
-        '只开「能量弛豫」：椭球整体向北极（基态）收缩并平移。系统在向环境放能。',
-        '把初态设成 θ = 0（正好在北极）、只开相位阻尼：什么都不会发生。基态本来就没有相干项可丢——「退相干」只对叠加态有意义。',
-        '把 γφ 拉到最大：相干项在一两个进动周期内就没了。真实的宏观物体上，这个时间是 10⁻³¹ 秒量级。',
+        T('先把两个耦合都设为 0：箭头在球面上匀速进动，永远不缩短。这是封闭系统的幺正演化。'),
+        T('只开「相位阻尼」：箭头的水平分量迅速缩短，竖直分量一动不动。椭球被压成一根竖直的针——相干性没了，但「上还是下」的概率一点没变。'),
+        T('只开「能量弛豫」：椭球整体向北极（基态）收缩并平移。系统在向环境放能。'),
+        T('把初态设成 θ = 0（正好在北极）、只开相位阻尼：什么都不会发生。基态本来就没有相干项可丢——「退相干」只对叠加态有意义。'),
+        T('把 γφ 拉到最大：相干项在一两个进动周期内就没了。真实的宏观物体上，这个时间是 10⁻³¹ 秒量级。'),
       ]}
       pitfalls={[
         {
-          title: '“退相干 = 波函数坍缩”',
-          body: '不是。退相干把叠加态变成看起来像经典概率混合的东西（密度矩阵变对角），但它不解释为什么每次只出现一个结果。测量问题被压缩了，没有被消灭。',
+          title: T('“退相干 = 波函数坍缩”'),
+          body: T('不是。退相干把叠加态变成看起来像经典概率混合的东西（密度矩阵变对角），但它不解释为什么每次只出现一个结果。测量问题被压缩了，没有被消灭。'),
         },
         {
-          title: '“环境把能量抽走了，所以相干消失”',
-          body: '未必。纯相位阻尼不交换任何能量（布居完全不变），照样彻底摧毁相干。丢失的是相位信息，不是能量。',
+          title: T('“环境把能量抽走了，所以相干消失”'),
+          body: T('未必。纯相位阻尼不交换任何能量（布居完全不变），照样彻底摧毁相干。丢失的是相位信息，不是能量。'),
         },
         {
-          title: '“混合态就是我们不知道它是哪个纯态”',
-          body: '同一个密度矩阵可以由无穷多种不同的纯态系综给出，它们在物理上完全不可区分。「其实是某个纯态，只是我们不知道」这句话没有可操作的含义。',
+          title: T('“混合态就是我们不知道它是哪个纯态”'),
+          body: T('同一个密度矩阵可以由无穷多种不同的纯态系综给出，它们在物理上完全不可区分。「其实是某个纯态，只是我们不知道」这句话没有可操作的含义。'),
         },
       ]}
       reflect={[
-        '把整体（系统 + 环境）算进来时演化是幺正的、纯态始终是纯态。那么系统的熵是从哪冒出来的？',
-        'T₂ ≤ 2T₁ 这条不等式在几何上意味着什么？（提示：想想椭球在赤道方向与竖直方向的收缩速率。）',
-        '量子计算需要在 T₂ 之内完成足够多的门操作。若单门耗时 20 ns、T₂ = 100 μs，粗算一下能做多少次操作？够跑一个需要 10⁶ 次门的算法吗？',
+        T('把整体（系统 + 环境）算进来时演化是幺正的、纯态始终是纯态。那么系统的熵是从哪冒出来的？'),
+        T('T₂ ≤ 2T₁ 这条不等式在几何上意味着什么？（提示：想想椭球在赤道方向与竖直方向的收缩速率。）'),
+        T('量子计算需要在 T₂ 之内完成足够多的门操作。若单门耗时 20 ns、T₂ = 100 μs，粗算一下能做多少次操作？够跑一个需要 10⁶ 次门的算法吗？'),
       ]}
     >
       <SceneCanvas
@@ -216,7 +219,7 @@ export default function DecoherenceScene() {
         enablePan={false}
         overlay={
           <CanvasStat>
-            |r⃗| = {Math.hypot(...sample.r).toFixed(3)}　纯度 {purity.toFixed(3)}
+            |r⃗| = {Math.hypot(...sample.r).toFixed(3)}　{T('纯度')} {purity.toFixed(3)}
           </CanvasStat>
         }
       >
@@ -233,7 +236,7 @@ export default function DecoherenceScene() {
           onSample={setSample}
         />
         <SceneLabel position={[0, -1.45, 0]} tone="muted" size="xs">
-          球面 = 纯态　球内 = 混合态
+          {T('球面 = 纯态　球内 = 混合态')}
         </SceneLabel>
       </SceneCanvas>
     </SceneShell>

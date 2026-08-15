@@ -1,4 +1,6 @@
 ---
+import { getLangFromPath, translator } from '@/i18n'
+
 type Kind = 'note' | 'insight' | 'misconception' | 'warning' | 'history' | 'check'
 
 interface Props {
@@ -43,6 +45,13 @@ const STYLE: Record<Kind, { label: string; icon: string; accent: string; tint: s
 }
 
 const s = STYLE[type]
+
+/** 语言按路由推断：MDX 里不必给每个组件都传 lang */
+const _base = import.meta.env.BASE_URL
+const _rel = Astro.url.pathname.startsWith(_base)
+  ? Astro.url.pathname.slice(_base.length)
+  : Astro.url.pathname
+const t = translator(getLangFromPath(_rel))
 ---
 
 <aside
@@ -56,7 +65,7 @@ const s = STYLE[type]
       style={`background:${s.accent};color:var(--bg-elevated)`}
       aria-hidden="true">{s.icon}</span
     >
-    {title ?? s.label}
+    {title ?? t(s.label)}
   </p>
   <div class="text-[15px] leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
     <slot />

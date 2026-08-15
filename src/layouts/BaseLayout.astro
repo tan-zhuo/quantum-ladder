@@ -1,8 +1,10 @@
 ---
 import '@/styles/global.css'
 import Sidebar from '@/components/layout/Sidebar.astro'
+import Footer from '@/components/layout/Footer.astro'
 import SearchDialog from '@/components/search/SearchDialog'
 import FormulaPanel from '@/components/ui/FormulaPanel.astro'
+import { translator, localePath, HTML_LANG, DEFAULT_LANG, type Lang } from '@/i18n'
 
 interface Props {
   title: string
@@ -11,25 +13,43 @@ interface Props {
   currentChapter?: string
   /** 首页等宽屏页面可以关掉侧栏 */
   sidebar?: boolean
+  lang?: Lang
 }
 
 const {
   title,
-  description = '从零基础到前沿的量子力学系统教程，带可交互模拟。',
   currentId,
   currentChapter,
   sidebar = true,
+  lang = DEFAULT_LANG,
 } = Astro.props
 
+const t = translator(lang)
+const description =
+  Astro.props.description ??
+  t('从零基础到前沿的量子力学系统教程，以 3D 交互场景为主讲。')
+
 const base = import.meta.env.BASE_URL
+const L = (p: string) => localePath(lang, p, base)
+
+/**
+ * 语言切换：把当前路径在两种语言之间对折。
+ * 中文在根路径，英文在 /en/ 下，所以只需要加上或去掉一个前缀——
+ * 用户停在哪个模块，切过去还是那个模块。
+ */
+const here = Astro.url.pathname
+const rel = here.slice(base.length).replace(/^\/+/, '')
+const relNoLang = rel.startsWith('en/') ? rel.slice(3) : rel === 'en' ? '' : rel
+const otherLang: Lang = lang === 'zh' ? 'en' : 'zh'
+const otherHref = localePath(otherLang, relNoLang, base)
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={HTML_LANG[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} · 量子力学阶梯</title>
+    <title>{title} · {t('量子力学阶梯')}</title>
     <meta name="description" content={description} />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${base}icon-192.png`} />
@@ -58,7 +78,7 @@ const base = import.meta.env.BASE_URL
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-[var(--bg-elevated)] focus:px-3 focus:py-2 focus:shadow-lg"
     >
-      跳到正文
+      {t('跳到正文')}
     </a>
 
     <header
@@ -70,7 +90,7 @@ const base = import.meta.env.BASE_URL
             <button
               type="button"
               id="ql-sidebar-toggle"
-              aria-label="打开目录"
+              aria-label={t('打开目录')}
               aria-expanded="false"
               class="-ml-1 rounded-lg p-2 text-[var(--text-muted)] hover:bg-[var(--bg-subtle)] lg:hidden"
             >
@@ -81,12 +101,12 @@ const base = import.meta.env.BASE_URL
           )
         }
 
-        <a href={base} class="flex shrink-0 items-center gap-2 font-semibold tracking-tight">
+        <a href={L('')} class="flex shrink-0 items-center gap-2 font-semibold tracking-tight">
           <span
             class="grid size-7 place-items-center rounded-md bg-[var(--accent)] font-mono text-[13px] text-white"
             aria-hidden="true">ψ</span
           >
-          <span class="hidden text-[15px] sm:inline">量子力学阶梯</span>
+          <span class="hidden text-[15px] sm:inline">{t('量子力学阶梯')}</span>
         </a>
 
         <div class="flex-1"></div>
@@ -100,7 +120,7 @@ const base = import.meta.env.BASE_URL
             <circle cx="11" cy="11" r="7"></circle>
             <path d="m20 20-3.5-3.5"></path>
           </svg>
-          <span class="hidden sm:inline">搜索</span>
+          <span class="hidden sm:inline">{t('搜索')}</span>
           <kbd
             class="hidden rounded border border-[var(--border)] bg-[var(--bg-subtle)] px-1.5 font-mono text-[11px] sm:inline"
             >/</kbd
@@ -110,8 +130,8 @@ const base = import.meta.env.BASE_URL
         <button
           type="button"
           data-formula-open
-          title="公式速查（快捷键 f）"
-          aria-label="公式速查"
+          title={t('公式速查（快捷键 f）')}
+          aria-label={t('公式速查')}
           class="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-subtle)]"
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -119,11 +139,20 @@ const base = import.meta.env.BASE_URL
           </svg>
         </button>
 
+        <a
+          href={otherHref}
+          hreflang={otherLang === 'zh' ? 'zh-CN' : 'en'}
+          title={t('切换语言')}
+          class="rounded-lg px-2 py-1.5 font-mono text-[12px] text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]"
+        >
+          {otherLang === 'en' ? 'EN' : '中'}
+        </a>
+
         <button
           type="button"
           id="ql-theme-toggle"
-          title="切换深浅色（快捷键 t）"
-          aria-label="切换深浅色主题"
+          title={t('切换深浅色（快捷键 t）')}
+          aria-label={t('切换深浅色主题')}
           class="rounded-lg p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-subtle)]"
         >
           <svg
@@ -168,7 +197,7 @@ const base = import.meta.env.BASE_URL
               data-sidebar-scroll
               class="no-print fixed top-14 bottom-0 left-0 z-40 w-[280px] -translate-x-full overflow-y-auto overscroll-contain border-r border-[var(--border)] bg-[var(--bg)] px-2 py-5 transition-transform duration-200 lg:sticky lg:z-0 lg:h-[calc(100vh-3.5rem)] lg:translate-x-0"
             >
-              <Sidebar currentId={currentId} currentChapter={currentChapter} />
+              <Sidebar currentId={currentId} currentChapter={currentChapter} lang={lang} />
             </aside>
           </>
         )
@@ -176,6 +205,7 @@ const base = import.meta.env.BASE_URL
 
       <main id="main" class="min-w-0 flex-1">
         <slot />
+        <Footer lang={lang} />
       </main>
     </div>
 

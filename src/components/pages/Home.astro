@@ -1,0 +1,348 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getToc } from '@/lib/toc'
+import { getLabModules, countScenes } from '@/lib/lab'
+import { translator, localePath, DEFAULT_LANG, type Lang } from '@/i18n'
+import { CHAPTER_EN } from '@/i18n/sections-en'
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = DEFAULT_LANG } = Astro.props
+const t = translator(lang)
+const toc = await getToc()
+const modules = await getLabModules(lang)
+const sceneCount = await countScenes()
+const base = import.meta.env.BASE_URL
+const L = (p: string) => localePath(lang, p, base)
+const chapterTitle = (id: string, zh: string) => (lang === 'en' ? (CHAPTER_EN[id]?.title ?? zh) : zh)
+
+const allSections = toc.flatMap((c) => c.sections)
+const doneSections = allSections.filter((s) => s.status === 'done')
+
+/** 首屏推荐的五个核心场景：规格里的 Phase 1 */
+const FEATURED = [
+  {
+    module: '05-spin',
+    scene: 'Bloch 球',
+    title: '把自旋态变成可以用手拖的球',
+    desc: '球面上每个点都是一个纯态。加磁场看它进动，选一个轴测量看它塌缩，重复两百次看频率收敛到 Born 规则。',
+  },
+  {
+    module: '06-hydrogen',
+    scene: '氢原子轨道',
+    title: '真正看见 |ψ|² 长什么样',
+    desc: '六万个点一个个显影出来，每个点是一次位置测量的可能结果。切换 n、l、m，剖开 3d 轨道看里面。',
+  },
+  {
+    module: '03-bound-states',
+    scene: '势阱与谐振子',
+    title: '定态为什么被称为「静止」',
+    desc: 'ψ 在复平面里转个不停，而它的影子 |ψ|² 一动不动。能级、节点、渗出阱壁的指数尾巴都在同一张图里。',
+  },
+  {
+    module: '01-double-slit',
+    scene: '双缝干涉',
+    title: '条纹是一颗颗粒子累积出来的',
+    desc: '前几十个点毫无规律，几百个之后条纹自己浮现。在缝口放上探测器，条纹当场消失。',
+  },
+  {
+    module: '04-tunneling',
+    scene: '隧道效应',
+    title: '波包撞上一堵它翻不过的墙',
+    desc: '浏览器里实时解含时薛定谔方程。经典小球原路弹回，波包却有一部分出现在了另一侧。',
+  },
+]
+
+const PATHS = [
+  {
+    name: '第一次接触量子力学',
+    desc: '按模块编号顺序走：01 → 02 → 03 → 04，四个模块之后你已经能读懂大多数科普里说错的地方。',
+    route: ['00', '01', '02', '03', '04'],
+    accent: 'var(--accent)',
+  },
+  {
+    name: '正在上量子力学课',
+    desc: '课上讲到哪，就来对应模块看一眼图像，再回去看推导。场景下方的「深入阅读」直达教材小节。',
+    route: ['03', '06', '05', '09', '11'],
+    accent: 'var(--c-prob)',
+  },
+  {
+    name: '目标是量子信息',
+    desc: '跳过连续谱与氢原子，主攻二能级系统：Bloch 球 → 测量 → 纠缠 → 退相干。',
+    route: ['05', '07', '08', '12'],
+    accent: 'var(--c-energy)',
+  },
+]
+---
+
+<BaseLayout title={t('首页')} sidebar={false} lang={lang}>
+  <div class="mx-auto w-full max-w-[1080px] px-5 py-12 lg:px-8 lg:py-16">
+    <!-- ── Hero ─────────────────────────────────────────── -->
+    <section class="mb-14">
+      <p class="mb-3 font-mono text-[13px] tracking-wide text-[var(--accent-text)]">
+        {t('ψ · 3D 优先 · 纯前端 · 无需注册 · 可离线使用')}
+      </p>
+      <h1 class="max-w-[20ch] text-[36px] leading-[1.15] font-bold tracking-tight sm:text-[46px]">
+        {t('量子力学阶梯')}
+      </h1>
+      <p class="mt-5 max-w-[62ch] text-[17px] leading-relaxed text-[var(--text-muted)]">
+        {
+          t(
+            '这不是电子书。{0} 个 3D 交互场景是这里的主讲人——每一个重要原理都尽可能用三维把物理图像讲透， 让你先「看见」量子世界在发生什么，再谈公式。所有计算都在你的浏览器里实时进行。',
+            sceneCount,
+          )
+        }
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a
+          href={L('lab/05-spin/')}
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-2.5 text-[14.5px] font-medium text-white transition-opacity hover:opacity-90"
+        >
+          {t('从 Bloch 球开始')}
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
+        </a>
+        <a
+          href={L('lab/')}
+          class="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2.5 text-[14.5px] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+        >
+          {t('全部 {0} 个模块', modules.length)}
+        </a>
+        <a
+          href={L('lab/00-intro/')}
+          class="text-[14px] text-[var(--text-faint)] underline underline-offset-4 transition-colors hover:text-[var(--accent-text)]"
+        >
+          {t('怎么用这个平台？')}
+        </a>
+      </div>
+
+      <div id="ql-resume" class="mt-6 hidden">
+        <a
+          data-resume-link
+          href={base}
+          class="inline-flex items-center gap-2 rounded-lg border border-[var(--accent)]/35 bg-[var(--accent-soft)] px-3.5 py-2 text-[13.5px] text-[var(--accent-text)] transition-opacity hover:opacity-85"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 4l13 8-13 8z"></path>
+          </svg>
+          {t('继续上次：')}<span data-resume-label class="font-medium"></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── Phase 1 场景 ─────────────────────────────────── -->
+    <section class="mb-16">
+      <div class="mb-4 flex items-baseline justify-between gap-3">
+        <h2 class="text-[13px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+          {t('先看这五个')}
+        </h2>
+        <a href={`${base}lab/`} class="text-[13px] text-[var(--accent-text)] hover:underline">
+          {t('全部模块 →')}
+        </a>
+      </div>
+
+      <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          FEATURED.map((f, i) => (
+            <li class={i === 0 ? 'sm:col-span-2 lg:col-span-1' : ''}>
+              <a
+                href={L(`lab/${f.module}/`)}
+                class="group flex h-full flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 shadow-[var(--shadow-card)] transition-colors hover:border-[var(--accent)]/45"
+              >
+                <p class="mb-1.5 flex items-center gap-1.5 font-mono text-[11.5px] text-[var(--accent-text)]">
+                  <span aria-hidden="true">◆</span>
+                  {t(f.scene)}
+                </p>
+                <h3 class="text-[15.5px] font-semibold tracking-tight group-hover:text-[var(--accent-text)]">
+                  {t(f.title)}
+                </h3>
+                <p class="mt-1.5 text-[13.5px] leading-relaxed text-[var(--text-muted)]">{t(f.desc)}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- ── 这个平台和别的有什么不同 ───────────────────────── -->
+    <section class="mb-16 grid gap-4 sm:grid-cols-3">
+      {
+        [
+          {
+            t: '3D 是主讲人',
+            d: '能用三维讲清楚的，绝不只用二维图或纯文字。每个场景都支持旋转、缩放、剖切、时间演化与预设视角。',
+          },
+          {
+            t: '数字是算出来的',
+            d: '本征值问题、split-operator 演化、蒙特卡洛采样全在浏览器里跑。读数区会把数值解与解析解并排放着让你对照。',
+          },
+          {
+            t: '先图像，后数学',
+            d: '每个场景配一份观察指南（该看什么、调什么），以及一组「常见错误直觉」——那些几乎每个人都会踩一次的坑。',
+          },
+        ].map((x) => (
+          <div class="rounded-xl border border-[var(--border)] px-4 py-3.5">
+            <h3 class="text-[14.5px] font-semibold">{t(x.t)}</h3>
+            <p class="mt-1.5 text-[13px] leading-relaxed text-[var(--text-muted)]">{t(x.d)}</p>
+          </div>
+        ))
+      }
+    </section>
+
+    <!-- ── 学习路线 ─────────────────────────────────────── -->
+    <section class="mb-16">
+      <h2 class="mb-4 text-[13px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+        {t('三条路线，看你从哪来')}
+      </h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        {
+          PATHS.map((p) => (
+            <div class="flex flex-col rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3.5">
+              <h3 class="text-[15px] font-semibold" style={`color:${p.accent}`}>
+                {t(p.name)}
+              </h3>
+              <p class="mt-1.5 flex-1 text-[13px] leading-relaxed text-[var(--text-muted)]">{t(p.desc)}</p>
+              <div class="mt-3 flex flex-wrap items-center gap-1">
+                {p.route.map((num, i) => {
+                  const m = modules.find((x) => x.num === num)
+                  return (
+                    <>
+                      {i > 0 && (
+                        <span class="text-[10px] text-[var(--text-faint)]" aria-hidden="true">
+                          →
+                        </span>
+                      )}
+                      <a
+                        href={m ? L(m.path) : L('lab/')}
+                        title={m?.title}
+                        class="rounded-md bg-[var(--bg-subtle)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--text-muted)] transition-colors hover:text-[var(--accent-text)]"
+                      >
+                        {num}
+                      </a>
+                    </>
+                  )
+                })}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ── 教材部分 ─────────────────────────────────────── -->
+    <section class="mb-16">
+      <div class="rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] px-5 py-5">
+        <h2 class="text-[16px] font-semibold">{t('还有一整本教材')}</h2>
+        <p class="mt-2 max-w-[68ch] text-[14px] leading-relaxed text-[var(--text-muted)]">
+          {
+            t(
+              '3D 模块负责建立图像，完整的推导、习题与数值方法在教材部分： {0} 章、{1} 节，其中 {2} 节已定稿。 每个模块页面底部都有对应章节的直达链接。',
+              toc.length,
+              allSections.length,
+              doneSections.length,
+            )
+          }
+          {lang === 'en' && <span class="text-[var(--text-faint)]"> (textbook text is in Chinese)</span>}
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          {
+            toc.slice(0, 8).map((c) => (
+              <a
+                href={`${base}${c.href.replace(/^\//, '')}`}
+                class="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[12.5px] text-[var(--text-muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--text)]"
+              >
+                <span class="mr-1 font-mono text-[11px] text-[var(--text-faint)]">{c.num}</span>
+                {chapterTitle(c.id, c.title)}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 进度 ─────────────────────────────────────────── -->
+    <section class="mb-14">
+      <div class="flex flex-wrap items-baseline gap-x-8 gap-y-3 rounded-xl border border-[var(--border)] px-5 py-4">
+        <div>
+          <p class="font-mono text-[22px] tabular-nums text-[var(--text)]" id="ql-my-progress">—</p>
+          <p class="text-[12px] text-[var(--text-faint)]" id="ql-my-progress-note">
+            {t('你的学习进度只存在本机浏览器里')}
+          </p>
+        </div>
+        <div>
+          <p class="font-mono text-[22px] tabular-nums text-[var(--text)]">{sceneCount}</p>
+          <p class="text-[12px] text-[var(--text-faint)]">{t('个 3D 场景')}</p>
+        </div>
+        <div>
+          <p class="font-mono text-[22px] tabular-nums text-[var(--text)]">{modules.length}</p>
+          <p class="text-[12px] text-[var(--text-faint)]">{t('个模块')}</p>
+        </div>
+        <div>
+          <p class="font-mono text-[22px] tabular-nums text-[var(--text)]">{allSections.length}</p>
+          <p class="text-[12px] text-[var(--text-faint)]">{t('节教材')}</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="border-t border-[var(--border)] pt-6 text-[13px] leading-relaxed text-[var(--text-faint)]">
+      <p>
+        {
+          t(
+            '纯静态站点，全部计算在你的浏览器里完成。学习进度只存在本机 localStorage，不上传任何数据。 支持离线访问：访问过的页面会被缓存下来。',
+          )
+        }
+      </p>
+    </footer>
+  </div>
+</BaseLayout>
+
+<script>
+  import { lastVisited, loadProgress, summarise, MASTERY_LABEL } from '@/lib/progress'
+
+  // 索引里带了每节/每个模块的标题，用来把「继续上次」显示成人话
+  type IndexDoc = { id: string; href: string; label: string; title: string }
+
+  async function hydrate() {
+    const state = loadProgress()
+    const ids = Object.keys(state)
+    if (!ids.length) return
+
+    let docs: IndexDoc[] = []
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/search-index.json`)
+      docs = (await res.json()) as IndexDoc[]
+    } catch {
+      return
+    }
+
+    // 中英两份文档共用同一个 id（进度与语言无关），统计前先去重
+    const uniqueIds = [...new Set(docs.map((d) => d.id))]
+    const { read, mastered, total } = summarise(uniqueIds)
+    const value = document.getElementById('ql-my-progress')
+    const note = document.getElementById('ql-my-progress-note')
+    if (value) value.textContent = `${read}/${total}`
+    if (note) note.textContent = `其中 ${mastered} 处自评为「${MASTERY_LABEL[2]}」以上`
+
+    const last = lastVisited()
+    const isEn = document.documentElement.lang.startsWith('en')
+    const candidates = last ? docs.filter((d) => d.id === last.id) : []
+    const doc =
+      candidates.find((d) => d.href.includes('/en/') === isEn) ?? candidates[0]
+    if (doc) {
+      const box = document.getElementById('ql-resume')
+      const link = box?.querySelector<HTMLAnchorElement>('[data-resume-link]')
+      const label = box?.querySelector<HTMLElement>('[data-resume-label]')
+      if (box && link && label) {
+        link.href = doc.href
+        label.textContent = doc.label ? `${doc.label} ${doc.title}` : doc.title
+        box.classList.remove('hidden')
+      }
+    }
+  }
+
+  void hydrate()
+</script>

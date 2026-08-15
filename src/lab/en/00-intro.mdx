@@ -1,0 +1,91 @@
+---
+num: '00'
+title: How to use this platform
+goal: Learn to drive a 3D scene in three minutes, and see why this site insists on "look first, calculate second".
+youWillSee:
+  - 'The skeleton every module shares: one-line goal → 3D scene → what to look for → common misconceptions → questions'
+  - 'The controls every scene has in common: rotate, zoom, preset views, clipping, time control, screenshot'
+prereqs:
+  - High-school mathematics and physics
+  - A device with WebGL (anything from the last decade, phones included)
+scenes: []
+related:
+  - 00-guide/01-index
+phase: 1
+status: done
+---
+
+This is not an e-book, and it is not a collection of flashcards.
+
+The lecturer here is the 3D scene. Text and formulas play a supporting role: their job is to tell you what a thing is called and how to compute it **after** you have already seen it. Reverse the order and the formulas are just symbols.
+
+## What a module looks like
+
+Every module follows the same skeleton, so you can skip around safely:
+
+1. **A one-line physical goal** — which single picture this module is trying to install in your head.
+2. **What you will see** — set before you enter, so that you are not staring at the screen wondering where to look.
+3. **The 3D scene** — the main event. The control panel beside it is there to be used, not admired.
+4. **What to look for** — written under the scene, step by step: change this, watch that. **This is the densest part of the site.**
+5. **Common wrong intuitions** — the traps nearly everyone falls into once, flagged in advance.
+6. **Think it through** — questions without model answers. If you cannot answer them, go back and drag some sliders.
+7. **Go deeper** — links into the textbook for the full derivations and exercises.
+
+## Controls shared by every scene
+
+<Callout type="insight" title="Mouse / touch">
+- **Rotate**: hold the left button and drag (touch: one finger)
+- **Zoom**: scroll wheel (touch: pinch)
+- **Pan**: hold the right button and drag (touch: two fingers)
+- **Back to the start**: the ↺ button at the top right of the scene
+</Callout>
+
+The buttons at the top left of the canvas are **preset views**. They are not arbitrary angles: each one is the direction from which some particular quantity reads most clearly. When a picture stops making sense, cycle through the presets first — that usually fixes it.
+
+Three more buttons sit at the top right:
+
+- **📷 Screenshot** — saves the current frame as a PNG you can paste into your notes.
+- **⚙ Display settings** — render quality, colour-blind-safe palette, high contrast, in-scene labels.
+- **⛶ Full screen** — strongly recommended on a phone.
+
+### About performance
+
+Every scene watches its own frame rate. If it stays below 35 fps for two seconds, it drops one quality tier (fewer particles, coarser subdivision). You can also lock a tier by hand in the display settings — once locked, the automatic downgrade stops interfering.
+
+On older hardware, just lock it to "Low": the picture gets coarser, but not one number changes.
+
+<Callout type="warning" title="The colours mean something">
+One semantic palette runs through the whole site, and it is the same in every scene:
+
+- **Blue** — the wavefunction ψ (real part, or the complex tube)
+- **Orange** — the imaginary part, or the classical object being compared against
+- **Purple** — the probability density |ψ|²
+- **Grey** — the potential V(x)
+- **Teal** — energy levels and measurement axes
+
+If you have a colour vision difference, switch on "Colour-blind safe palette" in the display settings and the whole site changes to a palette that stays distinguishable under the common red–green types.
+</Callout>
+
+## A workable pace
+
+**Do not binge the modules.** The 3D scene in each one deserves ten minutes of dragging, rotating and trying to predict what happens next.
+
+One schedule that works:
+
+| Stage | Modules | Goal |
+| --- | --- | --- |
+| Week 1 | 01 → 02 → 03 | Build the basic "wavefunction + probability" picture |
+| Week 2 | 04 → 09 | Understand time evolution; separate stationary states from superpositions |
+| Week 3 | 05 → 06 | Spin and orbitals: two kinds of angular momentum |
+| Week 4 | 07 → 08 | Measurement and entanglement — the hardest and most interesting part |
+| After | 10 → 14 | Whatever interests you |
+
+At the end of each module there is a self-assessment. It lives only in your own browser (localStorage): no account, no upload, no leaderboard. Rate yourself honestly — its only purpose is to tell you, two weeks from now, which module to revisit.
+
+## One warning
+
+The hard part of quantum mechanics has never been the mathematics. It is **giving up intuitions that have never once failed you in the macroscopic world**: trajectories, "things are somewhere", "measuring is just looking".
+
+The modules ahead dismantle those one at a time. It is uncomfortable while it happens, and that is normal — the discomfort is the old picture being replaced.
+
+When you are ready, start with [module 01](/en/lab/01-double-slit/).

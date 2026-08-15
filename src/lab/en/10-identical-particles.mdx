@@ -1,0 +1,102 @@
+---
+num: '10'
+title: Identical particles and exchange symmetry
+goal: 'See how a purely formal operation — swapping two labels — pushes particles apart or pulls them together.'
+youWillSee:
+  - 'Swapping two identical particles returns the wavefunction unchanged (bosons) or flipped in sign (fermions)'
+  - 'An antisymmetric wavefunction is exactly zero on x₁ = x₂ — Pauli exclusion is not an extra rule'
+  - 'The same single-particle states give visibly different distributions under the two symmetries'
+prereqs:
+  - 'What a two-particle wavefunction ψ(x₁, x₂) means'
+  - 'Bound states in one dimension (module 03)'
+scenes:
+  - identical-particles
+related:
+  - 08-identical-particles/01-identity-principle
+  - 08-identical-particles/02-bosons-fermions
+  - 08-identical-particles/03-pauli-exclusion
+  - 08-identical-particles/04-exchange-interaction
+phase: 3
+status: done
+---
+
+Classically, two identical balls are still two balls: you can number them and follow each trajectory.
+
+Quantum mechanically you cannot. With no trajectories there is no way to say "that one was number 1". Identical particles are indistinguishable **in principle**, and that fact has observable consequences.
+
+<Scene name="identical-particles" />
+
+## The exchange operator has only two eigenvalues
+
+Define $\hat P_{12}\psi(x_1,x_2) = \psi(x_2,x_1)$. Since $\hat P_{12}^2 = \hat I$, its eigenvalues can only be $\pm1$:
+
+$$
+\psi(x_2,x_1) = \pm\,\psi(x_1,x_2).
+$$
+
+- $+$: **bosons** (integer spin: photons, phonons, $^4$He)
+- $-$: **fermions** (half-integer spin: electrons, protons, neutrons)
+
+The link between spin and statistics is not a postulate of quantum mechanics but a theorem of relativistic quantum field theory (the spin-statistics theorem). In the non-relativistic framework we can only take it as an experimental fact.
+
+## Pauli exclusion is a corollary
+
+Put two fermions in the same single-particle state $\phi_a$:
+
+$$
+\psi_-(x_1,x_2) = \frac{1}{\sqrt2}\left[\phi_a(x_1)\phi_a(x_2) - \phi_a(x_2)\phi_a(x_1)\right] = 0 .
+$$
+
+The whole wavefunction vanishes. "Two fermions cannot occupy the same state" is not an extra prohibition; it is the arithmetic of antisymmetrisation.
+
+Set the two quantum numbers equal in the scene with fermions selected and the entire distribution collapses to nothing — which is quite vivid.
+
+<Callout type="insight" title="Exchange force: a force that is not one">
+For different single-particle states $\phi_a,\phi_b$, compute the mean square separation:
+
+$$
+\langle (x_1-x_2)^2\rangle_\pm = \langle x^2\rangle_a + \langle x^2\rangle_b - 2\langle x\rangle_a\langle x\rangle_b \mp 2\left|\langle a|x|b\rangle\right|^2 .
+$$
+
+The last term is the **exchange term**:
+
+- bosons (take $-$): smaller separation, particles bunch together;
+- fermions (take $+$): larger separation, particles avoid each other.
+
+The two curves in the scene differ by exactly this term. Note that the Hamiltonian contains **no** interaction potential — the "force" comes purely from the symmetry requirement on the wavefunction.
+
+It holds up electron degeneracy pressure in metals, keeps white dwarfs and neutron stars from collapsing, and underlies ferromagnetism (the exchange interaction).
+</Callout>
+
+## One table
+
+| | Bosons | Fermions |
+| --- | --- | --- |
+| Under exchange | $\psi \to +\psi$ | $\psi \to -\psi$ |
+| Same state | allowed, and increasingly favoured | forbidden |
+| Statistics | Bose–Einstein | Fermi–Dirac |
+| At low temperature | Bose–Einstein condensation | Fermi sea and degeneracy pressure |
+| Examples | photons, $^4$He, $^{87}$Rb | electrons, protons, $^3$He |
+
+<Derivation title="The Slater determinant" level="进阶">
+
+The antisymmetric wavefunction of $N$ fermions can be written as a determinant:
+
+$$
+\psi(x_1,\ldots,x_N) = \frac{1}{\sqrt{N!}}
+\det\begin{pmatrix}
+\phi_1(x_1) & \cdots & \phi_1(x_N)\\
+\vdots & \ddots & \vdots\\
+\phi_N(x_1) & \cdots & \phi_N(x_N)
+\end{pmatrix}.
+$$
+
+Two properties of determinants encode the physics exactly: swapping two columns flips the sign (antisymmetry), and two identical rows give zero (Pauli exclusion). The whole Hartree–Fock method is built on this object.
+
+</Derivation>
+
+## Think it through
+
+1. If two electrons are in a spin triplet (symmetric spin part), the spatial part must be antisymmetric. What does that do to their spatial distribution, and how does it relate to bonding and antibonding states in the hydrogen molecule?
+2. A metal contains $10^{23}$ electrons and the wavefunction must be antisymmetric under **every** pair exchange. Why can we still treat them as independent electrons when computing conductivity?
+3. In two dimensions, exchanging twice need not return the original state (braid group rather than permutation group), which permits anyons and fractional statistics. What is essentially different about three dimensions?

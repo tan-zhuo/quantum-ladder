@@ -1,0 +1,123 @@
+---
+num: '08'
+title: Entanglement and Bell non-locality
+goal: 'Refute, with your own data, the assumption that outcomes were already decided before the measurement.'
+youWillSee:
+  - 'Each side alone is completely random, yet the two are strictly correlated'
+  - 'Rotate the measurement angles and the correlation follows a cosine, not the kinked line local realism allows'
+  - 'The CHSH value accumulates live; the moment it passes 2, the classical explanation is out'
+prereqs:
+  - 'Single qubits and the Bloch sphere (module 05)'
+  - 'Measurement and projection (module 07)'
+  - 'Conditional and joint probability'
+scenes:
+  - entanglement
+related:
+  - 09-quantum-information/03-entanglement-measures
+  - 09-quantum-information/04-bell-chsh
+  - 09-quantum-information/05-teleportation
+  - 13-frontier/07-foundations
+phase: 2
+status: done
+---
+
+Everything odd so far could still, at a stretch, be explained away by "the particle carries some property we have not identified".
+
+This module ends that option. The power of Bell's theorem is that it does not ask you to believe quantum mechanics. It needs only two assumptions that look self-evident — **locality** (a measurement here does not affect the outcome there) and **realism** (measurement reads off a property that already exists) — and proves that a certain measurable quantity must then be at most 2.
+
+Experiment gives $2\sqrt2 \approx 2.83$.
+
+<Scene name="entanglement" />
+
+## An entangled state: definite as a whole, random in its parts
+
+Take the singlet (total spin zero):
+
+$$
+\ket{\Psi^-} = \frac{1}{\sqrt2}\left(\ket{\uparrow}_A\ket{\downarrow}_B - \ket{\downarrow}_A\ket{\uparrow}_B\right).
+$$
+
+It **cannot** be written as $\ket{\phi}_A\otimes\ket{\chi}_B$, which is the definition of entanglement.
+
+Consequently:
+
+- Alice looking at her particle alone gets ↑ and ↓ equally often, completely at random, whatever axis she picks;
+- yet whenever the two use the **same** axis, the results are always opposite — perfectly correlated.
+
+The two spheres in the scene are the reduced states of A and B. Both sit at the centre (maximally mixed), which says that locally there is no information at all. All of it is in the correlation.
+
+<Callout type="warning" title="Entanglement cannot carry a message">
+If the outcomes are strictly correlated, can we signal faster than light with them?
+
+No. Alice cannot control whether she gets ↑ or ↓; her side is 50/50 noise. Bob's data alone is 50/50 too — whether or not Alice measured, and however she measured. Only when the two records are brought together **over a classical channel** and compared does the correlation appear.
+
+The formal statement is the **no-signalling theorem**, and it is what keeps quantum mechanics on speaking terms with special relativity.
+</Callout>
+
+## CHSH: turning philosophy into a number
+
+Alice picks one of two angles $a, a'$; Bob picks one of $b, b'$; each records $\pm1$. Define the correlation $E(a,b) = \langle A B\rangle$ and then
+
+$$
+S = E(a,b) - E(a,b') + E(a',b) + E(a',b').
+$$
+
+**What local hidden variables predict**: if each particle carries predetermined values $A(\lambda), B(\lambda)$, then for every $\lambda$
+
+$$
+A(a)B(b) - A(a)B(b') + A(a')B(b) + A(a')B(b') = A(a)[B(b)-B(b')] + A(a')[B(b)+B(b')] = \pm 2,
+$$
+
+because one bracket is 0 and the other is $\pm2$. Averaging gives $|S| \le 2$.
+
+**What quantum mechanics predicts**: for the singlet, $E(a,b) = -\cos\theta_{ab}$. Taking $a=0°$, $a'=90°$, $b=45°$, $b'=135°$, the four angles are $45°, 135°, 45°, 45°$, so
+
+$$
+|S| = \left|{-\tfrac{\sqrt2}{2}} - \tfrac{\sqrt2}{2} - \tfrac{\sqrt2}{2} - \tfrac{\sqrt2}{2}\right| = 2\sqrt2 \approx 2.828 .
+$$
+
+<Callout type="warning" title="Do not import the photon angles">
+Many references quote the optimal angles as $0°,\,45°,\,22.5°,\,67.5°$ — that is the **photon polarisation** convention, where the correlation goes as $\cos 2\theta$ and the angles are halved. This scene simulates spin 1/2, where the correlation is $\cos\theta$, so the optimal spacing is $45°$ rather than $22.5°$. Use the wrong set and $|S|$ tops out at 2.39 no matter how you tune it.
+</Callout>
+
+You can drag all four angles in the scene and watch $S$ respond. The defaults are the optimal set above.
+
+<Derivation title="Where the cosine comes from" level="进阶">
+
+For the singlet, the joint expectation along $\hat a$ and $\hat b$ is
+
+$$
+E(\hat a,\hat b) = \bra{\Psi^-}(\vec\sigma\cdot\hat a)\otimes(\vec\sigma\cdot\hat b)\ket{\Psi^-} = -\,\hat a\cdot\hat b = -\cos\theta_{ab}.
+$$
+
+A pretty property of the singlet is that it is anti-correlated along **every** direction (it is rotationally invariant), so only the relative angle matters.
+
+The crucial difference is cosine versus kinked line: the best a local hidden-variable model can manage is piecewise linear, while quantum mechanics gives a cosine. They agree at $0°$, $90°$ and $180°$ and differ most around $45°$ — exactly where the four CHSH angles are placed.
+
+</Derivation>
+
+## The loopholes, and how they were closed
+
+Early Bell experiments left two classical escape routes:
+
+- **Detection loophole**: only a fraction of pairs are detected, and if the losses correlate with the hidden variable a classical model can still fit the data. High-efficiency ion and superconducting-qubit experiments closed it from 2013.
+- **Locality loophole**: if the two measurement choices have time to communicate, locality was never really tested. Aspect used fast switching in 1982; Weihs used space-like separation in 1998.
+
+In 2015 three experiments (Delft, NIST, Vienna) closed both at once. The 2022 Nobel Prize went to Aspect, Clauser and Zeilinger.
+
+The only remaining gap is superdeterminism — the assumption that even the experimenters' choice of angles was fixed in advance. It cannot be falsified and it cannot be used to predict anything.
+
+<KeyFormulas
+  items={[
+    { name: 'Singlet state', latex: '\\ket{\\Psi^-}=\\tfrac{1}{\\sqrt2}(\\ket{\\uparrow\\downarrow}-\\ket{\\downarrow\\uparrow})', note: 'Not a product ⇒ entangled' },
+    { name: 'Quantum correlation', latex: 'E(\\hat a,\\hat b) = -\\hat a\\cdot\\hat b', note: 'Depends only on the angle' },
+    { name: 'Classical CHSH bound', latex: '|S| \\le 2', note: 'Forced by local realism' },
+    { name: 'Tsirelson bound', latex: '|S| \\le 2\\sqrt2', note: "Quantum mechanics' own ceiling" },
+  ]}
+/>
+
+## Think it through
+
+1. Set all four angles equal. What is $S$? Why does this choice test nothing non-classical?
+2. Quantum mechanics reaches $2\sqrt2$, while the algebraic maximum is 4. Is there a theory that is more non-local than quantum mechanics yet still forbids signalling? (Keyword: PR box. Why nature stopped at $2\sqrt2$ has no accepted answer.)
+3. If Alice measures first and Bob second, it is tempting to say "Alice's measurement collapsed Bob's particle". Change inertial frame and the order reverses. What is wrong with the question?

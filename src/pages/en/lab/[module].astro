@@ -1,0 +1,57 @@
+---
+import { getCollection, render } from 'astro:content'
+import LabLayout from '@/layouts/LabLayout.astro'
+import { getLabModules } from '@/lib/lab'
+import Callout from '@/components/mdx/Callout.astro'
+import Derivation from '@/components/mdx/Derivation.astro'
+import KeyFormulas from '@/components/mdx/KeyFormulas.astro'
+import Term from '@/components/mdx/Term.astro'
+import Scene from '@/components/canvas/Scene.astro'
+import Sim from '@/components/mdx/Sim.astro'
+
+/**
+ * 英文模块页。
+ *
+ * 路由按 **中文模块的 slug** 生成，而不是按英文文件生成：这样即使某个模块
+ * 还没译完，/en/lab/<slug>/ 也存在（正文回退到中文，页面框架仍是英文），
+ * 语言切换按钮永远不会指向 404。
+ */
+export async function getStaticPaths() {
+  const entries = await getCollection('lab')
+  const zh = entries.filter((e: { id: string }) => e.id.startsWith('zh/'))
+  const enIds = new Set(
+    entries.filter((e: { id: string }) => e.id.startsWith('en/')).map((e: { id: string }) => e.id),
+  )
+  return zh.map((entry: { id: string }) => {
+    const slug = entry.id.slice(3)
+    const enId = `en/${slug}`
+    return {
+      params: { module: slug },
+      props: { entryId: enIds.has(enId) ? enId : entry.id, translated: enIds.has(enId) },
+    }
+  })
+}
+
+const { entryId, translated } = Astro.props
+const entries = await getCollection('lab')
+const entry = entries.find((e: { id: string }) => e.id === entryId)!
+const { Content, headings } = await render(entry)
+
+const modules = await getLabModules('en')
+const module = modules.find((m) => m.slug === entryId.replace(/^(en|zh)\//, ''))!
+
+const components = { Callout, Derivation, KeyFormulas, Term, Scene, Sim }
+---
+
+<LabLayout module={module} headings={headings} lang="en">
+  {
+    !translated && (
+      <p class="not-prose mb-6 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-3.5 py-2.5 text-[13px] text-[var(--text-muted)]">
+        The narrative for this module has not been translated yet — the text below is in Chinese.
+        The 3D scene itself, including its controls, guide and reflection questions, is fully in
+        English.
+      </p>
+    )
+  }
+  <Content components={components} />
+</LabLayout>

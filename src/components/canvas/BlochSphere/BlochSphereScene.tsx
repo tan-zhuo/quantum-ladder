@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
@@ -369,7 +370,8 @@ function AngleArcs({
   )
 }
 
-export default function BlochSphereScene() {
+export default function BlochSphereScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const apiRef = useRef<SceneApi | null>(null)
 
@@ -474,14 +476,15 @@ export default function BlochSphereScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="bloch-sphere"
-      title="Bloch 球：把一个自旋态变成可以用手拖的几何对象"
-      subtitle="球面上的每一个点都是一个纯态。拖动箭头尖端改变状态，加上磁场看它进动，选一个轴测量看它塌缩。"
+      title={T('Bloch 球：把一个自旋态变成可以用手拖的几何对象')}
+      subtitle={T('球面上的每一个点都是一个纯态。拖动箭头尖端改变状态，加上磁场看它进动，选一个轴测量看它塌缩。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="状态制备">
+          <ControlGroup title={T('状态制备')}>
             <Slider
               label={<Tex>{'\\theta'}</Tex>}
               value={theta}
@@ -525,9 +528,9 @@ export default function BlochSphereScene() {
             </div>
           </ControlGroup>
 
-          <ControlGroup title="磁场与进动" hint="磁场不会把自旋「拉过去」，只会让它绕着磁场方向转圈——夹角始终不变。">
+          <ControlGroup title={T('磁场与进动')} hint={T('磁场不会把自旋「拉过去」，只会让它绕着磁场方向转圈——夹角始终不变。')}>
             <Segmented
-              label="磁场方向"
+              label={T('磁场方向')}
               value={bAxis}
               onChange={(v) => setBAxis(v as 'z' | 'x' | 'y')}
               options={[
@@ -537,7 +540,7 @@ export default function BlochSphereScene() {
               ]}
             />
             <Slider
-              label="Larmor 频率 ω"
+              label={T('Larmor 频率 ω')}
               value={bMag}
               min={0}
               max={4}
@@ -555,12 +558,12 @@ export default function BlochSphereScene() {
               speed={speed}
               onSpeed={setSpeed}
             />
-            <Toggle label="显示进动锥" checked={showCone} onChange={setShowCone} />
+            <Toggle label={T('显示进动锥')} checked={showCone} onChange={setShowCone} />
           </ControlGroup>
 
-          <ControlGroup title="测量">
+          <ControlGroup title={T('测量')}>
             <Segmented
-              label="测量轴"
+              label={T('测量轴')}
               value={mAxis}
               onChange={(v) => setMAxis(v as 'z' | 'x' | 'y')}
               options={[
@@ -569,20 +572,20 @@ export default function BlochSphereScene() {
                 { value: 'y', label: 'σy' },
               ]}
             />
-            <Toggle label="显示投影辅助线" checked={showProjection} onChange={setShowProjection} />
+            <Toggle label={T('显示投影辅助线')} checked={showProjection} onChange={setShowProjection} />
             <div className="flex flex-wrap gap-1.5">
               <Button variant="primary" onClick={measure}>
-                测量一次
+                {T('测量一次')}
               </Button>
-              <Button onClick={() => measureMany(200)} title="每次都重新制备成当前 |ψ⟩ 再测">
-                重复制备 ×200
+              <Button onClick={() => measureMany(200)} title={T('每次都重新制备成当前 |ψ⟩ 再测')}>
+                {T('重复制备 ×200')}
               </Button>
-              <Button onClick={() => setTally({ plus: 0, minus: 0 })}>清空统计</Button>
+              <Button onClick={() => setTally({ plus: 0, minus: 0 })}>{T('清空统计')}</Button>
             </div>
 
             <div className="space-y-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2">
               <div className="flex justify-between text-[12px] text-[var(--text-muted)]">
-                <span>理论 P₊</span>
+                <span>{T('理论 P₊')}</span>
                 <span className="font-mono tabular-nums text-[var(--text)]">{pPlus.toFixed(3)}</span>
               </div>
               <ProbabilityBar
@@ -592,7 +595,7 @@ export default function BlochSphereScene() {
                 ]}
               />
               <div className="flex justify-between text-[12px] text-[var(--text-muted)]">
-                <span>实测频率（{total} 次）</span>
+                <span>{T('实测频率（{0} 次）', total)}</span>
                 <span className="font-mono tabular-nums text-[var(--text)]">
                   {total > 0 ? empirical.toFixed(3) : '—'}
                 </span>
@@ -613,14 +616,14 @@ export default function BlochSphereScene() {
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-x-1 gap-y-1 overflow-x-auto text-[15px]">
             <Tex>{'\\ket{\\psi} ='}</Tex>
-            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title="点一下：在球上画出 θ（与 +z 轴的夹角）">
+            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title={T('点一下：在球上画出 θ（与 +z 轴的夹角）')}>
               <Tex>{`\\cos\\tfrac{\\theta}{2} = ${Math.cos(displayAngles.theta / 2).toFixed(3)}`}</Tex>
             </FormulaTerm>
             <Tex>{'\\ket{0} +'}</Tex>
-            <FormulaTerm active={highlight === 'phi'} onToggle={() => setHighlight((h) => (h === 'phi' ? null : 'phi'))} title="点一下：在赤道面上画出 φ（相对相位）">
+            <FormulaTerm active={highlight === 'phi'} onToggle={() => setHighlight((h) => (h === 'phi' ? null : 'phi'))} title={T('点一下：在赤道面上画出 φ（相对相位）')}>
               <Tex>{`\\ee^{\\ii\\varphi} = \\ee^{${displayAngles.phi.toFixed(2)}\\ii}`}</Tex>
             </FormulaTerm>
-            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title="点一下：在球上画出 θ">
+            <FormulaTerm active={highlight === 'theta'} onToggle={() => setHighlight((h) => (h === 'theta' ? null : 'theta'))} title={T('点一下：在球上画出 θ')}>
               <Tex>{`\\sin\\tfrac{\\theta}{2} = ${Math.sin(displayAngles.theta / 2).toFixed(3)}`}</Tex>
             </FormulaTerm>
             <Tex>{'\\ket{1}'}</Tex>
@@ -632,40 +635,40 @@ export default function BlochSphereScene() {
             </span>
             <span>|r⃗| = {Math.hypot(...sample).toFixed(4)}</span>
             <span>
-              ⟨{AXIS_LABEL[mAxis]}⟩ = {(2 * pPlus - 1).toFixed(3)}
+              ⟨{T(AXIS_LABEL[mAxis])}⟩ = {(2 * pPlus - 1).toFixed(3)}
             </span>
           </div>
           <Legend
             items={[
-              { color: p.accent, label: '状态矢量 r⃗' },
-              { color: p.classical, label: '进动锥', dashed: true },
-              { color: p.muted, label: '到测量轴的投影', dashed: true },
-              { color: p.energy, label: '测量轴 n̂' },
+              { color: p.accent, label: T('状态矢量 r⃗') },
+              { color: p.classical, label: T('进动锥'), dashed: true },
+              { color: p.muted, label: T('到测量轴的投影'), dashed: true },
+              { color: p.energy, label: T('测量轴 n̂') },
             ]}
           />
         </div>
       }
       guide={[
-        '读数区的公式是可以点的：点 cos(θ/2) 那一项，球上会画出 θ 这个夹角；点 e^{iφ} 那一项，赤道面上会画出 φ。公式里的每个符号在球上都有一个对应的几何量。',
-        '先把 θ 拖到 90°：状态落在赤道上，此时沿 z 测量得到 0 和 1 的概率各一半——「等概率叠加」在球面上就是「站在赤道」。',
-        '保持 θ 不变、只拖 φ：沿 z 测量的概率完全不变。φ 是相对相位，它在 z 基下不可见，却决定了沿 x、y 测量的结果。切到 σx 再拖一次 φ，看读数怎么变。',
-        '打开磁场按播放：注意矢量与磁场方向的夹角始终不变，只有 φ 在均匀增加。这就是 Larmor 进动。',
-        '点「测量一次」十几次，观察单次结果是随机的；再点「重复制备 ×200」，看实测频率如何逼近理论 P₊。',
+        T('读数区的公式是可以点的：点 cos(θ/2) 那一项，球上会画出 θ 这个夹角；点 e^{iφ} 那一项，赤道面上会画出 φ。公式里的每个符号在球上都有一个对应的几何量。'),
+        T('先把 θ 拖到 90°：状态落在赤道上，此时沿 z 测量得到 0 和 1 的概率各一半——「等概率叠加」在球面上就是「站在赤道」。'),
+        T('保持 θ 不变、只拖 φ：沿 z 测量的概率完全不变。φ 是相对相位，它在 z 基下不可见，却决定了沿 x、y 测量的结果。切到 σx 再拖一次 φ，看读数怎么变。'),
+        T('打开磁场按播放：注意矢量与磁场方向的夹角始终不变，只有 φ 在均匀增加。这就是 Larmor 进动。'),
+        T('点「测量一次」十几次，观察单次结果是随机的；再点「重复制备 ×200」，看实测频率如何逼近理论 P₊。'),
       ]}
       pitfalls={[
         {
-          title: '“Bloch 球上的点就是粒子在空间中的方向”',
-          body: '不是。球面是态空间，不是真实空间。θ = 90° 并不代表自旋「躺在水平面上」，而是代表沿 z 测量时上下各一半。',
+          title: T('“Bloch 球上的点就是粒子在空间中的方向”'),
+          body: T('不是。球面是态空间，不是真实空间。θ = 90° 并不代表自旋「躺在水平面上」，而是代表沿 z 测量时上下各一半。'),
         },
         {
-          title: '“测量后再测一次会得到不同结果”',
-          body: '不会。测量把态投影到本征态上，紧接着沿同一轴再测必得同样结果。要看到统计规律，必须每次重新制备——这正是「重复制备 ×200」在做的事。',
+          title: T('“测量后再测一次会得到不同结果”'),
+          body: T('不会。测量把态投影到本征态上，紧接着沿同一轴再测必得同样结果。要看到统计规律，必须每次重新制备——这正是「重复制备 ×200」在做的事。'),
         },
       ]}
       reflect={[
-        '两个只差一个整体相位的态（|ψ⟩ 与 e^{iα}|ψ⟩）在球面上是同一个点吗？如果是，为什么说相对相位 φ 却是可观测的？',
-        '若磁场沿 z、初态恰好是 |0⟩，播放后画面上什么都没发生。用「本征态不随时间改变（除整体相位）」解释这件事。',
-        '把测量轴设成 σx、状态设成 |0⟩，理论 P₊ = 0.5。测量一次后状态停在 ±x 上，此时若改回 σz 测量，概率是多少？这说明连续测不同方向意味着什么？',
+        T('两个只差一个整体相位的态（|ψ⟩ 与 e^{iα}|ψ⟩）在球面上是同一个点吗？如果是，为什么说相对相位 φ 却是可观测的？'),
+        T('若磁场沿 z、初态恰好是 |0⟩，播放后画面上什么都没发生。用「本征态不随时间改变（除整体相位）」解释这件事。'),
+        T('把测量轴设成 σx、状态设成 |0⟩，理论 P₊ = 0.5。测量一次后状态停在 ±x 上，此时若改回 σz 测量，概率是多少？这说明连续测不同方向意味着什么？'),
       ]}
     >
       <SceneCanvas
@@ -680,7 +683,7 @@ export default function BlochSphereScene() {
             {((displayAngles.phi * 180) / Math.PI).toFixed(1)}°
             {outcome ? (
               <span className="ml-2" style={{ color: outcome.value === 1 ? p.energy : p.imag }}>
-                ↯ 上一次测量：{outcome.value === 1 ? '+1' : '−1'}
+                ↯ {T('上一次测量：{0}', outcome.value === 1 ? '+1' : '−1')}
               </span>
             ) : null}
           </CanvasStat>

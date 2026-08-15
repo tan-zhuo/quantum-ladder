@@ -1,0 +1,123 @@
+---
+num: '02'
+title: The wavefunction and the Born rule
+goal: Turn "ψ is complex and |ψ|² is the probability density" from a slogan into a picture you can rotate.
+youWillSee:
+  - ψ as a curve writhing in the complex plane, with the real and imaginary parts as its two shadows
+  - 'Normalisation is not mathematical fussiness: it is the sentence "the particle is somewhere"'
+  - One position measurement smashes the curve into a narrow spike, which then spreads again
+prereqs:
+  - 'Complex numbers: modulus, argument, Euler''s formula'
+  - What an integral means (area)
+scenes:
+  - wavefunction
+related:
+  - 02-wavefunction/01-born-rule
+  - 02-wavefunction/02-normalization-and-current
+  - 02-wavefunction/06-expectation-and-uncertainty
+  - 03-formalism/08-measurement
+phase: 2
+status: done
+---
+
+The previous module showed that the landing points obey some probability distribution. This module introduces whatever it is that governs that distribution.
+
+It is called the wavefunction, written $\psi(x)$, and three things about it have to be said at once:
+
+1. $\psi$ is **complex** — at every point it has a modulus and a phase;
+2. what has physical meaning is $|\psi|^2$, the **probability density**, not the probability itself;
+3. the **phase** of $\psi$ is not directly observable, yet **differences** of phase decide every interference effect.
+
+A flat figure cannot show the first of these, so the first thing to do is stand the complex plane up.
+
+<Scene name="wavefunction" />
+
+## The Born rule: modulus squared, and nothing else
+
+$$
+P(x \in [a,b]) = \int_a^b |\psi(x)|^2\,\dd x .
+$$
+
+The left side is a **probability** (dimensionless); the integrand on the right is a **probability density** (units of 1/length). Asking "what is the probability of the particle being at $x = 0.3$" is meaningless — that probability is zero. What is meaningful is the probability of landing in a small interval around 0.3.
+
+<Callout type="warning" title="Why modulus squared, and not |ψ| or ψ²">
+Three reasons, all needed:
+
+- $\psi$ is complex, so $\psi^2$ is generally complex and cannot be a probability;
+- could $|\psi|$ be the density? No — probabilities would then add linearly, the interference term would disappear, and the double-slit fringes with it;
+- $|\psi|^2$ is non-negative, keeps the interference term, and the Schrödinger equation happens to guarantee that $\int|\psi|^2$ does not change with time.
+
+That last point is no coincidence. It is a direct consequence of unitarity.
+</Callout>
+
+## Normalisation: one physical sentence, written as an equation
+
+$$
+\int_{-\infty}^{\infty} |\psi(x)|^2\,\dd x = 1 .
+$$
+
+All this says is: **the particle is somewhere**.
+
+The "Normalise" button in the scene is worth pressing a few times. Drag the overall amplitude up and down: the shape never changes, only the height scales, while the area under $|\psi|^2$ is pulled back to 1 every time. $\psi$ and $2\psi$ describe the same physical state — which will later become a stronger statement: **neither the overall length nor the overall phase of a state vector means anything.**
+
+<Derivation title="Probability conservation and the current" level="进阶">
+
+Differentiate $\rho = |\psi|^2$ with respect to time, using the Schrödinger equation
+
+$$
+\ii\hbar\,\partial_t \psi = -\frac{\hbar^2}{2m}\partial_x^2\psi + V\psi
+$$
+
+and its complex conjugate. The result is
+
+$$
+\partial_t \rho + \partial_x j = 0,\qquad
+j = \frac{\hbar}{m}\,\mathrm{Im}\!\left(\psi^*\,\partial_x\psi\right).
+$$
+
+This is a continuity equation, formally identical to the ones in fluid mechanics and electrodynamics. It guarantees that total probability is conserved: probability does not appear or vanish, it only flows.
+
+Look at the expression for $j$: it is proportional to the **spatial gradient of the phase**. The phase is not observable, but its gradient is the probability current — the first hard evidence that the phase is not decoration. Flatten the twist of ψ in the scene (constant phase everywhere) and the current goes to zero.
+
+</Derivation>
+
+## Measurement and collapse, stated honestly
+
+The "Measure position" button smashes $\psi$ into a narrow spike. Note the wording carefully.
+
+- If your instrument has resolution $\delta$, the wavefunction afterwards is localised to a width of about $\delta$. It does **not** become a mathematical delta function.
+- Once localised, the momentum uncertainty grows ($\Delta x \Delta p \ge \hbar/2$) and the packet immediately starts spreading fast. Release the button in the scene and you watch it blow up.
+- "Collapse" is a **rule for how to continue calculating** after a measurement, not a mechanism anyone has pinned down. Whether it is a physical process, or merely reflects our projecting the entangled system-plus-apparatus state, is the core dispute in quantum foundations. [Module 07](/en/lab/07-measurement/) and [module 12](/en/lab/12-decoherence/) go into it.
+
+<Callout type="misconception" title="“The wavefunction is a substance spread through space”">
+If $\psi$ were a real cloud of electron-stuff, a measurement would have to contract it from all of space to a point instantaneously, which clashes with relativity. And for two particles the wavefunction lives on a six-dimensional configuration space — it is not a field in three-dimensional space at all.
+
+A safer formulation: $\psi$ carries the complete information about measurement outcomes. Whether it "is a real thing" is answered differently by different interpretations, but **the calculational rules are identical in all of them**.
+</Callout>
+
+## Expectation values and uncertainty
+
+Once you have a density, all the statistics follow:
+
+$$
+\langle x\rangle = \int x\,|\psi|^2\,\dd x,\qquad
+\langle x^2\rangle = \int x^2\,|\psi|^2\,\dd x,\qquad
+\Delta x = \sqrt{\langle x^2\rangle-\langle x\rangle^2}.
+$$
+
+The readout shows $\langle x\rangle$ and $\Delta x$ live. Squeeze the packet: $\Delta x$ shrinks while the momentum spread grows. The uncertainty relation is not an instrumental defect but a mathematical fact about Fourier transforms — a function and its transform cannot both be narrow.
+
+<KeyFormulas
+  items={[
+    { name: 'Born rule', latex: 'P(a<x<b) = \\int_a^b |\\psi|^2\\,\\dd x', note: 'Modulus squared is a density, not a probability' },
+    { name: 'Normalisation', latex: '\\int |\\psi|^2 \\dd x = 1', note: '"The particle is somewhere"' },
+    { name: 'Probability current', latex: 'j = \\frac{\\hbar}{m}\\mathrm{Im}(\\psi^*\\partial_x\\psi)', note: 'A phase gradient is a flow' },
+    { name: 'Uncertainty relation', latex: '\\Delta x\\,\\Delta p \\ge \\hbar/2', note: 'An inevitable consequence of Fourier duality' },
+  ]}
+/>
+
+## Think it through
+
+1. $\psi$ and $\ee^{\ii\alpha}\psi$ (constant $\alpha$) give identical $|\psi|^2$ and identical expectation values. Why does "the phase has no physical meaning" hold only for the **global** phase?
+2. A real wavefunction with constant phase has zero probability current $j$ — even where $|\psi|^2$ has a steep slope. Does that clash with the intuition that stuff flows from high to low concentration? Why not?
+3. After a measurement squeezes the packet, what sets the rate at which it spreads? Guess first, then go back and shrink the instrument resolution.

@@ -1,3 +1,5 @@
+import { useT } from '@/i18n/react'
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -64,7 +66,8 @@ interface StageConfig {
   block: Block
 }
 
-export default function SternGerlachScene() {
+export default function SternGerlachScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -123,36 +126,37 @@ export default function SternGerlachScene() {
     if (activeStages.length < 2) return null
     const last = activeStages[activeStages.length - 1]!
     const prev = activeStages[activeStages.length - 2]!
-    if (last.axis === prev.axis) return '与前一台同轴：结果必然重复，只有一束'
-    return '与前一台正交：五五开——前面筛掉的成分又回来了'
+    if (last.axis === prev.axis) return T('与前一台同轴：结果必然重复，只有一束')
+    return T('与前一台正交：五五开——前面筛掉的成分又回来了')
   }, [activeStages])
 
   return (
     <SceneShell
+      lang={lang}
       id="stern-gerlach"
-      title="串联 Stern-Gerlach：测量不是「看一眼」"
-      subtitle="每个飞过的点都是一个真实抽样。把第二台换成 X 轴，再用第三台测 Z——你会看到第一台明明筛干净的那一束又回来了。"
+      title={T('串联 Stern-Gerlach：测量不是「看一眼」')}
+      subtitle={T('每个飞过的点都是一个真实抽样。把第二台换成 X 轴，再用第三台测 Z——你会看到第一台明明筛干净的那一束又回来了。')}
       apiRef={apiRef}
       height={520}
       controls={
         <>
-          <ControlGroup title="装置">
+          <ControlGroup title={T('装置')}>
             <Segmented
-              label="分析器台数"
+              label={T('分析器台数')}
               value={stageCount}
               onChange={(v) => {
                 setStageCount(Number(v))
                 reset()
               }}
               options={[
-                { value: 1, label: '1 台' },
-                { value: 2, label: '2 台' },
-                { value: 3, label: '3 台' },
+                { value: 1, label: T('1 台') },
+                { value: 2, label: T('2 台') },
+                { value: 3, label: T('3 台') },
               ]}
             />
             {activeStages.map((st, i) => (
               <div key={i} className="space-y-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2">
-                <p className="text-[12px] font-semibold text-[var(--text-muted)]">第 {i + 1} 台</p>
+                <p className="text-[12px] font-semibold text-[var(--text-muted)]">{T('第 {0} 台', i + 1)}</p>
                 <Segmented
                   value={st.axis}
                   onChange={(v) => {
@@ -160,8 +164,8 @@ export default function SternGerlachScene() {
                     reset()
                   }}
                   options={[
-                    { value: 'z', label: 'Z 轴' },
-                    { value: 'x', label: 'X 轴' },
+                    { value: 'z', label: T('Z 轴') },
+                    { value: 'x', label: T('X 轴') },
                   ]}
                 />
                 <Segmented
@@ -171,44 +175,45 @@ export default function SternGerlachScene() {
                     reset()
                   }}
                   options={[
-                    { value: 'none', label: '都通过' },
-                    { value: 'minus', label: '挡下束' },
-                    { value: 'plus', label: '挡上束' },
+                    { value: 'none', label: T('都通过') },
+                    { value: 'minus', label: T('挡下束') },
+                    { value: 'plus', label: T('挡上束') },
                   ]}
                 />
               </div>
             ))}
           </ControlGroup>
 
-          <ControlGroup title="束流">
+          <ControlGroup title={T('束流')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
               onReset={reset}
               speed={speed}
               onSpeed={setSpeed}
-              timeLabel={`${total} 个`}
+              timeLabel={T('{0} 个', total)}
             />
-            <Slider label="发射速率" value={rate} min={5} max={200} step={5} onChange={setRate} />
-            <Button onClick={reset}>清空计数</Button>
+            <Slider label={T('发射速率')} value={rate} min={5} max={200} step={5} onChange={setRate} />
+            <Button onClick={reset}>{T('清空计数')}</Button>
           </ControlGroup>
 
-          <ControlGroup title="末端计数">
+          <ControlGroup title={T('末端计数')}>
             <div className="space-y-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2">
               <div className="flex justify-between text-[12px] text-[var(--text-muted)]">
-                <span>上束 / 下束</span>
+                <span>{T('上束 / 下束')}</span>
                 <span className="font-mono tabular-nums text-[var(--text)]">
                   {counts.plus} / {counts.minus}
                 </span>
               </div>
               <ProbabilityBar
                 segments={[
-                  { value: fraction, color: p.energy, label: '上' },
-                  { value: 1 - fraction, color: p.imag, label: '下' },
+                  { value: fraction, color: p.energy, label: T('上') },
+                  { value: 1 - fraction, color: p.imag, label: T('下') },
                 ]}
               />
               <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-                被挡板吸收 {counts.blocked} 个。{expectation}
+                {T('被挡板吸收 {0} 个。', counts.blocked)}
+                {expectation}
               </p>
             </div>
           </ControlGroup>
@@ -221,43 +226,43 @@ export default function SternGerlachScene() {
               {activeStages.length >= 2 &&
               activeStages[activeStages.length - 1]!.axis !== activeStages[activeStages.length - 2]!.axis
                 ? '|\\braket{\\pm_x}{\\pm_z}|^2 = \\tfrac12'
-                : '|\\braket{\\pm_z}{\\pm_z}|^2 = 1 \\ \\text{或}\\ 0'}
+                : T('|\\braket{\\pm_z}{\\pm_z}|^2 = 1 \\ \\text{或}\\ 0')}
             </Tex>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-            <span>已发射 {total + counts.blocked}</span>
-            <span>到达屏 {total}</span>
-            <span>上束比例 {total > 0 ? fraction.toFixed(3) : '—'}</span>
+            <span>{T('已发射 {0}', total + counts.blocked)}</span>
+            <span>{T('到达屏 {0}', total)}</span>
+            <span>{T('上束比例 {0}', total > 0 ? fraction.toFixed(3) : '—')}</span>
           </div>
           <Legend
             items={[
-              { color: p.energy, label: '自旋 +（沿该台的轴）' },
-              { color: p.imag, label: '自旋 −' },
-              { color: p.potential, label: '磁铁与挡板' },
+              { color: p.energy, label: T('自旋 +（沿该台的轴）') },
+              { color: p.imag, label: T('自旋 −') },
+              { color: p.potential, label: T('磁铁与挡板') },
             ]}
           />
         </div>
       }
       guide={[
-        '默认配置就是那个经典实验：Z（挡下束）→ X（挡下束）→ Z。注意最后一台仍然分成两束——第一台明明只放行了「上」。',
-        '把第二台也改成 Z 轴：最后一台只剩一束。测量是可重复的，同一个轴测多少次结果都不变。',
-        '把第二台改回 X 轴：下束立刻回来了。X 测量不是读取属性，它真的改变了态。',
-        '只留一台、都不挡：入射是完全无偏的银原子，两束各占一半——这是 1922 年 Stern 与 Gerlach 看到的原始现象，也是「自旋只有两个值」的第一个直接证据。',
+        T('默认配置就是那个经典实验：Z（挡下束）→ X（挡下束）→ Z。注意最后一台仍然分成两束——第一台明明只放行了「上」。'),
+        T('把第二台也改成 Z 轴：最后一台只剩一束。测量是可重复的，同一个轴测多少次结果都不变。'),
+        T('把第二台改回 X 轴：下束立刻回来了。X 测量不是读取属性，它真的改变了态。'),
+        T('只留一台、都不挡：入射是完全无偏的银原子，两束各占一半——这是 1922 年 Stern 与 Gerlach 看到的原始现象，也是「自旋只有两个值」的第一个直接证据。'),
       ]}
       pitfalls={[
         {
-          title: '“第一台已经把下束筛掉了，后面不该再出现”',
-          body: '「下束」是相对于 Z 轴说的。经过 X 分析器之后，态变成了 X 的本征态，它在 Z 基下重新是叠加态——不是筛子漏了，是属性本身被重新定义了。',
+          title: T('“第一台已经把下束筛掉了，后面不该再出现”'),
+          body: T('「下束」是相对于 Z 轴说的。经过 X 分析器之后，态变成了 X 的本征态，它在 Z 基下重新是叠加态——不是筛子漏了，是属性本身被重新定义了。'),
         },
         {
-          title: '“磁场把自旋掰到了新方向”',
-          body: '非均匀磁场提供的是位置相关的力，把不同自旋分量在空间上分开；真正改变态的是「挡掉一束」这个选择动作（投影）。',
+          title: T('“磁场把自旋掰到了新方向”'),
+          body: T('非均匀磁场提供的是位置相关的力，把不同自旋分量在空间上分开；真正改变态的是「挡掉一束」这个选择动作（投影）。'),
         },
       ]}
       reflect={[
-        '如果第二台 X 分析器不挡任何一束，而是把两束重新合并（不去看是哪一束），第三台的 Z 结果会是什么？（这就是量子擦除的雏形。）',
-        '把三台都设成 Z 轴、都不挡，屏上会看到几束？为什么？',
-        '银原子有 47 个电子，为什么整体表现得像一个自旋 1/2？',
+        T('如果第二台 X 分析器不挡任何一束，而是把两束重新合并（不去看是哪一束），第三台的 Z 结果会是什么？（这就是量子擦除的雏形。）'),
+        T('把三台都设成 Z 轴、都不挡，屏上会看到几束？为什么？'),
+        T('银原子有 47 个电子，为什么整体表现得像一个自旋 1/2？'),
       ]}
     >
       <SceneCanvas
@@ -267,7 +272,7 @@ export default function SternGerlachScene() {
         maxDistance={34}
         overlay={
           <CanvasStat>
-            {activeStages.map((s) => s.axis.toUpperCase()).join(' → ')}　到达 {total}
+            {activeStages.map((s) => s.axis.toUpperCase()).join(' → ')}　{T('到达 {0}', total)}
           </CanvasStat>
         }
       >
@@ -277,7 +282,7 @@ export default function SternGerlachScene() {
           <meshStandardMaterial color={p.potential} roughness={0.7} />
         </mesh>
         <SceneLabel position={[SOURCE_X, 0.75, 0]} tone="muted" size="xs">
-          炉源（无偏自旋）
+          {T('炉源（无偏自旋）')}
         </SceneLabel>
 
         {activeStages.map((st, i) => (
@@ -290,7 +295,7 @@ export default function SternGerlachScene() {
           <meshStandardMaterial color={p.potential} transparent opacity={0.3} side={THREE.DoubleSide} />
         </mesh>
         <SceneLabel position={[SCREEN_X, 1.7, 0]} tone="muted" size="xs">
-          探测屏
+          {T('探测屏')}
         </SceneLabel>
 
         <PointCloud
@@ -326,6 +331,7 @@ export default function SternGerlachScene() {
 
 function Magnet({ x, axis, block, index }: { x: number; axis: Axis; block: Block; index: number }) {
   const p = useScenePalette()
+  const T = useT()
   const vertical = axis === 'z'
   return (
     <group position={[x, 0, 0]}>
@@ -341,7 +347,7 @@ function Magnet({ x, axis, block, index }: { x: number; axis: Axis; block: Block
         </mesh>
       ))}
       <SceneLabel position={vertical ? [0, 1.15, 0] : [0, 0, 1.15]} tone="accent" size="xs">
-        {index + 1}. {axis.toUpperCase()} 分析器
+        {T('{0}. {1} 分析器', index + 1, axis.toUpperCase())}
       </SceneLabel>
 
       {/* 挡板 */}

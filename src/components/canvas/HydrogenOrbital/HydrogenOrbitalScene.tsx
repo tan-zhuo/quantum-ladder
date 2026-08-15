@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -156,7 +157,8 @@ function ScaleRings({ rMax, color }: { rMax: number; color: string }) {
   )
 }
 
-export default function HydrogenOrbitalScene() {
+export default function HydrogenOrbitalScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -248,17 +250,18 @@ export default function HydrogenOrbitalScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="hydrogen-orbital"
-      title="氢原子轨道：真正看见 |ψ(r)|² 长什么样"
-      subtitle="每个点是一次位置测量的可能结果，点的疏密就是概率密度。切换量子数，看波瓣、节点与尺度如何随 n、l、m 变化。"
+      title={T('氢原子轨道：真正看见 |ψ(r)|² 长什么样')}
+      subtitle={T('每个点是一次位置测量的可能结果，点的疏密就是概率密度。切换量子数，看波瓣、节点与尺度如何随 n、l、m 变化。')}
       apiRef={apiRef}
       height={580}
       controls={
         <>
-          <ControlGroup title="量子数" hint={`当前：${label}　l < n，|m| ≤ l`}>
-            <Slider label="主量子数 n" value={n} min={1} max={5} step={1} onChange={setN} />
-            <Slider label="角量子数 l" value={l} min={0} max={n - 1} step={1} onChange={setL} />
-            <Slider label="磁量子数 m" value={m} min={-l} max={l} step={1} onChange={setM} disabled={l === 0} />
+          <ControlGroup title={T('量子数')} hint={T('当前：{0}　l < n，|m| ≤ l', label)}>
+            <Slider label={T('主量子数 n')} value={n} min={1} max={5} step={1} onChange={setN} />
+            <Slider label={T('角量子数 l')} value={l} min={0} max={n - 1} step={1} onChange={setL} />
+            <Slider label={T('磁量子数 m')} value={m} min={-l} max={l} step={1} onChange={setM} disabled={l === 0} />
             <div className="flex flex-wrap gap-1">
               {(
                 [
@@ -288,27 +291,27 @@ export default function HydrogenOrbitalScene() {
           </ControlGroup>
 
           <ControlGroup
-            title="表示方式"
-            hint="化学课上画的哑铃、四叶草是「实球谐」；复球谐的 |ψ|² 关于 z 轴旋转对称，看不出方位角结构。两者都对，只是基底选得不同。"
+            title={T('表示方式')}
+            hint={T('化学课上画的哑铃、四叶草是「实球谐」；复球谐的 |ψ|² 关于 z 轴旋转对称，看不出方位角结构。两者都对，只是基底选得不同。')}
           >
             <Segmented
               value={real ? 'real' : 'complex'}
               onChange={(v) => setReal(v === 'real')}
               options={[
-                { value: 'real', label: '实轨道' },
-                { value: 'complex', label: '复轨道 |Y_lm|²' },
+                { value: 'real', label: T('实轨道') },
+                { value: 'complex', label: T('复轨道 |Y_lm|²') },
               ]}
             />
-            <Slider label="点云不透明度" value={opacity} min={0.15} max={1} step={0.01} onChange={setOpacity} />
+            <Slider label={T('点云不透明度')} value={opacity} min={0.15} max={1} step={0.01} onChange={setOpacity} />
           </ControlGroup>
 
-          <ControlGroup title="结构与剖切">
-            <Toggle label={`径向节点球面（${radialNodeCount} 个）`} checked={showNodes} onChange={setShowNodes} />
-            <Toggle label="半径刻度环" checked={showRings} onChange={setShowRings} />
-            <Toggle label="剖切平面" checked={clipOn} onChange={setClipOn} />
+          <ControlGroup title={T('结构与剖切')}>
+            <Toggle label={T('径向节点球面（{0} 个）', radialNodeCount)} checked={showNodes} onChange={setShowNodes} />
+            <Toggle label={T('半径刻度环')} checked={showRings} onChange={setShowRings} />
+            <Toggle label={T('剖切平面')} checked={clipOn} onChange={setClipOn} />
             {clipOn ? (
               <Slider
-                label="剖切位置"
+                label={T('剖切位置')}
                 value={clipPos}
                 min={-0.9}
                 max={0.9}
@@ -319,7 +322,7 @@ export default function HydrogenOrbitalScene() {
             ) : null}
           </ControlGroup>
 
-          <ControlGroup title="径向概率 P(r) = r²|R(r)|²">
+          <ControlGroup title={T('径向概率 P(r) = r²|R(r)|²')}>
             <MiniPlot
               series={[{ points: radialSeries, color: p.prob, fill: true }]}
               markers={nodes.map((r) => [r / rMax, p.faint] as [number, string])}
@@ -327,10 +330,10 @@ export default function HydrogenOrbitalScene() {
                 [0, 0, '0'],
                 [1, 0, `${rMax.toFixed(0)} a₀`],
               ]}
-              ariaLabel="径向概率分布"
+              ariaLabel={T('径向概率分布')}
             />
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              竖虚线是径向节点。注意峰值位置随 n 迅速外移——这就是原子「变大」的含义。
+              {T('竖虚线是径向节点。注意峰值位置随 n 迅速外移——这就是原子「变大」的含义。')}
             </p>
           </ControlGroup>
         </>
@@ -346,47 +349,47 @@ export default function HydrogenOrbitalScene() {
             </span>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-            <span>径向节点 {radialNodeCount}</span>
-            <span>角向节点 {angularNodes}</span>
-            <span>总节点 {n - 1}</span>
+            <span>{T('径向节点')} {radialNodeCount}</span>
+            <span>{T('角向节点')} {angularNodes}</span>
+            <span>{T('总节点')} {n - 1}</span>
             <span>
-              采样点 {ready.toLocaleString()} / {budget.toLocaleString()}
+              {T('采样点')} {ready.toLocaleString()} / {budget.toLocaleString()}
             </span>
           </div>
           <Legend
             items={[
-              { color: p.phasePos, label: 'ψ > 0 的波瓣' },
-              { color: p.phaseNeg, label: 'ψ < 0 的波瓣' },
-              { color: p.faint, label: '径向节点球面' },
+              { color: p.phasePos, label: T('ψ > 0 的波瓣') },
+              { color: p.phaseNeg, label: T('ψ < 0 的波瓣') },
+              { color: p.faint, label: T('径向节点球面') },
             ]}
           />
         </div>
       }
       guide={[
-        '先看 1s → 2s → 3s：形状都是球，但半径迅速变大，中间多出一层层的节点球面。原子的「大小」就是这么来的。',
-        '固定 n = 2，把 l 从 0 调到 1：球变成哑铃。再调 m，哑铃换方向——这就是 p_z、p_x、p_y 的来历。',
-        '选 3d、m = ±2，打开剖切平面并拖动它：从外面看是四叶草，剖开才看得到中间是空的。',
-        '把「实轨道」切到「复轨道」：形状立刻变成绕 z 轴旋转对称的圆环。两种画法描述同一组本征态，只是基底不同——化学里习惯用实的，做角动量代数时习惯用复的。',
-        '打开径向节点球面，数一数：球面数应当恰好是 n − l − 1。',
+        T('先看 1s → 2s → 3s：形状都是球，但半径迅速变大，中间多出一层层的节点球面。原子的「大小」就是这么来的。'),
+        T('固定 n = 2，把 l 从 0 调到 1：球变成哑铃。再调 m，哑铃换方向——这就是 p_z、p_x、p_y 的来历。'),
+        T('选 3d、m = ±2，打开剖切平面并拖动它：从外面看是四叶草，剖开才看得到中间是空的。'),
+        T('把「实轨道」切到「复轨道」：形状立刻变成绕 z 轴旋转对称的圆环。两种画法描述同一组本征态，只是基底不同——化学里习惯用实的，做角动量代数时习惯用复的。'),
+        T('打开径向节点球面，数一数：球面数应当恰好是 n − l − 1。'),
       ]}
       pitfalls={[
         {
-          title: '“电子在轨道上绕着核转”',
-          body: '定态里没有轨迹。点云不是电子走过的路线，而是「如果现在测量位置，结果落在这里的概率」。定态的概率密度完全不随时间变化。',
+          title: T('“电子在轨道上绕着核转”'),
+          body: T('定态里没有轨迹。点云不是电子走过的路线，而是「如果现在测量位置，结果落在这里的概率」。定态的概率密度完全不随时间变化。'),
         },
         {
-          title: '“轨道有明确的边界”',
-          body: '|ψ|² 在任何有限半径外都不为零，只是指数衰减。图上看到的「边缘」是采样点稀疏到画不出来而已，不是墙。',
+          title: T('“轨道有明确的边界”'),
+          body: T('|ψ|² 在任何有限半径外都不为零，只是指数衰减。图上看到的「边缘」是采样点稀疏到画不出来而已，不是墙。'),
         },
         {
-          title: '“节点是电子不能通过的地方”',
-          body: '节点面上概率密度为零，但这不构成「屏障」。在束缚态里问「电子怎么穿过节点」本身就预设了轨迹，而轨迹并不存在。',
+          title: T('“节点是电子不能通过的地方”'),
+          body: T('节点面上概率密度为零，但这不构成「屏障」。在束缚态里问「电子怎么穿过节点」本身就预设了轨迹，而轨迹并不存在。'),
         },
       ]}
       reflect={[
-        '为什么氢原子的能量只依赖 n，与 l、m 无关？（提示：这是库仑势特有的额外简并，别的中心力场没有。）',
-        '2p_z 与 2p_x 的能量相同、形状只差一个转动。那么「电子处在 2p_z 上」这句话有绝对意义吗？',
-        '总节点数恒等于 n − 1。回想一维势阱里第 n 个态有 n 个节点——两件事之间是什么关系？',
+        T('为什么氢原子的能量只依赖 n，与 l、m 无关？（提示：这是库仑势特有的额外简并，别的中心力场没有。）'),
+        T('2p_z 与 2p_x 的能量相同、形状只差一个转动。那么「电子处在 2p_z 上」这句话有绝对意义吗？'),
+        T('总节点数恒等于 n − 1。回想一维势阱里第 n 个态有 n 个节点——两件事之间是什么关系？'),
       ]}
     >
       <SceneCanvas
@@ -400,7 +403,11 @@ export default function HydrogenOrbitalScene() {
           <>
             <CanvasStat>
               {label}　n={n} l={l} m={m}
-              {ready < budget ? <span className="ml-2 opacity-70">显影中 {Math.round((ready / budget) * 100)}%</span> : null}
+              {ready < budget ? (
+                <span className="ml-2 opacity-70">
+                  {T('显影中')} {Math.round((ready / budget) * 100)}%
+                </span>
+              ) : null}
             </CanvasStat>
             <CanvasLegend
               items={[
@@ -425,7 +432,7 @@ export default function HydrogenOrbitalScene() {
           <lineBasicMaterial color={p.axis} transparent opacity={0.45} />
         </line>
         <SceneLabel position={[0, rMax * 1.06, 0]} tone="muted" size="xs">
-          z（量子化轴）
+          {T('z（量子化轴）')}
         </SceneLabel>
 
         {showNodes ? <NodeSpheres radii={nodes} color={p.faint} /> : null}

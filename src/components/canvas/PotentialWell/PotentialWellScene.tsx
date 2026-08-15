@@ -1,3 +1,4 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -242,7 +243,8 @@ function StateDeck({
   )
 }
 
-export default function PotentialWellScene() {
+export default function PotentialWellScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -344,55 +346,56 @@ export default function PotentialWellScene() {
     return { mean, sigma: Math.sqrt(Math.max(0, sq - mean * mean)) }
   }, [sol, state])
 
-  const kindLabel = kind === 'infinite' ? '无限深方阱' : kind === 'finite' ? '有限深方阱' : '谐振子'
+  const kindLabel = kind === 'infinite' ? T('无限深方阱') : kind === 'finite' ? T('有限深方阱') : T('谐振子')
 
   return (
     <SceneShell
+      lang={lang}
       id="potential-well"
-      title="一维束缚态：能级、波函数与「定态为什么是静止的」"
-      subtitle="蓝色的管子是 ψ 在复平面里的样子，它随时间转动；紫色幕布是 |ψ|²，它一动不动。这就是「定态」的全部含义。"
+      title={T('一维束缚态：能级、波函数与「定态为什么是静止的」')}
+      subtitle={T('蓝色的管子是 ψ 在复平面里的样子，它随时间转动；紫色幕布是 |ψ|²，它一动不动。这就是「定态」的全部含义。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="势阱">
+          <ControlGroup title={T('势阱')}>
             <Segmented
               value={kind}
               onChange={(v) => setKind(v as WellKind)}
               options={[
-                { value: 'infinite', label: '无限深' },
-                { value: 'finite', label: '有限深' },
-                { value: 'harmonic', label: '谐振子' },
+                { value: 'infinite', label: T('无限深') },
+                { value: 'finite', label: T('有限深') },
+                { value: 'harmonic', label: T('谐振子') },
               ]}
             />
             {kind !== 'harmonic' ? (
-              <Slider label="阱宽 L" value={width} min={1} max={8} step={0.1} onChange={setWidth} />
+              <Slider label={T('阱宽 L')} value={width} min={1} max={8} step={0.1} onChange={setWidth} />
             ) : (
-              <Slider label="角频率 ω" value={omega} min={0.4} max={3} step={0.05} onChange={setOmega} />
+              <Slider label={T('角频率 ω')} value={omega} min={0.4} max={3} step={0.05} onChange={setOmega} />
             )}
             {kind === 'finite' ? (
-              <Slider label="阱深 V₀" value={depth} min={0.5} max={20} step={0.1} onChange={setDepth} />
+              <Slider label={T('阱深 V₀')} value={depth} min={0.5} max={20} step={0.1} onChange={setDepth} />
             ) : null}
           </ControlGroup>
 
-          <ControlGroup title="能级" hint="点能级尺或 3D 里的曲线都能切换量子数。">
+          <ControlGroup title={T('能级')} hint={T('点能级尺或 3D 里的曲线都能切换量子数。')}>
             <EnergyLadder
               levels={sol.states.map((s) => ({ energy: s.energy, bound: s.bound }))}
               active={n}
               onPick={setN}
               range={[frame.eMin, frame.eMax]}
             />
-            <Slider label="量子数 n" value={n} min={0} max={sol.states.length - 1} step={1} onChange={setN} />
+            <Slider label={T('量子数 n')} value={n} min={0} max={sol.states.length - 1} step={1} onChange={setN} />
           </ControlGroup>
 
-          <ControlGroup title="显示">
-            <Toggle label="ψ（复平面里的管）" checked={showPsi} onChange={setShowPsi} />
-            <Toggle label="|ψ|²（概率密度幕布）" checked={showProb} onChange={setShowProb} />
-            <Toggle label="其余本征态轮廓" checked={deck} onChange={setDeck} />
-            <Toggle label="经典概率分布对比" checked={classical} onChange={setClassical} />
+          <ControlGroup title={T('显示')}>
+            <Toggle label={T('ψ（复平面里的管）')} checked={showPsi} onChange={setShowPsi} />
+            <Toggle label={T('|ψ|²（概率密度幕布）')} checked={showProb} onChange={setShowProb} />
+            <Toggle label={T('其余本征态轮廓')} checked={deck} onChange={setDeck} />
+            <Toggle label={T('经典概率分布对比')} checked={classical} onChange={setClassical} />
           </ControlGroup>
 
-          <ControlGroup title="时间演化">
+          <ControlGroup title={T('时间演化')}>
             <TimeBar
               playing={playing}
               onPlay={setPlaying}
@@ -402,7 +405,10 @@ export default function PotentialWellScene() {
               }}
               speed={speed}
               onSpeed={setSpeed}
-              timeLabel={`相位 ${((((phase % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) * 57.3).toFixed(0)}°`}
+              timeLabel={T(
+                '相位 {0}°',
+                ((((phase % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) * 57.3).toFixed(0),
+              )}
             />
           </ControlGroup>
         </>
@@ -415,64 +421,71 @@ export default function PotentialWellScene() {
             </span>
             {analytic !== undefined ? (
               <span className="font-mono text-[12.5px] text-[var(--text-muted)]">
-                解析值 {analytic.toFixed(4)}（误差 {(Math.abs(state.energy - analytic) / Math.abs(analytic) * 100).toFixed(2)}%）
+                {T(
+                  '解析值 {0}（误差 {1}%）',
+                  analytic.toFixed(4),
+                  ((Math.abs(state.energy - analytic) / Math.abs(analytic)) * 100).toFixed(2),
+                )}
               </span>
             ) : null}
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
-            <span>节点数 {nodes}</span>
+            <span>{T('节点数')} {nodes}</span>
             <span>⟨x⟩ = {stats.mean.toFixed(3)}</span>
             <span>Δx = {stats.sigma.toFixed(3)}</span>
-            <span>{state.bound ? '束缚态' : '非束缚（受计算窗口限制）'}</span>
+            <span>{state.bound ? T('束缚态') : T('非束缚（受计算窗口限制）')}</span>
             {sol.analyticBoundCount !== undefined ? (
               <span>
-                束缚能级 {sol.boundCount}
-                {sol.analyticBoundCount !== sol.boundCount ? ` / 解析 ${sol.analyticBoundCount}` : ''}
+                {T('束缚能级')} {sol.boundCount}
+                {sol.analyticBoundCount !== sol.boundCount
+                  ? T(' / 解析 {0}', sol.analyticBoundCount)
+                  : ''}
               </span>
             ) : null}
           </div>
           {sol.analyticBoundCount !== undefined && sol.analyticBoundCount !== sol.boundCount ? (
             <p className="text-[11.5px] leading-snug text-[var(--text-faint)]">
-              解析式预言还有一条能级，但它弱束缚到尾巴远超出计算窗口，数值上被硬边界推成了正能量。
-              这不是 bug，而是「临界束缚态」的真实特征。
+              {T(
+                '解析式预言还有一条能级，但它弱束缚到尾巴远超出计算窗口，数值上被硬边界推成了正能量。这不是 bug，而是「临界束缚态」的真实特征。',
+              )}
             </p>
           ) : null}
           <Legend
             items={[
-              { color: p.real, label: 'ψ（复数，随时间转动）' },
-              { color: p.prob, label: '|ψ|²（不随时间变）' },
-              { color: p.potential, label: '势能 V(x)' },
-              { color: p.energy, label: '能级 Eₙ' },
-              ...(classical ? [{ color: p.classical, label: '经典概率分布', dashed: true }] : []),
+              { color: p.real, label: T('ψ（复数，随时间转动）') },
+              { color: p.prob, label: T('|ψ|²（不随时间变）') },
+              { color: p.potential, label: T('势能 V(x)') },
+              { color: p.energy, label: T('能级 Eₙ') },
+              ...(classical ? [{ color: p.classical, label: T('经典概率分布'), dashed: true }] : []),
             ]}
           />
         </div>
       }
       guide={[
-        '先按播放，然后切到「沿 x 看」视角：你正对着复平面，会看到 ψ 在原地转圈。转的是相位，不是概率——紫色幕布始终不动。',
-        '把量子数 n 从 0 调到 5：数一数波函数穿过零点的次数，应当恰好等于 n。同时注意能级间距怎么变——无限深阱是 n²，谐振子是等间距。',
-        '切到有限深阱，把 V₀ 调小：能级一条条被「挤出」阱口，束缚态越来越少。同时注意波函数在阱壁外并不为零——它指数衰减地渗出去，这正是隧道效应的根。',
-        '选谐振子、把 n 调到最大，打开「经典概率分布对比」：量子分布的包络开始贴近经典结果，两端最大、中间最小。这就是对应原理。',
-        '打开「其余本征态轮廓」并旋转视角：能级图与波函数图其实是同一张图的两个投影方向。',
+        T('先按播放，然后切到「沿 x 看」视角：你正对着复平面，会看到 ψ 在原地转圈。转的是相位，不是概率——紫色幕布始终不动。'),
+        T('把量子数 n 从 0 调到 5：数一数波函数穿过零点的次数，应当恰好等于 n。同时注意能级间距怎么变——无限深阱是 n²，谐振子是等间距。'),
+        T('切到有限深阱，把 V₀ 调小：能级一条条被「挤出」阱口，束缚态越来越少。同时注意波函数在阱壁外并不为零——它指数衰减地渗出去，这正是隧道效应的根。'),
+        T('选谐振子、把 n 调到最大，打开「经典概率分布对比」：量子分布的包络开始贴近经典结果，两端最大、中间最小。这就是对应原理。'),
+        T('打开「其余本征态轮廓」并旋转视角：能级图与波函数图其实是同一张图的两个投影方向。'),
       ]}
       pitfalls={[
         {
-          title: '“波函数是粒子在空间中的形状”',
-          body: 'ψ 不是物质分布。它是复振幅；有物理意义的是 |ψ|²（概率密度）以及不同态之间的相对相位。',
+          title: T('“波函数是粒子在空间中的形状”'),
+          body: T('ψ 不是物质分布。它是复振幅；有物理意义的是 |ψ|²（概率密度）以及不同态之间的相对相位。'),
         },
         {
-          title: '“定态里粒子在阱中来回运动”',
-          body: '定态的概率密度完全不随时间变化，也没有概率流。会「流动」的只有叠加态——那是模块 09 的内容。',
+          title: T('“定态里粒子在阱中来回运动”'),
+          body: T('定态的概率密度完全不随时间变化，也没有概率流。会「流动」的只有叠加态——那是模块 09 的内容。'),
         },
         {
-          title: '“无限深阱里 ψ 在墙外为零，所以有限深阱也一样”',
-          body: '恰恰相反。有限深阱里波函数以 e^{−κ|x|} 渗入经典禁区，这是纯量子效应，也是隧道效应的直接来源。',
+          title: T('“无限深阱里 ψ 在墙外为零，所以有限深阱也一样”'),
+          body: T('恰恰相反。有限深阱里波函数以 e^{−κ|x|} 渗入经典禁区，这是纯量子效应，也是隧道效应的直接来源。'),
         },
       ]}
       reflect={[
-        '为什么基态能量不是零？把阱宽调窄时基态能量怎么变？用不确定性原理估一估 E ~ ħ²/(2mL²) 并与读数对照。',
-        '无限深阱 E_n ∝ n²，谐振子 E_n ∝ (n + ½) 等间距。从「波必须在阱内装下整数个半波长」和「势能是二次的」两条出发，解释这个差别。',
-        '有限深阱无论多浅，都至少有一个束缚态（一维特有）。把 V₀ 调到 0.5 试试。这在三维中不成立——为什么维度会有影响？',
+        T('为什么基态能量不是零？把阱宽调窄时基态能量怎么变？用不确定性原理估一估 E ~ ħ²/(2mL²) 并与读数对照。'),
+        T('无限深阱 E_n ∝ n²，谐振子 E_n ∝ (n + ½) 等间距。从「波必须在阱内装下整数个半波长」和「势能是二次的」两条出发，解释这个差别。'),
+        T('有限深阱无论多浅，都至少有一个束缚态（一维特有）。把 V₀ 调到 0.5 试试。这在三维中不成立——为什么维度会有影响？'),
       ]}
     >
       <SceneCanvas

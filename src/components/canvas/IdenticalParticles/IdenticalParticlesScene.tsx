@@ -1,3 +1,5 @@
+import { translator, DEFAULT_LANG, type Lang } from '@/i18n'
+import { useT } from '@/i18n/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -37,7 +39,8 @@ function phi(n: number, x: number): number {
   return Math.SQRT2 * Math.sin(n * Math.PI * x)
 }
 
-export default function IdenticalParticlesScene() {
+export default function IdenticalParticlesScene({ lang = DEFAULT_LANG }: { lang?: Lang }) {
+  const T = translator(lang)
   const p = useScenePalette()
   const profile = useQualityProfile()
   const apiRef = useRef<SceneApi | null>(null)
@@ -114,53 +117,55 @@ export default function IdenticalParticlesScene() {
 
   return (
     <SceneShell
+      lang={lang}
       id="identical-particles"
-      title="全同粒子：交换 = 沿对角线翻一次面"
-      subtitle="水平面是位形空间 (x₁, x₂)，高度是波函数 Ψ。点「交换两个粒子」——玻色子的曲面纹丝不动，费米子的整张曲面翻到地面以下。"
+      title={T('全同粒子：交换 = 沿对角线翻一次面')}
+      subtitle={T('水平面是位形空间 (x₁, x₂)，高度是波函数 Ψ。点「交换两个粒子」——玻色子的曲面纹丝不动，费米子的整张曲面翻到地面以下。')}
       apiRef={apiRef}
       height={560}
       controls={
         <>
-          <ControlGroup title="单粒子态">
-            <Slider label="量子数 a" value={na} min={1} max={5} step={1} onChange={setNa} />
-            <Slider label="量子数 b" value={nb} min={1} max={5} step={1} onChange={setNb} />
+          <ControlGroup title={T('单粒子态')}>
+            <Slider label={T('量子数 a')} value={na} min={1} max={5} step={1} onChange={setNa} />
+            <Slider label={T('量子数 b')} value={nb} min={1} max={5} step={1} onChange={setNb} />
             {identical ? (
               <p className="rounded-lg border border-[var(--c-warn)]/40 bg-[color-mix(in_srgb,var(--c-warn)_8%,transparent)] px-2.5 py-1.5 text-[12px] leading-snug text-[var(--text-muted)]">
-                两个量子数相同。费米子模式下整个波函数会**恒等于零**——这就是泡利不相容，
-                它不是外加的禁令，而是反对称化的算术结果。
+                {T(
+                  '两个量子数相同。费米子模式下整个波函数会恒等于零——这就是泡利不相容，它不是外加的禁令，而是反对称化的算术结果。',
+                )}
               </p>
             ) : null}
           </ControlGroup>
 
-          <ControlGroup title="对称性">
+          <ControlGroup title={T('对称性')}>
             <Segmented
               value={sym}
               onChange={(v) => setSym(v as Sym)}
               options={[
-                { value: 'distinguishable', label: '可分辨' },
-                { value: 'boson', label: '玻色子' },
-                { value: 'fermion', label: '费米子' },
+                { value: 'distinguishable', label: T('可分辨') },
+                { value: 'boson', label: T('玻色子') },
+                { value: 'fermion', label: T('费米子') },
               ]}
             />
             <Button variant="primary" onClick={exchange}>
-              交换两个粒子
+              {T('交换两个粒子')}
             </Button>
-            <Toggle label="显示 |Ψ|² 而不是 Ψ" checked={showSquared} onChange={setShowSquared} />
-            <Toggle label="高亮 x₁ = x₂ 对角线" checked={showDiagonal} onChange={setShowDiagonal} />
+            <Toggle label={T('显示 |Ψ|² 而不是 Ψ')} checked={showSquared} onChange={setShowSquared} />
+            <Toggle label={T('高亮 x₁ = x₂ 对角线')} checked={showDiagonal} onChange={setShowDiagonal} />
           </ControlGroup>
 
-          <ControlGroup title="⟨(x₁−x₂)²⟩ 对照" hint="哈密顿量里没有任何相互作用势，差别纯粹来自对称性。">
+          <ControlGroup title={T('⟨(x₁−x₂)²⟩ 对照')} hint={T('哈密顿量里没有任何相互作用势，差别纯粹来自对称性。')}>
             <div className="space-y-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-2 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
               <div className="flex justify-between">
-                <span>可分辨</span>
+                <span>{T('可分辨')}</span>
                 <span>{comparison.distinguishable.toFixed(4)}</span>
               </div>
               <div className="flex justify-between" style={{ color: p.energy }}>
-                <span>玻色子（聚集）</span>
+                <span>{T('玻色子（聚集）')}</span>
                 <span>{comparison.boson.toFixed(4)}</span>
               </div>
               <div className="flex justify-between" style={{ color: p.imag }}>
-                <span>费米子（回避）</span>
+                <span>{T('费米子（回避）')}</span>
                 <span>{Number.isNaN(comparison.fermion) ? '—' : comparison.fermion.toFixed(4)}</span>
               </div>
             </div>
@@ -180,43 +185,46 @@ export default function IdenticalParticlesScene() {
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-1 font-mono text-[12.5px] tabular-nums text-[var(--text-muted)]">
             <span>⟨(x₁−x₂)²⟩ = {collapsed ? '—' : data.meanSep.toFixed(4)}</span>
-            <span>交换后 Ψ → {sym === 'fermion' ? '−Ψ' : sym === 'boson' ? '+Ψ' : '另一个态（可分辨粒子不要求对称性）'}</span>
-            {collapsed ? <span style={{ color: p.danger }}>Ψ ≡ 0（泡利不相容）</span> : null}
+            <span>
+              {T('交换后 Ψ → ')}
+              {sym === 'fermion' ? '−Ψ' : sym === 'boson' ? '+Ψ' : T('另一个态（可分辨粒子不要求对称性）')}
+            </span>
+            {collapsed ? <span style={{ color: p.danger }}>{T('Ψ ≡ 0（泡利不相容）')}</span> : null}
           </div>
           <Legend
             items={[
               { color: p.phasePos, label: 'Ψ > 0' },
               { color: p.phaseNeg, label: 'Ψ < 0' },
-              { color: p.faint, label: 'x₁ = x₂ 对角线' },
+              { color: p.faint, label: T('x₁ = x₂ 对角线') },
             ]}
           />
         </div>
       }
       guide={[
-        '先选「可分辨」：曲面在对角线两侧不对称——「1 号在左、2 号在右」和反过来是两个不同的状态。',
-        '切到「玻色子」：曲面关于对角线镜像对称，而且在对角线上（两粒子重合处）取值最大。玻色子喜欢聚在一起。',
-        '切到「费米子」：曲面在对角线上**严格为零**，而且对角线两侧一正一负。两个费米子不可能出现在同一点。',
-        '点「交换两个粒子」：这个动画就是把曲面沿对角线翻 180°。玻色子看不出变化，费米子整个翻到了地面下——差别只有一个负号，后果是整张元素周期表。',
-        '把两个量子数调成相同、选费米子：曲面直接消失。泡利不相容不需要额外规则，反对称化自己就把它算没了。',
+        T('先选「可分辨」：曲面在对角线两侧不对称——「1 号在左、2 号在右」和反过来是两个不同的状态。'),
+        T('切到「玻色子」：曲面关于对角线镜像对称，而且在对角线上（两粒子重合处）取值最大。玻色子喜欢聚在一起。'),
+        T('切到「费米子」：曲面在对角线上**严格为零**，而且对角线两侧一正一负。两个费米子不可能出现在同一点。'),
+        T('点「交换两个粒子」：这个动画就是把曲面沿对角线翻 180°。玻色子看不出变化，费米子整个翻到了地面下——差别只有一个负号，后果是整张元素周期表。'),
+        T('把两个量子数调成相同、选费米子：曲面直接消失。泡利不相容不需要额外规则，反对称化自己就把它算没了。'),
       ]}
       pitfalls={[
         {
-          title: '“交换对称性是一种作用力”',
-          body: '哈密顿量里没有任何相互作用项。粒子的聚集或回避完全来自波函数必须（反）对称这个约束。习惯上叫「交换力」，但它不是力。',
+          title: T('“交换对称性是一种作用力”'),
+          body: T('哈密顿量里没有任何相互作用项。粒子的聚集或回避完全来自波函数必须（反）对称这个约束。习惯上叫「交换力」，但它不是力。'),
         },
         {
-          title: '“波函数画的是两个粒子在空间中的位置”',
-          body: '这张曲面画在**位形空间**上：横轴是 1 号的位置，纵轴是 2 号的位置。两个粒子的真实空间是一维的，位形空间才是二维的。三个粒子就是三维，十个粒子就是十维——这也是多体问题难的根源。',
+          title: T('“波函数画的是两个粒子在空间中的位置”'),
+          body: T('这张曲面画在**位形空间**上：横轴是 1 号的位置，纵轴是 2 号的位置。两个粒子的真实空间是一维的，位形空间才是二维的。三个粒子就是三维，十个粒子就是十维——这也是多体问题难的根源。'),
         },
         {
-          title: '“泡利不相容说的是费米子之间有排斥力”',
-          body: '不相容是波函数结构的后果，不是相互作用。它不传递能量、不随距离衰减，也没有对应的场。',
+          title: T('“泡利不相容说的是费米子之间有排斥力”'),
+          body: T('不相容是波函数结构的后果，不是相互作用。它不传递能量、不随距离衰减，也没有对应的场。'),
         },
       ]}
       reflect={[
-        '两个电子的总波函数 = 空间部分 × 自旋部分，整体必须反对称。若自旋处于三重态（对称），空间部分必须反对称——这对它们的平均间距意味着什么？这就是铁磁性的起源之一。',
-        '把 a、b 调得很远（比如 1 和 5），三种情形的 ⟨(x₁−x₂)²⟩ 差别会怎么变？为什么两个态的空间重叠越小，交换效应越弱？',
-        '二维体系里交换两次不一定回到原状态，于是允许「任意子」（分数统计）。这与三维有什么本质区别？',
+        T('两个电子的总波函数 = 空间部分 × 自旋部分，整体必须反对称。若自旋处于三重态（对称），空间部分必须反对称——这对它们的平均间距意味着什么？这就是铁磁性的起源之一。'),
+        T('把 a、b 调得很远（比如 1 和 5），三种情形的 ⟨(x₁−x₂)²⟩ 差别会怎么变？为什么两个态的空间重叠越小，交换效应越弱？'),
+        T('二维体系里交换两次不一定回到原状态，于是允许「任意子」（分数统计）。这与三维有什么本质区别？'),
       ]}
     >
       <SceneCanvas
@@ -226,7 +234,7 @@ export default function IdenticalParticlesScene() {
         maxDistance={22}
         overlay={
           <CanvasStat>
-            {sym === 'boson' ? '玻色子（对称）' : sym === 'fermion' ? '费米子（反对称）' : '可分辨粒子'}
+            {sym === 'boson' ? T('玻色子（对称）') : sym === 'fermion' ? T('费米子（反对称）') : T('可分辨粒子')}
             　a={na} b={nb}
           </CanvasStat>
         }
@@ -294,6 +302,7 @@ function Surface({
   collapsed: boolean
 }) {
   const p = useScenePalette()
+  const T = useT()
   const groupRef = useRef<THREE.Group>(null)
   const anim = useRef({ token: -1, t: 1 })
 
@@ -377,7 +386,7 @@ function Surface({
   if (collapsed) {
     return (
       <SceneLabel position={[0, 0.6, 0]} tone="custom">
-        <span style={{ color: p.danger, fontSize: 14 }}>Ψ ≡ 0：两个费米子不能占据同一个态</span>
+        <span style={{ color: p.danger, fontSize: 14 }}>{T('Ψ ≡ 0：两个费米子不能占据同一个态')}</span>
       </SceneLabel>
     )
   }
