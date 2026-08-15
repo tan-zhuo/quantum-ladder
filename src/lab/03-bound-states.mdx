@@ -1,0 +1,130 @@
+---
+num: '03'
+title: 一维束缚态：势阱与谐振子
+goal: 看懂「能级」是从哪冒出来的，以及为什么定态明明在转、却被称为「静止」。
+youWillSee:
+  - 蓝色的 ψ 管随时间在复平面里转动，而紫色的 |ψ|² 幕布纹丝不动
+  - 量子数每加一，波函数就多一个节点；能级间距按 n² 或等间距排开
+  - 有限深阱里波函数渗出阱壁，指数衰减——这就是隧道效应的种子
+prereqs:
+  - 波函数与 Born 规则（模块 02）
+  - 二阶常微分方程的边界条件概念
+scenes:
+  - potential-well
+related:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - 02-wavefunction/05-stationary-states
+  - 02-wavefunction/07-infinite-well
+  - 02-wavefunction/08-finite-well
+  - 02-wavefunction/09-harmonic-oscillator
+phase: 1
+status: done
+---
+
+「能量是量子化的」大概是量子力学最广为人知的一句话，也是最容易被当成咒语背下来的一句。
+
+它其实一点也不神秘：把波关在一个盒子里，就只有特定的几种波能装得下。吉他弦、鼓面、管风琴都是这样。真正需要解释的不是「为什么量子化」，而是「为什么之前没人注意到电子是波」。
+
+<Scene name="potential-well" />
+
+## 定态：转的是相位，不是概率
+
+含时薛定谔方程
+
+$$
+\ii\hbar\,\partial_t\Psi = \hat H \Psi
+$$
+
+在 $\hat H\psi_n = E_n\psi_n$ 的解上给出
+
+$$
+\Psi_n(x,t) = \psi_n(x)\,\ee^{-\ii E_n t/\hbar}.
+$$
+
+指数因子的模恒为 1，所以
+
+$$
+|\Psi_n(x,t)|^2 = |\psi_n(x)|^2 \quad\text{与 } t \text{ 无关}.
+$$
+
+这就是场景里最核心的那一幕：**管子在转，影子不动**。切到「沿 x 看」视角，你正对复平面，会看到整条曲线像一根被拧的绳子一样原地旋转。转速正比于 $E_n$。
+
+<Callout type="insight" title="为什么单个态的相位转速不可观测">
+只有一个能级时，整体相位 $\ee^{-\ii E t/\hbar}$ 是全局的，什么都测不出来——你甚至无法知道它在转。
+
+一旦叠加两个能级，相对相位 $\ee^{-\ii(E_2-E_1)t/\hbar}$ 就出现了，概率密度开始随时间流动，频率恰好是 $\omega = (E_2-E_1)/\hbar$。这正是原子发光的频率。玻尔的「跃迁频率条件」在这里不是假设，而是推论。
+
+想看这一幕，去[模块 09](/lab/09-time-evolution/)。
+</Callout>
+
+## 三个势阱，三种能级排布
+
+| 势阱 | 能级 | 间距 | 记号 |
+| --- | --- | --- | --- |
+| 无限深方阱 | $E_n = \dfrac{n^2\pi^2\hbar^2}{2mL^2}$ | 越来越疏（$\propto n$） | $n = 1,2,3\ldots$ |
+| 谐振子 | $E_n = \hbar\omega\left(n+\tfrac12\right)$ | 完全等间距 | $n = 0,1,2\ldots$ |
+| 有限深方阱 | 无解析式（超越方程） | 有限条，越高越疏 | 深度决定条数 |
+
+场景里切换势阱类型，同时盯着左侧的能级尺，这三种排布的差别一眼就看出来了。
+
+<Derivation title="无限深方阱：三行推完">
+
+阱内 $V=0$，定态方程是 $-\frac{\hbar^2}{2m}\psi'' = E\psi$，通解 $\psi = A\sin kx + B\cos kx$，其中 $k=\sqrt{2mE}/\hbar$。
+
+边界条件 $\psi(0)=\psi(L)=0$ 强制 $B=0$ 且 $kL = n\pi$。于是
+
+$$
+k_n = \frac{n\pi}{L},\qquad E_n = \frac{\hbar^2k_n^2}{2m} = \frac{n^2\pi^2\hbar^2}{2mL^2},\qquad
+\psi_n = \sqrt{\frac{2}{L}}\sin\frac{n\pi x}{L}.
+$$
+
+「装得下整数个半波长」这句话，数学上就是 $kL=n\pi$。
+
+</Derivation>
+
+## 基态能量不为零：不确定性的直接后果
+
+$E_1 \ne 0$，谐振子甚至有零点能 $\tfrac12\hbar\omega$。为什么不能让粒子静止在阱底？
+
+因为静止意味着 $\Delta p = 0$，而 $\Delta x \le L$ 是有限的，这违反 $\Delta x\Delta p\ge\hbar/2$。粗略估计：
+
+$$
+E \sim \frac{(\Delta p)^2}{2m} \sim \frac{\hbar^2}{2mL^2},
+$$
+
+与精确结果 $\pi^2\hbar^2/2mL^2$ 只差一个 $\pi^2 \approx 10$ 的因子。把场景里的阱宽 $L$ 拖窄，基态能量按 $1/L^2$ 飙升——这个「挤压代价」是原子不会塌缩、白矮星不会被引力压垮的同一个原因。
+
+## 有限深阱：波函数会漏出去
+
+这是本模块最该带走的一张画面。
+
+在经典禁区（$E < V(x)$）里，定态方程变成
+
+$$
+\psi'' = \kappa^2\psi,\qquad \kappa = \frac{\sqrt{2m(V_0-E)}}{\hbar},
+$$
+
+解是 $\ee^{\pm\kappa x}$ ——不是振荡，是指数衰减。所以波函数在阱壁之外不是零，而是拖着一条指数尾巴。
+
+把这条尾巴接到墙的另一侧，就是[模块 04 的隧道效应](/lab/04-tunneling/)。
+
+<Callout type="check" title="数一数节点">
+第 $n$ 个态恰有 $n$ 个节点（无限深阱的编号从 1 开始时是 $n-1$ 个内部节点）。这不是巧合，是斯图姆-刘维尔理论的普遍结论：一维束缚态按能量排序后，节点数严格递增。
+
+场景的读数区实时显示节点数。切换量子数时对照一下。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '定态', latex: '\\Psi_n(x,t)=\\psi_n(x)\\ee^{-\\ii E_n t/\\hbar}', note: '只有相位在转' },
+    { name: '无限深阱', latex: 'E_n = n^2\\pi^2\\hbar^2/2mL^2', note: '∝ n²，∝ 1/L²' },
+    { name: '谐振子', latex: 'E_n = \\hbar\\omega(n+\\tfrac12)', note: '等间距 + 零点能' },
+    { name: '经典禁区', latex: '\\psi \\sim \\ee^{-\\kappa x},\\ \\kappa=\\sqrt{2m(V_0-E)}/\\hbar', note: '指数衰减，不是零' },
+  ]}
+/>
+
+## 想一想
+
+1. 把无限深阱的宽度加倍，基态能量变成原来的几分之一？场景里量一下，再用公式核对。
+2. 谐振子的能级等间距，这件事和「电磁场可以有 n 个光子」有什么关系？
+3. 一维有限深阱无论多浅都至少有一个束缚态，三维却不是这样。把阱深调到 0.5 试试，再想想维度在哪一步进来了。

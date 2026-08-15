@@ -1,0 +1,459 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+/* 主题由 <html data-theme="light|dark"> 控制（BaseLayout 里的内联脚本在首帧前定好，避免闪白）。 */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  --bg: #fbfaf8;
+  --bg-elevated: #ffffff;
+  --bg-subtle: #f2f0ec;
+  --border: #e2ded7;
+  --border-strong: #c9c3b8;
+  --text: #1c1a17;
+  --text-muted: #5f5a52;
+  --text-faint: #8a847a;
+  --accent: #3b5bdb;
+  --accent-soft: #e7ecfd;
+  --accent-text: #2f49b0;
+
+  /* 物理语义色：全站图表、模拟、提示框共用同一套，避免每个组件各自发明配色 */
+  --c-wave: #3b5bdb; /* 波函数实部 / 主曲线 */
+  --c-wave-im: #c2410c; /* 波函数虚部 */
+  --c-prob: #7048e8; /* 概率密度 */
+  --c-potential: #4b5563; /* 势能曲线 */
+  --c-energy: #0d9488; /* 能级 */
+  --c-warn: #b45309;
+  --c-danger: #b91c1c;
+  --c-grid: #e4e0d9;
+
+  --shadow-card: 0 1px 2px rgb(28 26 23 / 0.05), 0 4px 16px -8px rgb(28 26 23 / 0.12);
+}
+
+[data-theme='dark'] {
+  --bg: #14161a;
+  --bg-elevated: #1b1e24;
+  --bg-subtle: #22262d;
+  --border: #2e333c;
+  --border-strong: #454c58;
+  --text: #e8e6e3;
+  --text-muted: #a7a29a;
+  --text-faint: #7d7871;
+  --accent: #8ea3ff;
+  --accent-soft: #1e2540;
+  --accent-text: #a9baff;
+
+  /* 深色下把饱和度压低、亮度提上来，公式与曲线才不会刺眼 */
+  --c-wave: #7f9cff;
+  --c-wave-im: #ff9d6b;
+  --c-prob: #b39aff;
+  --c-potential: #9aa3b2;
+  --c-energy: #4ecdc4;
+  --c-warn: #f0b357;
+  --c-danger: #ff8080;
+  --c-grid: #2a2f38;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px -8px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elevated: var(--bg-elevated);
+  --color-subtle: var(--bg-subtle);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-wave: var(--c-wave);
+  --color-prob: var(--c-prob);
+  --color-energy: var(--c-energy);
+  --color-warn: var(--c-warn);
+  --color-danger: var(--c-danger);
+
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── 正文排版 ─────────────────────────────────────────────
+   自己写而不用 @tailwindcss/typography：需要对 KaTeX 块级公式、
+   可折叠推导、模拟组件的间距做精确控制。 */
+
+.prose {
+  color: var(--text);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  overflow-wrap: break-word;
+}
+
+.prose > * + * {
+  margin-top: 1.15em;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  color: var(--text);
+  font-weight: 650;
+  line-height: 1.35;
+  scroll-margin-top: 5rem;
+  letter-spacing: -0.01em;
+}
+
+.prose h2 {
+  margin-top: 2.6em;
+  margin-bottom: 0.7em;
+  font-size: 1.5rem;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose h3 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-size: 1.2rem;
+}
+
+.prose h4 {
+  margin-top: 1.6em;
+  margin-bottom: 0.4em;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+
+/* 标题锚点：hover 时才显形，不打扰阅读 */
+.prose .heading-anchor {
+  margin-left: 0.4em;
+  color: var(--text-faint);
+  opacity: 0;
+  text-decoration: none;
+  font-weight: 400;
+  transition: opacity 0.15s;
+}
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.prose .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.prose a {
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+.prose a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose strong {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li::marker {
+  color: var(--text-faint);
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose li > ul,
+.prose li > ol {
+  margin-top: 0.4em;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: 1em;
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5em 0;
+}
+
+.prose :not(pre) > code {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.12em 0.36em;
+  font-size: 0.875em;
+  font-family: var(--font-mono);
+}
+
+.prose pre {
+  background: var(--bg-subtle) !important;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1em 1.1em;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+/* Shiki 双主题：跟随 data-theme 切换而不是系统偏好 */
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+  font-style: var(--shiki-dark-font-style) !important;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose thead {
+  border-bottom: 2px solid var(--border-strong);
+}
+.prose th {
+  text-align: left;
+  font-weight: 650;
+  padding: 0.5em 0.8em;
+  white-space: nowrap;
+}
+.prose td {
+  padding: 0.5em 0.8em;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+/* ── KaTeX ───────────────────────────────────────────── */
+
+.katex {
+  font-size: 1.06em;
+}
+
+/* 块级公式横向可滚，长推导在手机上也不会撑破布局 */
+.katex-display {
+  margin: 1.5em 0;
+  padding: 0.2em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex-display > .katex {
+  white-space: nowrap;
+}
+
+/* 深色模式下 KaTeX 默认继承 currentColor，这里只需保证分数线等描边够亮 */
+[data-theme='dark'] .katex .frac-line,
+[data-theme='dark'] .katex .overline .overline-line,
+[data-theme='dark'] .katex .underline .underline-line,
+[data-theme='dark'] .katex .hline,
+[data-theme='dark'] .katex .sqrt > .root {
+  border-color: var(--text);
+}
+[data-theme='dark'] .katex svg line,
+[data-theme='dark'] .katex svg path {
+  stroke: currentColor;
+}
+
+/* 编号公式：右侧编号 + 可点击定位 */
+.equation {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  scroll-margin-top: 5rem;
+}
+.equation > .equation-body {
+  min-width: 0;
+}
+.equation > .equation-tag {
+  color: var(--text-faint);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.equation:target > .equation-body {
+  background: var(--accent-soft);
+  border-radius: 6px;
+}
+
+/* ── 模拟与 3D 场景的控件 ──────────────────────────────────
+   2D 模拟和 3D 场景共用这套控件外观：同一个站点里不该出现两种滑块。 */
+
+.ql-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 18px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ql-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-strong);
+}
+.ql-range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-strong);
+}
+
+.ql-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--bg-elevated);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transition: transform 0.12s;
+}
+.ql-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--bg-elevated);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+.ql-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.ql-range:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ql-range:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ql-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+.ql-checkbox::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  transform: scale(0);
+  transition: transform 0.12s;
+  box-shadow: inset 1em 1em #fff;
+  clip-path: polygon(14% 44%, 0 65%, 42% 100%, 100% 16%, 84% 0, 40% 66%);
+}
+.ql-checkbox:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ql-checkbox:checked::after {
+  transform: scale(1);
+}
+
+/* 3D 画布：不要让触摸手势被页面滚动抢走，否则手机上转不动模型 */
+.ql-canvas-host canvas {
+  touch-action: none;
+  outline: none;
+}
+
+/* ── 打印样式：只留内容 ────────────────────────────────── */
+@media print {
+  .no-print,
+  nav,
+  aside,
+  button,
+  .sim-controls {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .prose {
+    font-size: 11pt;
+  }
+  .prose a::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+    color: #555;
+  }
+  /* 打印时展开全部推导（BaseLayout 的 beforeprint 钩子负责老浏览器） */
+  details::details-content {
+    content-visibility: visible !important;
+    block-size: auto !important;
+  }
+  details > summary {
+    list-style: none;
+  }
+  .print-break-avoid {
+    break-inside: avoid;
+  }
+}

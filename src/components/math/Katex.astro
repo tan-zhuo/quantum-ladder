@@ -1,0 +1,32 @@
+---
+import katex from 'katex'
+
+interface Props {
+  /** LaTeX 源码 */
+  formula: string
+  display?: boolean
+  class?: string
+}
+
+const { formula, display = false, class: className } = Astro.props
+
+// 与 astro.config.mjs 里 rehype-katex 的宏保持一致，
+// 这样 MDX 正文里的 \ket 和这里手写的 \ket 是同一个东西。
+const macros = {
+  '\\ket': '\\left|#1\\right\\rangle',
+  '\\bra': '\\left\\langle#1\\right|',
+  '\\braket': '\\left\\langle#1\\middle|#2\\right\\rangle',
+  '\\dd': '\\mathrm{d}',
+  '\\ii': '\\mathrm{i}',
+  '\\ee': '\\mathrm{e}',
+}
+
+const html = katex.renderToString(formula, {
+  displayMode: display,
+  throwOnError: false,
+  strict: false,
+  macros,
+})
+---
+
+<span class={className} set:html={html} />

@@ -1,0 +1,55 @@
+---
+interface Props {
+  /** 折叠标题，例如「推导：从连续性方程得到概率流」 */
+  title: string
+  /** 默认展开。规格要求推导默认折叠，只有特别关键的才设 true */
+  open?: boolean
+  /** 难度提示，帮读者判断要不要现在读 */
+  level?: '基础' | '进阶' | '选读'
+  /** 预计花费时间 */
+  minutes?: number
+}
+
+const { title, open = false, level, minutes } = Astro.props
+---
+
+<details
+  class="group my-6 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] print-break-avoid"
+  open={open}
+>
+  <summary
+    class="flex cursor-pointer list-none items-center gap-2.5 px-4 py-3 transition-colors hover:bg-[var(--bg-subtle)]"
+  >
+    <svg
+      class="size-3.5 shrink-0 text-[var(--text-faint)] transition-transform group-open:rotate-90"
+      viewBox="0 0 12 12"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M4 2l4 4-4 4z"></path>
+    </svg>
+    <span class="flex-1 text-[14px] font-medium text-[var(--text)]">{title}</span>
+    {
+      level && (
+        <span class="shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text-faint)]">
+          {level}
+        </span>
+      )
+    }
+    {
+      minutes && (
+        <span class="shrink-0 font-mono text-[11px] text-[var(--text-faint)]">~{minutes} min</span>
+      )
+    }
+    <span
+      class="shrink-0 text-[11.5px] text-[var(--text-faint)] group-open:hidden"
+      aria-hidden="true">展开</span
+    >
+  </summary>
+
+  <div
+    class="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-1 text-[15.5px] [&>*:first-child]:mt-4 [&>*:last-child]:mb-4"
+  >
+    <slot />
+  </div>
+</details>

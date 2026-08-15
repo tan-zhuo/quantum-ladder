@@ -1,0 +1,51 @@
+---
+import { GLOSSARY } from '@/data/glossary'
+
+interface Props {
+  /** 术语键，见 src/data/glossary.ts；省略时用 slot 文本 */
+  id: string
+}
+
+const { id } = Astro.props
+const entry = GLOSSARY[id]
+const base = import.meta.env.BASE_URL
+---
+
+{
+  entry ? (
+    <span class="ql-term group relative">
+      <button
+        type="button"
+        class="cursor-help border-b border-dotted border-[var(--text-faint)] text-inherit"
+        aria-describedby={`tip-${id}`}
+      >
+        <slot>{entry.term}</slot>
+      </button>
+      <span
+        id={`tip-${id}`}
+        role="tooltip"
+        class="ql-tooltip pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-[min(20rem,70vw)] -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[13px] leading-relaxed font-normal text-[var(--text-muted)] opacity-0 shadow-lg transition-opacity duration-150"
+      >
+        <strong class="text-[var(--text)]">{entry.term}</strong>
+        {entry.en && <span class="ml-1.5 text-[11.5px] text-[var(--text-faint)]">{entry.en}</span>}
+        <span class="mt-1 block">{entry.definition}</span>
+        {entry.ref && (
+          <span class="mt-1 block text-[11.5px] text-[var(--accent-text)]">
+            详见 {entry.refLabel ?? entry.ref}
+          </span>
+        )}
+      </span>
+    </span>
+  ) : (
+    <slot />
+  )
+}
+
+<style>
+  /* hover 与键盘聚焦都要能唤出提示，触屏上点一下也算 focus */
+  .ql-term:hover .ql-tooltip,
+  .ql-term:focus-within .ql-tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>

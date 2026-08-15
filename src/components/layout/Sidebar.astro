@@ -1,0 +1,227 @@
+---
+import { getToc } from '@/lib/toc'
+import { getLabModules } from '@/lib/lab'
+import { TRACK_LABEL, type Track } from '@/data/chapters'
+
+interface Props {
+  /** 当前小节 id，用于高亮与自动展开。3D 模块的 id 形如 `lab/05-spin` */
+  currentId?: string
+  currentChapter?: string
+}
+
+const { currentId, currentChapter } = Astro.props
+const toc = await getToc()
+const modules = await getLabModules()
+const base = import.meta.env.BASE_URL
+
+const groups: { track: Track; chapters: typeof toc }[] = (
+  ['main', 'branch', 'appendix'] as Track[]
+).map((track) => ({ track, chapters: toc.filter((c) => c.track === track) }))
+
+// 教材部分默认折叠：平台的主轴是 3D 模块，章节树是「深入阅读」的入口
+const inTextbook = !!currentChapter
+---
+
+<nav class="ql-sidebar-nav" aria-label="目录">
+  {/* ── 3D 实验室：平台主轴 ───────────────────────────── */}
+  <section class="mb-5">
+    <h2 class="mb-2 flex items-center gap-1.5 px-3 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+      <span aria-hidden="true" class="text-[var(--accent)]">◆</span>
+      3D 实验室
+    </h2>
+    <ul class="space-y-px">
+      {
+        modules.map((m) => {
+          const id = `lab/${m.id}`
+          const active = id === currentId
+          return (
+            <li>
+              <a
+                href={`${base}${m.href.replace(/^\//, '')}`}
+                data-section-link={id}
+                aria-current={active ? 'page' : undefined}
+                class={
+                  'flex items-center gap-2 rounded-md px-3 py-1.5 text-[13.5px] leading-snug transition-colors ' +
+                  (active
+                    ? 'bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]')
+                }
+              >
+                <span class="ql-read-dot size-1.5 shrink-0 rounded-full bg-transparent" aria-hidden="true" />
+                <span class="font-mono text-[11.5px] text-[var(--text-faint)]">{m.num}</span>
+                <span class="min-w-0 flex-1 truncate">{m.title}</span>
+                {m.scenes.length > 0 && (
+                  <span class="shrink-0 font-mono text-[10px] text-[var(--accent)]" title={`${m.scenes.length} 个 3D 场景`}>
+                    {m.scenes.length}◆
+                  </span>
+                )}
+              </a>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </section>
+
+  <details open={inTextbook} class="group/lib mb-2">
+    <summary class="mb-2 flex cursor-pointer list-none items-center gap-1.5 px-3 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase hover:text-[var(--text-muted)]">
+      <svg
+        class="size-3 shrink-0 transition-transform group-open/lib:rotate-90"
+        viewBox="0 0 12 12"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M4 2l4 4-4 4z"></path>
+      </svg>
+      教材（深入阅读）
+    </summary>
+    <div>
+  {
+    groups.map(({ track, chapters }) =>
+      chapters.length === 0 ? null : (
+        <section class="mb-5">
+          <h2 class="mb-2 px-3 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+            {TRACK_LABEL[track]}
+          </h2>
+          <ul class="space-y-0.5">
+            {chapters.map((chapter) => {
+              const open = chapter.id === currentChapter
+              return (
+                <li>
+                  <details open={open} class="group/ch">
+                    <summary
+                      class="flex cursor-pointer list-none items-center gap-2 rounded-md px-3 py-1.5 text-[13.5px] transition-colors hover:bg-[var(--bg-subtle)]"
+                      data-chapter={chapter.id}
+                    >
+                      <svg
+                        class="size-3 shrink-0 text-[var(--text-faint)] transition-transform group-open/ch:rotate-90"
+                        viewBox="0 0 12 12"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path d="M4 2l4 4-4 4z" />
+                      </svg>
+                      <span class="font-mono text-[11.5px] text-[var(--text-faint)]">
+                        {chapter.num}
+                      </span>
+                      <a
+                        href={chapter.href}
+                        class={
+                          'min-w-0 flex-1 truncate hover:text-[var(--accent-text)] ' +
+                          (open ? 'font-semibold text-[var(--text)]' : 'text-[var(--text-muted)]')
+                        }
+                      >
+                        {chapter.title}
+                      </a>
+                      {chapter.sections.length > 0 && (
+                        <span
+                          class="shrink-0 font-mono text-[10.5px] text-[var(--text-faint)]"
+                          title={`${chapter.doneCount} / ${chapter.sections.length} 节已定稿`}
+                        >
+                          {chapter.doneCount}/{chapter.sections.length}
+                        </span>
+                      )}
+                    </summary>
+
+                    {chapter.sections.length > 0 ? (
+                      <ul class="mt-0.5 mb-1 ml-[1.4rem] space-y-px border-l border-[var(--border)] pl-2">
+                        {chapter.sections.map((s) => {
+                          const active = s.id === currentId
+                          return (
+                            <li>
+                              <a
+                                href={s.href}
+                                data-section-link={s.id}
+                                aria-current={active ? 'page' : undefined}
+                                class={
+                                  'group/sec flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] leading-snug transition-colors ' +
+                                  (active
+                                    ? 'bg-[var(--accent-soft)] font-medium text-[var(--accent-text)]'
+                                    : 'text-[var(--text-muted)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]')
+                                }
+                              >
+                                <span
+                                  class="ql-read-dot size-1.5 shrink-0 rounded-full bg-transparent"
+                                  aria-hidden="true"
+                                />
+                                <span class="min-w-0 flex-1">
+                                  {s.section && (
+                                    <span class="mr-1 font-mono text-[11px] text-[var(--text-faint)]">
+                                      {s.section}
+                                    </span>
+                                  )}
+                                  {s.title}
+                                </span>
+                                {s.sims.length > 0 && (
+                                  <span
+                                    class="shrink-0 text-[10px] text-[var(--accent)]"
+                                    title="含交互模拟"
+                                  >
+                                    ◈
+                                  </span>
+                                )}
+                                {s.status === 'stub' && (
+                                  <span
+                                    class="shrink-0 rounded bg-[var(--bg-subtle)] px-1 text-[9.5px] text-[var(--text-faint)]"
+                                    title="待撰写"
+                                  >
+                                    待写
+                                  </span>
+                                )}
+                              </a>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    ) : (
+                      <p class="mt-0.5 mb-1 ml-[1.4rem] border-l border-[var(--border)] px-2 py-1 pl-2 text-[12px] text-[var(--text-faint)]">
+                        待撰写
+                      </p>
+                    )}
+                  </details>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ),
+    )
+  }
+  </div>
+  </details>
+</nav>
+
+<script>
+  import { loadProgress, onProgressChange, type ProgressState } from '@/lib/progress'
+
+  // 已读小节在目录里点一个小圆点。进度存在 localStorage，
+  // 所以只能在客户端染色——服务端渲染出来的页面对所有人都一样，这才能被 CDN 缓存。
+  function paint(state: ProgressState) {
+    document.querySelectorAll<HTMLElement>('[data-section-link]').forEach((el) => {
+      const id = el.dataset.sectionLink!
+      const dot = el.querySelector<HTMLElement>('.ql-read-dot')
+      if (!dot) return
+      const p = state[id]
+      const level = p?.mastery ?? 0
+      if (p?.read || level > 0) {
+        dot.style.background = level >= 2 ? 'var(--c-energy)' : 'var(--accent)'
+        dot.title = level >= 2 ? '已掌握' : '已读'
+      } else {
+        dot.style.background = 'transparent'
+        dot.removeAttribute('title')
+      }
+    })
+  }
+
+  paint(loadProgress())
+  onProgressChange(paint)
+
+  // 侧栏滚到当前小节。这里手算 scrollTop 而不是 scrollIntoView：
+  // 后者会连带滚动整个页面，进入章节时正文会被顶走。
+  const active = document.querySelector<HTMLElement>('[aria-current="page"]')
+  const scroller = active?.closest<HTMLElement>('[data-sidebar-scroll]')
+  if (active && scroller) {
+    const offset = active.offsetTop - scroller.clientHeight / 2
+    scroller.scrollTop = Math.max(0, offset)
+  }
+</script>

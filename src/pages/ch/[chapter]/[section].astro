@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from 'astro:content'
+import ChapterLayout from '@/layouts/ChapterLayout.astro'
+import { getToc, type TocSection } from '@/lib/toc'
+import Callout from '@/components/mdx/Callout.astro'
+import Derivation from '@/components/mdx/Derivation.astro'
+import DualView from '@/components/mdx/DualView.astro'
+import KeyFormulas from '@/components/mdx/KeyFormulas.astro'
+import QuizBlock from '@/components/mdx/QuizBlock.astro'
+import Sim from '@/components/mdx/Sim.astro'
+import Term from '@/components/mdx/Term.astro'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('sections')
+  return entries.map((entry: { id: string }) => {
+    const [chapter, ...rest] = entry.id.split('/')
+    return { params: { chapter, section: rest.join('/') }, props: { entryId: entry.id } }
+  })
+}
+
+const { entryId } = Astro.props
+const entries = await getCollection('sections')
+const entry = entries.find((e: { id: string }) => e.id === entryId)!
+const { Content, headings } = await render(entry)
+
+const toc = await getToc()
+const section = toc.flatMap((c) => c.sections).find((s) => s.id === entryId) as TocSection
+
+/**
+ * MDX 里可以直接用这些组件，不需要 import。
+ * 需要水合的（模拟、自测）走 Sim / QuizBlock 这两个 .astro 壳，
+ * 因为 client:* 指令要求组件在编译期被静态导入。
+ */
+const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Sim, Term }
+---
+
+<ChapterLayout section={section} headings={headings}>
+  <Content components={components} />
+</ChapterLayout>

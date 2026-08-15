@@ -1,0 +1,164 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { CHAPTERS } from '@/data/chapters'
+import { getToc } from '@/lib/toc'
+
+export async function getStaticPaths() {
+  return CHAPTERS.map((c) => ({ params: { chapter: c.id }, props: { chapterId: c.id } }))
+}
+
+const { chapterId } = Astro.props
+const toc = await getToc()
+const chapter = toc.find((c) => c.id === chapterId)!
+const base = import.meta.env.BASE_URL
+
+const prereqChapters = chapter.prereqs
+  .map((id) => toc.find((c) => c.id === id))
+  .filter((c): c is NonNullable<typeof c> => !!c)
+
+const simCount = chapter.sections.reduce((n, s) => n + s.sims.length, 0)
+const first = chapter.sections[0]
+---
+
+<BaseLayout
+  title={`第 ${chapter.num} 章 ${chapter.title}`}
+  description={chapter.blurb}
+  currentChapter={chapter.id}
+>
+  <div class="mx-auto w-full max-w-[900px] px-5 py-10 lg:px-8">
+    <nav
+      aria-label="面包屑"
+      class="mb-5 flex items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]"
+    >
+      <a href={base} class="hover:text-[var(--accent-text)]">首页</a>
+      <span aria-hidden="true">/</span>
+      <span class="text-[var(--text-muted)]">第 {chapter.num} 章</span>
+    </nav>
+
+    <header class="mb-9">
+      <p class="mb-1.5 font-mono text-[13px] text-[var(--accent-text)]">第 {chapter.num} 章</p>
+      <h1 class="text-[32px] leading-tight font-bold tracking-tight">{chapter.title}</h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed text-[var(--text-muted)]">{chapter.blurb}</p>
+
+      <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-y border-[var(--border)] py-4 text-[13px]">
+        <div>
+          <dt class="text-[var(--text-faint)]">小节</dt>
+          <dd class="mt-0.5 font-mono text-[15px]">{chapter.sections.length}</dd>
+        </div>
+        <div>
+          <dt class="text-[var(--text-faint)]">已定稿</dt>
+          <dd class="mt-0.5 font-mono text-[15px]">
+            {chapter.doneCount}
+            <span class="text-[var(--text-faint)]">/{chapter.sections.length}</span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-[var(--text-faint)]">交互模拟</dt>
+          <dd class="mt-0.5 font-mono text-[15px]">{simCount}</dd>
+        </div>
+        <div>
+          <dt class="text-[var(--text-faint)]">预计用时</dt>
+          <dd class="mt-0.5 font-mono text-[15px]">
+            {Math.round(chapter.minutes / 60)} <span class="text-[13px]">小时</span>
+          </dd>
+        </div>
+        {
+          prereqChapters.length > 0 && (
+            <div class="min-w-0">
+              <dt class="text-[var(--text-faint)]">建议先读</dt>
+              <dd class="mt-0.5 flex flex-wrap gap-x-2 gap-y-1 text-[13.5px]">
+                {prereqChapters.map((c) => (
+                  <a href={c.href} class="text-[var(--accent-text)] hover:underline">
+                    第 {c.num} 章
+                  </a>
+                ))}
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    {
+      chapter.sections.length === 0 ? (
+        <div class="rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-5 py-10 text-center">
+          <p class="text-[14.5px] text-[var(--text-muted)]">本章内容尚未撰写。</p>
+          <p class="mt-1.5 text-[13px] text-[var(--text-faint)]">
+            往 <code class="font-mono">src/content/{chapter.id}/</code> 里添加 mdx 文件即可，
+            目录树会自动收录。
+          </p>
+        </div>
+      ) : (
+        <ol class="space-y-2">
+          {chapter.sections.map((s) => (
+            <li>
+              <a
+                href={s.href}
+                class="group flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3.5 transition-colors hover:border-[var(--border-strong)]"
+              >
+                <span class="mt-0.5 w-10 shrink-0 font-mono text-[12.5px] text-[var(--text-faint)]">
+                  {s.section ?? '—'}
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="flex flex-wrap items-center gap-2">
+                    <span class="text-[15px] font-medium group-hover:text-[var(--accent-text)]">
+                      {s.title}
+                    </span>
+                    {s.sims.length > 0 && (
+                      <span class="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10.5px] text-[var(--accent-text)]">
+                        ◈ {s.sims.length} 个模拟
+                      </span>
+                    )}
+                    {s.status === 'stub' && (
+                      <span class="rounded-full bg-[var(--bg-subtle)] px-2 py-0.5 text-[10.5px] text-[var(--text-faint)]">
+                        待撰写
+                      </span>
+                    )}
+                  </span>
+                  {s.summary && (
+                    <span class="mt-1 block text-[13.5px] leading-relaxed text-[var(--text-muted)]">
+                      {s.summary}
+                    </span>
+                  )}
+                </span>
+                <span
+                  class="ql-read-dot mt-2 size-2 shrink-0 rounded-full bg-transparent"
+                  data-section-link={s.id}
+                  aria-hidden="true"
+                />
+              </a>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+
+    {
+      first && (
+        <div class="mt-8">
+          <a
+            href={first.href}
+            class="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
+          >
+            从 {first.label} 开始 →
+          </a>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  import { loadProgress, onProgressChange, type ProgressState } from '@/lib/progress'
+
+  function paint(state: ProgressState) {
+    document.querySelectorAll<HTMLElement>('a .ql-read-dot[data-section-link]').forEach((dot) => {
+      const p = state[dot.dataset.sectionLink!]
+      const level = p?.mastery ?? 0
+      dot.style.background = p?.read || level > 0 ? (level >= 2 ? 'var(--c-energy)' : 'var(--accent)') : 'transparent'
+    })
+  }
+
+  paint(loadProgress())
+  onProgressChange(paint)
+</script>

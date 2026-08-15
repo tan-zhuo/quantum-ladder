@@ -1,0 +1,190 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import MasteryPicker from '@/components/progress/MasteryPicker'
+import { getLabNeighbours, type LabModule } from '@/lib/lab'
+import { getToc } from '@/lib/toc'
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  module: LabModule
+  headings: MarkdownHeading[]
+}
+
+const { module, headings } = Astro.props
+const { prev, next, index, total } = await getLabNeighbours(module.id)
+const base = import.meta.env.BASE_URL
+
+// 「深入阅读」：把 frontmatter 里的教材小节 id 解析成带标题的链接
+const toc = await getToc()
+const allSections = toc.flatMap((c) => c.sections)
+const related = module.related
+  .map((id) => allSections.find((s) => s.id === id))
+  .filter((s): s is NonNullable<typeof s> => !!s)
+
+const outline = headings.filter((h) => h.depth === 2)
+---
+
+<BaseLayout title={module.label} description={module.goal} currentId={`lab/${module.id}`}>
+  {prev && <link rel="prev" href={`${base}lab/${prev.id}/`.replace(/\/{2,}/g, '/')} slot="head" />}
+  {next && <link rel="next" href={`${base}lab/${next.id}/`.replace(/\/{2,}/g, '/')} slot="head" />}
+
+  <div class="mx-auto w-full max-w-[1180px] px-5 py-8 lg:px-8 xl:max-w-[1280px]">
+    <nav aria-label="面包屑" class="mb-4 flex flex-wrap items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]">
+      <a href={base} class="hover:text-[var(--accent-text)]">首页</a>
+      <span aria-hidden="true">/</span>
+      <a href={`${base}lab/`} class="hover:text-[var(--accent-text)]">3D 实验室</a>
+      <span aria-hidden="true">/</span>
+      <span class="text-[var(--text-muted)]">模块 {module.num}</span>
+    </nav>
+
+    <header class="mb-8">
+      <p class="mb-1.5 font-mono text-[13px] text-[var(--accent-text)]">模块 {module.num}</p>
+      <h1 class="text-[28px] leading-tight font-bold tracking-tight sm:text-[34px]">
+        {module.title}
+      </h1>
+      <p class="mt-3 max-w-[70ch] text-[16px] leading-relaxed text-[var(--text-muted)]">
+        {module.goal}
+      </p>
+
+      {
+        module.status !== 'done' && (
+          <p class="mt-4 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-3 py-2 text-[13px] text-[var(--text-muted)]">
+            {module.status === 'stub'
+              ? '本模块的 3D 场景尚在建设中，当前页面给出的是场景规格与要点。'
+              : '本模块为草稿：场景可用，文字与观察指南还在打磨。'}
+          </p>
+        )
+      }
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        {
+          module.youWillSee.length > 0 && (
+            <section class="rounded-xl border border-[var(--accent)]/25 bg-[var(--accent-soft)]/40 px-3.5 py-3">
+              <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--accent-text)] uppercase">
+                你将看见什么
+              </h2>
+              <ul class="space-y-1 text-[13.5px] text-[var(--text-muted)]">
+                {module.youWillSee.map((s) => (
+                  <li class="flex gap-1.5">
+                    <span aria-hidden="true" class="mt-[3px] shrink-0 text-[var(--accent)]">
+                      ◆
+                    </span>
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          module.prereqs.length > 0 && (
+            <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
+              <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
+                前置知识
+              </h2>
+              <ul class="space-y-1 text-[13.5px] text-[var(--text-muted)]">
+                {module.prereqs.map((s) => (
+                  <li class="flex gap-1.5">
+                    <span aria-hidden="true" class="text-[var(--text-faint)]">
+                      ·
+                    </span>
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </div>
+
+      {
+        outline.length > 2 && (
+          <nav aria-label="本页大纲" class="no-print mt-6 flex flex-wrap gap-x-4 gap-y-1 border-t border-[var(--border)] pt-4 text-[13px]">
+            {outline.map((h) => (
+              <a href={`#${h.slug}`} class="text-[var(--text-faint)] transition-colors hover:text-[var(--accent-text)]">
+                {h.text}
+              </a>
+            ))}
+          </nav>
+        )
+      }
+    </header>
+
+    <article class="prose max-w-none">
+      <slot />
+    </article>
+
+    {
+      related.length > 0 && (
+        <section class="mt-12 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4">
+          <h2 class="mb-2 text-[12px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
+            深入阅读 · 教材对应小节
+          </h2>
+          <p class="mb-3 text-[13px] text-[var(--text-muted)]">
+            3D 场景负责建立图像，完整的推导与习题在教材部分。
+          </p>
+          <ul class="grid gap-1.5 sm:grid-cols-2">
+            {related.map((s) => (
+              <li>
+                <a
+                  href={`${base}${s.href.replace(/^\//, '')}`}
+                  class="flex items-baseline gap-2 rounded-lg px-2 py-1.5 text-[13.5px] transition-colors hover:bg-[var(--bg-subtle)]"
+                >
+                  <span class="font-mono text-[11.5px] text-[var(--text-faint)]">{s.section}</span>
+                  <span class="text-[var(--accent-text)]">{s.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="no-print mt-8 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4">
+      <h2 class="mb-2 text-[12px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
+        学完这一模块
+      </h2>
+      <MasteryPicker sectionId={`lab/${module.id}`} client:visible />
+    </section>
+
+    <nav class="no-print mt-10 flex items-stretch justify-between gap-3 border-t border-[var(--border)] pt-6">
+      {
+        prev ? (
+          <a
+            href={`${base}lab/${prev.id}/`.replace(/\/{2,}/g, '/')}
+            class="group flex-1 rounded-xl border border-[var(--border)] px-4 py-3 transition-colors hover:border-[var(--border-strong)]"
+          >
+            <p class="text-[11.5px] text-[var(--text-faint)]">← 上一模块</p>
+            <p class="mt-0.5 text-[14px] font-medium text-[var(--text)]">{prev.label}</p>
+          </a>
+        ) : (
+          <div class="flex-1" />
+        )
+      }
+      <span class="self-center px-1 font-mono text-[12px] whitespace-nowrap text-[var(--text-faint)]">
+        {index} / {total}
+      </span>
+      {
+        next ? (
+          <a
+            href={`${base}lab/${next.id}/`.replace(/\/{2,}/g, '/')}
+            class="group flex-1 rounded-xl border border-[var(--border)] px-4 py-3 text-right transition-colors hover:border-[var(--border-strong)]"
+          >
+            <p class="text-[11.5px] text-[var(--text-faint)]">下一模块 →</p>
+            <p class="mt-0.5 text-[14px] font-medium text-[var(--text)]">{next.label}</p>
+          </a>
+        ) : (
+          <div class="flex-1" />
+        )
+      }
+    </nav>
+  </div>
+
+  <script>
+    // 进入模块即记一次访问，首页的「继续学习」据此定位
+    import { markVisited } from '@/lib/progress'
+    const id = document.body.dataset.sectionId
+    if (id) markVisited(id)
+  </script>
+</BaseLayout>

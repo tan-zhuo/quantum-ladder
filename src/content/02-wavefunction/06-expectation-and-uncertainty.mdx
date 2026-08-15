@@ -1,0 +1,332 @@
+---
+title: 期望值、方差与不确定性原理
+section: '2.6'
+order: 6
+summary: 从概率分布里提取数字：平均值、涨落，以及一条限制它们的不等式。
+status: done
+prereqs:
+  - 02-wavefunction/05-stationary-states
+objectives:
+  - 计算任意可观测量的期望值与标准差
+  - 说明动量算符为什么是 −iħ∂/∂x，而不是别的什么
+  - 正确陈述不确定性原理，并指出「观测者干扰」式解读的问题
+  - 用 Ehrenfest 定理说明经典力学如何从量子力学中浮现
+sims: ['infinite-well']
+---
+
+有了 $|\Psi|^2$，我们就有了一个概率分布。剩下的事情是统计学：算平均值，算涨落。
+
+## 期望值
+
+<Term id="expectation">期望值</Term>的定义直接来自概率论：
+
+$$
+\langle x\rangle=\int_{-\infty}^{\infty}x\,|\Psi(x,t)|^2\,\dd x
+$$
+
+<Callout type="misconception" title="期望值不是「最可能的测量结果」">
+双峰分布的例子最能说明问题：粒子有 50% 概率出现在 $x=-a$ 附近、50% 在 $x=+a$ 附近，
+那么 $\langle x\rangle=0$——而 $x=0$ 恰恰是概率**最低**的地方。
+
+「期望值」是**大量重复测量的平均值**，不是任何一次测量的预言。
+而且必须强调：是对**同样制备的大量拷贝**各测一次，
+不是对同一个粒子反复测——后者第一次测完态就变了（[3.8 节](/ch/03-formalism/08-measurement/)）。
+</Callout>
+
+## 动量算符从哪来
+
+位置的期望值好写。动量呢？我们并不知道「粒子的动量分布」长什么样。
+但有一条线索：$\langle p\rangle$ 应该等于 $m\,\dd\langle x\rangle/\dd t$。
+
+<Derivation title="推导：从 d⟨x⟩/dt 反推动量算符" level="进阶" minutes={7}>
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=\int x\frac{\partial}{\partial t}|\Psi|^2\,\dd x
+$$
+
+用 [2.2 节](/ch/02-wavefunction/02-normalization-and-current/)得到的连续性方程
+$\partial_t|\Psi|^2=-\partial_x j$：
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=-\int x\frac{\partial j}{\partial x}\dd x
+$$
+
+分部积分，边界项因 $\Psi$ 可归一化而消失：
+
+$$
+=\int j\,\dd x=\int\frac{\ii\hbar}{2m}\left(\Psi\frac{\partial\Psi^*}{\partial x}-\Psi^*\frac{\partial\Psi}{\partial x}\right)\dd x
+$$
+
+对第一项再作一次分部积分（把导数从 $\Psi^*$ 挪到 $\Psi$），两项合并：
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=-\frac{\ii\hbar}{m}\int\Psi^*\frac{\partial\Psi}{\partial x}\,\dd x
+$$
+
+于是
+
+$$
+\langle p\rangle=m\frac{\dd\langle x\rangle}{\dd t}=\int\Psi^*\left(-\ii\hbar\frac{\partial}{\partial x}\right)\Psi\,\dd x
+$$
+
+括号里的东西就是**动量算符**：
+
+$$
+\hat p=-\ii\hbar\frac{\partial}{\partial x}
+$$
+
+它不是被假设的，是被推出来的——只要你承认 Born 规则、薛定谔方程，
+以及「动量 = 质量 × 速度」这个经典对应。
+
+</Derivation>
+
+一般地，任何经典量 $A(x,p)$ 对应的算符由代换 $x\to x$、$p\to-\ii\hbar\partial_x$ 得到，
+其期望值为
+
+$$
+\langle \hat A\rangle=\int\Psi^*\,\hat A\,\Psi\,\dd x
+$$
+
+注意 $\hat A$ 必须夹在 $\Psi^*$ 和 $\Psi$ **中间**——算符要作用在右边的 $\Psi$ 上，顺序不能随便换。
+
+<Callout type="insight" title="为什么动量算符里有 i">
+在动量本征态 $\ee^{\ii px/\hbar}$ 上，$-\ii\hbar\partial_x$ 给出本征值 $p$：
+
+$$
+-\ii\hbar\frac{\partial}{\partial x}\ee^{\ii px/\hbar}=p\,\ee^{\ii px/\hbar}
+$$
+
+那个 $\ii$ 正是用来抵消求导带来的 $\ii$ 的。它同时保证 $\hat p$ 是**厄米**算符，
+从而本征值为实数——如果去掉 $\ii$，本征值就成了纯虚数，没法当动量用。
+
+de Broglie 关系 $p=\hbar k$ 在这里成了一条定义式的直接后果。
+</Callout>
+
+## 方差与标准差
+
+$$
+\sigma_A^2=\langle \hat A^2\rangle-\langle \hat A\rangle^2
+$$
+
+$\sigma_A$ 衡量的是**测量结果的离散程度**。特别地，$\sigma_A=0$ 当且仅当 $\Psi$ 是 $\hat A$ 的本征态——
+这时每次测量都给出同一个值。
+
+<Derivation title="例：无限深势阱基态的 σₓ 与 σ_p" level="进阶" minutes={6}>
+
+基态 $\psi_1=\sqrt{2/L}\sin(\pi x/L)$，定义域 $[0,L]$。
+
+**位置**：由对称性 $\langle x\rangle=L/2$。
+
+$$
+\langle x^2\rangle=\frac{2}{L}\int_0^L x^2\sin^2\frac{\pi x}{L}\dd x
+=\frac{2}{L}\int_0^L x^2\cdot\frac{1-\cos(2\pi x/L)}{2}\dd x
+$$
+
+第一项给 $\frac{L^2}{3}$；第二项两次分部积分后给 $-\frac{L^2}{2\pi^2}$。合起来
+
+$$
+\langle x^2\rangle=L^2\left(\frac13-\frac{1}{2\pi^2}\right)
+$$
+
+$$
+\sigma_x^2=\langle x^2\rangle-\frac{L^2}{4}=L^2\left(\frac{1}{12}-\frac{1}{2\pi^2}\right)
+\approx0.0326\,L^2
+\;\Longrightarrow\;\sigma_x\approx0.181\,L
+$$
+
+**动量**：$\langle p\rangle=0$（实波函数，$\Psi^*\partial_x\Psi$ 的积分为纯虚数被 $-\ii\hbar$ 抵成实数后由对称性为零；
+物理上就是左右行等概率）。而
+
+$$
+\langle p^2\rangle=2m\langle T\rangle=2mE_1=\frac{\pi^2\hbar^2}{L^2}
+\;\Longrightarrow\;\sigma_p=\frac{\pi\hbar}{L}
+$$
+
+**乘积**：
+
+$$
+\sigma_x\sigma_p\approx0.181L\cdot\frac{\pi\hbar}{L}=0.568\,\hbar\approx1.14\cdot\frac{\hbar}{2}
+$$
+
+确实大于 $\hbar/2$，而且相当接近下限。注意 $L$ **完全约掉了**——
+把盒子做小，$\sigma_x$ 按比例变小，$\sigma_p$ 按比例变大，乘积纹丝不动。
+这在本节的模拟里可以直接看到。
+
+</Derivation>
+
+## 不确定性原理
+
+$$
+\sigma_x\,\sigma_p\ \ge\ \frac{\hbar}{2}
+$$
+
+严格证明要用到广义不确定性关系（[3.6 节](/ch/03-formalism/06-commutators/)），
+这里先把**它到底在说什么**讲清楚。
+
+<Callout type="misconception" title="这不是「测量干扰」">
+流行的说法是：「要看清电子位置就得用短波长光子去照它，光子把动量踢给了电子，
+所以动量变得不确定。」
+
+这个说法（海森堡显微镜）有历史价值，但作为对不等式的解释是**错的**，理由很简单：
+
+$\sigma_x$ 和 $\sigma_p$ 是**同一个波函数**的两个统计性质。
+你可以在完全不测量的情况下，纯粹用纸笔从 $\Psi$ 算出它们——上面的推导就是这么做的。
+不等式在你决定测什么之前就已经成立了。
+
+正确的说法是：$\sigma_x$ 小的波函数（空间上很窄）
+在傅里叶展开中**必然**包含很宽的波数范围，因而 $\sigma_p$ 大。
+这是傅里叶分析的定理，对声波、光脉冲同样成立
+（这就是为什么超短激光脉冲必然有很宽的光谱）。
+量子力学的独特之处只在于 $p=\hbar k$ 把「波数宽度」翻译成了「动量不确定度」。
+</Callout>
+
+<DualView>
+<div slot="left">
+
+**该怎么读这条不等式**
+
+它是关于**态**的陈述，不是关于**仪器**的陈述。
+
+它说的是：不存在这样的量子态，其位置分布和动量分布同时任意窄。
+无论你用多好的仪器、测不测量，这条限制都在。
+
+达到等号的态是**高斯波包**——所以高斯波包在量子力学里享有特殊地位
+（[2.10 节](/ch/02-wavefunction/10-free-particle/)）。
+
+</div>
+<div slot="right">
+
+$$
+\sigma_x\sigma_p\ge\frac{\hbar}{2}
+$$
+
+数量级估算（常用）：
+
+$$
+\Delta p\sim\frac{\hbar}{\Delta x},\qquad
+E\sim\frac{(\Delta p)^2}{2m}\sim\frac{\hbar^2}{2m(\Delta x)^2}
+$$
+
+把粒子限制在尺度 $L$ 内，零点动能就 $\sim\hbar^2/2mL^2$。
+无限深势阱的 $E_1=\pi^2\hbar^2/2mL^2$ 与这个估计只差一个 $\pi^2$ 因子。
+
+</div>
+</DualView>
+
+<Sim name="infinite-well" />
+
+拖动阱宽 $L$ 并观察读数区的 $\Delta x/L$：它是个**常数**（约 0.181）。
+也就是说 $\sigma_x\propto L$，而能量 $\propto1/L^2$ 意味着 $\sigma_p\propto1/L$。
+乘积与 $L$ 无关——不等式在任何盒子尺寸下都同样紧。
+
+## Ehrenfest 定理：经典力学的回归
+
+<Derivation title="推导：⟨x⟩ 与 ⟨p⟩ 满足牛顿方程" level="进阶" minutes={5}>
+
+上面已经得到第一式：
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=\frac{\langle p\rangle}{m}
+$$
+
+对 $\langle p\rangle$ 做类似的计算（对时间求导，代入薛定谔方程，分部积分）可得
+
+$$
+\frac{\dd\langle p\rangle}{\dd t}=\left\langle-\frac{\partial V}{\partial x}\right\rangle=\langle F\rangle
+$$
+
+两式合起来正是牛顿第二定律的期望值版本。
+
+**但请看清右边**：是 $\langle F(x)\rangle$，不是 $F(\langle x\rangle)$。
+这两者一般不相等。把 $F$ 在 $\langle x\rangle$ 附近展开：
+
+$$
+\langle F(x)\rangle=F(\langle x\rangle)+\frac12 F''(\langle x\rangle)\,\sigma_x^2+\cdots
+$$
+
+只有当力在波包宽度范围内近似线性（$F''\approx0$），或者波包足够窄（$\sigma_x$ 很小）时，
+两者才一致，期望值才真正沿经典轨道运动。
+
+这解释了**经典力学何时是好近似**：宏观物体的 $\sigma_x$ 小得可笑，
+而且日常力场在那个尺度上极其平滑。也解释了何时不是：
+电子过双缝时波包宽度与缝间距可比，$F''$ 项完全不能忽略。
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: '期望值', latex: '\\langle \\hat A\\rangle=\\int\\Psi^*\\hat A\\Psi\\,\\dd x', note: '算符必须夹在中间，作用于右侧的 Ψ' },
+    { name: '动量算符', latex: '\\hat p=-\\ii\\hbar\\frac{\\partial}{\\partial x}', note: '由 ⟨p⟩ = m d⟨x⟩/dt 推出，不是假设' },
+    { name: '标准差', latex: '\\sigma_A=\\sqrt{\\langle \\hat A^2\\rangle-\\langle \\hat A\\rangle^2}', note: 'σ_A = 0 ⟺ Ψ 是 Â 的本征态' },
+    { name: '不确定性原理', latex: '\\sigma_x\\sigma_p\\ge\\frac{\\hbar}{2}', note: '关于态的性质，与是否测量无关；高斯波包取等号' },
+    { name: 'Ehrenfest 定理', latex: 'm\\frac{\\dd^2\\langle x\\rangle}{\\dd t^2}=\\left\\langle-\\frac{\\partial V}{\\partial x}\\right\\rangle', note: '注意是 ⟨F(x)⟩ 而非 F(⟨x⟩)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'unc-1',
+      prompt: '关于不确定性原理 σₓσ_p ≥ ħ/2，下列哪个说法是正确的？',
+      options: [
+        '它是同一个波函数的两个统计量之间的关系，与是否进行测量无关',
+        '它描述测量位置时仪器对动量造成的扰动',
+        '它说明我们的仪器精度还不够高',
+        '它只在实际做测量时才成立',
+      ],
+      answer: 0,
+      distractors: {
+        1: '海森堡显微镜是有历史价值的直觉图像，但不等式本身可以在完全不测量的情况下由 Ψ 纯计算得到。',
+        2: '这是关于自然的限制，不是技术限制。',
+        3: '不等式对任何合法波函数恒成立。',
+      },
+      explain: 'σₓ 与 σ_p 都是从 Ψ 算出来的数。位置窄的波函数在傅里叶展开中必然含有宽的波数分布——这是傅里叶分析的定理，对经典波同样成立。量子力学的贡献是 p = ħk 这一步翻译。',
+    },
+    {
+      id: 'unc-2',
+      prompt: '无限深势阱的基态中，σₓσ_p 的值随阱宽 L 如何变化？',
+      options: [
+        '与 L 无关，恒为约 1.14 × ħ/2',
+        '正比于 L',
+        '反比于 L',
+        '正比于 L²',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'σₓ ∝ L 但 σ_p ∝ 1/L，乘积中 L 约掉。',
+        2: '同上。',
+      },
+      explain: 'σₓ ≈ 0.181L，σ_p = πħ/L，乘积 ≈ 0.568ħ 与 L 无关。缩小盒子会同步地压窄位置分布、展宽动量分布，不等式的「紧度」保持不变。',
+    },
+    {
+      id: 'unc-3',
+      prompt: 'Ehrenfest 定理给出 d⟨p⟩/dt = ⟨−∂V/∂x⟩。为什么这不等于说「量子力学就是经典力学」？',
+      options: [
+        '因为右边是 ⟨F(x)⟩ 而非 F(⟨x⟩)，两者仅在力近似线性或波包很窄时才相等',
+        '因为期望值本身没有物理意义',
+        '因为该式只对定态成立',
+        '因为该式忽略了势能项',
+      ],
+      answer: 0,
+      distractors: {
+        1: '期望值是可测的物理量（大量重复实验的平均）。',
+        2: '推导对任意波函数成立。',
+      },
+      explain: '⟨F(x)⟩ = F(⟨x⟩) + ½F″(⟨x⟩)σₓ² + …。当力场在波包宽度上非线性时，修正项不可忽略，期望值不再沿经典轨道运动。这正是量子效应显著的判据。',
+    },
+    {
+      id: 'unc-4',
+      type: 'numeric',
+      prompt: '把一个电子限制在 0.1 nm（约一个原子的尺度）内。用 ΔxΔp ≈ ħ/2 与 E ≈ (Δp)²/2m 估算其零点动能，单位 eV。（取 ħc = 197.3 eV·nm，mc² = 511000 eV）',
+      answer: 0.95,
+      tolerance: 0.25,
+      unit: 'eV',
+      explain: 'Δp c ≈ ħc/(2Δx) = 197.3/(2×0.1) = 986.5 eV。E = (Δpc)²/(2mc²) = 986.5²/(2×511000) ≈ 0.95 eV。数量级正是原子的电子伏特能标——这不是巧合，原子的能标本来就由这个平衡决定。',
+    },
+  ]}
+/>
+
+## 接下来
+
+工具备齐了。接下来五节把它们用在具体的势上，从最简单的开始：
+一个粒子，两堵无限高的墙。

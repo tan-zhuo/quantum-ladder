@@ -1,0 +1,72 @@
+---
+num: '99'
+title: 附录：数学工具与符号约定
+goal: 把全站用到的记号、单位与数学工具集中在一处，随用随查。
+youWillSee:
+  - 全站统一的符号表与单位约定
+  - 每个 3D 场景背后的数值方法与它们的误差来源
+prereqs: []
+scenes: []
+related:
+  - appendix-a-math/01-linear-algebra
+  - appendix-a-math/02-fourier
+  - appendix-b-formulas/01-formula-table
+  - appendix-c-numerics/01-finite-difference
+  - appendix-c-numerics/02-split-operator
+phase: 3
+status: done
+---
+
+## 符号约定
+
+| 记号 | 含义 |
+| --- | --- |
+| $\ket{\psi}$、$\bra{\psi}$ | 态矢量与其对偶 |
+| $\braket{\phi}{\psi}$ | 内积（左边取复共轭） |
+| $\hat A$ | 算符（戴帽） |
+| $\vec r$ | Bloch 矢量 |
+| $\rho$ | 密度矩阵 |
+| $\psi_{n\ell m}$ | 氢原子波函数，下标依次为主、角、磁量子数 |
+| $a_0$ | 玻尔半径 |
+
+## 单位约定
+
+3D 场景里为了让数值好看，一律采用**自然单位**：
+
+- 一维问题：$\hbar = m = 1$。能量与长度都是无量纲的，只有比值有意义。
+- 氢原子：$\hbar = m_e = e = 1$（原子单位）。长度单位是玻尔半径 $a_0 = 0.529$ Å，能量单位是 Hartree $= 27.211$ eV。
+- 自旋：$\hbar/2$ 为单位，泡利矩阵的本征值取 $\pm1$。
+
+场景里显示的数字都在这套单位下。要换回国际单位，乘上相应的常数即可。
+
+## 每个场景背后的数值方法
+
+| 场景 | 方法 | 主要误差来源 |
+| --- | --- | --- |
+| Bloch 球 | 罗德里格斯有限转动 | 无（模长严格守恒） |
+| 氢原子轨道 | 径向逆 CDF + 角向拒绝采样 | 蒙特卡洛统计涨落 $\sim 1/\sqrt N$ |
+| 一维势阱 | 三点差分 + QL 求本征值 + 反迭代求本征矢 | 网格离散 $O(\dd x^2)$；有限窗口对弱束缚态的挤压 |
+| 双缝 | 惠更斯子波直接求和（非远场近似） | 子波源数目有限（每缝 11 个） |
+| 隧道效应 | split-operator，对称分裂 | 时间步 $O(\dd t^3)$；边缘吸收层 |
+| 路径积分 | 路径蒙特卡洛采样 | 采样数；离散时间步 |
+
+数值方法的完整推导见[附录 C](/ch/appendix-c-numerics/01-finite-difference/)。
+
+## 常用数学工具
+
+- **线性代数**：厄米算符、本征分解、张量积 → [附录 A.1](/ch/appendix-a-math/01-linear-algebra/)
+- **傅里叶变换**：位置-动量对偶、不确定性关系的数学来源 → [附录 A.2](/ch/appendix-a-math/02-fourier/)
+- **特殊函数**：Hermite（谐振子）、Laguerre（氢原子径向）、Legendre 与球谐（角向）→ [附录 A.3](/ch/appendix-a-math/03-special-functions/)
+
+## 常数速查
+
+| 常数 | 值 |
+| --- | --- |
+| $\hbar$ | $1.0546\times10^{-34}$ J·s $= 6.582\times10^{-16}$ eV·s |
+| $m_e$ | $9.109\times10^{-31}$ kg $= 511$ keV/$c^2$ |
+| $a_0$ | $5.292\times10^{-11}$ m |
+| Hartree | $27.211$ eV |
+| Rydberg | $13.606$ eV |
+| $k_B$ | $8.617\times10^{-5}$ eV/K |
+
+完整表格见[附录 B](/ch/appendix-b-formulas/01-formula-table/)，或按快捷键 <kbd>f</kbd> 呼出全站公式速查面板。

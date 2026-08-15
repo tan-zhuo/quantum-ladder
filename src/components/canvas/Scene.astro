@@ -1,0 +1,78 @@
+---
+import BlochSphereScene from './BlochSphere/BlochSphereScene'
+import WavefunctionScene from './Wavefunction/WavefunctionScene'
+import HydrogenOrbitalScene from './HydrogenOrbital/HydrogenOrbitalScene'
+import PotentialWellScene from './PotentialWell/PotentialWellScene'
+import DoubleSlitScene from './DoubleSlit/DoubleSlitScene'
+import TunnelingScene from './Tunneling/TunnelingScene'
+import SternGerlachScene from './SternGerlach/SternGerlachScene'
+import EntanglementScene from './Entanglement/EntanglementScene'
+import SuperpositionScene from './Superposition/SuperpositionScene'
+import DecoherenceScene from './Decoherence/DecoherenceScene'
+import PathIntegralScene from './PathIntegral/PathIntegralScene'
+import IdenticalParticlesScene from './IdenticalParticles/IdenticalParticlesScene'
+
+/**
+ * MDX 里嵌入 3D 场景的唯一入口：<Scene name="bloch-sphere" />
+ *
+ * 和 src/components/mdx/Sim.astro 同一个套路：client:* 指令要求组件在编译期
+ * 是静态引用，所以这里必须逐个 if 而不是查表——从对象里取组件再挂 client:visible，
+ * Astro 在编译期认不出它对应哪个模块，构建会报 NoMatchingImport。
+ *
+ * 一律用 client:visible：一个模块页可能有两三个场景，每个场景都是几十上百 KB 的
+ * three.js 运行时 + 数万个顶点，滚到哪个才初始化哪个，首屏才不会被拖垮。
+ */
+
+export const SCENE_NAMES = [
+  'bloch-sphere',
+  'wavefunction',
+  'hydrogen-orbital',
+  'potential-well',
+  'double-slit',
+  'tunneling',
+  'stern-gerlach',
+  'entanglement',
+  'superposition',
+  'decoherence',
+  'path-integral',
+  'identical-particles',
+] as const
+
+export type SceneName = (typeof SCENE_NAMES)[number]
+
+interface Props {
+  name: SceneName
+}
+
+const { name } = Astro.props
+
+if (!SCENE_NAMES.includes(name)) {
+  throw new Error(
+    `未知的 3D 场景 "${name}"。可用的有：${SCENE_NAMES.join('、')}。` +
+      `新增场景请在 src/components/canvas/Scene.astro 里登记。`,
+  )
+}
+---
+
+<div class="ql-canvas-host">
+  {name === 'bloch-sphere' && <BlochSphereScene client:visible />}
+  {name === 'wavefunction' && <WavefunctionScene client:visible />}
+  {name === 'hydrogen-orbital' && <HydrogenOrbitalScene client:visible />}
+  {name === 'potential-well' && <PotentialWellScene client:visible />}
+  {name === 'double-slit' && <DoubleSlitScene client:visible />}
+  {name === 'tunneling' && <TunnelingScene client:visible />}
+  {name === 'stern-gerlach' && <SternGerlachScene client:visible />}
+  {name === 'entanglement' && <EntanglementScene client:visible />}
+  {name === 'superposition' && <SuperpositionScene client:visible />}
+  {name === 'decoherence' && <DecoherenceScene client:visible />}
+  {name === 'path-integral' && <PathIntegralScene client:visible />}
+  {name === 'identical-particles' && <IdenticalParticlesScene client:visible />}
+</div>
+
+<noscript>
+  <div
+    class="my-8 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-4 py-6 text-center text-[13.5px] text-[var(--text-muted)]"
+  >
+    这里是一个 3D 交互场景（{name}），需要启用 JavaScript 与 WebGL 才能运行。
+  </div>
+</noscript>

@@ -1,0 +1,119 @@
+---
+import { FORMULA_GROUPS } from '@/data/formulas'
+import Katex from '@/components/math/Katex.astro'
+
+const base = import.meta.env.BASE_URL
+---
+
+<!--
+  公式速查抽屉。整块在构建期渲染成 HTML（含 KaTeX 排版结果），
+  客户端只有几行开关逻辑——不给每个页面塞 280KB 的 katex.js。
+-->
+<div
+  id="ql-formula-panel"
+  class="no-print pointer-events-none fixed inset-0 z-50"
+  aria-hidden="true"
+>
+  <div
+    data-formula-backdrop
+    class="absolute inset-0 bg-black/30 opacity-0 transition-opacity duration-200"
+  >
+  </div>
+
+  <aside
+    data-formula-drawer
+    role="dialog"
+    aria-modal="false"
+    aria-label="公式速查"
+    class="absolute top-0 right-0 flex h-full w-full max-w-[420px] translate-x-full flex-col border-l border-[var(--border)] bg-[var(--bg-elevated)] shadow-2xl transition-transform duration-200"
+  >
+    <header class="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+      <h2 class="text-[15px] font-semibold">公式速查</h2>
+      <div class="flex items-center gap-1">
+        <a
+          href={`${base}ch/appendix-b-formulas/`}
+          class="rounded-md px-2 py-1 text-[12.5px] text-[var(--text-muted)] hover:bg-[var(--bg-subtle)]"
+        >
+          完整版 →
+        </a>
+        <button
+          type="button"
+          data-formula-close
+          aria-label="关闭"
+          class="rounded-md p-1.5 text-[var(--text-faint)] hover:bg-[var(--bg-subtle)] hover:text-[var(--text)]"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+      {
+        FORMULA_GROUPS.map((group) => (
+          <section class="mb-5">
+            <h3 class="mb-2 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+              {group.title}
+            </h3>
+            <ul class="space-y-3">
+              {group.items.map((item) => (
+                <li class="rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-2.5">
+                  <div class="mb-1 flex items-baseline justify-between gap-2">
+                    <span class="text-[13px] font-medium">{item.name}</span>
+                    {item.ref && (
+                      <a
+                        href={`${base}ch/${item.ref}/`}
+                        class="shrink-0 text-[11.5px] text-[var(--accent-text)] hover:underline"
+                      >
+                        出处
+                      </a>
+                    )}
+                  </div>
+                  <div class="overflow-x-auto py-0.5 text-[15px]">
+                    <Katex formula={item.latex} display />
+                  </div>
+                  {item.note && (
+                    <p class="mt-1 text-[12px] leading-snug text-[var(--text-faint)]">{item.note}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </aside>
+</div>
+
+<script>
+  const panel = document.getElementById('ql-formula-panel')
+  if (panel) {
+    const drawer = panel.querySelector<HTMLElement>('[data-formula-drawer]')!
+    const backdrop = panel.querySelector<HTMLElement>('[data-formula-backdrop]')!
+    let open = false
+    let lastFocus: HTMLElement | null = null
+
+    function setOpen(next: boolean) {
+      open = next
+      panel!.classList.toggle('pointer-events-none', !next)
+      panel!.setAttribute('aria-hidden', String(!next))
+      drawer.classList.toggle('translate-x-full', !next)
+      drawer.setAttribute('aria-modal', String(next))
+      backdrop.classList.toggle('opacity-0', !next)
+      if (next) {
+        lastFocus = document.activeElement as HTMLElement
+        drawer.querySelector<HTMLElement>('button')?.focus()
+      } else {
+        lastFocus?.focus()
+      }
+    }
+
+    window.addEventListener('ql:formula-toggle', () => setOpen(!open))
+    backdrop.addEventListener('click', () => setOpen(false))
+    panel.querySelector('[data-formula-close]')?.addEventListener('click', () => setOpen(false))
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open) setOpen(false)
+    })
+  }
+</script>

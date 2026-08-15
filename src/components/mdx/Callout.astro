@@ -1,0 +1,64 @@
+---
+type Kind = 'note' | 'insight' | 'misconception' | 'warning' | 'history' | 'check'
+
+interface Props {
+  type?: Kind
+  title?: string
+}
+
+const { type = 'note', title } = Astro.props
+
+const STYLE: Record<Kind, { label: string; icon: string; accent: string; tint: string }> = {
+  note: { label: '注意', icon: 'i', accent: 'var(--text-muted)', tint: 'var(--bg-subtle)' },
+  insight: {
+    label: '物理图像',
+    icon: '✦',
+    accent: 'var(--accent)',
+    tint: 'color-mix(in srgb, var(--accent) 7%, transparent)',
+  },
+  misconception: {
+    label: '常见误解',
+    icon: '✕',
+    accent: 'var(--c-danger)',
+    tint: 'color-mix(in srgb, var(--c-danger) 7%, transparent)',
+  },
+  warning: {
+    label: '容易踩坑',
+    icon: '!',
+    accent: 'var(--c-warn)',
+    tint: 'color-mix(in srgb, var(--c-warn) 8%, transparent)',
+  },
+  history: {
+    label: '历史',
+    icon: '⌛',
+    accent: 'var(--text-faint)',
+    tint: 'var(--bg-subtle)',
+  },
+  check: {
+    label: '自检',
+    icon: '?',
+    accent: 'var(--c-energy)',
+    tint: 'color-mix(in srgb, var(--c-energy) 8%, transparent)',
+  },
+}
+
+const s = STYLE[type]
+---
+
+<aside
+  class="my-6 rounded-xl border-l-[3px] px-4 py-3 print-break-avoid"
+  style={`border-left-color:${s.accent};background:${s.tint};border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)`}
+  data-callout={type}
+>
+  <p class="mb-1.5 flex items-center gap-2 text-[12.5px] font-semibold" style={`color:${s.accent}`}>
+    <span
+      class="grid size-[18px] shrink-0 place-items-center rounded-full text-[11px]"
+      style={`background:${s.accent};color:var(--bg-elevated)`}
+      aria-hidden="true">{s.icon}</span
+    >
+    {title ?? s.label}
+  </p>
+  <div class="text-[15px] leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+    <slot />
+  </div>
+</aside>

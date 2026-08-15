@@ -1,0 +1,280 @@
+---
+title: 时间有关薛定谔方程
+section: '2.4'
+order: 4
+summary: 定态只是特解。普遍解是它们的线性叠加——而叠加的系数一旦定下，未来就完全确定了。
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+objectives:
+  - 写出任意初态的完整时间演化表达式
+  - 由初始波函数计算展开系数 cₙ，并解释 |cₙ|² 的物理含义
+  - 说明薛定谔方程为什么是一阶时间导数，以及这带来什么后果
+---
+
+上一节我们找到了一族特解 $\Psi_n=\psi_n\ee^{-\ii E_nt/\hbar}$。
+但物理上你不能指望初始状态刚好是其中某一个。真实的初态是任意的——
+比如「粒子被局限在阱的左半边」。这时候怎么办？
+
+答案藏在方程的一个性质里：**线性**。
+
+## 叠加原理与普遍解
+
+薛定谔方程是线性的：若 $\Psi_1$ 与 $\Psi_2$ 都是解，则 $c_1\Psi_1+c_2\Psi_2$ 也是解。
+于是我们可以把无穷多个定态叠起来：
+
+$$
+\Psi(x,t)=\sum_n c_n\,\psi_n(x)\,\ee^{-\ii E_n t/\hbar}
+$$
+
+这就是普遍解。**只要能定出系数 $c_n$，未来所有时刻的 $\Psi$ 就全知道了。**
+
+<Callout type="insight" title="量子力学的因果结构">
+薛定谔方程对时间是**一阶**的。这意味着只要给定 $\Psi(x,0)$，
+$\Psi(x,t)$ 就被唯一确定——不需要额外给「初速度」。
+
+对比经典力学的牛顿方程 $m\ddot x=F$：那是二阶的，必须同时给出初位置和初速度。
+量子力学里波函数一个人就把所有信息带全了。
+
+这也是为什么量子态的演化是**完全决定论**的。
+不确定性出现在**测量**环节，不在演化环节——这两件事经常被混为一谈。
+</Callout>
+
+## 怎么求出系数
+
+定态 $\psi_n$ 构成一组**完备正交归一基**（证明属于 [3.5 节](/ch/03-formalism/05-hermitian-operators/)，
+这里先用）：
+
+$$
+\int_{-\infty}^{\infty}\psi_m^*(x)\psi_n(x)\,\dd x=\delta_{mn}
+$$
+
+<Derivation title="推导：用正交性把 cₙ 挑出来" level="基础" minutes={4}>
+
+在 $t=0$ 时，
+
+$$
+\Psi(x,0)=\sum_n c_n\psi_n(x)
+$$
+
+两边同乘 $\psi_m^*(x)$ 并对全空间积分：
+
+$$
+\int\psi_m^*\Psi(x,0)\,\dd x=\sum_n c_n\int\psi_m^*\psi_n\,\dd x=\sum_n c_n\delta_{mn}=c_m
+$$
+
+于是
+
+$$
+c_n=\int_{-\infty}^{\infty}\psi_n^*(x)\,\Psi(x,0)\,\dd x
+$$
+
+这个技巧叫 **Fourier trick**。它之所以有效，全靠正交性把求和里除了一项之外的全部打掉。
+在 Dirac 符号下它会写成 $c_n=\braket{\psi_n}{\Psi(0)}$，看起来就是「取分量」——
+和三维矢量沿基矢投影完全同构。
+
+</Derivation>
+
+系数还满足
+
+$$
+\sum_n|c_n|^2=1
+$$
+
+<Derivation title="推导：Σ|cₙ|² = 1" level="进阶" minutes={3}>
+
+$$
+1=\int|\Psi|^2\dd x=\int\left(\sum_m c_m\psi_m\right)^{\!*}\left(\sum_n c_n\psi_n\right)\dd x
+=\sum_{m,n}c_m^*c_n\int\psi_m^*\psi_n\,\dd x
+$$
+
+$$
+=\sum_{m,n}c_m^*c_n\,\delta_{mn}=\sum_n|c_n|^2
+$$
+
+注意这个结果与时间无关：加上时间因子后 $c_n\to c_n\ee^{-\ii E_nt/\hbar}$，模不变。
+所以**如果初态归一化了，它就永远归一化**——这与 [2.2 节](/ch/02-wavefunction/02-normalization-and-current/)
+用连续性方程得到的结论一致，只是换了个更省力的证法。
+
+</Derivation>
+
+<Callout type="insight" title="|cₙ|² 是什么">
+$|c_n|^2$ 是**测量能量时得到 $E_n$ 的概率**。
+
+这不是本节能证明的——它属于测量公设（[3.8 节](/ch/03-formalism/08-measurement/)）。
+但现在你至少可以检查它的自洽性：$\sum_n|c_n|^2=1$ 正好说明「测能量总会得到某个 $E_n$」。
+
+而且 $\langle E\rangle=\sum_n|c_n|^2E_n$ 也不随时间变（因为 $|c_n|$ 不变），
+这正是量子力学版本的**能量守恒**。
+</Callout>
+
+## 一个完整的例子
+
+<Derivation title="例：无限深势阱中的初始局域态" level="进阶" minutes={7}>
+
+考虑宽度为 $L$ 的无限深势阱，其定态为（见 [2.7 节](/ch/02-wavefunction/07-infinite-well/)）
+
+$$
+\psi_n(x)=\sqrt{\frac{2}{L}}\sin\frac{n\pi x}{L},\qquad E_n=\frac{n^2\pi^2\hbar^2}{2mL^2}
+$$
+
+设初态为两个最低定态的等权叠加：
+
+$$
+\Psi(x,0)=\frac{1}{\sqrt2}\left[\psi_1(x)+\psi_2(x)\right]
+$$
+
+即 $c_1=c_2=1/\sqrt2$，其余为零。演化后
+
+$$
+\Psi(x,t)=\frac{1}{\sqrt2}\left[\psi_1\ee^{-\ii E_1t/\hbar}+\psi_2\ee^{-\ii E_2t/\hbar}\right]
+$$
+
+概率密度：
+
+$$
+|\Psi|^2=\frac12\left[\psi_1^2+\psi_2^2+2\psi_1\psi_2\cos\frac{(E_2-E_1)t}{\hbar}\right]
+$$
+
+<strong>看清楚交叉项。</strong>前两项不随时间变，第三项以角频率
+
+$$
+\omega_{21}=\frac{E_2-E_1}{\hbar}=\frac{3\pi^2\hbar}{2mL^2}
+$$
+
+振荡。所以概率密度会在阱内**左右晃动**，周期 $T=2\pi\hbar/(E_2-E_1)$。
+
+三点值得注意：
+
+1. 振荡频率只依赖**能级差**，不依赖能量零点。把所有 $E_n$ 平移一个常数，
+   物理结果不变——能量零点的选择确实是任意的。
+2. 只有一个 $c_n$ 非零时（纯定态），交叉项不存在，$|\Psi|^2$ 静止。
+3. 这个 $\omega_{21}$ 正是该体系吸收或发射光子的频率（[7.5 节](/ch/07-approximation/05-time-dependent-perturbation/)）。
+   **玻尔频率条件 $\Delta E=\hbar\omega$ 在这里自动出现了。**
+
+</Derivation>
+
+## 为什么是一阶时间导数
+
+薛定谔当年其实先写下了一个相对论性的二阶方程（后来叫 Klein-Gordon 方程），
+发现它给出的氢原子精细结构不对，才退回到非相对论的一阶形式。
+
+<DualView>
+<div slot="left">
+
+一阶时间导数带来两个关键性质：
+
+- **概率守恒**成立。二阶方程给出的守恒量不是正定的，无法解释成概率
+  （这正是 Klein-Gordon 方程的「负概率」困难）。
+- **初条件只需 $\Psi(x,0)$**。态的定义因此非常干净。
+
+代价是方程对空间是二阶、对时间是一阶，**时空地位不对称**——
+这在相对论下是不可接受的，最终由 Dirac 方程解决。
+
+</div>
+<div slot="right">
+
+$$
+\ii\hbar\frac{\partial\Psi}{\partial t}=\hat H\Psi
+$$
+
+形式解：
+
+$$
+\Psi(t)=\hat U(t)\Psi(0),\qquad \hat U(t)=\ee^{-\ii\hat Ht/\hbar}
+$$
+
+$\hat U$ 是**幺正**算符（$\hat U^\dagger\hat U=1$），这正是概率守恒的算符版本。
+详见 [3.9 节](/ch/03-formalism/09-time-evolution-pictures/)。
+
+相对论推广见 [第 12 章](/ch/12-relativistic/)。
+
+</div>
+</DualView>
+
+<Callout type="misconception" title="「i」不是可有可无的">
+偶尔会看到有人说方程里的 $\ii$ 只是约定。不是。
+
+如果把 $\ii\hbar\partial_t\Psi=\hat H\Psi$ 里的 $\ii$ 去掉，得到的是**扩散方程**
+$\partial_t\Psi\propto\partial_x^2\Psi$。它的解是指数衰减的，不振荡，也不干涉——
+描述的是墨水在水里扩散，不是电子。
+
+$\ii$ 让指数解从 $\ee^{-\lambda t}$（衰减）变成 $\ee^{-\ii\omega t}$（振荡），
+波动性和干涉全从这里来。顺带一提，把 $t\to-\ii\tau$ 代入确实能把薛定谔方程变成扩散方程，
+这个技巧叫 Wick 转动，是量子蒙特卡洛和 [路径积分](/ch/11-path-integral/)的基础。
+</Callout>
+
+<Callout type="note" title="本节为何没有配交互模拟">
+本节的核心结论——叠加态的 $|\Psi|^2$ 会随时间振荡，而定态不会——
+正是下一节 [2.5](/ch/02-wavefunction/05-stationary-states/) 的势阱模拟要展示的东西，
+在那里配合「定态 / 叠加态」切换开关看效果最好。
+这里再放一个同样的模拟只会重复。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '含时薛定谔方程', latex: '\\ii\\hbar\\frac{\\partial\\Psi}{\\partial t}=\\hat H\\Psi', note: '对时间一阶：给定 Ψ(x,0) 就唯一确定未来' },
+    { name: '普遍解', latex: '\\Psi(x,t)=\\sum_n c_n\\psi_n(x)\\,\\ee^{-\\ii E_n t/\\hbar}', note: '每个分量按自己的能量转相位' },
+    { name: '展开系数', latex: 'c_n=\\int\\psi_n^*(x)\\,\\Psi(x,0)\\,\\dd x', note: 'Fourier trick；|cₙ|² 是测得 Eₙ 的概率' },
+    { name: '玻尔频率', latex: '\\omega_{mn}=\\frac{E_m-E_n}{\\hbar}', note: '叠加态中交叉项的振荡频率，也是跃迁光子的频率' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tdse-1',
+      prompt: '已知某粒子在 t = 0 时的波函数 Ψ(x,0)。要预言 t > 0 时的波函数，还需要什么额外信息？',
+      options: [
+        '不需要额外信息，Ψ(x,0) 加上哈密顿量就完全确定了未来',
+        '还需要 ∂Ψ/∂t 在 t = 0 时的值',
+        '还需要知道测量结果',
+        '无法预言，量子演化本质上是随机的',
+      ],
+      answer: 0,
+      distractors: {
+        1: '那是二阶方程（如牛顿方程、波动方程）才需要的；薛定谔方程对时间是一阶的。',
+        3: '演化是完全决定论的，随机性只出现在测量环节。',
+      },
+      explain: '薛定谔方程对时间一阶，Ψ(x,0) 就是完整的初条件。形式上 Ψ(t) = e^{−iĤt/ħ}Ψ(0)。',
+    },
+    {
+      id: 'tdse-2',
+      prompt: '把体系所有能级同时平移一个常数 E₀（即重新选取能量零点），下列哪些量会改变？（多选）',
+      options: [
+        '每个定态的相位因子 e^{−iEₙt/ħ}',
+        '叠加态中概率密度的振荡频率',
+        '各定态的空间波函数 ψₙ(x)',
+        '测量能量得到各本征值的概率 |cₙ|²',
+      ],
+      answer: [0],
+      distractors: {
+        1: '振荡频率由能级差 (Eₘ−Eₙ)/ħ 决定，平移时差值不变。',
+        2: 'ψₙ 满足的方程变成 Ĥ′ψ = (E+E₀)ψ，同一个 ψ 仍是解。',
+        3: '展开系数由初态与本征态的内积决定，与能量零点无关。',
+      },
+      explain: '整体能量平移只让每个分量多乘一个公共相位 e^{−iE₀t/ħ}——这是整体相位，不可观测。所有可观测量（含振荡频率）都只依赖能级差。',
+    },
+    {
+      id: 'tdse-3',
+      prompt: '无限深势阱中初态为 Ψ(x,0) = (ψ₁ + ψ₂)/√2。概率密度 |Ψ(x,t)|² 的行为是：',
+      options: [
+        '以角频率 (E₂−E₁)/ħ 在阱内左右振荡',
+        '保持不变，因为每个 ψₙ 都是定态',
+        '整体向右平移',
+        '以角频率 (E₂+E₁)/ħ 振荡',
+      ],
+      answer: 0,
+      distractors: {
+        1: '定态的叠加不是定态；交叉项 2ψ₁ψ₂cos[(E₂−E₁)t/ħ] 随时间变化。',
+        3: '和频不出现，因为交叉项来自 e^{−iE₁t/ħ} 与 e^{+iE₂t/ħ} 的乘积，指数相减。',
+      },
+      explain: '|Ψ|² = ½[ψ₁² + ψ₂² + 2ψ₁ψ₂cos(ω₂₁t)]，ω₂₁ = (E₂−E₁)/ħ。下一节的模拟可以直接看到这个振荡。',
+    },
+  ]}
+/>
+
+## 接下来
+
+现在我们有了完整的演化图景。下一节把「定态」和「非定态」的差别彻底摊开——
+并用模拟当场看一眼。

@@ -1,0 +1,40 @@
+---
+interface Props {
+  /** 左栏标题，默认「物理图像」 */
+  left?: string
+  /** 右栏标题，默认「数学形式」 */
+  right?: string
+}
+
+const { left = '物理图像', right = '数学形式' } = Astro.props
+---
+
+<!--
+  「物理图像 vs 数学形式」双栏对照（验收标准第 3 条）。
+  窄屏自动叠成上下两块——手机上强行分栏会把公式挤成一团。
+-->
+<div class="my-6 grid gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] md:grid-cols-2 print-break-avoid">
+  <section class="bg-[var(--bg-elevated)] px-4 py-3">
+    <h4
+      class="mb-2 flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--accent)] uppercase"
+    >
+      <span aria-hidden="true">◑</span>
+      {left}
+    </h4>
+    <div class="text-[15px] leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+      <slot name="left" />
+    </div>
+  </section>
+
+  <section class="bg-[var(--bg-elevated)] px-4 py-3">
+    <h4
+      class="mb-2 flex items-center gap-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase"
+    >
+      <span aria-hidden="true">∑</span>
+      {right}
+    </h4>
+    <div class="text-[15px] leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+      <slot name="right" />
+    </div>
+  </section>
+</div>

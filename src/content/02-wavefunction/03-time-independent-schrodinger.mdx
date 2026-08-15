@@ -1,0 +1,246 @@
+---
+title: 时间无关薛定谔方程
+section: '2.3'
+order: 3
+summary: 分离变量把含时问题拆成两半：一个本征值问题决定能级，一个平凡的相位因子负责演化。
+status: done
+prereqs:
+  - 02-wavefunction/01-born-rule
+  - 02-wavefunction/02-normalization-and-current
+objectives:
+  - 通过分离变量导出定态方程
+  - 说明为什么能量本征值必须是实数、且解只在特定 E 下存在
+  - 从曲率的角度定性判断波函数在给定势中的形状
+---
+
+薛定谔方程的完整形式是
+
+$$
+\ii\hbar\frac{\partial\Psi(x,t)}{\partial t} = \hat H\Psi(x,t),\qquad
+\hat H = -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2}+V(x)
+$$
+
+这是一个偏微分方程。好消息是：当 $V$ 不显含时间时（绝大多数教学问题都是这样），
+它可以用**分离变量法**拆成两个常微分方程，而且其中一个的解是完全平凡的。
+
+## 分离变量
+
+<Derivation title="推导：从含时方程到定态方程" level="基础" minutes={5} open={true}>
+
+设试探解具有可分离形式
+
+$$
+\Psi(x,t) = \psi(x)\,\varphi(t)
+$$
+
+代入方程：
+
+$$
+\ii\hbar\,\psi(x)\frac{\dd\varphi}{\dd t} = \varphi(t)\left[-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V(x)\psi\right]
+$$
+
+两边同除 $\psi\varphi$：
+
+$$
+\underbrace{\ii\hbar\frac{1}{\varphi}\frac{\dd\varphi}{\dd t}}_{\text{只依赖 }t}
+=\underbrace{\frac{1}{\psi}\left[-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V\psi\right]}_{\text{只依赖 }x}
+$$
+
+左边只是 $t$ 的函数，右边只是 $x$ 的函数，而 $x$ 与 $t$ 是独立变量。
+一个只依赖 $t$ 的量恒等于一个只依赖 $x$ 的量，唯一可能是**两边都等于同一个常数**。
+把这个分离常数记作 $E$（马上会看到它就是能量）。
+
+**时间部分**：
+
+$$
+\ii\hbar\frac{\dd\varphi}{\dd t}=E\varphi
+\;\Longrightarrow\;
+\varphi(t)=\ee^{-\ii Et/\hbar}
+$$
+
+（积分常数吸收进 $\psi$。）这个解是完全通用的，与势能长什么样毫无关系。
+全部的物理内容都在空间部分里。
+
+**空间部分**，也就是**时间无关薛定谔方程**：
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V(x)\psi = E\psi
+$$
+
+或者写成算符形式 $\hat H\psi = E\psi$。
+
+</Derivation>
+
+于是可分离解总是这个样子：
+
+$$
+\Psi_n(x,t)=\psi_n(x)\,\ee^{-\ii E_n t/\hbar}
+$$
+
+<Callout type="insight" title="这不是一个普通的微分方程">
+$\hat H\psi=E\psi$ 表面上是二阶常微分方程，但它有个额外的身份：**本征值问题**。
+
+区别在于：普通微分方程对任意参数值都有解；而这里我们额外要求 $\psi$ 满足物理上的边界条件
+（可归一化、连续等）。这些条件只在 $E$ 取某些特定值时才能同时满足。
+那些允许的 $E$ 就是**能级**，对应的 $\psi$ 就是**能量本征态**。
+
+**能量的量子化不是额外假设，是边界条件的数学后果。**
+这是量子力学最漂亮的地方之一：普朗克和玻尔当年必须硬塞进去的量子化条件，
+在薛定谔的框架里自动冒出来。
+</Callout>
+
+## 为什么 E 必须是实数
+
+<Derivation title="推导：束缚态的能量本征值为实数" level="进阶" minutes={4}>
+
+假设 $\hat H\psi = E\psi$ 且 $\psi$ 可归一化。取复共轭（$V$ 实）：
+
+$$
+-\frac{\hbar^2}{2m}\psi^{*\prime\prime}+V\psi^*=E^*\psi^*
+$$
+
+第一式乘 $\psi^*$、第二式乘 $\psi$，相减后含 $V$ 的项抵消：
+
+$$
+-\frac{\hbar^2}{2m}\left(\psi^*\psi''-\psi\psi^{*\prime\prime}\right)=(E-E^*)|\psi|^2
+$$
+
+左边括号里又是一个全导数 $\frac{\dd}{\dd x}(\psi^*\psi'-\psi\psi^{*\prime})$。对全空间积分，
+左边化为边界项，因 $\psi$ 可归一化而为零：
+
+$$
+0=(E-E^*)\int|\psi|^2\dd x = (E-E^*)\cdot 1
+$$
+
+故 $E=E^*$，即 $E$ 为实数。
+
+这不是巧合。它的一般化版本是「厄米算符的本征值必为实数」，
+到 [3.5 节](/ch/03-formalism/05-hermitian-operators/) 会用算符语言重做一遍，
+而且只需要三行。眼下这个啰嗦的积分证明恰好说明了：**换个语言，同一件事可以变得多简单。**
+
+</Derivation>
+
+$E$ 为实还有一个直接后果：$|\varphi(t)|^2=|\ee^{-\ii Et/\hbar}|^2=1$，时间因子的模恒为 1。
+所以 $|\Psi_n(x,t)|^2=|\psi_n(x)|^2$ 不随时间变化——这就是「定态」名称的由来，
+下一节详说。
+
+## 用曲率读波函数
+
+不解方程也能看出 $\psi$ 大致长什么样。把定态方程改写成
+
+$$
+\frac{\dd^2\psi}{\dd x^2}=\frac{2m}{\hbar^2}\left[V(x)-E\right]\psi
+$$
+
+<DualView>
+<div slot="left">
+
+**经典允许区（$E>V$）**：$\psi''$ 与 $\psi$ 反号，曲线**弯向 $x$ 轴**——振荡。
+$E-V$ 越大（动能越大）弯得越急，波长越短。
+
+**经典禁区（$E<V$）**：$\psi''$ 与 $\psi$ 同号，曲线**背离 $x$ 轴**——指数行为。
+物理上只保留衰减的那一支，否则无法归一化。
+
+**转折点（$E=V$）**：$\psi''=0$，曲线在这里改变凹凸性。
+
+</div>
+<div slot="right">
+
+$$
+\psi''=\frac{2m(V-E)}{\hbar^2}\psi
+$$
+
+$E>V$：局部近似 $\psi\sim\ee^{\pm\ii kx}$，$k=\frac{\sqrt{2m(E-V)}}{\hbar}$
+
+$E<V$：局部近似 $\psi\sim\ee^{\pm\kappa x}$，$\kappa=\frac{\sqrt{2m(V-E)}}{\hbar}$
+
+这两个近似正是 [WKB 方法](/ch/07-approximation/04-wkb/)的出发点。
+
+</div>
+</DualView>
+
+<Callout type="insight" title="用这套图像就能猜出能级量子化">
+考虑一个把粒子关住的势阱。从阱的左侧远处出发，$\psi$ 必须指数衰减地趋于零。
+它进入阱内后开始振荡，出阱后又变回指数行为。
+
+问题来了：出阱后的指数解一般同时含增长项 $\ee^{+\kappa x}$ 和衰减项 $\ee^{-\kappa x}$。
+要让 $\psi$ 在右侧远处也趋于零，必须把增长项的系数**精确调成零**。
+
+这只有在 $E$ 取特定值时才能做到——阱内振荡的相位刚好使两侧衔接得上。
+这就是能级离散的来源。$n$ 越大，阱内塞下的半波长越多，节点越多，能量越高。
+</Callout>
+
+<Callout type="note" title="本节为何没有配交互模拟">
+本节讲的是方法论（分离变量）而不是某个具体体系，可视化对象是「解题步骤」而非物理量。
+上面「用曲率读波函数」的直觉，在 [2.7](/ch/02-wavefunction/07-infinite-well/)
+与 [2.9 节](/ch/02-wavefunction/09-harmonic-oscillator/) 的模拟里可以直接验证：
+拖动量子数，看波函数在阱内弯曲的密度如何随能量变化。
+真正的通用工具是 [4.5 节](/ch/04-1d-problems/05-custom-potential-solver/)的自定义势求解器。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '时间无关薛定谔方程', latex: '-\\frac{\\hbar^2}{2m}\\frac{\\dd^2\\psi}{\\dd x^2}+V(x)\\psi=E\\psi', note: '本征值问题：只有特定的 E 允许存在可归一化的解' },
+    { name: '可分离解', latex: '\\Psi_n(x,t)=\\psi_n(x)\\,\\ee^{-\\ii E_n t/\\hbar}', note: '时间部分与势能无关，永远是这个相位因子' },
+    { name: '曲率关系', latex: '\\frac{\\dd^2\\psi}{\\dd x^2}=\\frac{2m}{\\hbar^2}[V(x)-E]\\,\\psi', note: 'E>V 振荡，E<V 指数；定性判形状全靠它' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tise-1',
+      prompt: '分离变量法得到的时间因子 e^{−iEt/ħ}，其形式依赖于势能 V(x) 吗？',
+      options: [
+        '不依赖，只要 V 不显含时间，时间因子永远是这个形式',
+        '依赖，不同的 V 给出不同的时间演化',
+        '依赖，V 越大相位转得越快',
+        '只有 V = 0 时才是这个形式',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'V 的信息全部进入空间方程，决定的是允许的 E 值。',
+        2: '相位转速由本征值 E 决定，而 E 是解本征值问题得到的。',
+      },
+      explain: '分离变量后时间方程是 iħφ̇ = Eφ，其中不含 V。V 只通过决定 E 的取值间接影响演化速度。',
+    },
+    {
+      id: 'tise-2',
+      prompt: '为什么束缚态的能量是离散的？',
+      options: [
+        '因为只有特定的 E 能让波函数在两侧同时衰减到零',
+        '因为薛定谔方程只对离散的 E 有解',
+        '因为能量本来就是一份一份的，这是基本假设',
+        '因为波函数必须是周期性的',
+      ],
+      answer: 0,
+      distractors: {
+        1: '微分方程对任意 E 都有数学解，问题是这些解一般不可归一化。',
+        2: '恰恰相反：量子化是从方程 + 边界条件推出来的，不是假设。',
+        3: '束缚态波函数一般不是周期函数。',
+      },
+      explain: '经典禁区里的通解含指数增长与指数衰减两支。要求两侧都可归一化，等于要求增长支的系数在两端都为零——这是对 E 的强约束，只有离散的 E 满足。',
+    },
+    {
+      id: 'tise-3',
+      prompt: '在某处 E − V(x) = 4 eV，在另一处 E − V(x) = 1 eV。关于波函数在这两处的行为，正确的是：',
+      options: [
+        '前者振荡更快（局部波长更短）',
+        '后者振荡更快',
+        '两处波长相同，只是振幅不同',
+        '后者是指数衰减的',
+      ],
+      answer: 0,
+      distractors: {
+        1: '局部波数 k = √(2m(E−V))/ħ 随 E−V 增大而增大。',
+        3: '只有 E < V 才是指数行为，这里两处都满足 E > V。',
+      },
+      explain: '局部波长 λ = 2πħ/√(2m(E−V))。动能越大波长越短、弯曲越急。振幅方面则相反：粒子在动能大的地方跑得快、停留时间短，概率密度反而低。',
+    },
+  ]}
+/>
+
+## 接下来
+
+分离变量给出的只是一族特解。真正的普遍解是它们的**叠加**——
+而叠加态的行为和定态截然不同。下一节回到完整的含时方程。

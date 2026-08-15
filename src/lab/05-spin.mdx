@@ -1,0 +1,164 @@
+---
+num: '05'
+title: 自旋与 Bloch 球
+goal: 把「自旋态」从一堆复数变成一个可以用手拖动、可以看见它进动与塌缩的几何对象。
+youWillSee:
+  - 一个球面，上面每一个点都是一个纯态；拖动它，读数里的 |ψ⟩ 同步改变
+  - 磁场中的自旋绕着磁场方向进动，夹角始终不变——它不会「被吸过去」
+  - 测量把矢量瞬间投到两极，单次结果随机，重复几百次后频率收敛到 (1 ± r⃗·n̂)/2
+prereqs:
+  - 复数与欧拉公式
+  - 二维复向量、内积与模方
+  - 知道「态的模方给出概率」这条 Born 规则
+scenes:
+  - bloch-sphere
+  - stern-gerlach
+related:
+  - 05-angular-momentum/03-spin-half
+  - 05-angular-momentum/04-stern-gerlach
+  - 05-angular-momentum/05-spin-precession
+  - 09-quantum-information/01-qubit-bloch-sphere
+phase: 1
+status: done
+---
+
+自旋 1/2 是整个量子力学里**最小**的非平凡系统：态空间只有二维。
+
+小到什么程度？小到我们可以把它的**全部**状态一次性画出来，一个不落。这件事在其他系统里做不到——氢原子的态空间是无限维的，你只能一次看一个轨道。而自旋 1/2 的所有纯态恰好构成一个球面，于是「量子态」这个抽象概念第一次有了可以用手拨弄的实体。
+
+先看，再算。
+
+<Scene name="bloch-sphere" />
+
+## 为什么球面上的一个点就够了
+
+一个二维复向量有四个实参数：
+
+$$
+\ket{\psi} = \begin{pmatrix} a \\ b \end{pmatrix},\qquad a, b \in \mathbb{C}.
+$$
+
+但其中两个是「假自由度」。归一化 $|a|^2 + |b|^2 = 1$ 去掉一个；整体相位不可观测——$\ket{\psi}$ 与 $\ee^{\ii\alpha}\ket{\psi}$ 给出完全相同的所有测量结果——又去掉一个。剩下两个实参数，正好是球面的两个角：
+
+$$
+\ket{\psi} = \cos\frac{\theta}{2}\ket{0} + \ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}.
+$$
+
+<Callout type="warning" title="半角不是笔误">
+指数上的角是 $\theta$，系数里的角是 $\theta/2$。这个因子 2 是自旋 1/2 的签名：**Bloch 球上转一圈（$\theta: 0 \to 2\pi$），态矢量只转了半圈**，要转两圈才回到原状态。场景里把 θ 从 0 拖到 180° 时，你在球面上走了半圈，而态已经从 $\ket{0}$ 走到了 $\ket{1}$——两个正交态在球面上是**对跖点**，而不是垂直的两个方向。
+</Callout>
+
+与之对应的几何量是 **Bloch 矢量**
+
+$$
+\vec{r} = \braket{\psi}{\vec{\sigma}\,\psi} = (\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta),
+$$
+
+它就是场景里那个箭头。纯态一律满足 $|\vec r| = 1$，即落在球面上；球**内部**的点也有意义，那是混合态，留到[模块 12](/lab/12-decoherence/) 再看。
+
+## 进动：磁场做的事和你以为的不一样
+
+把自旋放进沿 $z$ 的磁场，哈密顿量是 $H = -\tfrac{\hbar\omega}{2}\sigma_z$。解出来的运动方程极其干净：
+
+$$
+\frac{\dd \vec r}{\dd t} = \vec\omega \times \vec r .
+$$
+
+叉乘意味着 $\vec r$ 的变化率**永远垂直于 $\vec r$ 与 $\vec\omega$**。于是：
+
+- $|\vec r|$ 不变（态始终是纯态）；
+- $\vec r \cdot \hat\omega$ 不变（与磁场的夹角锁死）；
+- 只有绕磁场的方位角在匀速增加。
+
+这就是场景里那个圆锥。经典直觉常常预期「自旋会被磁场掰过去，最后指向磁场方向」——那是**耗散**系统的行为（比如指南针在有摩擦的空气里）。孤立量子系统的幺正演化不会这么做，它只会转圈。要让自旋真的躺倒到磁场方向，必须引入与环境的耦合，那是[模块 12](/lab/12-decoherence/) 的内容。
+
+<Derivation title="从薛定谔方程推出进动方程">
+
+取 $H = -\tfrac{\hbar\omega}{2}\sigma_z$，海森堡绘景下算符的运动方程是
+
+$$
+\frac{\dd \hat\sigma_i}{\dd t} = \frac{\ii}{\hbar}[H, \hat\sigma_i].
+$$
+
+用泡利矩阵的对易关系 $[\sigma_i, \sigma_j] = 2\ii\,\epsilon_{ijk}\sigma_k$：
+
+$$
+[\sigma_z, \sigma_x] = 2\ii\sigma_y, \qquad [\sigma_z, \sigma_y] = -2\ii\sigma_x, \qquad [\sigma_z,\sigma_z]=0 .
+$$
+
+代入即得
+
+$$
+\dot\sigma_x = -\omega\,\sigma_y,\qquad \dot\sigma_y = \omega\,\sigma_x,\qquad \dot\sigma_z = 0,
+$$
+
+取期望值就是 $\dot{\vec r} = \vec\omega\times\vec r$，其中 $\vec\omega = \omega\hat z$。第三式 $\dot\sigma_z = 0$ 正是「与磁场的夹角不变」。
+
+</Derivation>
+
+## 测量：投影，而不是「看一眼」
+
+沿单位轴 $\hat n$ 测量自旋，可能的结果只有 $\pm 1$，概率为
+
+$$
+P_\pm = \frac{1 \pm \vec r\cdot\hat n}{2}.
+$$
+
+场景里那条从箭头尖端垂直落到测量轴上的虚线，画的就是 $\vec r \cdot \hat n$ 这个投影。测量之后态**塌缩**到 $\hat n$ 的相应本征态上——箭头会跳到轴的一端。
+
+这里有一个初学者极易踩的坑：塌缩之后再沿同一个轴测量，结果必然与上次相同。想看到 $P_\pm$ 的统计规律，必须**每一次都重新制备**同一个 $\ket{\psi}$。场景里那个「重复制备 ×200」按钮就是在做这件事，按钮名字也刻意写全了。
+
+<KeyFormulas
+  items={[
+    {
+      name: '球面参数化',
+      latex: '\\ket{\\psi} = \\cos\\frac{\\theta}{2}\\ket{0} + \\ee^{\\ii\\varphi}\\sin\\frac{\\theta}{2}\\ket{1}',
+      note: '两个实参数就够了：归一化与整体相位各吃掉一个自由度',
+    },
+    {
+      name: 'Bloch 矢量',
+      latex: '\\vec r = (\\sin\\theta\\cos\\varphi,\\ \\sin\\theta\\sin\\varphi,\\ \\cos\\theta)',
+      note: '纯态 |r| = 1，混合态在球内',
+    },
+    {
+      name: 'Larmor 进动',
+      latex: '\\dot{\\vec r} = \\vec\\omega \\times \\vec r',
+      note: '叉乘 ⇒ 模长与夹角都守恒，只有方位角在转',
+    },
+    {
+      name: '测量概率',
+      latex: 'P_\\pm = \\tfrac{1}{2}\\left(1 \\pm \\vec r\\cdot\\hat n\\right)',
+      note: '就是那条投影虚线的长度',
+    },
+  ]}
+/>
+
+## 把球面搬进实验室：Stern-Gerlach
+
+Bloch 球是数学图像。Stern 和 Gerlach 在 1922 年做的实验，是这个图像第一次以可见的方式砸在人们面前：一束银原子穿过非均匀磁场后，**没有**摊成一条连续的带，而是干净利落地分成两束。
+
+<Scene name="stern-gerlach" />
+
+把两台仪器串起来，事情变得更有意思：第一台沿 $z$ 分束、挡掉下束，第二台再沿 $z$ 测，出来的仍然全是上束——这是「重复测量结果不变」。但若第二台沿 $x$，出来的又是五五开的两束；再接第三台沿 $z$，本来以为「已经筛干净的」下束又冒出来了。
+
+这件事没有经典类比。它说明沿 $x$ 的测量**不是**在读取一个早已存在的属性，而是真的把态改变了。
+
+## 常见的三个误解
+
+<Callout type="misconception" title="“Bloch 球上的方向就是自旋在空间中指的方向”">
+不是。球面是**态空间**，不是真实空间。$\theta = 90°$ 不代表自旋「躺平」，而代表沿 $z$ 测量时上下各占一半。真实空间中的方向只有在测量轴的意义下才出现。
+</Callout>
+
+<Callout type="misconception" title="“电子在自转”">
+「自旋」这个名字是历史遗留。若真把电子当成经典小球来转，赤道线速度会远超光速。自旋是粒子的内禀角动量，它的存在最终由相对论性波动方程（Dirac 方程）自然给出，见[模块 14](/lab/14-frontier/) 与教材第 12 章。
+</Callout>
+
+<Callout type="misconception" title="“测量前它其实已经是上或下，只是我们不知道”">
+这就是局域隐变量假设。它可以被实验证伪——Bell 不等式给出了判据，[模块 08](/lab/08-entanglement/) 会让你亲手把它推翻。
+</Callout>
+
+## 检验一下自己
+
+1. 把状态设成 $\ket{+}$（θ = 90°, φ = 0），测量轴选 σx。测量一次会得到什么？概率是多少？换成 σz 呢？
+2. 磁场沿 z、初态为 $\ket{0}$ 时按播放，画面上什么都不动。用「能量本征态只随时间积累一个整体相位」解释它。若初态改成 $\ket{+}$ 呢？
+3. 两个态 $\ket{\psi_1} = \ket{+}$ 与 $\ket{\psi_2} = \ee^{\ii\pi/3}\ket{+}$，它们在球面上是同一个点。那么「相位不可观测」和「相对相位 φ 可观测」这两句话如何共存？

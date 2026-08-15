@@ -1,0 +1,334 @@
+---
+title: 自由粒子与高斯波包
+section: '2.10'
+order: 10
+summary: 最简单的势（没有势）反而最麻烦：定态不可归一化。解决办法是把它们叠起来，代价是波包会散开。
+status: done
+prereqs:
+  - 02-wavefunction/06-expectation-and-uncertainty
+  - 02-wavefunction/09-harmonic-oscillator
+objectives:
+  - 说明自由粒子定态为什么不可归一化，以及为什么它们仍然有用
+  - 区分相速度与群速度，并说明哪个才是粒子的速度
+  - 由色散关系解释波包展宽，并估算展宽时间
+sims: ['wave-packet-scattering']
+---
+
+$$
+V(x)=0
+$$
+
+看起来是最简单的情形。实际上它引出了整章最微妙的问题。
+
+## 定态：不可归一化
+
+定态方程
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}=E\psi
+\;\Longrightarrow\;
+\psi_k(x)=A\ee^{\ii kx},\qquad k=\pm\frac{\sqrt{2mE}}{\hbar}
+$$
+
+加上时间因子：
+
+$$
+\Psi_k(x,t)=A\,\ee^{\ii\left(kx-\frac{\hbar k^2}{2m}t\right)}
+$$
+
+$k>0$ 右行，$k<0$ 左行，$E=\hbar^2k^2/2m$ 对任意实数 $k$ 都允许——**能谱是连续的**。
+
+麻烦在于
+
+$$
+\int_{-\infty}^{\infty}|\Psi_k|^2\dd x=|A|^2\int_{-\infty}^{\infty}\dd x=\infty
+$$
+
+<Callout type="misconception" title="「自由粒子不存在定态」这句话的正确含义">
+准确的说法是：**自由粒子没有可归一化的能量本征态**。
+
+这不是说自由粒子不存在，也不是说 $\ee^{\ii kx}$ 没用。它的含义是：
+不存在具有精确动量的物理态。$\ee^{\ii kx}$ 对应 $\sigma_p=0$，
+由不确定性原理必须 $\sigma_x=\infty$——粒子均匀地分布在整个宇宙里。
+
+真实的粒子总是局域在某个区域，因此动量必然有一定展宽。
+$\ee^{\ii kx}$ 是**理想化的极限**，就像力学里的「质点」。
+</Callout>
+
+## 波包：把平面波叠起来
+
+方程线性，所以可以叠加。$k$ 连续，求和变积分：
+
+$$
+\Psi(x,t)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\phi(k)\,\ee^{\ii\left(kx-\frac{\hbar k^2}{2m}t\right)}\dd k
+$$
+
+$\phi(k)$ 是**动量空间波函数**。给定初态，它由傅里叶变换给出：
+
+$$
+\phi(k)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\Psi(x,0)\,\ee^{-\ii kx}\dd x
+$$
+
+<DualView>
+<div slot="left">
+
+**两个表象，一个态。**
+
+$\Psi(x)$ 和 $\phi(k)$ 携带完全相同的信息，只是「用什么基去展开」不同。
+$|\Psi(x)|^2$ 给位置分布，$|\phi(k)|^2$ 给动量分布（准确说是 $|\phi(k)|^2\dd k$，
+$p=\hbar k$）。
+
+这是量子力学的核心结构之一：**同一个态，可以在不同的基下展开**。
+[3.1–3.2 节](/ch/03-formalism/01-from-wavefunction-to-vector/)会把它抽象成
+「同一个矢量在不同坐标系下的分量」。
+
+</div>
+<div slot="right">
+
+Parseval 定理保证归一化在两个表象里一致：
+
+$$
+\int|\Psi(x)|^2\dd x=\int|\phi(k)|^2\dd k=1
+$$
+
+傅里叶变换的基本性质
+
+$$
+\sigma_x\sigma_k\ge\frac12
+$$
+
+配合 $p=\hbar k$ 立刻给出
+
+$$
+\sigma_x\sigma_p\ge\frac{\hbar}{2}
+$$
+
+**不确定性原理就是傅里叶分析的定理加上 de Broglie 关系。**
+
+</div>
+</DualView>
+
+## 相速度与群速度
+
+平面波 $\ee^{\ii(kx-\omega t)}$ 的等相位点以
+
+$$
+v_\text{phase}=\frac{\omega}{k}=\frac{\hbar k}{2m}=\frac{p}{2m}
+$$
+
+移动。这是经典速度 $p/m$ 的**一半**——如果这就是粒子速度，量子力学从一开始就错了。
+
+<Derivation title="推导：波包整体以群速度移动" level="进阶" minutes={6}>
+
+设 $\phi(k)$ 集中在 $k_0$ 附近的窄范围内。把色散关系在 $k_0$ 处展开：
+
+$$
+\omega(k)=\omega_0+\omega'(k_0)(k-k_0)+\frac12\omega''(k_0)(k-k_0)^2+\cdots
+$$
+
+先只保留到一阶。记 $q=k-k_0$，$v_g\equiv\omega'(k_0)$：
+
+$$
+\Psi(x,t)\approx\frac{\ee^{\ii(k_0x-\omega_0t)}}{\sqrt{2\pi}}\int\phi(k_0+q)\,\ee^{\ii q(x-v_gt)}\dd q
+$$
+
+积分只通过组合 $x-v_gt$ 依赖于 $x$ 和 $t$。也就是说
+
+$$
+|\Psi(x,t)|^2\approx|\Psi(x-v_gt,\,0)|^2
+$$
+
+**包络整体以 $v_g$ 平移，形状不变。** 而
+
+$$
+v_g=\left.\frac{\dd\omega}{\dd k}\right|_{k_0}=\frac{\dd}{\dd k}\frac{\hbar k^2}{2m}=\frac{\hbar k_0}{m}=\frac{p_0}{m}
+$$
+
+**这才是经典速度。** 相速度描述的是内部条纹的移动，不携带粒子。
+
+</Derivation>
+
+<Callout type="insight" title="用模拟直接验证">
+在下面的模拟里把势垒高度 $V_0$ 设为 0（自由粒子），打开「显示 Re ψ」再播放。
+
+你会看到两种运动同时发生：**包络**（紫色 $|\psi|^2$）向右平移，
+而**内部条纹**（蓝色 Re ψ）以更慢的速度移动。
+包络的速度是条纹速度的两倍——这正是 $v_g=2v_\text{phase}$。
+</Callout>
+
+## 波包会散开
+
+现在保留二阶项。$\omega''=\hbar/m\ne0$ 意味着**色散**：不同 $k$ 分量以不同速度传播。
+
+<Derivation title="推导：高斯波包的展宽公式" level="进阶" minutes={8}>
+
+取初态高斯波包
+
+$$
+\Psi(x,0)=(2\pi\sigma_0^2)^{-1/4}\ee^{-x^2/4\sigma_0^2}\ee^{\ii k_0x}
+$$
+
+其傅里叶变换仍是高斯（这是高斯函数的特殊性质）：
+
+$$
+\phi(k)\propto\ee^{-\sigma_0^2(k-k_0)^2}
+$$
+
+宽度 $\sigma_k=1/2\sigma_0$，所以 $\sigma_x\sigma_p=\sigma_0\cdot\frac{\hbar}{2\sigma_0}=\frac{\hbar}{2}$——
+**高斯波包精确取到不确定性下限**。这是它的特殊地位所在。
+
+代入演化积分（配方后做高斯积分，代数繁琐但无技巧），得
+
+$$
+|\Psi(x,t)|^2=\frac{1}{\sqrt{2\pi}\,\sigma(t)}\exp\left[-\frac{(x-v_gt)^2}{2\sigma(t)^2}\right]
+$$
+
+$$
+\boxed{\ \sigma(t)=\sigma_0\sqrt{1+\left(\frac{\hbar t}{2m\sigma_0^2}\right)^2}\ }
+$$
+
+定义**展宽时间**
+
+$$
+\tau=\frac{2m\sigma_0^2}{\hbar}
+$$
+
+$t\ll\tau$ 时波包基本不变；$t\gg\tau$ 时 $\sigma\approx\sigma_0 t/\tau=\frac{\hbar t}{2m\sigma_0}$，
+**线性增长**。
+
+</Derivation>
+
+<Callout type="insight" title="展宽的物理原因不神秘">
+$\sigma_p=\hbar/2\sigma_0$ 意味着速度有展宽 $\sigma_v=\sigma_p/m=\hbar/2m\sigma_0$。
+跑了时间 $t$ 之后，跑得快的和跑得慢的分开了 $\sigma_v t$——这就是 $t\gg\tau$ 时的渐近行为。
+
+初始越窄的波包，动量展宽越大，散得越快。这里没有任何神秘之处，
+和一群速度略有差异的赛跑者会逐渐拉开距离是同一回事。
+</Callout>
+
+<Derivation title="数量级：什么时候需要在意展宽" level="基础" minutes={4}>
+
+$$
+\tau=\frac{2m\sigma_0^2}{\hbar}
+$$
+
+**电子，$\sigma_0=1\ \text{nm}$**：
+
+$$
+\tau=\frac{2\times9.11\times10^{-31}\times(10^{-9})^2}{1.055\times10^{-34}}\approx1.7\times10^{-14}\ \text{s}
+$$
+
+约 17 飞秒。电子波包散得非常快——这就是为什么电子显微镜和量子器件设计必须认真对待它。
+
+**一粒尘埃，$m=10^{-15}$ kg，$\sigma_0=10^{-6}$ m**：
+
+$$
+\tau=\frac{2\times10^{-15}\times10^{-12}}{1.055\times10^{-34}}\approx1.9\times10^{7}\ \text{s}
+$$
+
+约 7 个月。而实际上尘埃早在这之前就被空气分子撞得
+[退相干](/ch/10-open-systems/05-decoherence/)了，展宽根本没机会发生。
+
+**结论**：量子展宽在宏观世界不可见，不是因为公式失效，
+而是因为 $\tau\propto m\sigma_0^2$ 在宏观参数下大得离谱。
+
+</Derivation>
+
+<Sim name="wave-packet-scattering" />
+
+<Callout type="check" title="在模拟里验证展宽">
+把 $V_0$ 拖到 0，$\sigma$ 设为 1（最窄），点播放并观察读数区的「波包宽度 Δx」。
+它会持续增大。
+
+然后把 $\sigma$ 设为 8 重来一次——宽波包散得慢得多。
+因为 $\tau\propto\sigma_0^2$，$\sigma_0$ 变 8 倍，$\tau$ 变 64 倍。
+</Callout>
+
+<Callout type="warning" title="谐振子里的例外">
+自由波包必然展宽，但这不是普遍规律。
+
+在谐振子势中，**相干态**（见 [2.9 节](/ch/02-wavefunction/09-harmonic-oscillator/)的第三个视图）
+永远保持高斯形状不变地来回振荡。原因是谐振子的能级等间距，
+各分量的相对相位在每个周期后完全复原，色散被势能「补偿」掉了。
+
+这是谐振子等间距能谱的又一个漂亮后果。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '自由粒子定态', latex: '\\Psi_k(x,t)=A\\,\\ee^{\\ii(kx-\\hbar k^2t/2m)}', note: '不可归一化；只能作为展开基使用' },
+    { name: '波包展开', latex: '\\Psi(x,t)=\\frac{1}{\\sqrt{2\\pi}}\\int\\phi(k)\\ee^{\\ii(kx-\\omega(k)t)}\\dd k', note: 'φ(k) 由 Ψ(x,0) 的傅里叶变换给出' },
+    { name: '群速度', latex: 'v_g=\\frac{\\dd\\omega}{\\dd k}=\\frac{\\hbar k_0}{m}=\\frac{p_0}{m}=2v_{\\text{phase}}', note: '包络的速度才是粒子速度' },
+    { name: '高斯波包展宽', latex: '\\sigma(t)=\\sigma_0\\sqrt{1+\\left(\\frac{\\hbar t}{2m\\sigma_0^2}\\right)^2}', note: '展宽时间 τ = 2mσ₀²/ħ' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fp-1',
+      prompt: '自由粒子的平面波解 e^{ikx} 不可归一化。正确的理解是：',
+      options: [
+        '它是理想化极限：动量完全确定意味着位置完全不确定',
+        '自由粒子在物理上不存在',
+        '薛定谔方程对自由粒子不适用',
+        '归一化条件对自由粒子不成立',
+      ],
+      answer: 0,
+      distractors: {
+        1: '自由粒子当然存在，只是它的态必须是波包而非单个平面波。',
+        2: '方程完全适用，只是本征函数不在 L² 中。',
+        3: '任何物理态都必须归一化。',
+      },
+      explain: 'e^{ikx} 对应 σ_p = 0，由 σₓσ_p ≥ ħ/2 得 σₓ = ∞。它是有用的展开基（类似 δ 函数），但不是物理态。',
+    },
+    {
+      id: 'fp-2',
+      prompt: '非相对论自由粒子的相速度与群速度关系是：',
+      options: [
+        'v_group = 2 v_phase，群速度等于经典速度 p/m',
+        'v_phase = 2 v_group',
+        '两者相等',
+        '两者关系取决于粒子质量',
+      ],
+      answer: 0,
+      distractors: {
+        1: '弄反了：v_phase = ω/k = ħk/2m，v_group = dω/dk = ħk/m。',
+        2: '只有色散关系为线性（如真空中的光）时两者才相等。',
+      },
+      explain: 'ω = ħk²/2m。v_phase = ω/k = ħk/2m，v_group = dω/dk = ħk/m = p/m。携带粒子（和能量、信息）的是群速度。',
+    },
+    {
+      id: 'fp-3',
+      prompt: '初始宽度为 σ₀ 的自由高斯波包，其展宽时间 τ = 2mσ₀²/ħ。若把 σ₀ 增大到 3 倍，τ 变为原来的：',
+      options: ['9 倍', '3 倍', '1/3', '1/9'],
+      answer: 0,
+      distractors: {
+        1: 'τ 正比于 σ₀² 而非 σ₀。',
+        2: '宽波包散得更慢而不是更快。',
+      },
+      explain: 'τ ∝ σ₀²，σ₀ → 3σ₀ 给出 τ → 9τ。物理原因：宽波包的动量展宽 σ_p = ħ/2σ₀ 更小，各分量速度差异更小。',
+    },
+    {
+      id: 'fp-4',
+      prompt: '为什么谐振子中的相干态不会展宽，而自由波包会？',
+      options: [
+        '因为谐振子能级等间距，各分量的相对相位每个周期后完全复原',
+        '因为谐振子势把波包「夹住」了，纯粹是几何限制',
+        '因为相干态不是叠加态',
+        '因为谐振子中不存在色散',
+      ],
+      answer: 0,
+      distractors: {
+        1: '这个直觉方向对，但机制说错了——束缚本身不足以阻止形状改变，非谐振子中波包照样会畸变。',
+        2: '相干态恰恰是无穷多个能量本征态的叠加。',
+        3: '色散指的是 ω(k) 非线性，在谐振子里换成了能谱 Eₙ 对 n 的依赖——它恰好是线性的。',
+      },
+      explain: 'Eₙ = (n+½)ħω 对 n 严格线性，所以相位 e^{−iEₙt/ħ} 在 t = 2π/ω 后全部同步复原。非谐振子（Eₙ 非线性）中相干态就会散开又周期性重聚，这叫量子回复（quantum revival）。',
+    },
+  ]}
+/>
+
+## 接下来
+
+最后一节把波包用在一个具体的靶子上：一堵它「本不该」穿过的墙。

@@ -1,0 +1,280 @@
+---
+title: 归一化与概率流
+section: '2.2'
+order: 2
+summary: 概率总和必须永远是 1。证明这件事的同时，我们会得到一个描述「概率往哪儿流」的量。
+status: done
+prereqs:
+  - 02-wavefunction/01-born-rule
+objectives:
+  - 对给定波函数完成归一化，并说明为什么归一化常数的相位无所谓
+  - 证明归一化在时间演化下自动保持
+  - 写出概率流密度并用连续性方程解释它的物理含义
+  - 判断一个函数能否作为合法的波函数
+---
+
+Born 规则要求
+
+$$
+\int_{-\infty}^{\infty}|\Psi(x,t)|^2\,\dd x = 1
+$$
+
+这是一个很强的约束，而且必须**在每个时刻都成立**。
+薛定谔方程给出的是 $\Psi$ 随时间的变化——凭什么保证这个积分不变？
+
+如果它会变，量子力学就完了：粒子会随时间凭空出现或消失。
+这一节我们证明它不会变，并在证明过程中挖出一个有用的新量。
+
+## 归一化
+
+给定一个解 $\Psi$，方程的线性性保证 $A\Psi$ 也是解（$A$ 为任意复常数）。
+我们选 $A$ 使得积分等于 1：
+
+$$
+|A|^2\int_{-\infty}^{\infty}|\Psi|^2\,\dd x = 1
+$$
+
+<Callout type="note" title="整体相位是自由的">
+上式只定死了 $|A|$，没有定死 $A$ 的相位。也就是说 $\Psi$ 和 $\ee^{\ii\theta}\Psi$
+描述的是**完全相同的物理状态**——它们的 $|\Psi|^2$ 一模一样，任何期望值也一模一样。
+
+这叫**整体相位不可观测**。但请注意：*相对*相位是可观测的。
+$\psi_1+\psi_2$ 和 $\psi_1+\ee^{\ii\pi}\psi_2$ 是完全不同的态，它们的干涉图样正好相反。
+</Callout>
+
+不是所有函数都能归一化。要求 $\int|\Psi|^2$ 收敛，就必须让 $\Psi$ 在 $x\to\pm\infty$ 时足够快地趋于零。
+这类函数叫**平方可积函数**，构成 Hilbert 空间 $L^2$。
+
+<Callout type="warning" title="平面波不可归一化">
+$\Psi = A\ee^{\ii kx}$ 的模平方是常数 $|A|^2$，积分发散。严格说它不是一个合法的物理态。
+
+但它太有用了，我们不会扔掉它——办法是用它作为**基**去展开真正可归一化的波包，
+这正是 [2.10 节](/ch/02-wavefunction/10-free-particle/) 要做的事。
+「不可归一化的解也有用」是量子力学里反复出现的模式。
+</Callout>
+
+## 归一化不随时间改变
+
+<Derivation title="推导：d/dt ∫|Ψ|²dx = 0" level="基础" minutes={6}>
+
+我们要证明
+
+$$
+\frac{\dd}{\dd t}\int_{-\infty}^{\infty}|\Psi(x,t)|^2\,\dd x = 0
+$$
+
+积分限与时间无关，所以求导可以搬进积分号里，变成偏导数：
+
+$$
+\frac{\dd}{\dd t}\int|\Psi|^2\dd x = \int \frac{\partial}{\partial t}\left(\Psi^*\Psi\right)\dd x
+= \int\left(\Psi^*\frac{\partial\Psi}{\partial t}+\frac{\partial\Psi^*}{\partial t}\Psi\right)\dd x
+$$
+
+现在用薛定谔方程（这里先接受它的形式，第 2.4 节会详细讨论）：
+
+$$
+\frac{\partial\Psi}{\partial t} = \frac{\ii\hbar}{2m}\frac{\partial^2\Psi}{\partial x^2}-\frac{\ii}{\hbar}V\Psi
+$$
+
+取复共轭（$V$ 是实函数，这一点至关重要）：
+
+$$
+\frac{\partial\Psi^*}{\partial t} = -\frac{\ii\hbar}{2m}\frac{\partial^2\Psi^*}{\partial x^2}+\frac{\ii}{\hbar}V\Psi^*
+$$
+
+代回被积函数。含 $V$ 的两项符号相反，**直接抵消**：
+
+$$
+\Psi^*\frac{\partial\Psi}{\partial t}+\frac{\partial\Psi^*}{\partial t}\Psi
+=\frac{\ii\hbar}{2m}\left(\Psi^*\frac{\partial^2\Psi}{\partial x^2}-\frac{\partial^2\Psi^*}{\partial x^2}\Psi\right)
+$$
+
+括号里的东西恰好是一个全导数：
+
+$$
+\frac{\partial}{\partial x}\left(\Psi^*\frac{\partial\Psi}{\partial x}-\frac{\partial\Psi^*}{\partial x}\Psi\right)
+=\Psi^*\frac{\partial^2\Psi}{\partial x^2}-\frac{\partial^2\Psi^*}{\partial x^2}\Psi
+$$
+
+（交叉项 $\frac{\partial\Psi^*}{\partial x}\frac{\partial\Psi}{\partial x}$ 出现两次且相消。）于是
+
+$$
+\frac{\dd}{\dd t}\int|\Psi|^2\dd x
+=\frac{\ii\hbar}{2m}\left[\Psi^*\frac{\partial\Psi}{\partial x}-\frac{\partial\Psi^*}{\partial x}\Psi\right]_{-\infty}^{+\infty}
+$$
+
+而可归一化要求 $\Psi\to 0$（且导数有界）当 $|x|\to\infty$，所以边界项为零。证毕。
+
+**这个证明依赖什么？** 只依赖 $V$ 是**实**的。如果引入复势（凝聚态与核物理里确实会这么做，
+用来唯象地描述粒子被吸收），归一化就会随时间衰减——那正是「吸收」的数学表现。
+本站波包模拟里的吸收边界层用的就是同一个思路。
+</Derivation>
+
+## 概率流密度
+
+上面的推导里冒出来的那个组合太重要了，值得单独起名。定义**概率流密度**
+
+$$
+j(x,t) \equiv \frac{\ii\hbar}{2m}\left(\Psi\frac{\partial\Psi^*}{\partial x}-\Psi^*\frac{\partial\Psi}{\partial x}\right)
+=\frac{\hbar}{m}\operatorname{Im}\left(\Psi^*\frac{\partial\Psi}{\partial x}\right)
+$$
+
+（两个写法等价，第二个更便于记忆和计算。）那么上面的推导实际上证明了
+
+$$
+\frac{\partial\rho}{\partial t}+\frac{\partial j}{\partial x}=0
+$$
+
+这就是**连续性方程**，和流体力学、电动力学里的形式一模一样。
+
+<DualView>
+<div slot="left">
+
+把 $\rho$ 想成一种不可压缩流体的密度，$j$ 是它的流量。
+连续性方程说：某个小区间里的「概率量」减少了多少，
+就一定有同样多的概率从两端**流**了出去。概率不会凭空产生或消失，只会搬家。
+
+这也解释了为什么归一化守恒：概率总量守恒是局域守恒律的整体版本。
+
+</div>
+<div slot="right">
+
+$$
+\frac{\dd}{\dd t}\int_a^b\rho\,\dd x = j(a,t)-j(b,t)
+$$
+
+左边是区间内概率的变化率，右边是「左端流入减右端流出」。
+
+对定态（$\Psi=\psi\ee^{-\ii Et/\hbar}$ 且 $\psi$ 实）有 $j\equiv 0$：
+不是没有运动，而是左行与右行的流恰好抵消。
+
+</div>
+</DualView>
+
+<Derivation title="例：平面波的概率流" level="基础" minutes={3}>
+
+取 $\Psi = A\ee^{\ii(kx-\omega t)}$。则
+
+$$
+\frac{\partial\Psi}{\partial x}=\ii k\Psi,\qquad
+\Psi^*\frac{\partial\Psi}{\partial x}=\ii k|A|^2
+$$
+
+$$
+j=\frac{\hbar}{m}\operatorname{Im}(\ii k|A|^2)=\frac{\hbar k}{m}|A|^2
+$$
+
+注意 $\hbar k/m = p/m = v$，所以
+
+$$
+j = \rho\, v
+$$
+
+——概率密度乘以速度，正是「流量 = 密度 × 速度」。这跟经典流体的直觉完全一致。
+
+顺带看出：如果 $\psi$ 是**实**函数（比如无限深势阱的定态），$\Psi^*\partial_x\Psi$ 是实的，
+虚部为零，$j = 0$。定态里概率分布不动，流也为零。
+
+</Derivation>
+
+<Callout type="misconception" title="j = 0 不等于粒子静止">
+无限深势阱的定态 $j\equiv 0$，但粒子的动能 $E_n>0$，显然不是静止的。
+
+正确的理解是：定态 $\sin(n\pi x/L)$ 可以写成两个反向平面波之和
+$\frac{1}{2\ii}(\ee^{\ii n\pi x/L}-\ee^{-\ii n\pi x/L})$。
+右行流与左行流大小相等、方向相反，净流为零。就像一根两端固定的驻波绳子——
+绳子在动，但没有能量在净传输。
+</Callout>
+
+## 什么样的函数才是合法波函数
+
+不是任意数学函数都能当波函数。要求来自两方面：Born 规则要能用，薛定谔方程要有意义。
+
+| 要求 | 理由 |
+| --- | --- |
+| 平方可积 $\int\lvert\Psi\rvert^2\dd x<\infty$ | 否则无法归一化，Born 规则失效 |
+| $\Psi$ 单值 | $\lvert\Psi\rvert^2$ 必须给出唯一的概率 |
+| $\Psi$ 连续 | 否则 $\partial_x\Psi$ 出现 δ 函数，动能发散 |
+| $\partial_x\Psi$ 连续（势有限时） | 由薛定谔方程两边积分得到；势含 δ 函数或无限高时可以不连续 |
+
+<Callout type="warning" title="最后一条有例外，而且很常用">
+在无限深势阱的壁上、以及 δ 势的位置，$\partial_x\Psi$ **允许**跳变。
+这不是「特例开后门」，而是从方程本身推出来的：对薛定谔方程在跳变点两侧作 $\varepsilon\to 0$ 的积分，
+$\partial_x\Psi$ 的跃变正比于 $\int V\dd x$。$V$ 有限时该积分为零，$V$ 是 δ 函数时就不为零。
+
+这一条在 [2.7](/ch/02-wavefunction/07-infinite-well/) 与
+[2.8 节](/ch/02-wavefunction/08-finite-well/) 会立刻用到。
+</Callout>
+
+<Callout type="note" title="本节为何没有配交互模拟">
+概率流的可视化需要一个「流场随时间变化」的动画，
+它真正有说服力的场合是波包撞势垒时反射流与透射流的分离——
+那个演示放在 [2.11 节](/ch/02-wavefunction/11-tunneling/) 更合适，
+在这里只会变成一条恒为零的直线。本节的结论都是解析的，纸笔可验证。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '归一化条件', latex: '\\int_{-\\infty}^{\\infty}|\\Psi(x,t)|^2\\,\\dd x=1', note: '薛定谔方程保证它一旦成立就永远成立' },
+    { name: '概率流密度', latex: 'j=\\frac{\\hbar}{m}\\operatorname{Im}\\left(\\Psi^*\\frac{\\partial\\Psi}{\\partial x}\\right)', note: '平面波下退化为 j = ρv' },
+    { name: '连续性方程', latex: '\\frac{\\partial\\rho}{\\partial t}+\\frac{\\partial j}{\\partial x}=0', note: '概率的局域守恒律' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'norm-1',
+      prompt: '归一化条件 ∫|Ψ|²dx = 1 能唯一确定波函数前面的常数 A 吗？',
+      options: [
+        '不能，它只确定 |A|，A 的相位是自由的',
+        '能，A 被唯一确定为正实数',
+        '能，因为概率必须为正',
+        '不能，因为积分本身发散',
+      ],
+      answer: 0,
+      distractors: {
+        1: '条件里只出现 |A|²，任何 A = |A|e^{iθ} 都满足。',
+        2: '概率为正只要求 |A|² > 0，对相位没有约束。',
+      },
+      explain: '整体相位不可观测：Ψ 与 e^{iθ}Ψ 给出完全相同的所有测量结果。但两个态叠加时的相对相位是可观测的。',
+    },
+    {
+      id: 'norm-2',
+      prompt: '归一化随时间守恒的证明依赖下列哪个条件？',
+      options: [
+        '势能 V(x) 是实函数',
+        '势能 V(x) 与时间无关',
+        '波函数是定态',
+        '粒子质量为常数',
+      ],
+      answer: 0,
+      distractors: {
+        1: '推导中 V 可以含时，只要它是实的；含 V 的两项照样抵消。',
+        2: '证明对任意波函数成立，不限于定态。',
+      },
+      explain: '关键一步是 Ψ*(−i/ħ)VΨ 与 Ψ(+i/ħ)V*Ψ* 相消，这要求 V* = V。引入复势正是用来唯象描述粒子吸收（归一化会衰减）。',
+    },
+    {
+      id: 'norm-3',
+      prompt: '一个实值的定态波函数 ψ(x)（如无限深势阱的本征态），其概率流 j 等于多少？这意味着什么？',
+      options: [
+        'j = 0，右行流与左行流恰好抵消',
+        'j = 0，粒子处于静止状态',
+        'j = ρv ≠ 0，粒子在阱内匀速运动',
+        'j 随时间振荡',
+      ],
+      answer: 0,
+      distractors: {
+        1: '粒子动能 Eₙ > 0，并非静止；把 sin 展成两个反向平面波即可看清。',
+        2: '实波函数使 Ψ*∂ₓΨ 为实数，虚部为零。',
+      },
+      explain: 'j ∝ Im(Ψ*∂ₓΨ)。ψ 为实时该量为零。物理图像是驻波：两列反向行波叠加，净流为零但能量不为零。',
+    },
+  ]}
+/>
+
+## 接下来
+
+我们一直在用薛定谔方程却没有正式介绍它。下一节先处理**定态**情形——
+这是绝大多数计算实际会做的事：解一个本征值问题。

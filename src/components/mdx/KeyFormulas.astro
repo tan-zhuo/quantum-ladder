@@ -1,0 +1,41 @@
+---
+import Katex from '@/components/math/Katex.astro'
+
+interface Item {
+  name: string
+  latex: string
+  note?: string
+}
+
+interface Props {
+  /** 本节必须记住的公式。放在节末，作为复习锚点 */
+  items: Item[]
+  title?: string
+}
+
+const { items, title = '本节关键公式' } = Astro.props
+---
+
+<section class="my-8 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-4 print-break-avoid">
+  <h3
+    class="mb-3 flex items-center gap-2 text-[12px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase"
+  >
+    <span aria-hidden="true">∎</span>
+    {title}
+  </h3>
+  <ul class="space-y-3">
+    {
+      items.map((item) => (
+        <li class="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
+          <p class="mb-1 text-[13px] font-medium text-[var(--text)]">{item.name}</p>
+          <div class="overflow-x-auto py-1">
+            <Katex formula={item.latex} display />
+          </div>
+          {item.note && (
+            <p class="mt-1 text-[12.5px] leading-relaxed text-[var(--text-faint)]">{item.note}</p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>

@@ -1,0 +1,16 @@
+---
+import Quiz, { type Question } from '@/components/quiz/Quiz'
+
+interface Props {
+  questions: Question[]
+  title?: string
+}
+
+const { questions, title } = Astro.props
+---
+
+<!--
+  MDX 里写 <QuizBlock questions={[...]} />。
+  和 Sim.astro 同理：需要水合的组件必须静态导入，这层壳让作者免去 import。
+-->
+<Quiz client:visible questions={questions} title={title} />

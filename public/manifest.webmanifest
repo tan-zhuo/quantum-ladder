@@ -1,0 +1,24 @@
+{
+  "name": "量子力学阶梯 · 3D 实验室",
+  "short_name": "量子阶梯",
+  "description": "以 3D 交互为主要教学语言的量子力学学习平台：波函数、能级、隧穿、纠缠都在浏览器里实时计算。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbfaf8",
+  "theme_color": "#3b5bdb",
+  "categories": ["education", "science"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "3D 实验室", "url": "./lab/", "description": "全部 3D 模块" },
+    { "name": "Bloch 球", "url": "./lab/05-spin/", "description": "自旋与测量" },
+    { "name": "氢原子轨道", "url": "./lab/06-hydrogen/", "description": "概率云与节点" }
+  ]
+}

@@ -1,0 +1,49 @@
+---
+import InfiniteWell from '@/components/sim/InfiniteWell'
+import HarmonicOscillator from '@/components/sim/HarmonicOscillator'
+import WavePacketScattering from '@/components/sim/WavePacketScattering'
+
+/**
+ * MDX 里嵌入交互模拟的统一入口：<Sim name="infinite-well" />
+ *
+ * 为什么绕这一层：client:visible 这类水合指令要求组件在编译期是静态引用的，
+ * 不能通过 <Content components={...} /> 传进 MDX。把导入集中在这里之后，
+ * 章节作者写正文时一个 import 都不用写。
+ *
+ * 注意下面是逐个 if 而不是查表 —— 从对象里取出组件再 <Component client:visible />，
+ * Astro 在编译期看不到它对应哪个模块，构建会报 NoMatchingImport。
+ *
+ * client:visible 而不是 client:load：一节里常有两三个模拟，
+ * 滚到哪个才加载哪个，首屏 JS 才不会被拖垮。
+ */
+
+export const SIM_NAMES = ['infinite-well', 'harmonic-oscillator', 'wave-packet-scattering'] as const
+
+export type SimName = (typeof SIM_NAMES)[number]
+
+interface Props {
+  name: SimName
+}
+
+const { name } = Astro.props
+
+if (!SIM_NAMES.includes(name)) {
+  throw new Error(
+    `未知的模拟 "${name}"。可用的有：${SIM_NAMES.join('、')}。` +
+      `新增模拟请在 src/components/mdx/Sim.astro 里登记。`,
+  )
+}
+---
+
+{name === 'infinite-well' && <InfiniteWell client:visible />}
+{name === 'harmonic-oscillator' && <HarmonicOscillator client:visible />}
+{name === 'wave-packet-scattering' && <WavePacketScattering client:visible />}
+
+<noscript>
+  <div
+    class="my-8 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-4 py-6 text-center text-[13.5px] text-[var(--text-muted)]"
+  >
+    这里是一个交互模拟（{name}），需要启用 JavaScript 才能运行。
+    正文的推导与结论不依赖它，可以继续往下读。
+  </div>
+</noscript>

@@ -1,0 +1,271 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import MasteryPicker from '@/components/progress/MasteryPicker'
+import { CHAPTER_BY_ID } from '@/data/chapters'
+import { getNeighbours, resolvePrereqs, type TocSection } from '@/lib/toc'
+import type { MarkdownHeading } from 'astro'
+
+interface Props {
+  section: TocSection
+  headings: MarkdownHeading[]
+}
+
+const { section, headings } = Astro.props
+const chapter = CHAPTER_BY_ID.get(section.chapterId)!
+const { prev, next, index, total } = await getNeighbours(section.id)
+const prereqs = await resolvePrereqs(section.prereqs)
+const base = import.meta.env.BASE_URL
+
+// 只取 h2/h3：h4 通常是推导内部的小标题，列出来右栏会太吵
+const outline = headings.filter((h) => h.depth === 2 || h.depth === 3)
+---
+
+<BaseLayout
+  title={section.label}
+  description={section.summary}
+  currentId={section.id}
+  currentChapter={section.chapterId}
+>
+  {/* 阅读进度条：固定在顶栏下沿 */}
+  <div
+    class="no-print fixed top-14 right-0 left-0 z-20 h-0.5 bg-transparent"
+    aria-hidden="true"
+  >
+    <div id="ql-reading-bar" class="h-full w-0 bg-[var(--accent)] transition-[width] duration-75"></div>
+  </div>
+
+  {prev && <link rel="prev" href={prev.href} slot="head" />}
+  {next && <link rel="next" href={next.href} slot="head" />}
+
+  <div class="mx-auto flex w-full max-w-[1180px] gap-10 px-5 py-8 lg:px-8 xl:max-w-[1320px]">
+    <article class="min-w-0 flex-1">
+      <nav aria-label="面包屑" class="mb-4 flex flex-wrap items-center gap-1.5 text-[12.5px] text-[var(--text-faint)]">
+        <a href={base} class="hover:text-[var(--accent-text)]">首页</a>
+        <span aria-hidden="true">/</span>
+        <a href={`${base}ch/${chapter.id}/`} class="hover:text-[var(--accent-text)]">
+          {chapter.num}. {chapter.title}
+        </a>
+        <span aria-hidden="true">/</span>
+        <span class="text-[var(--text-muted)]">{section.section ?? section.title}</span>
+      </nav>
+
+      <header class="mb-8">
+        {
+          section.section && (
+            <p class="mb-1.5 font-mono text-[13px] text-[var(--accent-text)]">{section.section}</p>
+          )
+        }
+        <h1 class="text-[28px] leading-tight font-bold tracking-tight sm:text-[32px]">
+          {section.title}
+        </h1>
+        {
+          section.summary && (
+            <p class="mt-3 text-[16px] leading-relaxed text-[var(--text-muted)]">{section.summary}</p>
+          )
+        }
+
+        {
+          section.status !== 'done' && (
+            <p class="mt-4 rounded-lg border border-dashed border-[var(--border-strong)] bg-[var(--bg-subtle)] px-3 py-2 text-[13px] text-[var(--text-muted)]">
+              {section.status === 'stub'
+                ? '本节尚未撰写，当前只有大纲。内容结构与交互模拟的规格见下方。'
+                : '本节为草稿，推导与措辞可能还会调整。'}
+            </p>
+          )
+        }
+
+        {
+          (prereqs.length > 0 || section.objectives.length > 0) && (
+            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+              {prereqs.length > 0 && (
+                <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
+                  <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
+                    建议先掌握
+                  </h2>
+                  <ul class="space-y-1 text-[13.5px]">
+                    {prereqs.map((p) => (
+                      <li class="flex gap-1.5">
+                        <span aria-hidden="true" class="text-[var(--text-faint)]">
+                          ·
+                        </span>
+                        {p.href ? (
+                          <a href={p.href} class="text-[var(--accent-text)] hover:underline">
+                            {p.text}
+                          </a>
+                        ) : (
+                          <span class="text-[var(--text-muted)]">{p.text}</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {section.objectives.length > 0 && (
+                <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3.5 py-3">
+                  <h2 class="mb-1.5 text-[11.5px] font-semibold tracking-[0.1em] text-[var(--text-faint)] uppercase">
+                    学完本节你应该能
+                  </h2>
+                  <ul class="space-y-1 text-[13.5px] text-[var(--text-muted)]">
+                    {section.objectives.map((o) => (
+                      <li class="flex gap-1.5">
+                        <span aria-hidden="true" class="text-[var(--c-energy)]">
+                          ✓
+                        </span>
+                        <span>{o}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
+          )
+        }
+      </header>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <div class="mt-12">
+        <MasteryPicker client:visible sectionId={section.id} />
+      </div>
+
+      <nav class="no-print mt-8 grid gap-3 sm:grid-cols-2" aria-label="上一节 / 下一节">
+        {
+          prev ? (
+            <a
+              href={prev.href}
+              rel="prev"
+              class="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 transition-colors hover:border-[var(--border-strong)]"
+            >
+              <span class="text-[11.5px] text-[var(--text-faint)]">← 上一节</span>
+              <span class="mt-0.5 block text-[14px] font-medium group-hover:text-[var(--accent-text)]">
+                {prev.label}
+              </span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          next && (
+            <a
+              href={next.href}
+              rel="next"
+              class="group rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 text-right transition-colors hover:border-[var(--border-strong)] sm:col-start-2"
+            >
+              <span class="text-[11.5px] text-[var(--text-faint)]">下一节 →</span>
+              <span class="mt-0.5 block text-[14px] font-medium group-hover:text-[var(--accent-text)]">
+                {next.label}
+              </span>
+            </a>
+          )
+        }
+      </nav>
+
+      <p class="mt-6 text-center text-[12px] text-[var(--text-faint)]">
+        全站第 {index + 1} / {total} 节 · 用 <kbd class="font-mono">←</kbd> <kbd class="font-mono">→</kbd> 翻页
+      </p>
+    </article>
+
+    {
+      outline.length > 1 && (
+        <aside class="no-print sticky top-20 hidden h-fit w-[200px] shrink-0 xl:block" aria-label="本页目录">
+          <h2 class="mb-2 text-[11px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
+            本页内容
+          </h2>
+          <ul class="space-y-0.5 border-l border-[var(--border)]">
+            {outline.map((h) => (
+              <li>
+                <a
+                  href={`#${h.slug}`}
+                  data-outline-link={h.slug}
+                  class={
+                    '-ml-px block border-l-2 border-transparent py-1 text-[12.5px] leading-snug text-[var(--text-muted)] transition-colors hover:text-[var(--text)] ' +
+                    (h.depth === 3 ? 'pl-6' : 'pl-3')
+                  }
+                >
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  import { markVisited } from '@/lib/progress'
+
+  const sectionId = document.body.dataset.sectionId
+  if (sectionId) markVisited(sectionId)
+
+  // ── 阅读进度条 ─────────────────────────────────────────
+  const bar = document.getElementById('ql-reading-bar')
+  const article = document.querySelector('article')
+
+  function updateBar() {
+    if (!bar || !article) return
+    // 以正文区域为基准而不是整页：页脚导航不该算进「读完了」
+    const start = article.offsetTop
+    const end = start + article.offsetHeight - window.innerHeight
+    const p = end <= start ? 1 : (window.scrollY - start) / (end - start)
+    bar.style.width = `${Math.min(100, Math.max(0, p * 100))}%`
+  }
+
+  // ── 右栏目录高亮 ───────────────────────────────────────
+  const links = new Map<string, HTMLElement>()
+  document.querySelectorAll<HTMLElement>('[data-outline-link]').forEach((el) => {
+    links.set(el.dataset.outlineLink!, el)
+  })
+
+  let activeSlug = ''
+  function setActive(slug: string) {
+    if (slug === activeSlug) return
+    if (activeSlug) {
+      const old = links.get(activeSlug)
+      old?.classList.remove('border-[var(--accent)]', 'text-[var(--text)]', 'font-medium')
+    }
+    activeSlug = slug
+    const el = links.get(slug)
+    el?.classList.add('border-[var(--accent)]', 'text-[var(--text)]', 'font-medium')
+  }
+
+  if (links.size) {
+    const headings = [...links.keys()]
+      .map((slug) => document.getElementById(slug))
+      .filter((el): el is HTMLElement => !!el)
+
+    const io = new IntersectionObserver(
+      () => {
+        // 取最靠近视口上沿、且已经滚过去的那个标题；
+        // 直接用 isIntersecting 会在快速滚动时来回跳
+        let current = headings[0]?.id ?? ''
+        for (const h of headings) {
+          if (h.getBoundingClientRect().top <= 96) current = h.id
+          else break
+        }
+        setActive(current)
+      },
+      { rootMargin: '-80px 0px -70% 0px', threshold: [0, 1] },
+    )
+    headings.forEach((h) => io.observe(h))
+  }
+
+  updateBar()
+  window.addEventListener('scroll', updateBar, { passive: true })
+  window.addEventListener('resize', updateBar)
+
+  // ── 标题锚点 ───────────────────────────────────────────
+  document.querySelectorAll<HTMLElement>('.prose h2[id], .prose h3[id], .prose h4[id]').forEach((h) => {
+    const a = document.createElement('a')
+    a.href = `#${h.id}`
+    a.className = 'heading-anchor'
+    a.textContent = '#'
+    a.setAttribute('aria-label', `链接到「${h.textContent?.trim() ?? ''}」`)
+    h.appendChild(a)
+  })
+</script>
