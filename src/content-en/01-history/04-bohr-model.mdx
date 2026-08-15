@@ -1,18 +1,301 @@
 ---
-title: 'The Bohr model and the correspondence principle'
-summary: 'A semi-classical patchwork that nonetheless nailed the hydrogen spectrum.'
+title: The Bohr model and the correspondence principle
 section: '1.4'
 order: 4
-status: stub
+summary: A model its own author admitted was an unprincipled patchwork — and it gave the hydrogen spectrum to four significant figures. Both what it got right and what it got wrong are worth seeing clearly.
+status: done
+prereqs:
+  - 01-history/03-photoelectric-effect
+objectives:
+  - Derive the hydrogen energy levels and the Rydberg formula from Bohr's two postulates
+  - Compute the Bohr radius and 13.6 eV, and identify which constants they are built from
+  - State the correspondence principle and show how Bohr used it to reverse-engineer the quantisation condition
+  - Name three kinds of phenomena the model cannot handle
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section left the third dead end standing: a classical atom lives under $10^{-11}$ s and ought to emit a continuous spectrum.
+
+Start by looking at what experiment actually offered.
+
+## Spectral lines are not random — they have a formula
+
+Nineteenth-century spectroscopy accumulated a great deal of data: each element, heated or discharged, emits only at certain wavelengths, fixed precisely enough to identify the element.
+
+Hydrogen is the simplest, with only a handful of visible lines. In 1885 Balmer, a Swiss schoolteacher of mathematics, stared at those four numbers and found a formula. Rydberg later generalised it:
+
+$$
+\frac{1}{\lambda}=R_\infty\left(\frac{1}{n_1^2}-\frac{1}{n_2^2}\right),\qquad n_2>n_1
+$$
+
+with $R_\infty=1.097\times10^7\ \text{m}^{-1}$ fitted purely from experiment.
+
+<Callout type="check" title="Notice the shape of this formula">
+The right-hand side is **the difference of two terms, each depending only on an integer.**
+
+That is close to saying outright: each spectral line corresponds to a jump from one state to another, and the states are labelled by integers.
+
+The trouble is that in 1885 nobody knew what those integers were. For almost thirty years the formula was an unsolved numerical puzzle.
 </Callout>
 
-## Planned contents
+## Bohr's two postulates
 
-- Stationary states and quantised angular momentum
-- Deriving the Rydberg formula
-- The correspondence principle: large quantum numbers recover classical physics
-- Where the model fails
+In 1913 Bohr proposed two postulates in direct conflict with classical physics. He knew perfectly well they were unjustified; the plan was to accept them and see what followed.
+
+<Callout type="insight" title="Postulate one: stationary states">
+Electrons can occupy only certain orbits, and while in them they **do not radiate**. These are called **stationary states**.
+
+The criterion is quantisation of angular momentum:
+
+$$
+L=m v r=n\hbar,\qquad n=1,2,3,\dots
+$$
+</Callout>
+
+<Callout type="insight" title="Postulate two: transitions">
+When an electron jumps from a state of energy $E_{n_2}$ to one of energy $E_{n_1}$, the difference leaves as a single photon:
+
+$$
+h\nu=E_{n_2}-E_{n_1}
+$$
+
+Radiation happens only during the jump, and has nothing to do with how the electron moves while in an orbit.
+</Callout>
+
+The first postulate cuts off the collapse directly: **an electron in a stationary state does not radiate, so it cannot spiral in**; and $n=1$ is the lowest rung, with no step below it, so the atom is stable.
+
+The second turns the "difference of two terms" in the Rydberg formula into "difference of two energy levels".
+
+<Derivation title="Derivation: from two postulates to 13.6 eV" level="基础" minutes={8} open={true}>
+
+**Step 1: classical mechanics gives the orbit condition.** The Coulomb force supplies the centripetal force:
+
+$$
+\frac{e^2}{4\pi\varepsilon_0r^2}=\frac{mv^2}{r}
+\quad\Longrightarrow\quad
+mv^2=\frac{e^2}{4\pi\varepsilon_0r}
+$$
+
+Note this step is entirely classical — Bohr invoked quantum assumptions only where he had to, and used Newton everywhere else.
+
+**Step 2: impose the quantisation condition.** From $mvr=n\hbar$ we get $v=n\hbar/mr$; substituting,
+
+$$
+m\cdot\frac{n^2\hbar^2}{m^2r^2}=\frac{e^2}{4\pi\varepsilon_0 r}
+\quad\Longrightarrow\quad
+r_n=\frac{4\pi\varepsilon_0\hbar^2}{me^2}\,n^2
+$$
+
+**The orbital radii are discrete and go as $n^2$.** The smallest ($n=1$) is the **Bohr radius**:
+
+$$
+a_0=\frac{4\pi\varepsilon_0\hbar^2}{me^2}=0.529\ \text{Å}=5.29\times10^{-11}\ \text{m}
+$$
+
+This matched the atomic size then estimated from gas viscosity and similar methods. **A length assembled purely from fundamental constants landing at the right order of magnitude** — this was the model's first genuinely persuasive moment.
+
+**Step 3: compute the energy.** Total energy is kinetic plus potential:
+
+$$
+E=\frac12mv^2-\frac{e^2}{4\pi\varepsilon_0r}
+=\frac{e^2}{8\pi\varepsilon_0r}-\frac{e^2}{4\pi\varepsilon_0r}
+=-\frac{e^2}{8\pi\varepsilon_0r}
+$$
+
+(using step 1's $mv^2=e^2/4\pi\varepsilon_0r$; note in passing that **the kinetic energy is exactly half the magnitude of the potential energy**, a consequence of the virial theorem for a Coulomb force).
+
+Substituting $r_n$:
+
+$$
+E_n=-\frac{me^4}{32\pi^2\varepsilon_0^2\hbar^2}\cdot\frac{1}{n^2}=-\frac{13.606\ \text{eV}}{n^2}
+$$
+
+**Step 4: match the Rydberg formula.** By postulate two,
+
+$$
+h\nu=E_{n_2}-E_{n_1}=13.606\ \text{eV}\left(\frac{1}{n_1^2}-\frac{1}{n_2^2}\right)
+$$
+
+In terms of wavelength,
+
+$$
+\frac1\lambda=\frac{13.606\ \text{eV}}{hc}\left(\frac{1}{n_1^2}-\frac{1}{n_2^2}\right)
+$$
+
+That leading coefficient works out to $1.097\times10^7\ \text{m}^{-1}$ — **agreeing with the measured Rydberg constant to four significant figures.**
+
+Thirty years of numerical puzzle, solved.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**What the level diagram looks like**
+
+$E_n=-13.6/n^2$ eV: $-13.6,\ -3.40,\ -1.51,\ -0.85,\dots$
+
+The gaps shrink as you climb, crowding towards $E=0$ (where the electron just escapes). So:
+
+- Transitions down to $n_1=1$ (the **Lyman series**) carry the most energy and lie in the ultraviolet.
+- Down to $n_1=2$ (the **Balmer series**) happen to land in the visible — these are the four lines Balmer could see with his eyes.
+- Down to $n_1=3$ (the **Paschen series**) lie in the infrared.
+
+</div>
+<div slot="right">
+
+$$
+E_n=-\frac{13.606\ \text{eV}}{n^2},\qquad r_n=a_0n^2
+$$
+
+The **ionisation energy** — taking the electron from $n=1$ to $n=\infty$ — is 13.6 eV, in exact agreement with experiment.
+
+Using the fine-structure constant $\alpha=e^2/4\pi\varepsilon_0\hbar c\approx1/137$ it can be written very cleanly:
+
+$$
+E_n=-\frac12\alpha^2mc^2\cdot\frac{1}{n^2}
+$$
+
+that is, $\frac12\times(1/137)^2\times511000\ \text{eV}=13.6\ \text{eV}$.
+
+</div>
+</DualView>
+
+## The correspondence principle: how Bohr found that condition
+
+In the derivation above, $L=n\hbar$ was written down out of nowhere. Bohr did not guess it — he had a methodological principle.
+
+<Callout type="insight" title="The correspondence principle">
+**At large quantum numbers, quantum predictions must reduce to the classical result.**
+
+Classical electrodynamics says an orbiting electron radiates at its **orbital frequency** $f_\text{orb}$. Quantum theory says the radiated frequency is set by the gap between adjacent levels, $\nu=(E_{n+1}-E_n)/h$.
+
+In the limit of large $n$ these two must agree. Bohr found that they agree only if the angular momentum is quantised as $n\hbar$ — so he used the correspondence **backwards**, as the basis for deriving the quantisation condition.
+</Callout>
+
+<Derivation title="Check: the two frequencies really do agree at large n" level="进阶" minutes={6}>
+
+**Quantum side.** The gap between adjacent levels:
+
+$$
+\Delta E=E_{n+1}-E_n=13.6\ \text{eV}\left(\frac{1}{n^2}-\frac{1}{(n+1)^2}\right)
+$$
+
+Expanding for large $n$: $\frac{1}{n^2}-\frac{1}{(n+1)^2}\approx\frac{2}{n^3}$, so
+
+$$
+\nu_\text{quantum}=\frac{\Delta E}{h}\approx\frac{2\times13.6\ \text{eV}}{hn^3}
+$$
+
+**Classical side.** The orbital frequency is $f=v/2\pi r$. With $v=n\hbar/mr$ and $r=a_0n^2$:
+
+$$
+f_\text{orb}=\frac{n\hbar}{2\pi mr^2}=\frac{n\hbar}{2\pi ma_0^2n^4}=\frac{\hbar}{2\pi ma_0^2}\cdot\frac{1}{n^3}
+$$
+
+**Both go as $1/n^3$**, and putting the constants in shows the coefficients match too.
+
+**For a feel for the numbers**: at $n=2\to1$ the two differ by more than a factor of two; at $n=100\to99$ by under 2%; at $n=1000$ they are indistinguishable.
+
+Quantum effects do not "vanish" at large $n$; they simply become impossible to tell apart from the classical answer. The same idea reappears in another guise in [section 2.7](/en/ch/02-wavefunction/07-infinite-well/).
+
+</Derivation>
+
+## Where it goes wrong
+
+The Bohr model is absurdly accurate for hydrogen, but it is a **semi-classical patchwork**: half Newtonian orbit, half quantum rule, and the two are fundamentally incompatible.
+
+<Callout type="warning" title="Three things it cannot do">
+**1. It cannot handle helium.** Add a second electron and the model fails immediately, with errors too large to be useful. Helium is the second simplest atom there is.
+
+**2. It cannot give line intensities.** It tells you where the lines are but not which are bright and which are faint, nor why some transitions never happen at all (selection rules).
+
+**3. The very concept of an "orbit" is wrong.** This is the serious one. Bohr has the electron moving on a circle of radius $a_0$ carrying a definite angular momentum $\hbar$.
+
+Correct quantum mechanics says the hydrogen ground state has angular momentum $L=0$ (not $\hbar$), the electron has no definite trajectory at all, and $a_0$ is the characteristic scale of a probability distribution rather than the radius of a circle. See [section 6.3](/en/ch/06-hydrogen/03-hydrogen-solution/).
+
+**It got the levels right and the picture wrong.**
+</Callout>
+
+<Callout type="misconception" title="That textbook picture of an electron circling a nucleus">
+The familiar logo-like image of electrons on elliptical paths around a nucleus is the Bohr model — and it has been superseded for a century.
+
+A real atom is closer to a structured cloud of probability: spherical s orbitals, dumbbell-shaped p orbitals, four-lobed d orbitals. By [chapter 6](/en/ch/06-hydrogen/) you can rotate them yourself in a 3D scene.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Angular-momentum quantisation', latex: 'L=mvr=n\\hbar,\\qquad n=1,2,3,\\dots', note: "Bohr's first postulate, reverse-engineered from the correspondence principle" },
+    { name: 'Bohr radius', latex: 'a_0=\\frac{4\\pi\\varepsilon_0\\hbar^2}{me^2}=0.529\\ \\text{Å}', note: 'An atomic scale assembled purely from fundamental constants' },
+    { name: 'Hydrogen energy levels', latex: 'E_n=-\\frac{13.606\\ \\text{eV}}{n^2}=-\\frac{\\alpha^2mc^2}{2n^2}', note: 'The levels themselves are right; quantum mechanics re-derives them' },
+    { name: 'Rydberg formula', latex: '\\frac{1}{\\lambda}=R_\\infty\\left(\\frac{1}{n_1^2}-\\frac{1}{n_2^2}\\right)', note: 'R∞ = 1.097×10⁷ m⁻¹; theory and experiment agree to four figures' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bohr-1',
+      prompt: 'How does the Bohr model deal with "an atom collapses within 10⁻¹¹ s"?',
+      options: [
+        'It postulates that electrons in stationary states do not radiate, and that there is no level below n = 1 to fall to',
+        'It postulates that the Coulomb force becomes repulsive at short range',
+        'It postulates that the electron mass varies with orbital radius',
+        'It postulates that the nucleus reabsorbs the radiated energy',
+      ],
+      answer: 0,
+      distractors: {
+        1: "Coulomb's law holds perfectly at atomic scales; the model does not modify it.",
+        2: 'The mass is unchanged.',
+        3: 'That would contradict the discrete emission spectra actually observed.',
+      },
+      explain: 'Stability is written straight into the postulates — very much in the spirit of "accept it and see what follows". The real explanation waits for [section 2.5](/en/ch/02-wavefunction/05-stationary-states/): the charge distribution of a stationary state does not change in time, and a static distribution does not radiate.',
+    },
+    {
+      id: 'bohr-2',
+      prompt: "What role does the correspondence principle play in Bohr's work?",
+      options: [
+        'It is the basis for deriving the quantisation condition: at large n the quantum transition frequency must equal the classical orbital frequency',
+        'It proves classical physics is wrong',
+        'It is an empirical rule fitted to spectroscopic data',
+        'It fixes the photon energy at hν',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite: it requires the new theory to agree with the old one in the appropriate limit.',
+        2: 'It is a methodological principle, not a fit.',
+        3: 'That was the contribution of Planck and Einstein.',
+      },
+      explain: 'Bohr took "must reduce to classical at large n" as a constraint and found that only L = nħ satisfies it. This is the classic move when a new theory is being built: use the known-good old theory to constrain the form of the new one.',
+    },
+    {
+      id: 'bohr-3',
+      prompt: 'Which statements about the limitations of the Bohr model are correct? (Select all that apply.)',
+      options: [
+        'It cannot handle two-electron atoms such as helium',
+        'It gives no relative line intensities and no selection rules',
+        'Its energy-level formula for hydrogen is wrong',
+        'Its assumed circular electron orbits do not correspond to real quantum states',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'Eₙ = −13.6 eV/n² is correct, and quantum mechanics re-derives the same expression in [section 6.4](/en/ch/06-hydrogen/04-energy-levels/) (ignoring fine structure).',
+      },
+      explain: 'The Bohr model gets the answer right and the picture wrong. The level formula survives scrutiny, but the orbit concept does not: the hydrogen ground state actually has angular momentum 0, not ħ, and the electron has no definite path.',
+    },
+    {
+      id: 'bohr-4',
+      type: 'numeric',
+      prompt: 'What is the photon energy, in eV, for the hydrogen transition n = 3 → n = 2? (This is the Balmer Hα line, and it is red.)',
+      answer: 1.89,
+      tolerance: 0.1,
+      unit: 'eV',
+      explain: 'ΔE = 13.606×(1/4 − 1/9) = 13.606×0.1389 = 1.89 eV, corresponding to λ = 1240/1.89 = 656 nm — deep red. That characteristic red in nebula photographs comes from this line.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Bohr's quantisation condition $L=n\hbar$ is still a rule with no reason behind it. **Why integer multiples of $\hbar$ in particular?**
+
+Ten years later a doctoral student gave an unexpected answer: because the electron is a wave, and the orbit has to hold a whole number of wavelengths.

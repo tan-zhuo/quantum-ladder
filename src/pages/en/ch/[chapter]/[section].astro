@@ -7,6 +7,7 @@ import Derivation from '@/components/mdx/Derivation.astro'
 import DualView from '@/components/mdx/DualView.astro'
 import KeyFormulas from '@/components/mdx/KeyFormulas.astro'
 import QuizBlock from '@/components/mdx/QuizBlock.astro'
+import Scene from '@/components/canvas/Scene.astro'
 import Sim from '@/components/mdx/Sim.astro'
 import Term from '@/components/mdx/Term.astro'
 
@@ -38,7 +39,7 @@ const { Content, headings } = await render(entry)
 const toc = await getToc('en')
 const section = toc.flatMap((c) => c.sections).find((s) => s.id === entryId) as TocSection
 
-const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Sim, Term }
+const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Scene, Sim, Term }
 ---
 
 <ChapterLayout section={section} headings={headings} lang="en">

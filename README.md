@@ -51,7 +51,7 @@ npm run i18n:check   # 812 msgids, all translated
 | 轴 | 路由 | 组织方式 | 源码位置 |
 | --- | --- | --- | --- |
 | **3D 实验室**（主轴） | `/lab/<module>/` | 按「必须用三维讲透的核心原理」组织，16 个模块 | `src/lab/*.mdx` |
-| 教材（深入阅读） | `/ch/<chapter>/<section>/` | 按传统章节组织，18 章 106 节 | `src/content/**/*.mdx` |
+| 教材（深入阅读） | `/ch/<chapter>/<section>/` | 按传统章节组织，18 章 106 节（第 1、2 章已写完正文，其余为内容规划） | `src/content/**/*.mdx` |
 
 两者通过模块 frontmatter 里的 `related` 字段互相指路：3D 建立图像，教材负责把它算清楚。
 

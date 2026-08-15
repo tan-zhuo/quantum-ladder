@@ -1,17 +1,258 @@
 ---
-title: 'Black-body radiation and Planck’s quantum hypothesis'
-summary: 'Planck introduced E = nhν to make a formula fit, and opened the door to the quantum.'
+title: Black-body radiation and Planck's quantum hypothesis
 section: '1.2'
 order: 2
-status: stub
+summary: Planck got the right formula first and went looking for a justification afterwards. The justification he found, he refused to take seriously for over a decade.
+status: done
+prereqs:
+  - 01-history/01-classical-crisis
+objectives:
+  - Show how Planck's formula reduces to Rayleigh–Jeans at low frequency and to Wien at high frequency
+  - Explain why E = nhν kills the ultraviolet catastrophe and the specific-heat anomaly at the same time
+  - Use Planck's law to estimate the peak wavelength of everyday objects
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The first dead end from the previous section: classical theory computes black-body radiation and returns infinity.
+
+This section is about how Planck strangled it — and about the fact that he did not reason his way to the formula, but the other way round.
+
+## First, what the measured curve looks like
+
+Through the 1890s the Imperial Physical-Technical Institute in Berlin produced the most accurate black-body measurements then available. The curve has a distinctive shape:
+
+<DualView>
+<div slot="left">
+
+**Low-frequency end**: energy density rises with frequency, and the measurements agree well with Rayleigh–Jeans.
+
+**Peak**: a maximum at some frequency. The hotter the body, the higher that frequency — which is why iron goes from dull red to orange-white.
+
+**High-frequency end**: falls away fast, faster than any power law. The total area (the total energy) is finite.
+
+In 1896 Wien produced a purely empirical formula that fits the high end well but runs visibly low at the bottom. Rayleigh–Jeans fits the low end and diverges at the top. **Each formula gets half the curve.**
+
+</div>
+<div slot="right">
+
+**Wien's displacement law** (empirical, 1893):
+
+$$
+\lambda_\text{max}T=2.898\times10^{-3}\ \text{m}\cdot\text{K}
+$$
+
+**Stefan–Boltzmann law** (empirical, 1879):
+
+$$
+\text{total radiated power}\propto T^4
+$$
+
+Any correct theory has to reproduce both of these and reduce to Wien and Rayleigh–Jeans at the two ends. The constraints are tight.
+
+</div>
+</DualView>
+
+## What Planck did
+
+In October 1900 Planck used interpolation to stitch Wien's formula and Rayleigh–Jeans together — a purely mathematical move, aimed at producing an expression correct at both ends:
+
+$$
+u(\nu,T)=\frac{8\pi h\nu^3}{c^3}\cdot\frac{1}{\ee^{h\nu/k_BT}-1}
+$$
+
+That same evening someone tested it against the data. The agreement was perfect.
+
+**But why should the formula hold?** For the next two months Planck was, in his own words, working "desperately" to find a reason. What he found was this:
+
+<Callout type="insight" title="The quantum hypothesis">
+An oscillator of frequency $\nu$ in the cavity wall cannot have arbitrary energy; it is restricted to
+
+$$
+E_n=nh\nu,\qquad n=0,1,2,\dots
+$$
+
+Energy is exchanged in **whole units**, each of size $h\nu$. Here $h$ is a new constant of nature, which Planck fixed at about $6.55\times10^{-34}\ \text{J}\cdot\text{s}$ by fitting the data (modern value $6.626\times10^{-34}$).
 </Callout>
 
-## Planned contents
+## Why "one unit at a time" defeats the catastrophe
 
-- The Rayleigh–Jeans law and the ultraviolet catastrophe
-- How Planck arrived at his formula
-- Why Planck himself resisted his own hypothesis for years
+This is the step in the section most worth understanding, and it takes no calculation at all.
+
+<Callout type="check" title="Work it out first">
+The classical failure was: there are very many high-frequency modes, and each gets $k_BT$.
+
+Now impose that energy comes only in units of $h\nu$. The higher the frequency, the more expensive a single unit. Meanwhile the thermal bath supplies energies of order $k_BT$.
+
+So what happens when $h\nu \gg k_BT$?
+</Callout>
+
+The answer: **that mode cannot even afford its first unit, so it stays at $n=0$ and its average energy is essentially zero.**
+
+There are still just as many high-frequency modes, but they are all empty. The divergence is cut off at its source.
+
+<Derivation title="Derivation: from E = nhν to Planck's law" level="进阶" minutes={7}>
+
+Restrict the oscillator energies to $E_n=nh\nu$ and compute the average with the Boltzmann distribution. Write $x\equiv h\nu/k_BT$:
+
+$$
+\langle E\rangle=\frac{\sum_{n=0}^{\infty}nh\nu\,\ee^{-nx}}{\sum_{n=0}^{\infty}\ee^{-nx}}
+$$
+
+The denominator is a geometric series:
+
+$$
+\sum_{n=0}^{\infty}\ee^{-nx}=\frac{1}{1-\ee^{-x}}
+$$
+
+For the numerator use a standard trick — differentiate the denominator:
+
+$$
+\sum_{n=0}^{\infty}n\,\ee^{-nx}=-\frac{\dd}{\dd x}\frac{1}{1-\ee^{-x}}=\frac{\ee^{-x}}{(1-\ee^{-x})^2}
+$$
+
+Divide:
+
+$$
+\langle E\rangle=h\nu\cdot\frac{\ee^{-x}}{1-\ee^{-x}}=\frac{h\nu}{\ee^{h\nu/k_BT}-1}
+$$
+
+**That is the key result.** Now substitute it for $k_BT$ in the classical derivation; the mode density $8\pi\nu^2/c^3$ needs no change at all:
+
+$$
+u(\nu,T)=\frac{8\pi\nu^2}{c^3}\cdot\frac{h\nu}{\ee^{h\nu/k_BT}-1}
+$$
+
+**Check the two limits.**
+
+Low frequency ($h\nu\ll k_BT$, i.e. $x\ll1$): using $\ee^x\approx1+x$,
+
+$$
+\langle E\rangle\approx\frac{h\nu}{x}=k_BT
+$$
+
+Equipartition returns intact, so Rayleigh–Jeans is the low-frequency limit of Planck's law.
+
+High frequency ($h\nu\gg k_BT$): the $-1$ in the denominator is negligible, so
+
+$$
+\langle E\rangle\approx h\nu\,\ee^{-h\nu/k_BT}
+$$
+
+**Exponential suppression.** This is Wien's formula, and this is where the ultraviolet catastrophe is cured: exponential decay beats the $\nu^2$ growth easily, and the integral converges.
+
+</Derivation>
+
+<Callout type="history" title="Planck did not believe it">
+Planck was 42 when he wrote this down, and a classical physicist to the core. He later called the quantum hypothesis "an act of desperation" (*ein Akt der Verzweiflung*).
+
+For over a decade he kept trying to reinterpret $h$ as the product of some classical effect. All the attempts failed. As late as 1913 he was writing to the Prussian Academy in support of Einstein, arguing that Einstein should not be judged for having "occasionally gone too far in his light-quantum hypothesis" — and the light quantum is a direct consequence of Planck's own assumption.
+
+**The originator being the last to believe it** is not rare in the history of physics.
+</Callout>
+
+## The second dead end falls out for free
+
+The low-temperature specific heat problem is solved here too, using the very same sentence.
+
+Atomic vibrations in a solid are oscillators as well. To excite a mode of frequency $\nu$ costs at least $h\nu$. When the temperature is low enough that $k_BT\ll h\nu$, the mode is frozen and contributes nothing to the heat capacity.
+
+Raise the temperature and more modes thaw out, so the heat capacity climbs towards the classical $3R$. Einstein built the first quantum model of specific heat on this in 1907, and Debye refined it in 1912 to the point of quantitative agreement.
+
+<Callout type="insight" title="Why diamond misbehaves already at room temperature">
+Vibrational frequency goes as $\nu\propto\sqrt{k/m}$. Diamond's carbon–carbon bonds are extremely stiff (large $k$) and carbon atoms are light (small $m$), so its vibrational frequencies are unusually high.
+
+How high? Diamond's Debye temperature is about 2200 K, far above room temperature. So as far as diamond is concerned, 300 K *is* the cold, and most of its vibrational modes are still frozen.
+
+Lead is the opposite: soft bonds, heavy atoms, Debye temperature only about 105 K. It obeys Dulong–Petit obediently at room temperature.
+</Callout>
+
+## An exercise in orders of magnitude
+
+<Derivation title="Estimate: what a body, a filament and the Sun emit" level="基础" minutes={4}>
+
+Using Wien's displacement law $\lambda_\text{max}T=2.898\times10^{-3}\ \text{m}\cdot\text{K}$:
+
+- **A human body** (310 K): $\lambda_\text{max}=9.3\ \mu\text{m}$, far infrared. That is the band thermal cameras work in, and why you cannot see a person in the dark.
+- **An incandescent filament** (2800 K): $\lambda_\text{max}=1.0\ \mu\text{m}$, near infrared. The peak is not in the visible at all — a light bulb turns most of its energy into heat, which is exactly why it is so inefficient.
+- **The Sun's surface** (5800 K): $\lambda_\text{max}=0.50\ \mu\text{m}$, green light, right in the middle of the visible spectrum.
+
+The last one is no coincidence: **the sensitivity band of the human eye was selected by the Sun's radiation peak.**
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: "Planck's quantum hypothesis", latex: 'E_n=nh\\nu,\\qquad n=0,1,2,\\dots', note: 'Energy is exchanged in whole units whose size grows with frequency' },
+    { name: 'Mean oscillator energy', latex: '\\langle E\\rangle=\\frac{h\\nu}{\\ee^{h\\nu/k_BT}-1}', note: 'Low frequency → k_BT (equipartition); high frequency → exponentially suppressed' },
+    { name: "Planck's radiation law", latex: 'u(\\nu,T)=\\frac{8\\pi h\\nu^3}{c^3}\\cdot\\frac{1}{\\ee^{h\\nu/k_BT}-1}', note: 'Reduces to Rayleigh–Jeans and to Wien at the two ends' },
+    { name: "Wien's displacement law", latex: '\\lambda_{\\text{max}}T=2.898\\times10^{-3}\\ \\text{m}\\cdot\\text{K}', note: 'Hotter means the peak moves to shorter wavelengths' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'planck-1',
+      prompt: 'How does the quantum hypothesis E = nhν remove the ultraviolet catastrophe?',
+      options: [
+        'For high-frequency modes one unit hν far exceeds k_BT, so they cannot even be excited once and their mean energy is exponentially suppressed',
+        'It reduces the number of high-frequency modes',
+        'It imposes a maximum radiated frequency',
+        'It restores conservation of energy',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The mode density 8πν²/c³ is untouched in Planck’s derivation.',
+        2: "Planck's law is defined at arbitrarily high frequency; the values are just exponentially small.",
+        3: 'The classical derivation never violated energy conservation; it merely produced a divergent total.',
+      },
+      explain: 'What changes is not how many modes there are but what each one holds on average: from a constant k_BT to hν/(e^{hν/k_BT}−1). That quantity decays exponentially at the high end, so the integral converges.',
+    },
+    {
+      id: 'planck-2',
+      prompt: "Which statements about Planck's law and the two older formulas are correct? (Select all that apply.)",
+      options: [
+        'For hν ≪ k_BT it reduces to the Rayleigh–Jeans law',
+        "For hν ≫ k_BT it reduces to Wien's formula",
+        'It matches experiment across the whole spectrum',
+        'It overturns the mode count 8πν²/c³',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The mode count follows from classical standing-wave counting and Planck kept it entirely. Only the mean energy per mode was replaced.',
+      },
+      explain: "Using e^x ≈ 1+x at low frequency returns k_BT; dropping the −1 at high frequency gives exponential suppression. One expression covering what had been two half-right formulas is why it was accepted immediately.",
+    },
+    {
+      id: 'planck-3',
+      prompt: 'Why is diamond already well below 3R at room temperature while lead is not?',
+      options: [
+        'Stiff bonds and light atoms give diamond high vibrational frequencies, so room temperature is effectively "cold" for it and most modes remain frozen',
+        'Diamond is denser',
+        'Diamond is an insulator with no free electrons to conduct heat',
+        'Lead has a higher atomic number',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Density does not directly decide whether a mode can be excited.',
+        2: 'We are comparing the lattice-vibration contribution, not electronic conduction.',
+        3: 'Atomic number matters only through the mass; the real criterion is whether hν exceeds k_BT.',
+      },
+      explain: 'ν ∝ √(k/m). Diamond has large k and small m, giving a Debye temperature of about 2200 K; lead has small k and large m, giving about 105 K. The test is always the same: which is larger, hν or k_BT?',
+    },
+    {
+      id: 'planck-4',
+      type: 'numeric',
+      prompt: 'A furnace at 1500 K radiates with a peak wavelength of how many micrometres? (Wien constant 2.898×10⁻³ m·K)',
+      answer: 1.93,
+      tolerance: 0.1,
+      unit: 'μm',
+      explain: 'λ = 2.898×10⁻³/1500 = 1.93×10⁻⁶ m = 1.93 μm, in the near infrared. That is why a furnace looks merely dull orange yet burns fiercely — most of the energy leaves as infrared you cannot see.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Planck held that "one unit at a time" was a property of the oscillators in the cavity wall; light itself remained a continuous wave.
+
+Five years later a patent clerk pushed that sentence somewhere Planck did not want it to go: **what if light itself comes in units?**

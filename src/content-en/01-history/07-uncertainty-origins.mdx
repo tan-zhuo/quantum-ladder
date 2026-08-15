@@ -1,17 +1,284 @@
 ---
-title: 'Where the uncertainty principle came from'
-summary: 'Heisenberg''s microscope, matrix mechanics, and what exactly is uncertain.'
+title: Where the uncertainty principle came from
 section: '1.7'
 order: 7
-status: stub
+summary: Heisenberg's microscope convinced a generation of physicists. The argument gives the right formula for the wrong reason — and seeing why matters more than memorising the formula.
+status: done
+prereqs:
+  - 01-history/06-double-slit
+objectives:
+  - Reproduce the γ-ray microscope argument and state its conclusion and its premise
+  - Explain why "measurement disturbance" cannot support the uncertainty principle
+  - Say what is actually uncertain, in the language of the double slit and of Fourier analysis
+  - Explain that matrix mechanics and wave mechanics are two ways of writing one theory
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section concluded that "which slit the electron went through" has no answer until the measurement is arranged.
+
+This section tightens that into a calculable relation — and, just as importantly, **picks out the most widely repeated wrong reason for it**.
+
+## Heisenberg's microscope
+
+In 1927 the 26-year-old Heisenberg wrote the paper in Copenhagen. His argument is a thought experiment.
+
+<Callout type="history" title="The γ-ray microscope">
+To measure an electron's position you have to see it, which means a photon must scatter off it into your microscope.
+
+**Position accuracy is limited by wavelength.** A microscope resolves down to about
+
+$$
+\Delta x\sim\frac{\lambda}{\sin\varepsilon}
+$$
+
+where $\varepsilon$ is the half-angle of the objective. To measure precisely you need short wavelengths — hence a γ-ray microscope.
+
+**The price is paid in momentum.** The shorter the wavelength, the larger the photon momentum $p=h/\lambda$. And a photon scattering into the objective could have come from anywhere within $\pm\varepsilon$; you cannot know which. So the recoil delivered to the electron is uncertain by
+
+$$
+\Delta p\sim\frac{h}{\lambda}\sin\varepsilon
+$$
+
+**Multiply the two** and both $\lambda$ and $\sin\varepsilon$ cancel:
+
+$$
+\Delta x\,\Delta p\sim h
+$$
+
+Measuring position precisely requires short wavelengths, and short wavelengths necessarily kick the electron harder — **the trade cannot be avoided.**
 </Callout>
 
-## Planned contents
+The argument is enormously persuasive: it turns an abstract restriction into a picture you can run in your head. And it does give the right order of magnitude.
 
-- Heisenberg's γ-ray microscope thought experiment
-- Why it is not simply "measurement disturbance"
-- How it relates to the rigorous derivation in §2.6
+## But the reason is wrong
+
+<Callout type="misconception" title="The uncertainty principle is not about measurement disturbance">
+Heisenberg's microscope says: **the act of measuring position disturbs the momentum.**
+
+That sounds unarguable. The problem is that on this account the electron has a definite position **and** a definite momentum before measurement, and our clumsy apparatus merely spoils one of them.
+
+That picture is wrong, for two independent reasons.
+
+**Reason one: $\sigma_x$ and $\sigma_p$ are two properties of the same wavefunction.**
+
+Given a state $\Psi$, you can compute both $\sigma_x$ and $\sigma_p$ with pen and paper, **without performing any measurement at all**. Do so and you find their product is never less than $\hbar/2$. With no measurement anywhere in sight, there is nothing for "measurement disturbance" to refer to. [Section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) carries this calculation out.
+
+**Reason two: disturbance can be measured separately, and it is not the same thing.**
+
+Later work (Ozawa 2003, experimentally tested from 2012) separated "measurement error" and "measurement-induced disturbance" into two independently measurable quantities and found that the Heisenberg-form **error–disturbance relation does not always hold** — measurement schemes exist whose error–disturbance product is below $\hbar/2$.
+
+Whereas $\sigma_x\sigma_p\ge\hbar/2$ **has never been violated**.
+
+**These are different statements.** The first is about instruments and can be improved on; the second is about the state itself and cannot be touched.
+</Callout>
+
+## So what is uncertain
+
+The correct statement is surprisingly plain — and we already glimpsed it in [the previous section](/en/ch/01-history/06-double-slit/).
+
+<DualView>
+<div slot="left">
+
+**It is a theorem about waves.**
+
+An infinitely long sine wave has a perfectly definite wavelength, but it fills all space and you cannot say where it is.
+
+Conversely, a very short pulse has a well-defined position, but you cannot say what its wavelength is — building an edge that sharp requires superposing a great many different wavelengths.
+
+**The more tightly you fix the position, the more wavelengths you need.** This is a theorem of Fourier analysis and holds equally for sound, light pulses and radio signals. Audio engineers have always known it: a very short drum hit occupies a wide band.
+
+</div>
+<div slot="right">
+
+Fourier analysis gives
+
+$$
+\sigma_x\,\sigma_k\ge\frac12
+$$
+
+Pure mathematics, nothing quantum about it.
+
+**Quantum mechanics adds one sentence**, the de Broglie relation
+
+$$
+p=\hbar k
+$$
+
+Substituting gives immediately
+
+$$
+\sigma_x\,\sigma_p\ge\frac{\hbar}{2}
+$$
+
+**The uncertainty principle = a theorem of Fourier analysis + the de Broglie relation.** There is nothing else in it.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Back to the slits — you have already seen this">
+Replace the double slit with a single slit of adjustable width and send electrons through it onto a screen.
+
+The narrower the slit, the better you know the electron's transverse position as it passes ($\Delta x$ small). And what is observed is: **the narrower the slit, the wider the diffraction pattern** — a larger spread of transverse momentum ($\Delta p$ large).
+
+The first minimum of single-slit diffraction, $a\sin\theta=\lambda$, gives a transverse momentum spread $\Delta p_y\approx p\sin\theta=h/a$, while $\Delta y\approx a$, so
+
+$$
+\Delta y\,\Delta p_y\approx h
+$$
+
+This is not a new experiment; it is the diffraction formula of 1801. **The uncertainty principle had been lying inside Young's experiment for a hundred and twenty-six years, unrecognised.**
+</Callout>
+
+## While we are here: matrix mechanics and wave mechanics
+
+Between 1925 and 1926 quantum mechanics was invented twice, independently.
+
+<DualView>
+<div slot="left">
+
+**Matrix mechanics** (Heisenberg, 1925)
+
+Heisenberg decided to build the theory out of **observable quantities only** — spectral line frequencies and intensities — abandoning unobservable things like electron orbits altogether.
+
+The objects he obtained obeyed a strange multiplication: $AB\ne BA$. He did not know at the time that these were matrices; Born recognised them.
+
+The key relation:
+
+$$
+\hat x\hat p-\hat p\hat x=\ii\hbar
+$$
+
+</div>
+<div slot="right">
+
+**Wave mechanics** (Schrödinger, 1926)
+
+Schrödinger started from de Broglie's matter waves and looked for the equation such a wave obeys. He got a partial differential equation — mathematics physicists of the day already knew.
+
+$$
+\ii\hbar\frac{\partial\Psi}{\partial t}=\hat H\Psi
+$$
+
+**The reception could not have been more different**: physicists could solve PDEs and could not handle matrices. Schrödinger's version took over almost at once.
+
+</div>
+</DualView>
+
+<Callout type="history" title="Neither camp thought much of the other">
+Heisenberg wrote to Pauli that he found Schrödinger's theory "repulsive" (*abscheulich*). Schrödinger wrote in a paper that he had been "discouraged, if not repelled" by the transcendental algebra of matrix mechanics.
+
+In 1926 Schrödinger proved the two are mathematically equivalent, and Dirac and Jordan soon supplied a unified framework.
+
+**They are two ways of writing one theory**, like describing the same circle in Cartesian or polar coordinates. Heisenberg's commutator and the uncertainty principle correspond, in Schrödinger's language, to properties of the Fourier transform — one fact, two accounts.
+
+[Chapter 3](/en/ch/03-formalism/) builds that unified framework, after which you will find that most of what was argued about in this chapter turns out to be two projections of the same equation.
+</Callout>
+
+<Callout type="warning" title="The energy–time relation is a different animal">
+You will often see $\Delta E\,\Delta t\ge\hbar/2$, which looks just like the position–momentum relation.
+
+**Its meaning is quite different.** Quantum mechanics has a position operator $\hat x$ and a momentum operator $\hat p$, but **no time operator** — time is a parameter, not an observable.
+
+The correct reading is: an unstable state with lifetime $\tau$ necessarily has an energy spread $\Delta E\sim\hbar/\tau$. This explains the natural linewidth of atomic spectral lines, and why short-lived particle resonances are broad.
+
+It is not a licence to borrow energy. Using it to explain tunnelling ("the particle borrows energy from the vacuum") is a widespread but untenable story, discussed in [section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: "Heisenberg's microscope estimate", latex: '\\Delta x\\,\\Delta p\\sim h', note: 'Right order of magnitude, but "measurement disturbance" is not why' },
+    { name: 'Fourier inequality', latex: '\\sigma_x\\,\\sigma_k\\ge\\frac12', note: 'Pure mathematics, true of every wave' },
+    { name: 'Uncertainty principle', latex: '\\sigma_x\\,\\sigma_p\\ge\\frac{\\hbar}{2}', note: '= the Fourier theorem + de Broglie’s p = ħk' },
+    { name: 'Canonical commutation relation', latex: '\\hat x\\hat p-\\hat p\\hat x=\\ii\\hbar', note: 'The core of matrix mechanics; chapter 3 derives the inequality from it rigorously' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'unc0-1',
+      prompt: "What is wrong with the γ-ray microscope argument?",
+      options: [
+        'It presents uncertainty as a disturbance inflicted by measurement, but σₓ and σ_p are properties of one wavefunction and can be computed without measuring anything',
+        'Its order-of-magnitude estimate is wrong',
+        'It assumes light carries momentum, and light does not',
+        'It applies only to electrons and not to other particles',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The estimate ΔxΔp ~ h is correct; the problem is the reason given for it.',
+        2: 'Photons do carry momentum p = h/λ; that part is fine.',
+        3: 'The uncertainty principle holds for all particles.',
+      },
+      explain: 'Given Ψ you can compute σₓ and σ_p on paper with no measurement involved. Moreover, later work on error–disturbance relations showed the Heisenberg-form inequality can be violated, while σₓσ_p ≥ ħ/2 never has been — two different statements.',
+    },
+    {
+      id: 'unc0-2',
+      prompt: 'Where does the uncertainty principle come from mathematically?',
+      options: [
+        'The Fourier theorem σₓσ_k ≥ 1/2, plus the de Broglie relation p = ħk',
+        'The precision limits of measuring instruments',
+        'The relativistic limit on signal speed',
+        'Statistical fluctuations from thermal motion',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'It has nothing to do with instruments; no improvement in apparatus touches it.',
+        2: 'It is already present in non-relativistic quantum mechanics.',
+        3: 'It holds at absolute zero, for a single particle.',
+      },
+      explain: '"A wave narrow in position must contain a wide range of wave numbers" is equally true of sound and light pulses — a short drum hit occupies a wide band. The only quantum ingredient is p = ħk, which translates "spread in wave number" into "uncertainty in momentum".',
+    },
+    {
+      id: 'unc0-3',
+      prompt: 'About matrix mechanics and wave mechanics, which statements are correct? (Select all that apply.)',
+      options: [
+        'They are mathematically equivalent — two ways of writing one theory',
+        'Heisenberg started from observables only; Schrödinger started from de Broglie matter waves',
+        'Wave mechanics was adopted faster because physicists were familiar with partial differential equations',
+        'Matrix mechanics was later shown to be wrong',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Matrix mechanics is entirely correct, and for spin and quantum optics it is more convenient than the wave equation — as [chapter 3](/en/ch/03-formalism/) shows.',
+      },
+      explain: 'Schrödinger proved the equivalence in 1926, and Dirac and Jordan supplied the unified framework. Choosing a formulation is a matter of convenience, like choosing Cartesian or polar coordinates.',
+    },
+    {
+      id: 'unc0-4',
+      prompt: 'About the energy–time relation ΔEΔt ≥ ħ/2, which is correct?',
+      options: [
+        'It differs in meaning from the position–momentum relation because there is no time operator; it says a state of finite lifetime necessarily has an energy spread',
+        'It is the same relation as σₓσ_p ≥ ħ/2 written differently',
+        'It allows a particle to borrow energy for a short time',
+        'It means energy conservation fails over short intervals',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Δt is not the standard deviation of any operator, and the derivation is entirely different.',
+        2: '"Borrowing energy" is a widespread but untenable story.',
+        3: 'Energy conservation holds exactly in quantum mechanics.',
+      },
+      explain: 'Time is a parameter in quantum mechanics, not an observable. The real content is that a state of lifetime τ has an energy spread ΔE ~ ħ/τ — the natural linewidth of spectral lines and the broad resonances of short-lived particles are direct consequences.',
+    },
+  ]}
+/>
+
+## End of the chapter
+
+Look back at the road this chapter travelled:
+
+1. Three dead ends all point at one assumption — **that energy can be divided continuously**.
+2. Planck replaced it with "one unit at a time", and the ultraviolet catastrophe and the specific-heat anomaly fell together.
+3. Einstein moved "one unit at a time" into light itself, and the four oddities of the photoelectric effect fell together.
+4. Bohr moved it onto electron orbits, and the hydrogen spectrum came out to four significant figures.
+5. De Broglie reversed the logic: quantisation is a **standing-wave condition**, because particles are waves too.
+6. The double slit showed that this "wave" is about probability, not about some substance vibrating.
+7. The uncertainty principle turns out to be a general property of waves, plus $p=\hbar k$.
+
+All the phenomena are now on the table, but what we hold is a set of disconnected rules: $E=h\nu$, $\lambda=h/p$, $L=n\hbar$… each governing a small patch, none able to compute the next new problem.
+
+What physics needs is an equation: given a particle's surroundings, work out how its state changes in time. Schrödinger wrote it down in 1926.
+
+The price is a new object — a complex-valued function $\Psi$. And **what it represents** is the first question to answer.
+
+[Chapter 2](/en/ch/02-wavefunction/) starts there.

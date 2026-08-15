@@ -1,17 +1,238 @@
 ---
-title: 'The photoelectric effect and Einstein’s light quanta'
-summary: 'Why the energy of light comes in lumps.'
+title: The photoelectric effect and Einstein's light quanta
 section: '1.3'
 order: 3
-status: stub
+summary: Four experimental facts, none of which the classical wave picture can explain. Einstein changed one sentence and all four fell at once.
+status: done
+prereqs:
+  - 01-history/02-blackbody-planck
+objectives:
+  - List the four facts classical wave theory cannot explain, and say where each one gets stuck
+  - Use hν = W + E_k to account for the threshold frequency, the instant response and the role of intensity
+  - Explain why Millikan's experiment became the strongest evidence for the very idea he set out to refute
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section ended at a boundary line: Planck held that "one unit at a time" was a property of the **oscillators in the cavity wall**, while light travelling through space remained a continuous electromagnetic wave.
+
+This section is about someone crossing that line.
+
+## Simple experiment, awkward results
+
+The apparatus has three parts: a metal plate, a collector and an ammeter. Shine light on the plate; if electrons are knocked out and reach the collector, the ammeter reads.
+
+<Callout type="history" title="It was found by accident">
+In 1887, while doing the experiments that confirmed electromagnetic waves exist, Hertz noticed that shining ultraviolet light on his spark gap made the spark jump more easily.
+
+There is some irony here: **the experiment that gave Maxwell's wave theory its decisive confirmation also turned up the phenomenon that would undermine it.**
 </Callout>
 
-## Planned contents
+By 1902 Lenard had the measurements nailed down. Four facts:
 
-- Four experimental facts classical physics cannot explain
-- Einstein's equation hν = W + Ek
-- Millikan's precision experiment, done to refute it
+<DualView>
+<div slot="left">
+
+**Fact 1: there is a threshold frequency.** Each metal has a threshold $\nu_0$. Below it, **no matter how bright the light or how long you wait**, not a single electron comes out.
+
+**Fact 2: intensity does not affect electron energy.** Turn the light up and the **number** of electrons increases, but the **maximum kinetic energy** of each one does not budge.
+
+**Fact 3: kinetic energy depends only on frequency.** Higher frequency gives higher maximum kinetic energy, and the relation is linear.
+
+**Fact 4: the response is instantaneous.** The current appears essentially the moment the light arrives (later measured at under $10^{-9}$ s), even for light almost too faint to detect.
+
+</div>
+<div slot="right">
+
+**What classical wave theory expects, point by point:**
+
+For fact 1: energy is carried by amplitude, not frequency. Bright enough light for long enough ought to accumulate enough energy. **Does not match.**
+
+For fact 2: more intensity means stronger fields, stronger forces on the electron, so it should come out faster. **Does not match.**
+
+For fact 3: classically the frequency only sets how fast the electron is shaken, not its energy ceiling. **Does not match.**
+
+For fact 4: energy flows in continuously from the whole wavefront, so it takes time to accumulate. **Does not match.**
+
+</div>
+</DualView>
+
+<Derivation title="Estimate: how long classical theory says you must wait" level="基础" minutes={5}>
+
+Putting a number on "accumulating energy" shows how fatal fact 4 is.
+
+Take a faint beam with power density $I=10^{-6}\ \text{W}/\text{m}^2$ (roughly a candle a few metres away). An atom has a cross-section of about $\sigma\approx10^{-20}\ \text{m}^2$.
+
+The power intercepted by one atom is then
+
+$$
+P=I\sigma=10^{-26}\ \text{W}
+$$
+
+Ejecting an electron requires overcoming the work function, typically $W\approx2\ \text{eV}=3.2\times10^{-19}\ \text{J}$. The time to accumulate that is
+
+$$
+t=\frac{W}{P}=\frac{3.2\times10^{-19}}{10^{-26}}\approx3\times10^{7}\ \text{s}
+$$
+
+**About a year.**
+
+The measured delay is under a nanosecond. Sixteen orders of magnitude apart — this is not a theory that lacks precision, it is a picture that is simply wrong.
+
+</Derivation>
+
+## Einstein changed one sentence
+
+In 1905 the 26-year-old Einstein, working in a patent office, wrote a paper titled "On a heuristic point of view concerning the production and transformation of light". He said:
+
+<Callout type="insight" title="The light-quantum hypothesis">
+Light is not merely emitted and absorbed in units — **it comes in units**. A beam of frequency $\nu$ consists of many particles of energy $h\nu$, later called **photons**.
+
+An electron can absorb **one** photon at a time: all of it, or nothing.
+</Callout>
+
+That is the whole change. Now go through the four facts again:
+
+$$
+h\nu = W + E_{k,\text{max}}
+$$
+
+$W$ is the **work function**, the minimum cost of pulling an electron out of the metal. $E_{k,\text{max}}$ is what the electron has left over.
+
+- **Threshold frequency**: if $h\nu<W$, a single photon cannot pay for the ticket and no electron emerges. More photons do not help, because pooling is not allowed — an electron absorbs one at a time. Hence $\nu_0=W/h$.
+- **What intensity does**: intensity equals the number of photons. More photons knock out more electrons (larger current), but each still receives $h\nu$, so the energy ceiling is unchanged.
+- **Linear in frequency**: $E_{k,\text{max}}=h\nu-W$, a straight line of slope exactly $h$ and intercept $-W$.
+- **Instant response**: nothing needs accumulating. A photon arrives, hits an electron, and the transaction is done.
+
+<Callout type="check" title="Note where the real work is done">
+The sentence doing the work is not "light has energy hν"; it is **"an electron can only absorb one photon at a time"**.
+
+That is what forbids pooling, and pooling is what would destroy the sharp threshold. If an electron could absorb two photons in succession, low-frequency light would eject electrons provided it were bright enough.
+
+And today that is exactly what can be done: crank the intensity up with a femtosecond laser and two-photon photoemission is a routine technique. **Low-frequency light really does eject electrons when it is intense enough** — which does not refute Einstein at all; it confirms that the restriction comes from a very improbable process rather than an absolute ban.
+</Callout>
+
+## Millikan came to refute it and nailed it down instead
+
+Einstein's paper was not popular. Even Planck did not accept it — putting $h$ inside light in flight struck him as going too far.
+
+<Callout type="history" title="Ten years of precision measurement">
+Millikan spent nearly a decade on precision photoelectric measurements, stating openly that his goal was to **disprove** Einstein's equation. He cut metal surfaces fresh in vacuum (to avoid oxide layers) and pushed the voltage–current curves to the limits of the day.
+
+In 1916 he published: the plot of $E_k$ against $\nu$ **is a perfect straight line**, and the $h$ from its slope agrees to within 0.5% with the value Planck had fitted from black-body radiation.
+
+He wrote the much-quoted line that Einstein's equation "appears in every case to predict exactly the observed results", while maintaining that the physical hypothesis behind it was untenable.
+
+The upshot: Einstein received the 1921 Nobel Prize for the photoelectric effect (**not** for relativity), and Millikan received his in 1923 partly for this work.
+</Callout>
+
+<Derivation title="Work it out: the threshold wavelength of sodium" level="基础" minutes={4}>
+
+Sodium has a work function $W=2.28\ \text{eV}$. The corresponding threshold wavelength is
+
+$$
+\lambda_0=\frac{hc}{W}=\frac{1240\ \text{eV}\cdot\text{nm}}{2.28\ \text{eV}}=544\ \text{nm}
+$$
+
+(Remember $hc=1240\ \text{eV}\cdot\text{nm}$ — one of the most useful constants there is.)
+
+544 nm is green. So green, blue and violet light eject electrons from sodium; yellow and red never will, however long you shine them.
+
+One more: with 400 nm violet light the maximum kinetic energy is
+
+$$
+E_k=\frac{1240}{400}-2.28=3.10-2.28=0.82\ \text{eV}
+$$
+
+Stopping those electrons requires 0.82 V of reverse bias on the collector — and this **stopping voltage** is precisely what the experiment measures directly.
+
+</Derivation>
+
+<Callout type="misconception" title='"Light is a particle, so wave theory is wrong" — no'>
+The photoelectric effect shows that light behaves granularly **when it exchanges energy with matter**. It does not abolish interference and diffraction.
+
+The same beam passing through two slits makes interference fringes (wave behaviour) and, landing on a metal, knocks out electrons one at a time (particle behaviour). Both are true.
+
+The correct statement is not "light is a particle" but: **light is neither a classical wave nor a classical particle. Both concepts are borrowed from the macroscopic world, and each fits only half of what light does.**
+
+[Section 1.6](/en/ch/01-history/06-double-slit/) pushes this to its limit with the double slit: photons arriving one at a time still build up interference fringes.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Photon energy', latex: 'E=h\\nu=\\frac{hc}{\\lambda}', note: 'hc = 1240 eV·nm, the workhorse for photon-energy estimates' },
+    { name: "Einstein's photoelectric equation", latex: 'h\\nu=W+E_{k,\\text{max}}', note: 'One electron absorbs one photon — that sentence is the crucial one' },
+    { name: 'Threshold frequency', latex: '\\nu_0=\\frac{W}{h},\\qquad \\lambda_0=\\frac{hc}{W}', note: 'Below it no intensity suffices' },
+    { name: 'Stopping voltage', latex: 'eU_0=E_{k,\\text{max}}=h\\nu-W', note: 'Plot U₀ against ν: slope h/e, intercept gives the work function' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pe-1',
+      prompt: 'Which assumption actually forbids "bright enough low-frequency light will eject electrons"?',
+      options: [
+        'An electron absorbs only one photon at a time; the energies of several photons cannot be pooled',
+        'Photons are massless',
+        'A metal contains a finite number of electrons',
+        'Photons travel at c',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Masslessness has nothing to do with whether energies can be pooled.',
+        2: 'The number of electrons sets the current, not whether emission occurs.',
+        3: 'Speed is irrelevant to the mode of energy exchange.',
+      },
+      explain: 'If pooling were allowed, intense low-frequency light would eject electrons and the threshold would not exist. Tellingly, with a femtosecond laser two-photon emission really does occur — which shows the restriction comes from an extremely improbable process, not an absolute prohibition.',
+    },
+    {
+      id: 'pe-2',
+      prompt: 'Double the intensity of the incident light at fixed frequency. Which quantities change? (Select all that apply.)',
+      options: [
+        'The number of electrons emitted per second',
+        'The photocurrent',
+        'The maximum kinetic energy of the electrons',
+        'The stopping voltage',
+      ],
+      answer: [0, 1],
+      distractors: {
+        2: 'Each electron still absorbs a single hν, so its energy ceiling hν − W is independent of intensity.',
+        3: 'The stopping voltage is proportional to the maximum kinetic energy and likewise does not change.',
+      },
+      explain: 'Intensity is the number of photons arriving per second. More photons eject more electrons (larger current), but the energy handed to each is unchanged. This point is completely counter-intuitive in the classical wave picture.',
+    },
+    {
+      id: 'pe-3',
+      prompt: 'What was Millikan trying to do with his precision photoelectric experiments, and what happened?',
+      options: [
+        "He set out to refute Einstein's equation, and measured a perfect straight line whose slope gave an h matching the black-body value",
+        'He set out to confirm Einstein and succeeded',
+        'He was measuring the electron charge and the photoelectric effect was a by-product',
+        'He set out to prove light is a continuous wave',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'He stated publicly that his aim was to disprove it.',
+        2: 'The oil-drop charge measurement was separate work.',
+        3: 'He questioned the light-quantum picture but never advocated a return to pure wave theory.',
+      },
+      explain: "The strongest evidence for a theory often comes from someone trying to destroy it. Millikan's 1916 data pinned h to 0.5%, and after that the light quantum faced no further experimental doubt — even though he personally continued to dislike it.",
+    },
+    {
+      id: 'pe-4',
+      type: 'numeric',
+      prompt: 'Ultraviolet light of 250 nm strikes tungsten, work function W = 4.3 eV. What is the maximum kinetic energy of the photoelectrons, in eV? (hc = 1240 eV·nm)',
+      answer: 0.66,
+      tolerance: 0.15,
+      unit: 'eV',
+      explain: 'E_k = hc/λ − W = 1240/250 − 4.3 = 4.96 − 4.3 = 0.66 eV. At 300 nm (4.13 eV) you would be below the work function and get nothing at all — tungsten’s threshold wavelength is 1240/4.3 = 288 nm.',
+    },
+  ]}
+/>
+
+## What comes next
+
+By now two of the three dead ends from [section 1.1](/en/ch/01-history/01-classical-crisis/) have been undone by the same sentence: **energy is exchanged in whole units.**
+
+The third remains: why atoms do not collapse, and why spectra are sets of sharp lines.
+
+In 1913 a young Dane working under Rutherford in Manchester decided to try attaching "one unit at a time" directly to the electron's orbit, and see what came out.

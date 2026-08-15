@@ -1,17 +1,273 @@
 ---
-title: 'De Broglie and wave–particle duality'
-summary: 'If waves can behave like particles, why not the other way round?'
+title: de Broglie and wave–particle duality
 section: '1.5'
 order: 5
-status: stub
+summary: A doctoral thesis his supervisor could not evaluate, built on a one-line formula. It turned Bohr's unmotivated rule into something close to obvious.
+status: done
+prereqs:
+  - 01-history/04-bohr-model
+objectives:
+  - Compute de Broglie wavelengths for electrons, atoms and everyday objects
+  - Re-derive Bohr's angular-momentum quantisation from a standing-wave condition
+  - Explain how the Davisson–Germer experiment confirmed the wave nature of electrons
+  - Say why the wave nature of macroscopic objects is unobservable
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section ended on an open question: what justifies Bohr's $L=n\hbar$?
+
+In 1923 the 31-year-old de Broglie gave an answer in his doctoral thesis. The thesis is a few dozen pages long and its core is a single line.
+
+## An argument from symmetry
+
+De Broglie's starting point was an observed asymmetry.
+
+<DualView>
+<div slot="left">
+
+**Light** had been treated as a wave for two centuries (interference and diffraction settle it). In 1905 Einstein said it was simultaneously a particle.
+
+So what about **the electron, treated as a particle for two centuries** — might it also be a wave?
+
+At the time there was essentially no experimental support for this. De Broglie later said the dual nature of light had "provoked" him: if nature likes symmetry, this should not be happening to light alone.
+
+</div>
+<div slot="right">
+
+For a photon, combine Einstein's $E=h\nu$ with the relativistic $E=pc$:
+
+$$
+p=\frac{E}{c}=\frac{h\nu}{c}=\frac{h}{\lambda}
+$$
+
+De Broglie's move was to **turn this round and apply it to massive particles**:
+
+$$
+\boxed{\ \lambda=\frac{h}{p}\ }
+$$
+
+Any particle of momentum $p$ has an associated wave of wavelength $h/p$.
+
+</div>
+</DualView>
+
+<Callout type="history" title="The thesis nearly failed">
+Langevin, de Broglie's supervisor, could not tell whether the thesis was right, and did not want to reject it out of hand. So he sent a copy to Einstein.
+
+Einstein's reply contains a much-quoted line: the young man had "lifted a corner of the great veil".
+
+The thesis passed. Two years later it was reading it that started Schrödinger wondering what wave equation such a wave would obey — the entire toolkit of [chapter 2](/en/ch/02-wavefunction/) begins here.
 </Callout>
 
-## Planned contents
+## Bohr's rule becomes a standing-wave condition
 
-- How λ = h/p was proposed
-- The Davisson–Germer electron diffraction experiment
-- A wave explanation of Bohr's quantisation condition
+This is where the one-line formula first pays for itself.
+
+<Callout type="check" title="Derive it yourself first">
+Treat the electron as a wave travelling round a circle of radius $r$. For it to **join up with itself** after one lap (otherwise each circuit would cancel against the last), the circumference must contain a whole number of wavelengths.
+
+Write that condition down, substitute $\lambda=h/p$, and see what you get.
+</Callout>
+
+$$
+2\pi r=n\lambda=n\frac{h}{p}=n\frac{h}{mv}
+$$
+
+Rearranged:
+
+$$
+mvr=\frac{nh}{2\pi}=n\hbar
+$$
+
+**Exactly Bohr's angular-momentum quantisation condition.**
+
+<Callout type="insight" title="Quantisation = a standing-wave condition">
+Bohr had to swallow $L=n\hbar$ as a rule he could not justify. Now it becomes almost obvious: **a wave going round a loop has to join up with itself.**
+
+This is the same thing that happens on a violin string, in an organ pipe, on a drumhead. A string clamped at both ends produces only a discrete set of frequencies because its length must hold a whole number of half-wavelengths.
+
+**Discreteness is not peculiar to the quantum world; it is the general consequence of confining a wave to a finite region.** Keep that sentence — [section 2.7](/en/ch/02-wavefunction/07-infinite-well/) works it out in full.
+</Callout>
+
+## So why can we not see the electron's wave?
+
+Because $h$ is tiny. The numbers below are the thing most worth computing yourself in this section.
+
+<Derivation title="Work it out: three de Broglie wavelengths" level="基础" minutes={6} open={true}>
+
+Using $\lambda=h/p$ with $h=6.626\times10^{-34}\ \text{J}\cdot\text{s}$.
+
+**1. A 100 eV electron** (a typical energy in an electron microscope)
+
+Non-relativistically $p=\sqrt{2mE}$; it is easier to work with $pc=\sqrt{2mc^2E}$:
+
+$$
+pc=\sqrt{2\times511000\times100}\ \text{eV}=1.01\times10^4\ \text{eV}
+$$
+
+$$
+\lambda=\frac{hc}{pc}=\frac{1240\ \text{eV}\cdot\text{nm}}{1.01\times10^4\ \text{eV}}=0.123\ \text{nm}=1.23\ \text{Å}
+$$
+
+**That is exactly the spacing between atoms in a crystal.** So electrons striking a crystal diffract just as X-rays do — not a coincidence, but the reason the experiment below could work at all.
+
+**2. A helium atom at room temperature** ($m=4\times1.66\times10^{-27}$ kg, $T=300$ K)
+
+With thermal momentum $p\approx\sqrt{3mk_BT}$ this gives $\lambda\approx0.7\ \text{Å}$. Also atomic-scale — which is why matter-wave interference is achievable in cold-atom experiments.
+
+**3. A walking person** ($m=70$ kg, $v=1$ m/s)
+
+$$
+\lambda=\frac{6.626\times10^{-34}}{70\times1}\approx9\times10^{-36}\ \text{m}
+$$
+
+For comparison, a proton has a radius of $10^{-15}$ m — twenty orders of magnitude larger.
+
+**Conclusion**: the wave nature has not disappeared for macroscopic objects, its wavelength is simply too small for anything to serve as a diffraction grating. To watch a person diffract you would need a doorway $10^{-35}$ metres wide.
+
+</Derivation>
+
+<Callout type="insight" title="This is also how an electron microscope works">
+A microscope's resolution limit is roughly half a wavelength. Visible light is around 500 nm, so an optical microscope cannot resolve anything below about 200 nm — a virus is already out of reach.
+
+Accelerate electrons to 100 keV and the de Broglie wavelength is about 0.004 nm, five orders of magnitude better in principle. Lens aberrations limit the practical figure, but modern transmission electron microscopes reach 0.05 nm — **enough to see individual atoms**.
+
+De Broglie received the Nobel Prize in 1929; Ruska received his for inventing the electron microscope in 1986. Fifty-seven years apart, on the same one-line formula.
+</Callout>
+
+## Confirmation: an experiment saved by an accident
+
+<Callout type="history" title="The Davisson–Germer experiment (1927)">
+At Bell Labs, Davisson and Germer fired an electron beam at a nickel target and measured the angular distribution of scattered electrons. At first they got an unremarkable smooth distribution.
+
+In 1925 a liquid-air bottle burst, air rushed into the vacuum system and the nickel target was badly oxidised. To rescue the sample they heated it for a long time to reduce it — and in the process unintentionally **annealed the polycrystalline nickel into a few large crystals**.
+
+On remeasuring, sharp peaks appeared in the scattering curve.
+
+It took them two years to work out what had happened: this was **electron diffraction off the crystal lattice**, with peaks obeying the Bragg condition exactly, and the wavelength from $\lambda=h/p$ matching perfectly.
+
+The same year, G. P. Thomson passed electrons through a polycrystalline film and obtained Debye rings identical to those from X-rays.
+
+There is a rare coincidence here: **J. J. Thomson won a Nobel Prize for showing the electron is a particle, and his son G. P. Thomson won one for showing the electron is a wave.** Both were right.
+</Callout>
+
+<Derivation title="Check: where was the Davisson–Germer peak" level="进阶" minutes={5}>
+
+Experimental conditions: accelerating voltage 54 V, nickel plane spacing $d=0.091$ nm, strong peak observed at a scattering angle of $50°$.
+
+**First the wavelength**:
+
+$$
+pc=\sqrt{2\times511000\times54}\ \text{eV}=7430\ \text{eV}
+\quad\Longrightarrow\quad
+\lambda=\frac{1240}{7430}=0.167\ \text{nm}
+$$
+
+**Now the diffraction condition.** For grazing diffraction off rows of surface atoms the constructive condition is
+
+$$
+D\sin\theta=n\lambda
+$$
+
+where $D=0.215$ nm is the spacing of atomic rows on the nickel surface and $\theta=50°$:
+
+$$
+D\sin\theta=0.215\times0.766=0.165\ \text{nm}
+$$
+
+against $\lambda=0.167$ nm, a difference of about 1%.
+
+**A formula written down from a pure argument about symmetry, confirmed to 1% by a laboratory accident.**
+
+</Derivation>
+
+<Callout type="misconception" title='"An electron is sometimes a particle and sometimes a wave" — not quite'>
+The usual phrasing is that an electron is normally a particle and turns into a wave in a double-slit experiment.
+
+That suggests it switches between two identities, which it does not. Closer to the truth:
+
+**An electron is always an electron.** "Wave" and "particle" are two models borrowed from macroscopic experience, and each works for only part of what electrons do. An electron is neither a small ball nor a ripple on water; it is something with no macroscopic counterpart.
+
+What actually describes it is the wavefunction — a complex-valued function that evolves according to a wave equation (its wave side), and whose modulus squared gives the probability of finding **one whole** electron somewhere (its particle side). The two sides never conflict, because they were talking about different things all along.
+
+That is the language [chapter 2](/en/ch/02-wavefunction/) sets up.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'de Broglie relation', latex: '\\lambda=\\frac{h}{p}', note: 'Holds for any particle; large p means short wavelength' },
+    { name: 'Non-relativistic electron wavelength', latex: '\\lambda=\\frac{hc}{\\sqrt{2mc^2E}}=\\frac{1.226\\ \\text{nm}}{\\sqrt{E/\\text{eV}}}', note: 'A 100 eV electron is about 0.12 nm — exactly the atomic spacing' },
+    { name: 'Standing wave → Bohr quantisation', latex: '2\\pi r=n\\lambda\\ \\Longrightarrow\\ mvr=n\\hbar', note: 'Turns an unmotivated rule into "the wave must join up with itself"' },
+    { name: 'Bragg diffraction condition', latex: 'D\\sin\\theta=n\\lambda', note: 'How Davisson and Germer verified the electron wavelength' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'db-1',
+      prompt: "How does the de Broglie relation explain Bohr's angular-momentum quantisation?",
+      options: [
+        'The electron wave must join up with itself around the orbit, 2πr = nλ, and substituting λ = h/p gives mvr = nħ',
+        'It assumes electrons can only exist at certain radii',
+        'It postulates that the energy takes only discrete values',
+        'It quantises the electron mass',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The discreteness of the radii is a result of the standing-wave condition, not an extra assumption.',
+        2: 'Discrete energies are likewise a consequence.',
+        3: 'The mass is unchanged.',
+      },
+      explain: 'The significance of this step is that it replaces a rule one simply had to accept with the statement that a wave confined to a finite region is necessarily discrete. Strings, drumheads and organ pipes all work the same way — discreteness is not unique to quantum physics.',
+    },
+    {
+      id: 'db-2',
+      prompt: 'Why is the wave nature of everyday objects not observable?',
+      options: [
+        'h is minuscule, so a macroscopic de Broglie wavelength is dozens of orders of magnitude smaller than any available diffracting structure',
+        'Because the wavelength of a macroscopic object is exactly zero',
+        'Because heavy objects do not obey quantum mechanics',
+        'Because air resistance cancels the wave effects',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'λ = h/p is always a finite positive number, just extremely small.',
+        2: 'Quantum mechanics has no upper mass limit; the effects are merely unobservable.',
+        3: 'Air resistance is irrelevant here — though decoherence is a separate and genuine reason, see [section 10.5](/en/ch/10-open-systems/05-decoherence/).',
+      },
+      explain: 'A walking person has λ ≈ 10⁻³⁵ m, twenty orders of magnitude below a proton. Seeing diffraction would require a slit of that size, and nothing like it exists. The wave nature has not gone away; there is simply no way to look at it.',
+    },
+    {
+      id: 'db-3',
+      prompt: 'How did the decisive sharp diffraction peak appear in the Davisson–Germer experiment?',
+      options: [
+        'A vacuum accident forced a high-temperature reduction to rescue the sample, which inadvertently annealed the polycrystalline nickel into large crystals',
+        'They deliberately ordered single-crystal nickel',
+        'They increased the electron-beam energy',
+        'They switched to an X-ray source',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The experiment originally used ordinary polycrystalline nickel, which is exactly why only a smooth distribution appeared.',
+        2: 'Changing the energy changes the wavelength, not the crystalline order.',
+        3: 'The whole point of the experiment is that it used electrons, not X-rays.',
+      },
+      explain: 'Randomly oriented crystallites smear the diffraction peaks out. Annealing produced large grains, and the diffraction condition could then be met. Accidental discoveries are not rare in science, but what really mattered was that they did not dismiss the anomalous data as noise.',
+    },
+    {
+      id: 'db-4',
+      type: 'numeric',
+      prompt: 'An electron accelerated through 150 V has what de Broglie wavelength, in nm? (Use λ = 1.226 nm/√(E/eV))',
+      answer: 0.1,
+      tolerance: 0.1,
+      unit: 'nm',
+      explain: 'λ = 1.226/√150 = 1.226/12.25 = 0.100 nm = 1.0 Å. That is the typical atomic spacing, and it is why low-energy electron diffraction (LEED) became a standard tool in surface science — its wavelength is naturally matched to the lattice.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The evidence now runs both ways: light knocks out electrons one at a time, and electrons diffract like waves.
+
+There is one experiment that puts both facts in the same picture and forces you to confront the tension between them. Feynman said it "contains the only mystery" of quantum mechanics.

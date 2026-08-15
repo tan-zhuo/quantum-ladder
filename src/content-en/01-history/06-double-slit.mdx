@@ -1,26 +1,256 @@
 ---
-title: 'The double slit, told in full'
-summary: 'From Young to delayed choice: one experiment covering every strange feature of quantum mechanics.'
+title: The double slit, told in full
 section: '1.6'
 order: 6
-status: stub
+summary: One experiment, four versions, a hundred and eighty years apart. Feynman said it contains the only mystery of quantum mechanics — and he was not being rhetorical.
+status: done
+prereqs:
+  - 01-history/05-de-broglie
+objectives:
+  - Explain how Young's experiment settled that light is a wave, and compute the fringe spacing
+  - Explain why particles arriving one at a time still build up fringes
+  - State the complementarity between which-path information and interference, and say what is wrong with "the detector knocked the particle sideways"
+  - Say which class of explanations the delayed-choice experiment rules out
 sims: ['double-slit']
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous five sections have piled up two facts that pull against each other: light knocks out electrons one at a time, and electrons diffract like waves.
+
+One experiment forces both into the same picture. We will go through it in four steps, each harder to explain than the last.
+
+## Step one: light is a wave (1801)
+
+Thomas Young sent a beam of light through two parallel narrow slits and saw alternating bright and dark bands on a screen behind them.
+
+<DualView>
+<div slot="left">
+
+**Why does this settle the wave question?**
+
+Light from the two slits generally travels unequal distances. Where the path difference is a whole number of wavelengths, crest meets crest and the waves add to a bright fringe; where it is half a wavelength, crest meets trough and they cancel to a dark one.
+
+The crucial part is the **cancellation**: adding two beams makes a place darker. A stream of particles cannot do that. Fire more bullets at the same spot and you get more, never fewer.
+
+</div>
+<div slot="right">
+
+With slit separation $d$, screen distance $L\gg d$ and position $y$ on the screen, the path difference is approximately
+
+$$
+\Delta = d\sin\theta\approx\frac{dy}{L}
+$$
+
+Bright fringes require $\Delta=m\lambda$, so adjacent bright fringes are separated by
+
+$$
+\Delta y=\frac{\lambda L}{d}
+$$
+
+Wider fringes mean a longer wavelength — this was the first way anyone measured the wavelength of light.
+
+</div>
+</DualView>
+
+<Derivation title="Work it out: why you never see fringes in daily life" level="基础" minutes={4}>
+
+Take $\lambda=550$ nm (green), $L=1$ m, $d=0.1$ mm:
+
+$$
+\Delta y=\frac{5.5\times10^{-7}\times1}{10^{-4}}=5.5\times10^{-3}\ \text{m}=5.5\ \text{mm}
+$$
+
+Perfectly visible. But with a slit separation of 1 mm, $\Delta y=0.55$ mm — just about visible. At 1 cm, $55\ \mu\text{m}$, beyond the eye's resolution.
+
+**That is why two ordinary light sources (two lamps, say) never show interference**: the separation is far too large and the fringes far too fine. On top of which ordinary sources are incoherent, their phases jumping randomly, so any fringes would be averaged away in time anyway.
+
+</Derivation>
+
+Up to 1801 everything is comfortable: light is a wave, done.
+
+## Step two: send them one at a time (from 1909)
+
+This is where the trouble starts.
+
+Dim the source until **at any moment there is on average less than one photon in the apparatus**. Replace the screen with a detector that registers single photons.
+
+<Callout type="check" title="Predict what happens">
+If there is only one photon at a time, surely it has to go through one slit or the other. Classically that predicts two bright bands on the screen (the shadows of the two slits) with darkness between them.
+
+What actually happens?
 </Callout>
 
-## Planned contents
+- **The first few dozen photons**: scattered points on the screen with no discernible pattern.
+- **After a few hundred**: some regions start accumulating points while others never receive any.
+- **After tens of thousands**: interference fringes stand out clearly, in exactly the positions they occupy with bright light.
 
-- Classical light waves through two slits
-- Single photons, one at a time, still interfering
-- Electron double slit (Tonomura, 1989)
-- Complementarity between which-path information and interference
-- Wheeler's delayed-choice experiment
+<Callout type="insight" title="Where the strangeness actually lies">
+It is not that the photon splits in half — every detection registers one whole photon, never half of one.
 
-## Planned simulations
+The strange part is this: **each photon lands somewhere at random, but the random distribution knows that both slits are open.**
 
-- `double-slit`
+With only the left slit open, photons do arrive at a particular spot. Open the right slit as well — classically that should only add more — and that spot now receives none at all. **Opening a second path closes off certain destinations.**
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="double-slit" />`.
+And all this happens when there is only one photon in the apparatus. It has no companions to coordinate with.
+</Callout>
+
+In 1989 Tonomura at Hitachi did the same experiment with **electrons**, filming the entire build-up one electron at a time. In 2002 a *Physics World* readers' poll voted it the most beautiful experiment in the history of physics.
+
+## Try it yourself
+
+<Scene name="double-slit" />
+
+<Callout type="check" title="Do at least these three things">
+1. **Touch nothing and watch the screen for ten seconds.** The first few dozen points look random; after a few hundred the fringes emerge on their own. This is what the word "probability" looks like experimentally.
+2. **Switch to "left slit only".** The fringes vanish, leaving a broad envelope. Switch back to both slits and note where the dark fringes fall — precisely where particles were arriving with one slit open.
+3. **Turn on "detector at the slits".** The fringes disappear on the spot. Turn it off and they return.
+
+Point 3 is the subject of the next section.
+</Callout>
+
+## Step three: what if we peek
+
+The natural next question: put a detector at the slits and see which one it went through.
+
+The result: **as soon as you can determine the path, the fringes vanish**, and the distribution degenerates into the simple sum of the two slits' individual contributions. Switch the detector off and the fringes come straight back.
+
+It also does not matter whether you ever read the record — as long as the information is **available in principle**, the fringes are gone.
+
+<Callout type="misconception" title='"The detector knocked the particle sideways" is not enough'>
+The standard story is: to see which slit the particle went through you must shine light on it, the photon transfers momentum, and that washes the fringes out.
+
+This holds in Heisenberg's original argument and is genuinely the dominant mechanism in some setups. **But it is not the essence.**
+
+The reason is that which-path schemes have been built that **transfer no momentum**. Put quarter-wave plates with different orientations over the two slits, for instance: a photon passing through picks up a different circular polarisation. Polarisation has nothing to do with direction of motion, no momentum changes hands — and the fringes vanish anyway.
+
+The real reason is that once the path information is recorded by **anything at all** (a wave plate, the internal state of an atom), the two paths carry mutually orthogonal labels and their probability amplitudes can no longer interfere.
+
+The rigorous version of this is called **decoherence**, worked out in [section 10.5](/en/ch/10-open-systems/05-decoherence/). And this "you cannot have both" structure reappears as the uncertainty principle in [section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/).
+</Callout>
+
+<Callout type="insight" title="Better still: the information can be erased">
+If the path information is stored somewhere you control (those two wave plates, say), and then — **after** the photon has already hit the screen — you erase it with a polariser at 45°, so that the two paths' labels become indistinguishable again:
+
+the fringes come back.
+
+This is the **quantum eraser**, proposed by Scully and Drühl in 1982 and realised many times since. It shows that what disappears is not the capacity to interfere but the fact that a label exists.
+</Callout>
+
+## Step four: delayed choice (proposed 1978, realised 2007)
+
+Wheeler pushed this to its final step with an almost provocative question:
+
+> What if we wait until the photon has **already passed the slits** before deciding whether to measure which path or measure interference?
+
+On the naive picture the photon must decide at the slits: either behave as a particle and pick one, or behave as a wave and take both. And we make our choice after it has gone through — must it foresee the future?
+
+<Callout type="history" title="The experiment was done">
+In 2007 Jacques and colleagues carried this out with single photons and a Mach–Zehnder interferometer that could be switched while the photon was in flight. The switching was driven by a quantum random-number generator and was spacelike-separated from the slits — **no signal could possibly have reached the photon in time**.
+
+The result: choosing "measure path" gives particle behaviour, choosing "measure interference" gives wave behaviour. Every time.
+
+**No retrocausality, and no photon changing its past.**
+</Callout>
+
+<Callout type="insight" title="What Wheeler's experiment actually rules out">
+Not causality, but a class of explanation: **that the photon quietly decided at the slits whether it was "going to be a wave or a particle".**
+
+Experiment rejects that. What remains is this:
+
+"Which slit did it go through" is simply not a question with an answer prior to measurement. Not that we do not know the answer — **the question has no answer until the measurement is arranged**.
+
+That sounds like word-play, but it has testable consequences: [Bell's inequality in section 9.4](/en/ch/09-quantum-information/04-bell-chsh/) turns it into a number that can be decided in a laboratory.
+</Callout>
+
+## What to take away
+
+<Callout type="misconception" title='Do not read "wave–particle duality" as "sometimes one, sometimes the other"'>
+The impression easiest to be left with is that particles switch between two identities.
+
+Closer to the truth: **electrons and photons are always the same kind of thing, and that kind of thing has no macroscopic counterpart.** "Wave" and "particle" are two models borrowed from water surfaces and billiard balls, and each covers only part of the experiments.
+
+What makes the double slit so important is that it forces both models to fail in one apparatus:
+- the screen registers individual arrivals (the wave model cannot produce that),
+- the arrivals are distributed as an interference pattern (the particle model cannot produce that).
+
+Accommodating both requires a new object: a complex-valued function that evolves by a wave equation and whose modulus squared gives the probability of finding **one whole** particle.
+
+That is the **wavefunction**, and [chapter 2](/en/ch/02-wavefunction/) starts from it.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Double-slit fringe spacing', latex: '\\Delta y=\\frac{\\lambda L}{d}', note: 'Wider slit separation, finer fringes; the first method of measuring wavelength' },
+    { name: 'Bright-fringe condition', latex: 'd\\sin\\theta=m\\lambda,\\qquad m=0,\\pm1,\\pm2,\\dots', note: 'Constructive where the path difference is a whole number of wavelengths' },
+    { name: 'Coherent two-slit intensity', latex: 'I=|\\psi_1+\\psi_2|^2=I_1+I_2+2\\sqrt{I_1I_2}\\cos\\delta', note: 'The third term is the interference term; the fringes live entirely in it' },
+    { name: 'With which-path information', latex: 'I=|\\psi_1|^2+|\\psi_2|^2', note: 'The interference term is gone, leaving the plain sum of the two slits' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ds-1',
+      prompt: 'With the source dimmed so that only one photon is in the apparatus at a time, long accumulation on the screen produces:',
+      options: [
+        'Interference fringes, in exactly the positions seen with bright light',
+        'Two bright bands, the shadows of the two slits',
+        'A uniform scatter of points',
+        'Nothing at all',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the classical-particle expectation, and experiment refutes it.',
+        2: 'The distribution of arrivals has clear structure; it is not uniform.',
+        3: 'Every photon is registered; only its position is random.',
+      },
+      explain: 'Each photon lands at random, but the distribution knows both slits are open. Interference therefore happens between the two possible paths of a single particle, not between different particles — dropping the rate to one per second changes nothing.',
+    },
+    {
+      id: 'ds-2',
+      prompt: 'About "the fringes vanish when a which-path detector is installed", which statements are correct? (Select all that apply.)',
+      options: [
+        'The fringes vanish as long as the path information is available in principle, whether or not you read it',
+        '"The probe photon knocked the particle sideways" holds in some setups but is not the essential reason',
+        'Which-path schemes that transfer no momentum also destroy the fringes',
+        'It happens because the detector absorbs some photons and the intensity drops',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Lowering the intensity only slows the accumulation; it does not change the shape of the distribution — single-photon experiments settled that cleanly.',
+      },
+      explain: 'What matters is whether the two paths carry mutually orthogonal labels. The quarter-wave-plate scheme changes no momentum yet still erases the fringes, showing it is information rather than disturbance that does the work. The rigorous treatment is in [section 10.5](/en/ch/10-open-systems/05-decoherence/).',
+    },
+    {
+      id: 'ds-3',
+      prompt: "Which class of explanation does Wheeler's delayed-choice experiment rule out?",
+      options: [
+        'That a particle decides at the slits whether it will "behave as a wave or a particle"',
+        'That photons have definite energies',
+        'That interference requires two or more particles',
+        'That measurement affects the system being measured',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Energy is irrelevant to this experiment.',
+        2: 'Single-photon interference was established well before delayed choice.',
+        3: 'Measurement affecting the system is part of quantum mechanics and was not ruled out.',
+      },
+      explain: 'Deciding at random what to measure after the photon has passed still produces results consistent with the chosen measurement. That rules out the picture of a particle picking an identity in advance, leaving: "which slit" simply has no answer until the measurement is arranged. No retrocausality is involved.',
+    },
+    {
+      id: 'ds-4',
+      type: 'numeric',
+      prompt: 'A double-slit experiment uses λ = 500 nm, slit separation d = 0.20 mm and screen distance L = 2.0 m. What is the spacing between adjacent bright fringes, in millimetres?',
+      answer: 5.0,
+      tolerance: 0.1,
+      unit: 'mm',
+      explain: 'Δy = λL/d = (5.0×10⁻⁷ × 2.0)/(2.0×10⁻⁴) = 5.0×10⁻³ m = 5.0 mm. You can verify the proportionality directly in the 3D scene above: increasing λ widens the fringes, increasing d narrows them.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The double slit forces a conclusion: "where the electron is" has no definite answer before measurement.
+
+So what does "uncertain" actually mean — that we do not know, or that there is nothing to know? The last section of this chapter traces where the concept came from, and what was wrong with the argument that originally sold it.

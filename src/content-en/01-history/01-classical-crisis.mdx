@@ -1,16 +1,220 @@
 ---
-title: 'The crisis of classical physics'
-summary: 'By the end of the 19th century physics looked complete — until three clouds shook the foundations.'
+title: The crisis of classical physics
 section: '1.1'
 order: 1
-status: stub
+summary: By 1900 physics looked finished. Three unremarkable experimental facts tore up the foundations.
+status: done
+prereqs:
+  - 00-guide/01-index
+objectives:
+  - State what classical physics covered around 1900 and what it believed it had settled
+  - 'Say exactly where each of the three dead ends gets stuck: the ultraviolet catastrophe, low-temperature specific heat, atomic stability'
+  - Explain why none of the three can be fixed by patching classical theory
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Start with something slightly counter-intuitive: **physicists in 1900 did not feel anything was missing.**
+
+The textbooks divided the world up like this:
+
+- **Mechanics** handles how things move. Newton's three laws plus gravitation get you from cannonballs to Neptune.
+- **Electromagnetism** handles electricity, magnetism and light. Maxwell's four equations unified them and predicted electromagnetic waves into the bargain — which Hertz duly produced in 1887.
+- **Thermodynamics and statistical mechanics** handle heat, energy and entropy. Boltzmann reduced macroscopic temperature to molecules banging about.
+
+Between them they covered essentially every experiment that could then be done. Students were occasionally advised against reading physics on the grounds that all that remained was measuring the constants to another decimal place.
+
+<Callout type="history" title="That famous line about two clouds">
+In April 1900 Lord Kelvin gave a lecture at the Royal Institution saying that the edifice of classical physics was complete, with only two small clouds left in an otherwise clear sky.
+
+He meant the Michelson–Morley experiment (no ether to be found) and the conflict between equipartition and the measured specific heats.
+
+In hindsight one cloud became relativity and the other became quantum mechanics. **The edifice was not patched; it was demolished and rebuilt.**
 </Callout>
 
-## Planned contents
+This chapter is about how the second cloud turned into a downpour. To make the road ahead easier, let us first lay out the three most damaging contradictions — not solving them, just being precise about where they get stuck.
 
-- The classical picture: mechanics + electromagnetism + thermodynamics
-- Three dead ends: the ultraviolet catastrophe, anomalous specific heats, atomic stability
+## Dead end one: heat something up and the formula returns infinity
+
+Anything with a temperature glows. Iron at 600 °C is dull red, at 1200 °C orange-white; the Sun's surface at 5800 K is white. Physicists idealised this as a **black body**: a cavity that only absorbs and never reflects, observed through a small hole.
+
+The question is plain: **how is the radiated energy distributed across frequencies?**
+
+<DualView>
+<div slot="left">
+
+**The classical answer.** Treat the field in the cavity as a collection of standing waves (just like a string clamped at both ends), each an independent mode of vibration. Equipartition says that in thermal equilibrium every mode gets an average energy $k_BT$.
+
+So count how many modes lie near frequency $\nu$, multiply by $k_BT$, and you have the distribution. That is the **Rayleigh–Jeans law**.
+
+**Where it fails.** Shorter standing waves (higher frequencies) are more numerous, without any upper bound. Give each one $k_BT$ and the total diverges.
+
+</div>
+<div slot="right">
+
+$$
+u(\nu,T)=\frac{8\pi\nu^2}{c^3}\,k_BT
+$$
+
+$$
+U=\int_0^\infty u(\nu,T)\,\dd \nu=\infty
+$$
+
+Every step is correct, and the conclusion is: **any object with a temperature instantly radiates away all its energy at infinite power.**
+
+This became known as the **ultraviolet catastrophe** — the disaster lives at the ultraviolet end, because the higher the frequency the worse it gets.
+
+</div>
+</DualView>
+
+The measured curve is of course nothing like this. It rises, peaks at some frequency, then falls, and the total energy is finite.
+
+**Note the character of this failure**: the theory is not slightly off, it returns infinity. That kind of error cannot be repaired with a correction factor.
+
+## Dead end two: cool it down and the heat capacity "vanishes"
+
+The second dead end uses the same equipartition theorem in a different setting.
+
+Each atom in a solid vibrates about its lattice site, which we can treat as three springs. Each oscillator has kinetic and potential energy, equipartition hands it $k_BT$, and a mole of solid therefore has
+
+$$
+C_V=3N_Ak_B=3R\approx 25\ \text{J}/(\text{mol}\cdot\text{K})
+$$
+
+This is the **Dulong–Petit law**, and at room temperature it is startlingly accurate for most metals.
+
+<Callout type="warning" title="But it only works near room temperature">
+Cool the sample and the measured $C_V$ falls steadily, approaching zero near absolute zero. The classical formula contains no temperature at all — it predicts $3R$ forever.
+
+Diamond is worse still: it is already well below $3R$ at **room temperature**.
+
+The same disease shows up in diatomic gases. Classically $\text{H}_2$ should have seven degrees of freedom — translation, rotation, vibration — but at room temperature only five are awake. The other two behave as though frozen.
+</Callout>
+
+**How can equipartition fail?** Its derivation uses only the most basic assumptions of statistical mechanics. Either statistical mechanics is wrong, or the premise that "every degree of freedom can take up energy continuously" is wrong.
+
+## Dead end three: a classical atom lasts under a ten-billionth of a second
+
+In 1911 Rutherford fired alpha particles at gold foil and found that the positive charge and nearly all the mass sit in a tiny nucleus, with the electrons outside. So what are the electrons doing?
+
+A stationary electron would simply be pulled straight into the nucleus by the Coulomb force. So it must orbit — like a planet round the Sun.
+
+<Derivation title="Estimate: how long does a classical atom live" level="基础" minutes={5}>
+
+The trouble is that the electron is charged, and classical electrodynamics has an ironclad rule: **an accelerating charge radiates**. Circular motion is accelerated motion (the direction keeps changing), so the electron must radiate continuously, lose energy continuously, and spiral inward continuously.
+
+The radiated power is given by the Larmor formula:
+
+$$
+P=\frac{e^2a^2}{6\pi\varepsilon_0c^3}
+$$
+
+Take the hydrogen scale $r\approx0.5\ \text{Å}=5\times10^{-11}\ \text{m}$. The Coulomb force supplies the centripetal acceleration:
+
+$$
+a=\frac{e^2}{4\pi\varepsilon_0 m r^2}\approx 9\times10^{22}\ \text{m}/\text{s}^2
+$$
+
+The electron's total energy (kinetic plus potential) is
+
+$$
+E=-\frac{e^2}{8\pi\varepsilon_0 r}\approx-2.2\times10^{-18}\ \text{J}
+$$
+
+Putting these in gives a radiated power of about $5\times10^{-8}\ \text{W}$. Dividing the total energy by the power gives an order-of-magnitude lifetime:
+
+$$
+\tau\sim\frac{|E|}{P}\sim\frac{2.2\times10^{-18}}{5\times10^{-8}}\approx4\times10^{-11}\ \text{s}
+$$
+
+**About 40 picoseconds.** Doing the integral properly (the power grows as the orbit shrinks) gives $1.6\times10^{-11}$ s, the same order.
+
+In other words: according to classical electrodynamics, the block of wood on your desk should have collapsed into a heap of nuclei within the first 0.00000000002 seconds after the Big Bang.
+
+</Derivation>
+
+The classical model cannot account for **spectra** either. A continuously shrinking orbit means a continuously changing frequency, so atoms should emit a continuous spectrum. What is actually measured is a set of sharp lines, positioned precisely enough to serve as an element's fingerprint.
+
+<Callout type="insight" title="What the three dead ends have in common">
+Set them side by side and three different roads point the same way:
+
+| | Classical prediction | Experimental fact |
+| --- | --- | --- |
+| Black-body radiation | High-frequency modes absorb without limit | The high end is suppressed |
+| Low-temperature specific heat | Every degree of freedom always gets $k_BT$ | Degrees of freedom freeze out |
+| Atomic stability | Energy can be radiated away continuously | Atoms are stable, spectra are discrete |
+
+All three failures trace back to one assumption: **that energy can be divided and exchanged in arbitrarily small amounts.**
+
+Suppose instead that energy is exchanged in whole units, and that the size of a unit grows with frequency. Then high-frequency modes get nothing because a single unit is too expensive; degrees of freedom freeze out at low temperature because the first unit is unaffordable; and the electron is stable because there is no lower level left to drop to. All three knots loosen together.
+
+That is the subject of the next section.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Rayleigh–Jeans law', latex: 'u(\\nu,T)=\\frac{8\\pi\\nu^2}{c^3}k_BT', note: 'Flawless derivation, divergent total energy — the ultraviolet catastrophe' },
+    { name: 'Dulong–Petit law', latex: 'C_V=3R\\approx25\\ \\text{J}/(\\text{mol}\\cdot\\text{K})', note: 'Accurate at room temperature, useless in the cold' },
+    { name: 'Larmor radiated power', latex: 'P=\\frac{e^2a^2}{6\\pi\\varepsilon_0c^3}', note: 'Gives a classical atom under 10⁻¹¹ s to live' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'crisis-1',
+      prompt: 'What is the crucial point about the ultraviolet catastrophe?',
+      options: [
+        'The classical derivation contains no error, yet the total radiated energy diverges — a failure no correction factor can repair',
+        'Rayleigh and Jeans made a mistake counting the modes',
+        'The equipment of the day could not measure the ultraviolet accurately',
+        'A black body is an idealisation that does not exist',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The mode count is a standard standing-wave count and is correct. What fails is the premise that every mode gets k_BT.',
+        2: 'The measurements were already accurate enough to force Planck to his formula.',
+        3: 'A cavity with a small hole is an excellent black body and entirely realisable.',
+      },
+      explain: 'Classical physics does not return a number that is 20% off; it returns infinity. Wherever a theory returns infinity, some basic assumption is usually failing — here, that energy can be distributed continuously.',
+    },
+    {
+      id: 'crisis-2',
+      prompt: 'The vanishing of specific heat at low temperature directly challenges which of these?',
+      options: [
+        'Equipartition: every degree of freedom gets an average energy k_BT',
+        'Conservation of energy',
+        'The second law of thermodynamics',
+        "Coulomb's law",
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Energy conservation holds throughout quantum mechanics and was never in question.',
+        2: 'Entropy growth has nothing to do with the specific-heat anomaly.',
+        3: 'The problem lies in statistical mechanics, not electromagnetism.',
+      },
+      explain: 'Equipartition predicts C_V = 3R independent of temperature. Measurements falling to zero say that "every degree of freedom can absorb arbitrarily small amounts of energy" fails in the cold — the degrees of freedom are frozen out.',
+    },
+    {
+      id: 'crisis-3',
+      prompt: 'Classical electrodynamics predicts an orbiting electron falls into the nucleus within about 10⁻¹¹ s. That prediction rests on:',
+      options: [
+        'An accelerating charge necessarily radiates electromagnetic waves',
+        'The electron mass being very small',
+        'The Coulomb force being far stronger than gravity',
+        'The nucleus carrying positive charge',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The mass does not change the conclusion that it must radiate.',
+        2: 'The strength of the force sets the orbital scale, not whether radiation occurs.',
+        3: 'True, but the immediate cause of collapse is radiative energy loss.',
+      },
+      explain: 'Orbiting is accelerating, an accelerating charge radiates by the Larmor formula, energy drains away and the orbit shrinks. Rescuing atomic stability means explaining why an electron in the ground state does not radiate — [section 2.5](/en/ch/02-wavefunction/05-stationary-states/) gives the answer: the charge distribution of a stationary state does not change in time at all.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Of the three dead ends, the first was prised open first. At the end of 1900, in order to make a formula match the measured curve, Planck made an assumption he himself was unhappy with.
+
+The next section looks at what he actually did, and why he spent more than a decade refusing to believe it.

@@ -7,6 +7,7 @@ import Derivation from '@/components/mdx/Derivation.astro'
 import DualView from '@/components/mdx/DualView.astro'
 import KeyFormulas from '@/components/mdx/KeyFormulas.astro'
 import QuizBlock from '@/components/mdx/QuizBlock.astro'
+import Scene from '@/components/canvas/Scene.astro'
 import Sim from '@/components/mdx/Sim.astro'
 import Term from '@/components/mdx/Term.astro'
 
@@ -28,10 +29,10 @@ const section = toc.flatMap((c) => c.sections).find((s) => s.id === entryId) as 
 
 /**
  * MDX 里可以直接用这些组件，不需要 import。
- * 需要水合的（模拟、自测）走 Sim / QuizBlock 这两个 .astro 壳，
+ * 需要水合的（3D 场景、模拟、自测）走 Scene / Sim / QuizBlock 这三个 .astro 壳，
  * 因为 client:* 指令要求组件在编译期被静态导入。
  */
-const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Sim, Term }
+const components = { Callout, Derivation, DualView, KeyFormulas, QuizBlock, Scene, Sim, Term }
 ---
 
 <ChapterLayout section={section} headings={headings} lang="zh">
