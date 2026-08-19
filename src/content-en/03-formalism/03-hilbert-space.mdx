@@ -55,7 +55,7 @@ $$
 </div>
 </DualView>
 
-<Callout type="warning" title="The word ''complete'' has two meanings — keep them apart">
+<Callout type="warning" title="The word 'complete' has two meanings — keep them apart">
 The ambiguity exists in English just as it does in Chinese, and beginners step on it almost without fail:
 
 **Complete in the analyst's sense (complete metric space)**: every Cauchy sequence has a limit, and the limit lies in the space. This is part of the definition of a Hilbert space, and it says **the space has no holes**.
@@ -91,7 +91,7 @@ $$
 
 equipped with the inner product $\braket{\phi}{\psi}=\int\phi^*\psi\,\dd x$.
 
-<Callout type="check" title="Why ''square-integrable'', exactly">
+<Callout type="check" title="Why 'square-integrable', exactly">
 This condition was not picked at random — it is precisely what the Born rule demands.
 
 For $|\psi|^2$ to serve as a probability density, $\int|\psi|^2\dd x$ must be a finite number (which you then divide out to normalise). If the integral diverges, no amount of rescaling produces a distribution with total probability 1.
@@ -139,7 +139,7 @@ Now for the question we have been dodging.
 
 The solutions of the position operator's eigenvalue equation $\hat x\ket{x_0}=x_0\ket{x_0}$ are, in the position basis, $\delta(x-x_0)$. The momentum operator's eigenstates are plane waves. **Neither belongs to $L^2$.**
 
-<Callout type="misconception" title="''Not in the space'' does not mean ''useless''">
+<Callout type="misconception" title="'Not in the space' does not mean 'useless'">
 A common misconception: since $\ket{x}$ is not a legitimate state, using it must be wrong.
 
 The right attitude: $\ket{x}$ and $\ket{p}$ are **generalised eigenstates** — extraordinarily useful **bookkeeping devices** that represent no preparable physical state.
@@ -204,7 +204,7 @@ This framework makes every formal manipulation above rigorous. **You do not need
 
 <KeyFormulas
   items={[
-    { name: 'Hilbert space', latex: '\\text{linear space + inner product + complete in the analyst''s sense}', note: 'Where quantum states live; the first postulate' },
+    { name: 'Hilbert space', latex: '\\text{linear space + inner product + complete in the analyst\'s sense}', note: 'Where quantum states live; the first postulate' },
     { name: 'L² space', latex: 'L^2=\\{\\psi:\\int|\\psi|^2\\dd x<\\infty\\}', note: '"Normalisable" = "square-integrable", singled out by the Born rule' },
     { name: 'δ normalisation', latex: '\\braket{x}{x\'}=\\delta(x-x\'),\\quad\\braket{p}{p\'}=\\delta(p-p\')', note: 'Orthonormality, continuous-spectrum edition' },
     { name: 'Mixed-spectrum completeness', latex: '\\sum_n\\ket{n}\\bra{n}+\\int\\ket{E}\\bra{E}\\dd E=\\hat 1', note: 'The finite well and hydrogen both need this form' },

@@ -1,17 +1,242 @@
 ---
-title: 'Why spin follows from relativity'
-summary: 'The Dirac equation gives g = 2 automatically.'
+title: Spin and relativity, inseparably joined
 section: '12.5'
 order: 5
-status: stub
+summary: 'Put the Dirac equation in an electromagnetic field and take the low-speed limit: g=2 drops out by itself. Expand one order further and the fine-structure trio — relativistic correction, spin-orbit coupling (Thomas 1/2 included), Darwin term — arrives automatically, complete. Spin is relativity''s gift to quantum mechanics.'
+status: done
+prereqs:
+  - 12-relativistic/03-dirac-equation
+  - 06-hydrogen/06-fine-structure
+  - 05-angular-momentum/07-spin-orbit
+sims: []
+objectives:
+  - Take the non-relativistic limit of the Dirac equation in an electromagnetic field, deriving the Pauli equation and g=2
+  - Show how, one order further into the expansion, all three fine-structure terms hand-stitched in section 6.6 appear automatically (Thomas 1/2 included)
+  - Explain why the tiny deviation of g−2 is a signpost on the road to quantum field theory
+  - State the relativistic origin of the spin-statistics theorem, redeeming the postulate of chapter 8
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+In chapter 5 the experiments held our heads down and made us accept two things: the electron has spin $\hbar/2$; and its magnetic moment carries a strange factor $g\approx2$ — for the same angular momentum, spin produces **twice** the magnetic moment that orbital motion does ([section 5.4](/en/ch/05-angular-momentum/04-stern-gerlach/)). In chapter 6 we then stuffed three "relativistic patches" into the hydrogen atom by hand to piece together the fine structure ([section 6.6](/en/ch/06-hydrogen/06-fine-structure/)). Each time the numbers came out right; each time we could not say **why**.
+
+This section settles all the accounts at once: every one of those "hand additions" is an automatic consequence of the Dirac equation. There is only one method — put the equation in an electromagnetic field and expand order by order in powers of $v/c$.
+
+## The zeroth-order surprise: g = 2
+
+The electromagnetic field is plugged in exactly as in classical mechanics and Schrödinger theory (minimal coupling): $\hat{\vec p}\to\hat{\vec\pi}=\hat{\vec p}-q\vec A$, plus the scalar-potential energy $q\varphi$:
+
+$$
+\ii\hbar\frac{\partial\psi}{\partial t}
+=\bigl[c\,\vec\alpha\cdot\hat{\vec\pi}+\beta mc^2+q\varphi\bigr]\psi
+$$
+
+Note carefully: **no** magnetic moment has been put in — the coupling says not one word about spin.
+
+<Derivation title="From the Dirac equation to the Pauli equation: the birth of g=2" level="进阶" minutes={12} open={true}>
+
+**Step 1: split into upper and lower halves.** Following the block structure of section 12.3, write the four-component spinor as two two-component spinors $\psi=\begin{pmatrix}\chi\\ \eta\end{pmatrix}$, and peel off the dominant rest-energy phase: $\psi\to\ee^{-\ii mc^2t/\hbar}\psi$. Substitute into the equation, use the block forms of $\alpha_k,\beta$, and obtain the coupled pair
+
+$$
+\ii\hbar\,\partial_t\chi=c\,\vec\sigma\cdot\hat{\vec\pi}\,\eta+q\varphi\,\chi
+$$
+
+$$
+\ii\hbar\,\partial_t\eta=c\,\vec\sigma\cdot\hat{\vec\pi}\,\chi+q\varphi\,\eta-2mc^2\eta
+$$
+
+**Step 2: identify the large and small components.** In the second equation, $-2mc^2\eta$ dwarfs everything else: at low speeds both $\ii\hbar\partial_t\eta$ and $q\varphi\eta$ (an energy of order $\sim mv^2$ times $\eta$) are far smaller than it, so
+
+$$
+\eta\approx\frac{\vec\sigma\cdot\hat{\vec\pi}}{2mc}\,\chi
+\;\sim\;\frac{v}{2c}\,\chi
+$$
+
+$\eta$ is smaller than $\chi$ by a factor of $v/c$ — call $\chi$ the **large component** (the Pauli two-component wavefunction of the non-relativistic electron) and $\eta$ the **small component**.
+
+**Step 3: substitute back.** Insert $\eta$ into the first equation:
+
+$$
+\ii\hbar\,\partial_t\chi
+=\left[\frac{(\vec\sigma\cdot\hat{\vec\pi})^2}{2m}+q\varphi\right]\chi
+$$
+
+**Step 4: the single most important piece of algebra in the whole story.** Use the Pauli-matrix identity $(\vec\sigma\cdot\vec a)(\vec\sigma\cdot\vec b)=\vec a\cdot\vec b+\ii\vec\sigma\cdot(\vec a\times\vec b)$:
+
+$$
+(\vec\sigma\cdot\hat{\vec\pi})^2=\hat\pi^2+\ii\,\vec\sigma\cdot(\hat{\vec\pi}\times\hat{\vec\pi})
+$$
+
+An ordinary vector crossed with itself is zero — but the components of $\hat{\vec\pi}$ do not commute with one another ($\hat{\vec p}$ does not commute with $\vec A(\vec x)$)! Compute component by component:
+
+$$
+(\hat{\vec\pi}\times\hat{\vec\pi})_z=\hat\pi_x\hat\pi_y-\hat\pi_y\hat\pi_x
+=-q\bigl([\hat p_x,A_y]+[A_x,\hat p_y]\bigr)
+=\ii\hbar q\Bigl(\frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}\Bigr)
+=\ii\hbar q\,B_z
+$$
+
+Assembling the three components: $\hat{\vec\pi}\times\hat{\vec\pi}=\ii\hbar q\vec B$. Substituting back:
+
+$$
+(\vec\sigma\cdot\hat{\vec\pi})^2=\hat\pi^2-q\hbar\,\vec\sigma\cdot\vec B
+$$
+
+**Step 5: read off the Pauli equation and the g factor.**
+
+$$
+\ii\hbar\,\partial_t\chi
+=\left[\frac{\hat\pi^2}{2m}+q\varphi
+-\frac{q\hbar}{2m}\,\vec\sigma\cdot\vec B\right]\chi
+$$
+
+The last term is a magnetic-moment energy $-\vec\mu\cdot\vec B$, where (using $\hat{\vec S}=\frac\hbar2\vec\sigma$)
+
+$$
+\vec\mu=\frac{q\hbar}{2m}\vec\sigma=\underbrace{2}_{g}\cdot\frac{q}{2m}\hat{\vec S}
+$$
+
+Compare the orbital moment $\vec\mu_L=\frac{q}{2m}\hat{\vec L}$ (coefficient $\frac{q}{2m}$, no factor of 2): **the g factor of the spin magnetic moment comes out exactly 2.** At no step was a magnetic moment put into the theory — it grew by itself out of the algebra of $(\vec\sigma\cdot\hat{\vec\pi})^2$, and its value matches the Stern-Gerlach and anomalous-Zeeman measurements. Before 1928, $g=2$ was a purely empirical number; after 1928, it is a homework derivation.
+
+</Derivation>
+
+## First order: the fine-structure trio arrives complete
+
+Push the approximation one order further (keep the $1/c^2$ corrections in the equation for $\eta$; the systematic version of this expansion is called the Foldy-Wouthuysen transformation — tedious algebra, no new ideas), and for the hydrogen atom ($q\varphi=V(r)$ the Coulomb potential) the effective Hamiltonian gains three extra terms:
+
+$$
+\hat H_{1/c^2}
+=\underbrace{-\frac{\hat p^4}{8m^3c^2}}_{\text{relativistic kinetic correction}}
++\underbrace{\frac{1}{2m^2c^2}\frac1r\frac{\dd V}{\dd r}\,\hat{\vec S}\cdot\hat{\vec L}}_{\text{spin-orbit coupling}}
++\underbrace{\frac{\hbar^2}{8m^2c^2}\nabla^2V}_{\text{Darwin term}}
+$$
+
+Check the books term by term — every one is an old acquaintance from section 6.6:
+
+<DualView>
+<div slot="left">
+
+**Where they came from back then (section 6.6):**
+
+1. Kinetic correction: expand $\sqrt{p^2c^2+m^2c^4}$ to the next order and add it in **by hand**.
+2. Spin-orbit coupling: in the electron's frame the nucleus circles the electron and produces a magnetic field acting on the spin moment — but the coefficient computed this way came out **twice too large**, and had to be patched by hand with the never-quite-explained "Thomas precession factor of 1/2" before it matched experiment.
+3. Darwin term: back then no semiclassical origin could be given at all; one simply conceded "it has to be added anyway", with a hand-waving story that the "trembling" of the electron's position (Zitterbewegung) smears out the potential it feels.
+
+Three patches, three pedigrees, each fending for itself.
+
+</div>
+<div slot="right">
+
+**Where they come from now (this section):**
+
+All three terms emerge together from **one and the same** expansion of one and the same Dirac equation —
+
+1. Kinetic correction: from the expansion of the energy square root, with the coefficient automatically right.
+2. Spin-orbit term: **the coefficient is born carrying Thomas's 1/2**, because the expansion contains both effects at once — the magnetic interaction and the frame precession.
+3. Darwin term: from the non-locality of the large-small component coupling; it acts only where $\nabla^2V\neq0$ — for the Coulomb potential, at the origin — so it touches only $s$ states, in seamless agreement with the spectroscopic data.
+
+The merged levels depend only on $n$ and the total angular momentum $j$:
+
+$$
+E_{nj}=-\frac{13.6\ \text{eV}}{n^2}
+\left[1+\frac{\alpha^2}{n^2}\Bigl(\frac{n}{j+1/2}-\frac34\Bigr)\right]
+$$
+
+Identical, term for term, with the formula pieced together in section 6.6.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="This chapter's thesis, in one sentence">
+**Spin is not an accessory of quantum mechanics; it is a gift from relativity.**
+
+The spin of chapter 5, the $g=2$, the fine-structure trio of chapter 6, even chapter 8's "fermions obey the exclusion principle" — all these "postulates", carried one by one from experiment into the theory, become **theorems** under the joint demands of "quantum mechanics + special relativity + a stable vacuum". The last of them (the spin-statistics theorem: half-integer spin must mean fermions, integer spin must mean bosons) was proved by Pauli in 1940 within relativistic quantum field theory — and its root lies precisely in relativity's causal structure (measurements at spacelike separation cannot influence one another). In non-relativistic quantum mechanics it can only be a postulate; the moment relativity enters, it is the only self-consistent choice. The stability of the material world — atoms that do not collapse, a periodic table that exists, white dwarfs that hold up against gravity — hangs, in the end, on Lorentz symmetry.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="g is not exactly 2 — and that is good news">
+Experiment measures the electron's g factor to be
 
-- Spinor representations and the Lorentz group
-- Why the g factor comes out naturally
-- The relativistic root of the spin-statistics theorem
+$$
+g=2.002\,319\,304\,360\ldots
+$$
+
+After Dirac's 2 comes a trailing string of digits, a relative deviation of about one part in a thousand. This is not the Dirac equation getting its sums wrong — it is the equation's limit of validity showing through: the electron is forever immersed in the quantum fluctuations of the electromagnetic field, ceaselessly emitting and reabsorbing virtual photons, and its magnetic moment is lightly dressed as a result. That is already an effect of the **field**, beyond the reach of any single-particle equation. In 1948 Schwinger computed the first-order correction with quantum electrodynamics,
+
+$$
+\frac{g-2}{2}=\frac{\alpha}{2\pi}\approx0.001\,161\ldots
+$$
+
+in agreement with experiment; today theory and experiment agree to **parts in a trillion** — the most precisely tested prediction in the history of physics. That little tail on $g-2$ is quantum field theory's first calling card, slipped under the door.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Pauli equation (derived automatically)', latex: '\\ii\\hbar\\,\\partial_t\\chi=\\Bigl[\\frac{(\\hat{\\vec p}-q\\vec A)^2}{2m}+q\\varphi-\\frac{q\\hbar}{2m}\\vec\\sigma\\cdot\\vec B\\Bigr]\\chi', note: 'Non-relativistic limit of the large component; the magnetic-moment term needs no hand insertion' },
+    { name: 'The key algebra', latex: '(\\vec\\sigma\\cdot\\hat{\\vec\\pi})^2=\\hat\\pi^2-q\\hbar\\,\\vec\\sigma\\cdot\\vec B', note: 'From π×π=iħqB (non-commuting components); g=2 comes from here' },
+    { name: 'Fine structure (arriving automatically)', latex: '\\hat H_{1/c^2}=-\\frac{\\hat p^4}{8m^3c^2}+\\frac{1}{2m^2c^2}\\frac1r\\frac{\\dd V}{\\dd r}\\hat{\\vec S}\\cdot\\hat{\\vec L}+\\frac{\\hbar^2}{8m^2c^2}\\nabla^2V', note: 'Thomas 1/2 born correct; the Darwin term touches only s states' },
+    { name: 'Hydrogen levels', latex: 'E_{nj}=-\\frac{13.6\\ \\text{eV}}{n^2}\\Bigl[1+\\frac{\\alpha^2}{n^2}\\Bigl(\\frac{n}{j+1/2}-\\frac34\\Bigr)\\Bigr]', note: 'Depends only on n and j, identical to the section 6.6 formula' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel5-1',
+      prompt: 'Which piece of algebra in the derivation is the direct source of g=2?',
+      options: [
+        '(σ·π)² = π² − qħσ·B, where π×π = iħqB is non-zero because p does not commute with A(x)',
+        'Adding a magnetic-moment term −μ·B to the Hamiltonian with its experimental value',
+        'Modelling the electron as a charged spinning ball and computing its rotational magnetic moment',
+        'First-order perturbation theory on the Coulomb potential',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'No magnetic moment was ever added by hand — minimal coupling p→p−qA says not a word about spin; the moment term is a product of the algebra.',
+        2: 'The spinning-ball model gives g=1 (and was ruled out long ago); g=2 is precisely the mark of having no classical counterpart.',
+      },
+      explain: 'For an ordinary vector a×a=0, but the components of the operator π do not commute: π×π=iħqB. Through the Pauli identity this term becomes −qħσ·B/2m, and comparing with the orbital moment qL/2m yields exactly the factor of 2.',
+    },
+    {
+      id: 'rel5-2',
+      prompt: 'Compared with the hand-built approach of section 6.6, the advantages of obtaining fine structure by expanding the Dirac equation are: (select all that apply)',
+      options: [
+        'All three corrections come from a single expansion, no longer each fending for itself',
+        'The spin-orbit coefficient automatically carries Thomas’s 1/2, with no extra correction needed',
+        'The Darwin term gains a definite origin, and automatically acts only on s states (∇²V is concentrated at the origin)',
+        'The expansion shows that fine structure does not actually exist',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Quite the opposite: the expansion exactly reproduces the E_nj formula of section 6.6, in agreement with experiment, depending only on n and j.',
+      },
+      explain: 'The semiclassical spin-orbit coefficient came out twice too large and needed Thomas precession to rescue it; the Darwin term had no origin at all back then. The Foldy-Wouthuysen expansion delivers all three terms at once with every coefficient right — "patches" promoted to "consequences".',
+    },
+    {
+      id: 'rel5-3',
+      prompt: 'Experiment measures g=2.00232 rather than exactly 2. This deviation shows that:',
+      options: [
+        'The Dirac single-particle equation has reached its limit of validity: the electron’s interaction with quantum fluctuations of the electromagnetic field dresses the magnetic moment, requiring quantum field theory (first-order correction α/2π)',
+        'The Dirac equation has been falsified and must be torn down and rebuilt',
+        'It is a systematic error caused by insufficient experimental precision',
+        'The electron is actually a spin-1 particle',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'g=2 itself is precisely the Dirac equation’s triumph; the little tail is the effect of a deeper layer of theory (QED), just as fine structure was to the Bohr model.',
+        2: 'g−2 has been measured to parts in a trillion and agrees with the QED calculation — it is the most precise theory-experiment comparison in the history of physics.',
+      },
+      explain: 'Schwinger computed (g−2)/2=α/2π≈0.00116 in 1948, in agreement with experiment. Emission and reabsorption of virtual photons is a "field" effect that a single-particle wave equation cannot contain in principle — g−2 is quantum field theory\'s first calling card.',
+    },
+    {
+      id: 'rel5-4',
+      type: 'numeric',
+      prompt: 'Among the n=2 levels of hydrogen, the fine-structure splitting between 2p₃/₂ and 2p₁/₂ is ΔE=13.6 eV×α²/16. Taking α=1/137.0, find ΔE (in units of 10⁻⁵ eV).',
+      answer: 4.53,
+      tolerance: 0.2,
+      unit: '×10⁻⁵ eV',
+      explain: 'From the E_nj formula, at n=2 the difference between the j=3/2 and j=1/2 terms is (13.6/4)·(α²/4)·(2/1−2/2)=13.6α²/16 ≈ 4.53×10⁻⁵ eV, corresponding to about 10.9 GHz — exactly the measured splitting quoted in section 6.6. Hand-stitched patches and automatic expansion compute one and the same nature.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Count the IOUs this chapter has signed: KG's negative probability is redeemed by the field's charge interpretation (12.2); the Dirac sea's infinite background is smoothed away by the field's recasting of the vacuum (12.4); the little tail of $g-2$ is computed from virtual-photon fluctuations (this section); and the proof of the spin-statistics theorem lives entirely inside field theory. Every thread points the same way: promote "the wavefunction of one particle" to "a quantum field vibrating at every point of spacetime", with particles merely the field's excitations. **The door to field theory now stands ajar.** In the next chapter we no longer derive line by line; instead, carrying this complete quantum-mechanical education, we go and look at the frontier scenery through the crack — from topological phases to black-hole information, where every single problem speaks the language you have already learned.

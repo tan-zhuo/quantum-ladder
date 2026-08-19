@@ -1,17 +1,301 @@
 ---
 title: 'The idea behind Shor’s algorithm'
-summary: 'Not deep number theory, but the quantum part done properly.'
 section: '9.9'
 order: 9
-status: stub
+summary: 'Factoring → period finding → reading the period with the QFT: every leg of the triple jump hand-computed on N = 15; the gap between polynomial and sub-exponential, hanging over RSA.'
+status: done
+prereqs:
+  - 09-quantum-information/07-deutsch-jozsa
+  - 09-quantum-information/08-grover
+objectives:
+  - 'Recount the full chain: factoring N ⇒ finding the period r of a^x mod N ⇒ extracting factors via gcd(a^{r/2} ± 1, N)'
+  - Hand-compute the entire pipeline for N = 15, a = 7, verifying every link
+  - 'Explain why the QFT turns a "period" into a "measurable peak": periodic superposition → interference concentration'
+  - Compare quantum O((log N)³) against classical sub-exponential complexity, and lay out the real threat to RSA and its likely timeline
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Grover's ending pointed the way: for exponential speedup, find a problem with **structure**.
+In 1994 Peter Shor found that problem — factoring large integers.
+Its structure is a hidden periodicity, and "finding periods with interference"
+has been quantum mechanics' signature trade since the double-slit experiment.
+This section does not dive into number-theoretic proofs, but it works the full logical chain
+and the quantum part all the way through.
+
+## The problem at the door: multiplication is easy, division is deadly
+
+$3\times5=15$ — mental arithmetic. The reverse, "15 = ? × ?", is not hard either.
+But make the number 617 digits long (2048 bits): multiplying two thousand-digit primes takes a
+computer milliseconds; recovering the two factors from the product, using the fastest known
+classical algorithm (the number field sieve), takes time on the order of
+
+$$
+\exp\!\left[c\,(\ln N)^{1/3}(\ln\ln N)^{2/3}\right],\qquad c\approx1.9
+$$
+
+— **sub-exponential**: far worse than polynomial. For a 2048-bit $N$, all the computing power on
+Earth combined would need millennia. The security of RSA public-key cryptography is staked on
+exactly this one-way street: the public key displays $N$ in plain sight, and whoever can factor it
+can read every ciphertext.
+
+## First leg: factoring ⇒ period finding (classical number theory, results only)
+
+Shor's first move is to **rewrite** the problem. Pick any $a$ coprime to $N$ and look at the
+modular exponential
+
+$$
+f(x)=a^x \bmod N
+$$
+
+It is necessarily periodic: $f(x+r)=f(x)$, and the smallest positive period $r$ is called the
+**order** of $a$. Number theory provides a bridge (stated without proof):
+
+> If $r$ is even and $a^{r/2}\not\equiv-1\pmod N$, then
+> $\gcd(a^{r/2}-1,\,N)$ and $\gcd(a^{r/2}+1,\,N)$ yield nontrivial factors of $N$.
+
+The intuition in one line: $a^r\equiv1$ means $(a^{r/2}-1)(a^{r/2}+1)\equiv0\pmod N$ —
+$N$ divides the product yet (under the stated conditions) divides neither factor,
+so $N$'s prime factors have been **split** between the two sides, and $\gcd$
+(the Euclidean algorithm — blazingly fast) collects one from each.
+For a random $a$ the conditions hold with probability at least $1/2$;
+if they fail, pick another $a$ and try again.
+
+**Hand-compute $N=15$ with $a=7$:**
+
+$$
+7^1=7,\quad 7^2=49\equiv4,\quad 7^3\equiv28\equiv13,\quad 7^4\equiv91\equiv1\pmod{15}
+$$
+
+The period is $r=4$ — even, and $7^2\equiv4\not\equiv-1$. Therefore
+
+$$
+\gcd(7^2-1,15)=\gcd(48,15)=3,\qquad
+\gcd(7^2+1,15)=\gcd(50,15)=5
+$$
+
+$15=3\times5$ — success. **The only hard step left in the entire algorithm is finding the period
+$r$.** Classically, period finding is no cheaper than factoring outright (you would have to grind
+$f$ through trillions of steps before seeing a single cycle); this is precisely the step quantum
+mechanics takes over.
+
+## Second leg: loading the period into a superposition
+
+Open with the DJ recipe: hit the first register ($t$ qubits, $Q=2^t\gg r^2$) with a row of $H$'s,
+compute the modular exponential for every $x$ in parallel, and write it into the second register:
+
+$$
+\frac{1}{\sqrt Q}\sum_{x=0}^{Q-1}\ket{x}\ket{a^x\bmod N}
+$$
+
+Now measure the **second register** (you don't actually have to — it just makes the story easier
+to tell), obtaining some value $f_0$. The first register thereupon collapses to the equal-weight
+superposition of **all the $x$ that produce that value** — and these $x$ form exactly an
+arithmetic progression $x_0,\ x_0+r,\ x_0+2r,\dots$:
+
+$$
+\ket{\Psi}=\frac{1}{\sqrt m}\sum_{j=0}^{m-1}\ket{x_0+jr},\qquad m\approx Q/r
+$$
+
+The period is now etched into the state, but a direct measurement would just spit out one random
+$x_0+jr$ — the random starting point $x_0$ scrambles the period information (each rerun gives a
+different $x_0$). The old problem: **the information went in but won't come out**. The old answer:
+interference. This time the interference machine is the quantum Fourier transform.
+
+## Third leg: the QFT turns the period into peaks
+
+The **quantum Fourier transform** (QFT) is the deluxe version of DJ's row of $H$'s — upgrading
+"bitwise phases" to "continuous phases":
+
+$$
+\mathrm{QFT}\ket{x}=\frac{1}{\sqrt Q}\sum_{y=0}^{Q-1}
+\ee^{2\pi\ii xy/Q}\ket{y}
+$$
+
+(The phases of $H^{\otimes n}$ are only $\pm1$; the QFT's phases take $Q$ ticks around the unit
+circle. It can be built from $O(t^2)$ gates — $H$'s plus controlled phase rotations; we skip the
+circuit here.)
+
+<Derivation title="Measuring after the QFT: why the peaks land on integer multiples of Q/r" level="进阶" minutes={9} open={true}>
+
+**Step 1: apply the QFT to the periodic state.** Substitute $\ket{\Psi}$ into the definition:
+
+$$
+\mathrm{QFT}\ket{\Psi}
+=\frac{1}{\sqrt{mQ}}\sum_{y=0}^{Q-1}
+\left[\sum_{j=0}^{m-1}\ee^{2\pi\ii(x_0+jr)y/Q}\right]\ket{y}
+$$
+
+**Step 2: factor out the random start.** Pull out the factor $\ee^{2\pi\ii x_0y/Q}$ —
+it contributes only a phase and **vanishes in the modulus squared**: the pesky $x_0$ exits the
+stage right here. The probability of measuring $y$ is
+
+$$
+P(y)=\frac{1}{mQ}\left|\sum_{j=0}^{m-1}\ee^{2\pi\ii jry/Q}\right|^2
+$$
+
+**Step 3: see when the geometric series adds up.** The bracket is a geometric series with ratio
+$\ee^{2\pi\ii ry/Q}$.
+
+- If $ry/Q$ is **exactly an integer**, i.e. $y=k\,Q/r$: every term equals 1, the sum is $m$,
+  and $P(y)=m/Q\approx1/r$ — a **sharp peak**;
+- otherwise the phases march around the unit circle, closing on themselves and nearly cancelling:
+  $P(y)\approx0$.
+
+$r$ sharp peaks stand evenly spaced at $y=0,\ \tfrac{Q}{r},\ \tfrac{2Q}{r},\dots$, carrying total
+probability about 1. (When $r$ does not divide $Q$ the peaks acquire a slight width and sit at the
+nearest integers, but the conclusion stands — this is exactly why we demanded $Q\gg r^2$:
+peak width much smaller than peak spacing.)
+
+**Step 4: recover $r$ from the readout.** Measuring some $y\approx kQ/r$ means
+
+$$
+\frac{y}{Q}\approx\frac{k}{r}
+$$
+
+The left side is the known readout; the right side is the fraction we want. A **continued-fraction
+expansion** finds the best rational approximation with denominator at most $N$, giving a candidate
+for $r$ (if $k$ and $r$ share a factor you get a divisor of $r$; a rerun or two and a least common
+multiple fixes that). Feed it back into the first leg's $\gcd$, and the factorization is done.
+
+**Mini worked check ($N=15,a=7,r=4$, with $Q=16$)**: the peaks should sit at $y=0,4,8,12$.
+Say we measure $y=12$: $\tfrac{12}{16}=\tfrac34$, the continued fraction gives $k/r=3/4$, so
+$r=4$. ✓
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Why this is interference's victory.** Compare the trilogy's three cases of "it went in but won't
+come out": the $2^n$ parallel function values couldn't be read out (DJ used $H$ interference to
+extract the parity), the target amplitude was too small to be read out (Grover used repeated
+interference to snowball it), and the period was masked by a random starting point (Shor uses QFT
+interference to filter out the start and amplify the period).
+What the QFT does is exactly diffraction through a grating: slits arranged with period $r$,
+bright fringes appearing at integer multiples of the reciprocal point $Q/r$ in the far field —
+**Shor's algorithm is a diffraction experiment performed in number theory.**
+
+</div>
+<div slot="right">
+
+The complexity ledger ($n=\log_2 N$ is the bit length):
+
+$$
+\text{Quantum (Shor)}:\ O(n^3)
+$$
+
+$$
+\text{Classical (number field sieve)}:\ \exp\!\big[O(n^{1/3}(\log n)^{2/3})\big]
+$$
+
+$n=2048$: quantum, on the order of $10^{10}$ gate operations (at the logical level);
+classical, about $10^{34}$ operations. Polynomial versus sub-exponential —
+this is not a speedup; it is a different species.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The timetable hanging over RSA">
+The threat is real, but the accounting must be done in logical qubits. Breaking 2048-bit RSA takes
+roughly **thousands of logical qubits** and trillions of gate operations; after the error-correction
+overhead (Section 9.10), that converts to roughly **millions of physical qubits** on current
+architectures — while machines of the mid-2020s hold only hundreds to thousands of physical qubits,
+with several orders of magnitude of engineering in between.
+Yet cryptographers must act **now**, because of "harvest now, decrypt later":
+ciphertext intercepted and stored today can wait for the quantum computer of the future.
+Hence NIST standardized quantum-resistant public-key algorithms in 2022–2024
+(lattice-based Kyber/ML-KEM, Dilithium/ML-DSA, and others), and the migration is underway.
+One comparison in passing: Grover only halves the strength of symmetric ciphers (AES-256 is fine),
+while Shor is a break-in-principle against public-key systems (RSA, elliptic curves) —
+two entirely different threat levels.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Two popular misconceptions">
+1. **"Shor has already factored big numbers"?** Experimental demonstrations to date are toy cases
+   like 15 and 21, often with "answer known in advance" simplifications. They validate the
+   principle, not the arrival of the threat.
+2. **"The quantum computer tries every factor"?** No. From start to finish the algorithm never
+   "trial-divides" anything: it **rewrites** factoring as a period problem, then reads the period
+   out in one interference pass. Without that layer of number-theoretic structure, quantum
+   parallelism would have nothing to grip — which explains once more why exponential speedup does
+   not generalize to arbitrary hard problems (NP-complete problems enjoy no such treatment to this
+   day).
+</Callout>
 
-- Reducing factoring to period finding
-- The quantum Fourier transform
-- The threat to RSA, and the likely timeline
+<KeyFormulas
+  items={[
+    { name: 'The reduction chain', latex: 'N=pq\\ \\Rightarrow\\ r=\\mathrm{ord}_N(a)\\ \\Rightarrow\\ \\gcd(a^{r/2}\\pm1,N)', note: 'Factoring → period finding → gcd; only the middle step needs a quantum computer' },
+    { name: 'QFT', latex: '\\mathrm{QFT}\\ket{x}=\\frac{1}{\\sqrt Q}\\sum_y \\ee^{2\\pi\\ii xy/Q}\\ket{y}', note: 'The continuous-phase version of H^{⊗n}; realizable with O(t²) gates' },
+    { name: 'Peak positions', latex: 'P(y)\\ \\text{peaks at}\\ y\\approx k\\,Q/r', note: 'Periodic superposition through QFT interference; the random start x₀ survives only as a phase, never entering the probability' },
+    { name: 'Complexity comparison', latex: 'O(n^3)\\ \\text{vs}\\ \\exp[O(n^{1/3}(\\log n)^{2/3})]', note: 'Polynomial vs sub-exponential: a threat to RSA in principle' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'sh-1',
+      type: 'numeric',
+      prompt: 'N = 21, with a = 2. What is the period r of the function 2^x mod 21? (Square repeatedly: 2, 4, 8, 16, …)',
+      answer: 6,
+      tolerance: 0,
+      explain: '2¹=2, 2²=4, 2³=8, 2⁴=16, 2⁵=32≡11, 2⁶=64≡1 (mod 21), so r = 6. It is even and 2³=8≢−1, hence gcd(2³−1, 21) = gcd(7,21) = 7 and gcd(9,21) = 3, giving 21 = 3×7.',
+    },
+    {
+      id: 'sh-2',
+      prompt: 'In Shor’s algorithm, which step is the quantum computer actually responsible for?',
+      options: [
+        'Finding the period r of the modular exponential a^x mod N',
+        'Computing the greatest common divisor (gcd)',
+        'The number-theoretic reduction of N to a period problem',
+        'Trial-dividing by every possible factor, one at a time',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The gcd runs on the Euclidean algorithm — microseconds on a classical computer.',
+        3: 'There is no trial division anywhere in the algorithm — it sidesteps search by rewriting the problem, which is exactly why it gets an exponential speedup while Grover only gets a quadratic one.',
+      },
+      explain: 'Of the chain’s three links, the reduction and the gcd are cheap classical steps; the one hard nut — period finding — goes to quantum parallelism plus QFT interference. The quantum computer is a surgeon’s scalpel, making only the single hardest cut.',
+    },
+    {
+      id: 'sh-3',
+      prompt: 'If you measured the first register directly before the QFT (while it holds the periodic superposition Σ∣x₀ + jr⟩), what would you get?',
+      options: [
+        'One random x₀ + jr, with x₀ different on every run, so r cannot be extracted reliably',
+        'The period r directly',
+        'Some integer multiple of Q/r',
+        'A factor of N',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Integer multiples of Q/r are the peak positions after the QFT — the QFT’s entire mission is to translate "spacing r" into "peak position Q/r" while erasing x₀.',
+      },
+      explain: 'A direct measurement just spits out one random term of the sequence, and the random start x₀ keeps results from different runs from lining up. The QFT turns x₀ into a pure phase (gone in the modulus squared) and turns the period r into the peak spacing — interfere first, measure after.',
+    },
+    {
+      id: 'sh-4',
+      prompt: 'Which statements about Shor’s algorithm’s impact on cryptography are correct? (Select all that apply.)',
+      options: [
+        'Public-key systems such as RSA and elliptic curves face a threat in principle',
+        '"Harvest now, decrypt later" means the migration must finish before large quantum computers exist',
+        'Symmetric ciphers such as AES are likewise exponentially broken',
+        'NIST has standardized quantum-resistant algorithms built on lattices and other hard problems',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'Symmetric ciphers suffer only Grover’s quadratic weakening, answered by doubling the key length; what Shor breaks are the public-key systems that rest on factoring and discrete logarithms.',
+      },
+      explain: 'Threat triage: public-key (RSA/ECC) faces a polynomial-time break from Shor and must switch algorithms; symmetric (AES) faces only Grover and just needs longer keys. Because ciphertext can be stored today and decrypted tomorrow, the migration window is set jointly by "years the data must stay secret + years to build the machine" — hence the action is now.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Shor needs trillions of gate operations to run back-to-back without a slip, and real qubits are
+delicate creatures: a one-percent gate error counts as excellent, and even left alone they quietly
+drift. Classical computers correct errors with redundant backups — but quantum states cannot be
+cloned (Section 9.5), and a measurement collapses them (Section 9.1) — **so how do you back up,
+and how do you even notice an error?** The next section is this chapter's finale: quantum error
+correction. Its answer is unexpectedly beautiful, and it is a grand reunion of everything this
+chapter has built — entanglement, measurement, stable correlations.

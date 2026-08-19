@@ -181,17 +181,17 @@ The accepted answer is no. This minimal antisymmetrization, **forced** by identi
       prompt: 'A Bell state is pure as a whole, yet measuring particle A alone gives completely random outcomes. Where is the information?',
       options: [
         'In the correlations between A and B — no experiment touching only A (or only B) can reach it; the results from the two sides must be compared',
-        'On B''s side; measuring B recovers all of it',
+        'On B\'s side; measuring B recovers all of it',
         'Destroyed by the measurement apparatus',
         'This shows the Bell state is actually a mixed state',
       ],
       answer: 0,
       distractors: {
-        1: 'B alone is likewise maximally mixed, ρ_B = ½·1 — B''s side knows nothing either.',
+        1: 'B alone is likewise maximally mixed, ρ_B = ½·1 — B\'s side knows nothing either.',
         2: 'It is so before any measurement: ρ_A = ½·1 is a property of the state itself.',
         3: 'The whole has Tr(ρ²) = 1, strictly pure; "mixed parts" is precisely the signature of entanglement.',
       },
-      explain: 'Both local ledgers are blank; all the information lives in correlation statements like "the two are always opposite". This is the quantitative version of section 3.10''s "knowing the whole is not knowing the parts", and the physical basis of quantum key distribution''s security.',
+      explain: 'Both local ledgers are blank; all the information lives in correlation statements like "the two are always opposite". This is the quantitative version of section 3.10\'s "knowing the whole is not knowing the parts", and the physical basis of quantum key distribution\'s security.',
     },
     {
       id: 'rdm-2',
@@ -213,7 +213,7 @@ The accepted answer is no. This minimal antisymmetrization, **forced** by identi
     {
       id: 'rdm-3',
       type: 'numeric',
-      prompt: 'For the state |Ψ⟩ = √(1/3)|↑↓⟩ + √(2/3)|↓↑⟩, find the purity Tr(ρ_A²) of A''s reduced density matrix. (Three decimal places.)',
+      prompt: 'For the state |Ψ⟩ = √(1/3)|↑↓⟩ + √(2/3)|↓↑⟩, find the purity Tr(ρ_A²) of A\'s reduced density matrix. (Three decimal places.)',
       answer: 0.556,
       tolerance: 0.005,
       unit: '',
@@ -230,9 +230,9 @@ The accepted answer is no. This minimal antisymmetrization, **forced** by identi
       ],
       answer: [0, 1, 3],
       distractors: {
-        2: 'When the whole is mixed, local entropy may come purely from classical ignorance (like two independently random coins); certifying entanglement then needs chapter 9''s criteria (PPT, entanglement witnesses).',
+        2: 'When the whole is mixed, local entropy may come purely from classical ignorance (like two independently random coins); certifying entanglement then needs chapter 9\'s criteria (PPT, entanglement witnesses).',
       },
-      explain: '"S(ρ_A) detects entanglement" presupposes a pure overall state. The last item is exactly the interface between 8.6 and 8.7: correlation energy is entanglement''s price in energy, and methods like DMRG prune the computation along the entanglement structure accordingly.',
+      explain: '"S(ρ_A) detects entanglement" presupposes a pure overall state. The last item is exactly the interface between 8.6 and 8.7: correlation energy is entanglement\'s price in energy, and methods like DMRG prune the computation along the entanglement structure accordingly.',
     },
   ]}
 />

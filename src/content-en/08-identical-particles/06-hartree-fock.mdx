@@ -170,8 +170,8 @@ The territory of "replace complicated interactions with a self-consistent mean f
   items={[
     { name: 'Determinant energy', latex: 'E=\\sum_i h_{ii}+\\frac12\\sum_{ij}(J_{ij}-K_{ij})', note: 'J direct, K exchange; i = j cancels automatically' },
     { name: 'HF equations', latex: '\\bigl[\\hat h+\\hat J-\\hat K\\bigr]\\phi_i=\\varepsilon_i\\phi_i', note: 'Non-linear: the operator depends on the solutions, so SCF iteration is required' },
-    { name: 'Koopmans'' theorem', latex: 'I_i\\approx-\\varepsilon_i', note: 'Orbital energy ≈ minus the ionisation energy (frozen-orbital approximation)' },
-    { name: 'Correlation energy', latex: 'E_{\\text{corr}}=E_{\\text{exact}}-E_{\\text{HF}}', note: 'The single determinant''s ceiling; −1.14 eV for helium' },
+    { name: 'Koopmans\' theorem', latex: 'I_i\\approx-\\varepsilon_i', note: 'Orbital energy ≈ minus the ionisation energy (frozen-orbital approximation)' },
+    { name: 'Correlation energy', latex: 'E_{\\text{corr}}=E_{\\text{exact}}-E_{\\text{HF}}', note: 'The single determinant\'s ceiling; −1.14 eV for helium' },
   ]}
 />
 
@@ -179,7 +179,7 @@ The territory of "replace complicated interactions with a self-consistent mean f
   questions={[
     {
       id: 'hf-1',
-      prompt: 'Why not just solve the iron atom''s 78-dimensional Schrödinger equation numerically on a computer?',
+      prompt: 'Why not just solve the iron atom\'s 78-dimensional Schrödinger equation numerically on a computer?',
       options: [
         'The number of values needed to store the wavefunction grows exponentially with dimension: 10 grid points per dimension already means 10⁷⁸ numbers, physically impossible',
         'Because the equation is non-linear',
@@ -192,13 +192,13 @@ The territory of "replace complicated interactions with a self-consistent mean f
         2: 'Numerically solving three-dimensional single-particle problems has been routine since chapter 4; the problem is the 78 dimensions.',
         3: 'Complex storage merely doubles the count — no obstacle.',
       },
-      explain: 'The exponential wall: k grid points per coordinate and d dimensions cost k^d numbers. 10⁷⁸ approaches the atom count of the observable universe. HF''s entire motivation is trading "one 3N-dimensional function" for "N three-dimensional functions".',
+      explain: 'The exponential wall: k grid points per coordinate and d dimensions cost k^d numbers. 10⁷⁸ approaches the atom count of the observable universe. HF\'s entire motivation is trading "one 3N-dimensional function" for "N three-dimensional functions".',
     },
     {
       id: 'hf-2',
       prompt: 'Which statements about the self-consistent-field (SCF) loop are correct? (Select all that apply.)',
       options: [
-        'Iteration is needed because each electron''s effective potential depends on the other electrons'' orbitals, which are themselves unknowns',
+        'Iteration is needed because each electron\'s effective potential depends on the other electrons\' orbitals, which are themselves unknowns',
         'The convergence criterion is that the newly solved orbitals (or field/energy) agree with the previous round',
         'The iteration always decreases monotonically and converges to the global optimum',
         'The Fock operator depends on the solutions themselves, making the HF equations a non-linear problem',
@@ -212,7 +212,7 @@ The territory of "replace complicated interactions with a self-consistent mean f
     {
       id: 'hf-3',
       type: 'numeric',
-      prompt: 'Helium''s HF-limit energy is −2.8617 hartree and the exact value is −2.9037 hartree. Find the magnitude of the correlation energy (absolute value) in eV. (1 hartree = 27.211 eV)',
+      prompt: 'Helium\'s HF-limit energy is −2.8617 hartree and the exact value is −2.9037 hartree. Find the magnitude of the correlation energy (absolute value) in eV. (1 hartree = 27.211 eV)',
       answer: 1.14,
       tolerance: 0.05,
       unit: 'eV',
@@ -233,7 +233,7 @@ The territory of "replace complicated interactions with a self-consistent mean f
         2: 'HF is derived from first principles, with no fitted parameters whatsoever.',
         3: 'Relativistic corrections are a different ledger (chapter 12).',
       },
-      explain: 'Hartree''s original 1928 scheme had only the Coulomb term Ĵ; vary an antisymmetric determinant and K̂ grows out on its own (Fock, Slater, 1930). It lowers the repulsion of same-spin pairs — the Fermi hole incarnated in an equation.',
+      explain: 'Hartree\'s original 1928 scheme had only the Coulomb term Ĵ; vary an antisymmetric determinant and K̂ grows out on its own (Fock, Slater, 1930). It lowers the repulsion of same-spin pairs — the Fermi hole incarnated in an equation.',
     },
   ]}
 />

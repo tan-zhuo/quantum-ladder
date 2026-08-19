@@ -1,17 +1,467 @@
 ---
-title: 'Rewriting earlier chapters in Dirac notation'
-summary: 'Translate every result of chapter 2 into the new language.'
+title: Rewriting earlier chapters in Dirac notation
 section: '3.11'
 order: 11
-status: stub
+summary: 'Time to settle the accounts. Redo the derivations that consumed so many pages of chapter 2 in the new language, and see exactly how much was saved.'
+status: done
+prereqs:
+  - 03-formalism/10-density-operator
+objectives:
+  - Recast the infinite square well results in the language of matrices and state vectors
+  - Solve the harmonic oscillator completely from the ladder-operator algebra, without solving a single differential equation
+  - Redo the uncertainty principle and the Ehrenfest theorem by operator methods
+sims: ['infinite-well', 'harmonic-oscillator']
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The toolkit is complete. This section settles the accounts: **translate every result of chapter 2 into the new language**, then tally up what was saved.
+
+This is not revision. Some proofs will shrink from half a page to three lines; others will turn from "solve a partial differential equation" into "do some algebra" — and **the second kind is the real prize**.
+
+## The infinite square well, written as matrices
+
+<DualView>
+<div slot="left">
+
+**Chapter 2's version**
+
+$$
+\psi_n(x)=\sqrt{\frac2L}\sin\frac{n\pi x}{L}
+$$
+
+$$
+E_n=\frac{n^2\pi^2\hbar^2}{2mL^2}
+$$
+
+$$
+\int_0^L\psi_m^*\psi_n\dd x=\delta_{mn}
+$$
+
+$$
+\Psi(x,0)=\sum_nc_n\psi_n(x)
+$$
+
+$$
+c_n=\int_0^L\psi_n^*\Psi\,\dd x
+$$
+
+</div>
+<div slot="right">
+
+**The new version**
+
+$$
+\hat H\ket{n}=E_n\ket{n}
+$$
+
+$$
+\braket{m}{n}=\delta_{mn},\qquad \sum_n\ket{n}\bra{n}=\hat 1
+$$
+
+$$
+\ket{\Psi}=\sum_nc_n\ket{n},\qquad c_n=\braket{n}{\Psi}
+$$
+
+**The wavefunctions are just components**: $\psi_n(x)=\braket{x}{n}$.
+
+In the energy basis, $\hat H$ is a diagonal matrix:
+
+$$
+H=\begin{pmatrix}E_1&&&\\&E_2&&\\&&E_3&\\&&&\ddots\end{pmatrix}
+$$
+
+</div>
+</DualView>
+
+<Derivation title="Time evolution: three lines" level="基础" minutes={3} open={true}>
+
+$$
+\ket{\Psi(t)}=\ee^{-\ii\hat Ht/\hbar}\ket{\Psi(0)}
+=\sum_nc_n\ee^{-\ii\hat Ht/\hbar}\ket{n}
+=\sum_nc_n\ee^{-\ii E_nt/\hbar}\ket{n}
+$$
+
+Done. The third equality is [section 3.4](/en/ch/03-formalism/04-linear-operators/)'s rule "$f(\hat A)\ket{a}=f(a)\ket{a}$".
+
+**Where does the sloshing of the probability density come from?**
+
+$$
+|\Psi(x,t)|^2=\Big|\sum_nc_n\ee^{-\ii E_nt/\hbar}\braket{x}{n}\Big|^2
+$$
+
+Expand, and the cross terms carry a factor $\ee^{-\ii(E_n-E_m)t/\hbar}$. In the $n=m$ terms the phases cancel (nothing changes with time); the $n\ne m$ terms oscillate at the Bohr frequencies $\omega_{nm}=(E_n-E_m)/\hbar$.
+
+[Section 2.5](/en/ch/02-wavefunction/05-stationary-states/) spent a whole section on "stationary states sit still, superpositions slosh". Here it is two lines — **and you can read off at a glance that the sloshing frequency is set entirely by the level spacing**.
+
+</Derivation>
+
+<Sim name="infinite-well" />
+
+<Callout type="check" title="Check it against the simulation">
+In the simulation, set $c_1$ and $c_2$ equal and watch the sloshing period; then switch to $c_1$ and $c_3$.
+
+By the analysis above, the frequency ratio should be $(E_3-E_1)/(E_2-E_1)=8/3$. That was a quiz question back in [section 2.5](/en/ch/02-wavefunction/05-stationary-states/) — now you can read it straight off the formula, with no need to compute anything again.
 </Callout>
 
-## Planned contents
+## The harmonic oscillator: a purely algebraic solution
 
-- Matrix representation of the infinite square well
-- The oscillator solved with ladder operators
-- An operator proof of the uncertainty principle
+[Section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) already used ladder operators, but Dirac notation was not yet available then. Rewritten in the new language, the structure comes out far more clearly.
+
+<Derivation title="The complete algebraic solution, without solving a single differential equation" level="进阶" minutes={10} open={true}>
+
+**The only starting point**: $[\hat x,\hat p]=\ii\hbar$. Define
+
+$$
+\hat a=\sqrt{\frac{m\omega}{2\hbar}}\left(\hat x+\frac{\ii\hat p}{m\omega}\right),\qquad
+\hat a^\dagger=\sqrt{\frac{m\omega}{2\hbar}}\left(\hat x-\frac{\ii\hat p}{m\omega}\right)
+$$
+
+(Writing $\hat a^\dagger$ rather than $\hat a_\pm$ is the standard convention; note that $\hat a$ is **not Hermitian** — $\hat a^\dagger$ is its adjoint.)
+
+**Step one: the commutator.**
+
+$$
+[\hat a,\hat a^\dagger]=\frac{m\omega}{2\hbar}\cdot\frac{2\ii}{m\omega}[\hat p,\hat x]\cdot(-1)=1
+$$
+
+**Step two: the Hamiltonian.** Define the **number operator** $\hat N=\hat a^\dagger\hat a$; then
+
+$$
+\hat H=\hbar\omega\left(\hat N+\frac12\right)
+$$
+
+So the problem becomes: **find the eigenvalues of $\hat N$.**
+
+**Step three: the eigenvalues of $\hat N$ are non-negative.** Let $\hat N\ket{\nu}=\nu\ket{\nu}$ with $\braket{\nu}{\nu}=1$:
+
+$$
+\nu=\bra{\nu}\hat a^\dagger\hat a\ket{\nu}=\big\|\hat a\ket{\nu}\big\|^2\ge0
+$$
+
+**Step four: the ladder property.** Using $[\hat N,\hat a]=-\hat a$ and $[\hat N,\hat a^\dagger]=+\hat a^\dagger$ (both follow directly from $[\hat a,\hat a^\dagger]=1$):
+
+$$
+\hat N\big(\hat a\ket{\nu}\big)=(\nu-1)\big(\hat a\ket{\nu}\big),\qquad
+\hat N\big(\hat a^\dagger\ket{\nu}\big)=(\nu+1)\big(\hat a^\dagger\ket{\nu}\big)
+$$
+
+**Step five: the ladder must have a bottom rung.** Applying $\hat a$ repeatedly produces eigenvalues $\nu-1,\nu-2,\dots$, but step three says eigenvalues are non-negative. The only way out is for the sequence to terminate somewhere — there must exist a state $\ket{0}$ with
+
+$$
+\hat a\ket{0}=0
+$$
+
+From $\hat N\ket{0}=\hat a^\dagger\hat a\ket{0}=0$, the lowest eigenvalue is $\nu=0$. The ladder property then gives all the eigenvalues:
+
+$$
+\nu=n,\qquad n=0,1,2,\dots
+$$
+
+(If some $\nu$ were not an integer, repeated lowering would step past 0 and produce a negative eigenvalue — a contradiction.)
+
+**Step six: the energy levels.**
+
+$$
+E_n=\hbar\omega\left(n+\frac12\right)
+$$
+
+**Step seven: the normalised ladder.** From $\|\hat a^\dagger\ket{n}\|^2=\bra{n}\hat a\hat a^\dagger\ket{n}=\bra{n}(\hat N+1)\ket{n}=n+1$:
+
+$$
+\hat a^\dagger\ket{n}=\sqrt{n+1}\,\ket{n+1},\qquad \hat a\ket{n}=\sqrt{n}\,\ket{n-1}
+$$
+
+$$
+\ket{n}=\frac{(\hat a^\dagger)^n}{\sqrt{n!}}\ket{0}
+$$
+
+**Every result came from a single commutation relation.** No Hermite polynomial appeared anywhere, and no differential equation was ever solved.
+
+**Only if you want the wavefunctions** do you return to the position basis: write $\hat a\ket{0}=0$ in $\braket{x}{\cdot}$ form and you get a first-order ordinary differential equation,
+
+$$
+\left(x+\frac{\hbar}{m\omega}\frac{\dd}{\dd x}\right)\psi_0(x)=0
+\ \Longrightarrow\
+\psi_0\propto\ee^{-m\omega x^2/2\hbar}
+$$
+
+A first-order equation — far easier than the original second-order one.
+
+</Derivation>
+
+<Sim name="harmonic-oscillator" />
+
+<Callout type="insight" title="Why this method matters so much">
+This algebra is not just a trick for the harmonic oscillator. It is a **template**, reused over and over throughout physics:
+
+- **Angular momentum** ([chapter 5](/en/ch/05-angular-momentum/)): from $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$ define $\hat L_\pm=\hat L_x\pm\ii\hat L_y$, and the same ladder argument delivers all the allowed values of $l$ and $m$ — including half-integer spin, which the wavefunction method cannot produce at all.
+- **Quantum field theory** ([section 8.5](/en/ch/08-identical-particles/05-second-quantization/)): $\hat a^\dagger$ becomes the operator that creates a particle, and $\ket{n}$ becomes "there are $n$ particles". "The $n$-th excited state" and "$n$ particles" become one and the same sentence.
+- **Coherent states**: the eigenstates $\hat a\ket{\alpha}=\alpha\ket{\alpha}$ are the quantum description of laser light.
+
+**The algebraic method reaches far beyond where the differential-equation method can go.** This is the most tangible profit of chapter 3.
+</Callout>
+
+## The uncertainty principle: from derivation to substitution
+
+<DualView>
+<div slot="left">
+
+**Chapter 2**
+
+All it could say was "the rigorous proof needs the generalised uncertainty relation", plus an intuitive Fourier-analysis origin.
+
+For the infinite-well ground state specifically, it still had to grind through two integrals: $\langle x^2\rangle$ by two rounds of integration by parts, and $\langle p^2\rangle$ smuggled in via $2mE_1$.
+
+</div>
+<div slot="right">
+
+**Chapter 3**
+
+$$
+\sigma_A\sigma_B\ge\frac12\big|\langle[\hat A,\hat B]\rangle\big|
+$$
+
+Substitute $[\hat x,\hat p]=\ii\hbar$:
+
+$$
+\sigma_x\sigma_p\ge\frac{\hbar}{2}
+$$
+
+**One step.** And the inequality holds for any pair of observables, not just $x$ and $p$.
+
+</div>
+</DualView>
+
+<Derivation title="The oscillator ground state: σₓ and σ_p without a single integral" level="进阶" minutes={6}>
+
+Invert the ladder-operator definitions:
+
+$$
+\hat x=\sqrt{\frac{\hbar}{2m\omega}}(\hat a+\hat a^\dagger),\qquad
+\hat p=\ii\sqrt{\frac{m\omega\hbar}{2}}(\hat a^\dagger-\hat a)
+$$
+
+**First moments.** On $\ket{0}$, $\hat a\ket{0}=0$ and $\braket{0}{1}=0$, so
+
+$$
+\langle x\rangle=\bra{0}\hat x\ket{0}\propto\bra{0}(\hat a+\hat a^\dagger)\ket{0}=0+\braket{0}{1}=0
+$$
+
+and likewise $\langle p\rangle=0$.
+
+**Second moments.**
+
+$$
+\hat x^2=\frac{\hbar}{2m\omega}\big(\hat a^2+\hat a\hat a^\dagger+\hat a^\dagger\hat a+(\hat a^\dagger)^2\big)
+$$
+
+Take the expectation value on $\ket{0}$: the $\hat a^2$ and $(\hat a^\dagger)^2$ terms send $\ket{0}$ to $\ket{2}$ or annihilate it — orthogonal to $\bra{0}$ either way, so they contribute nothing; $\hat a^\dagger\hat a\ket{0}=0$; all that survives is $\hat a\hat a^\dagger\ket{0}=\ket{0}$:
+
+$$
+\langle x^2\rangle=\frac{\hbar}{2m\omega}
+$$
+
+and in the same way
+
+$$
+\langle p^2\rangle=\frac{m\omega\hbar}{2}
+$$
+
+**Multiply them together**:
+
+$$
+\sigma_x\sigma_p=\sqrt{\frac{\hbar}{2m\omega}}\cdot\sqrt{\frac{m\omega\hbar}{2}}=\frac{\hbar}{2}
+$$
+
+**The bound is saturated exactly.** The oscillator ground state is a minimum-uncertainty state — [section 2.10](/en/ch/02-wavefunction/10-free-particle/) claimed that Gaussian wavepackets achieve $\hbar/2$ exactly, and here is the proof, without doing a single integral.
+
+**The zero-point energy falls out for free**:
+
+$$
+E_0=\frac{\langle p^2\rangle}{2m}+\frac12m\omega^2\langle x^2\rangle
+=\frac{\hbar\omega}{4}+\frac{\hbar\omega}{4}=\frac{\hbar\omega}{2}
+$$
+
+And you can see that kinetic and potential energy each contribute exactly half — the virial theorem, as it appears for the oscillator.
+
+</Derivation>
+
+## The Ehrenfest theorem: one line
+
+<DualView>
+<div slot="left">
+
+**Chapter 2's approach**
+
+Differentiate $\langle x\rangle$ with respect to time, substitute the Schrödinger equation, integrate by parts twice, argue the boundary terms away… most of a page.
+
+Then do it all again for $\langle p\rangle$.
+
+</div>
+<div slot="right">
+
+**With the Heisenberg equation**
+
+$$
+\frac{\dd\langle A\rangle}{\dd t}=\frac{\ii}{\hbar}\big\langle[\hat H,\hat A]\big\rangle
+$$
+
+Take $\hat A=\hat x$ and use $[\hat p^2,\hat x]=-2\ii\hbar\hat p$:
+
+$$
+\frac{\dd\langle x\rangle}{\dd t}=\frac{\langle p\rangle}{m}
+$$
+
+Take $\hat A=\hat p$ and use $[V(\hat x),\hat p]=\ii\hbar V'(\hat x)$:
+
+$$
+\frac{\dd\langle p\rangle}{\dd t}=-\big\langle V'(\hat x)\big\rangle
+$$
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Note that the right-hand side is still ⟨V′(x̂)⟩, not V′(⟨x⟩)">
+The new language shortens the derivation, but **it changes none of the physics**. The distinction that [section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) took pains over is still here:
+
+$$
+\big\langle V'(\hat x)\big\rangle\ne V'\big(\langle x\rangle\big)\quad\text{in general}
+$$
+
+Only when $V'$ is approximately linear across the width of the wavepacket are the two equal — and only then does the expectation value truly follow a classical trajectory.
+
+**This is a general lesson worth remembering**: changing language can save you computation, but it cannot save you physics. If a result seems to "disappear" in the new language, you have most likely dropped it.
+</Callout>
+
+## Settling the accounts
+
+<DualView>
+<div slot="left">
+
+**Pages saved**
+
+| Result | Chapter 2 | Chapter 3 |
+| --- | --- | --- |
+| Eigenvalues are real | Half a page of integrals | 3 lines |
+| Eigenstates are orthogonal | Verified system by system | 4 lines, holds in general |
+| Completeness of expansions | Taken on faith | Spectral theorem |
+| Uncertainty principle | Intuition only | One substitution |
+| Ehrenfest | Most of a page | 2 lines |
+| Harmonic oscillator | Power series + Hermite | Pure algebra |
+| Wavepacket spreading | Gaussian integrals by completing the square | A few lines ([section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/)) |
+
+</div>
+<div slot="right">
+
+**New powers bought**
+
+Not just saved pages — things chapter 2 simply could not do at all:
+
+- **Spin**: no wavefunction, only a two-dimensional state vector. All of [chapter 5](/en/ch/05-angular-momentum/) rests on this.
+- **Half-integer angular momentum**: the algebraic method naturally yields $j=1/2,3/2,\dots$; the wavefunction method can only give integer $l$.
+- **Entanglement and mixed states**: these need the density operator — the entire foundation of chapters [9](/en/ch/09-quantum-information/) and [10](/en/ch/10-open-systems/).
+- **Quantum field theory**: $\hat a^\dagger$ turns directly into a creation operator.
+
+</div>
+</DualView>
+
+<Callout type="check" title="Questions worth asking yourself before leaving this chapter">
+1. Chapter 2 said "the electron's energy in the box is discrete"; chapter 3 says "the eigenvalues of $\hat H$ are discrete". Are those the same statement?
+2. Why do we say the wavefunction is not the fundamental object? Would switching to the momentum representation lose any physical content?
+3. The measurement postulate and the evolution postulate have completely opposite characters. Why is this not a problem that finer calculation could make go away?
+4. The oscillator solution used nothing but $[\hat x,\hat p]=\ii\hbar$. Does that mean every system satisfying this commutation relation has equally spaced energy levels?
+
+(The answer to question 4 is "no" — you also need $\hat H$ to happen to be a linear function of $\hat a^\dagger\hat a$. The commutation relation fixes the **algebraic structure**; the Hamiltonian fixes the **dynamics**. Keeping those two apart is the mark of having finished this chapter.)
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Evolution (energy basis)', latex: '\\ket{\\Psi(t)}=\\sum_nc_n\\ee^{-\\ii E_nt/\\hbar}\\ket{n}', note: 'A whole section of chapter 2, in three lines' },
+    { name: 'Ladder operators', latex: '[\\hat a,\\hat a^\\dagger]=1,\\quad\\hat H=\\hbar\\omega(\\hat a^\\dagger\\hat a+\\tfrac12)', note: 'The entire oscillator hangs on this one relation' },
+    { name: 'Normalised ladder', latex: '\\hat a^\\dagger\\ket{n}=\\sqrt{n+1}\\ket{n+1},\\quad\\hat a\\ket{n}=\\sqrt{n}\\ket{n-1}', note: 'The creation and annihilation operators of chapter 8 are exactly these' },
+    { name: 'x̂ and p̂ in ladder form', latex: '\\hat x=\\sqrt{\\tfrac{\\hbar}{2m\\omega}}(\\hat a+\\hat a^\\dagger),\\ \\hat p=\\ii\\sqrt{\\tfrac{m\\omega\\hbar}{2}}(\\hat a^\\dagger-\\hat a)', note: 'Matrix elements without touching an integral' },
+    { name: 'Ehrenfest (operator form)', latex: '\\frac{\\dd\\langle A\\rangle}{\\dd t}=\\frac{\\ii}{\\hbar}\\langle[\\hat H,\\hat A]\\rangle', note: 'Take Â = x̂ and p̂ to get one classical equation each' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rw-1',
+      prompt: 'The fundamental relation the algebraic solution of the oscillator uses, start to finish, is:',
+      options: [
+        'Only [x̂, p̂] = iħ',
+        'The recurrence relations of the Hermite polynomials',
+        'The boundary condition ψ(±∞) = 0',
+        'The normalisation condition on the wavefunction',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Hermite polynomials are a by-product of the power-series method; the algebraic method never needs them.',
+        2: '"The ladder must have a bottom" comes from the non-negativity of N̂ eigenvalues, not from an explicit boundary condition.',
+        3: 'Normalisation only fixes the coefficients on the ladder; it plays no part in deriving the levels.',
+      },
+      explain: 'The chain is: [x̂,p̂] = iħ → [â,â†] = 1 → Ĥ = ħω(N̂+½) → ladder property → non-negative eigenvalues force the ladder to terminate → Eₙ = (n+½)ħω. The same template is reused for angular momentum and in quantum field theory.',
+    },
+    {
+      id: 'rw-2',
+      prompt: 'When computing ⟨x²⟩ in the oscillator ground state with ladder operators, why do the â² and (â†)² terms contribute nothing?',
+      options: [
+        'Because they send |0⟩ to |2⟩ or annihilate it outright, orthogonal to ⟨0| either way',
+        'Because they are the zero operator',
+        'Because they are not Hermitian',
+        'Because ħ is small',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'They are not zero operators — they merely fail to contribute to this particular expectation value.',
+        2: 'Being non-Hermitian has nothing to do with whether they contribute.',
+        3: 'The size of ħ is irrelevant.',
+      },
+      explain: '(â†)²|0⟩ ∝ |2⟩ and ⟨0|2⟩ = 0; â²|0⟩ = 0. Only ââ†|0⟩ = |0⟩ survives, giving ⟨x²⟩ = ħ/2mω in one step. The whole calculation never touches an integral.',
+    },
+    {
+      id: 'rw-3',
+      prompt: 'After switching to Dirac notation, the right-hand side of the Ehrenfest theorem:',
+      options: [
+        'Is still ⟨V′(x̂)⟩ rather than V′(⟨x⟩) — the physical content is unchanged',
+        'Becomes V′(⟨x⟩)',
+        'Becomes zero',
+        'No longer makes sense',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Changing language changes no physics; the distinction is still there.',
+        2: 'It is generally nonzero.',
+        3: 'It makes perfect sense.',
+      },
+      explain: 'This is the single most valuable lesson of the section: a new language shortens derivations but cannot remove physics. The gap between ⟨V′(x̂)⟩ and V′(⟨x⟩) is precisely the criterion for "when quantum effects matter", and it must show up in any language.',
+    },
+    {
+      id: 'rw-4',
+      prompt: 'Which powers does the language of chapter 3 provide that chapter 2 could not? (Select all that apply.)',
+      options: [
+        'Describing degrees of freedom, like spin, that have no wavefunction',
+        'Producing half-integer angular momentum',
+        'Describing mixed states and entanglement with the density operator',
+        'Solving one-dimensional wells more accurately',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The two languages give exactly the same answer to the same problem; there is no difference in accuracy.',
+      },
+      explain: 'The first three are things the wavefunction language cannot do even in principle: spin has no ψ(x); the wavefunction method yields only integer l; a part of an entangled state has no state vector at all. That is what changing language actually buys — the saved pages are just a bonus.',
+    },
+  ]}
+/>
+
+## End of chapter
+
+The three questions chapter 2 left open now have answers:
+
+**Why do observables correspond to operators?** Because demanding "measured values are real, distinct outcomes are distinguishable, every state can be expanded" picks out exactly the Hermitian operators ([section 3.5](/en/ch/03-formalism/05-hermitian-operators/)).
+
+**By what right is $|c_n|^2$ a probability?** That one remains a postulate (the Born rule). But the spectral theorem guarantees $\sum_n|c_n|^2=1$, so it is at least **self-consistent** — and Gleason's theorem goes further: in dimension $\ge3$ there is essentially no other choice.
+
+**What actually happens in a measurement?** The projection postulate describes its effect but **does not explain its mechanism** ([section 3.8](/en/ch/03-formalism/08-measurement/)). On this there is still no consensus — and it is not the sort of problem that computing more carefully can resolve.
+
+With this language in hand, the pace can pick up considerably. [Chapter 4](/en/ch/04-1d-problems/) returns to one-dimensional problems — but this time with structural methods like symmetry and the transfer matrix, and with a numerical solver that handles arbitrary potentials.

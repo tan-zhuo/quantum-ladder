@@ -1,18 +1,152 @@
 ---
-title: 'A short introduction to quantum machine learning'
-summary: 'How much of it is hype and how much is substance.'
+title: A short introduction to quantum machine learning
 section: '13.9'
 order: 9
-status: stub
+summary: '"Quantum + AI" is the loudest compound phrase in the news. This section performs a sober teardown: variational circuits and quantum kernels are genuine research directions, the data-loading bottleneck and barren plateaus are genuine roadblocks — and then, a look back down the whole ladder.'
+status: done
+prereqs:
+  - 09-quantum-information/02-quantum-gates
+  - 07-approximation/03-variational-method
+objectives:
+  - State how a variational quantum circuit works, and its direct lineage from the variational method of Chapter 7
+  - Use the data-loading bottleneck and the barren-plateau argument to explain why the "exponential speedup" slogan must be discounted
+  - Assemble a checklist for evaluating any quantum machine learning proposal
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+"Quantum computing × artificial intelligence" — no combination in the past decade of technology news has glittered more. Multiply two fields each carrying enormous expectations, and the product ought to be exponentially impressive.
+
+This section goes the other way: **no sales pitch — due diligence.** What in this field is honest physics, what is a promissory note not yet redeemed, and what is merely two buzzwords nailed together for marketing — we take it apart item by item, with tools you already own. As the final section of the book, it is also a full-dress rehearsal: judging the truth of frontier claims is exactly where the fundamentals matter most.
+
+## Substance, part one: variational quantum circuits — the variational method reborn as a circuit
+
+The skeleton of the vast majority of current "quantum machine learning" experiments is the **variational quantum circuit** (VQC), and you already know the recipe ([section 7.3](/en/ch/07-approximation/03-variational-method/)):
+
+1. Build a quantum circuit with knobs on it: the angles of single-qubit rotation gates, $\vec\theta=(\theta_1,\dots,\theta_M)$, are tunable parameters, with entangling gates interleaved ([section 9.2](/en/ch/09-quantum-information/02-quantum-gates/));
+2. The circuit turns the initial state $\ket{0\cdots0}$ into a trial state $\ket{\psi(\vec\theta)}$;
+3. Measure a cost function — for a molecular ground state, the energy
+   $E(\vec\theta)=\braket{\psi(\vec\theta)}{\hat H|\psi(\vec\theta)}$;
+4. A classical computer updates $\vec\theta$ from the measurement results, and back to step 2.
+
+This is the variational method: **the trial wavefunction has been swapped from "a formula on paper" to "a state prepared by a circuit"**, with the minimisation handed to a classical optimiser — a quantum–classical hybrid loop. The molecular-chemistry version is called VQE, and since 2017 it has run on real hardware for small systems such as lithium hydride and water; swap the cost function for a classification loss, and the circuit becomes a "quantum neural network". The physics is impeccable — the variational principle guarantees $E(\vec\theta)\ge E_0$ unconditionally, and hardware noise can only loosen the upper bound, never trick you across the lower one.
+
+The trouble is a single word: **scale**. Can it beat classical methods on a problem that matters? That question runs straight into the two walls below.
+
+## Roadblock one: the data-loading bottleneck
+
+Quantum machine learning's most seductive slogan: the state vector of $n$ qubits has $2^n$ amplitudes, so encode your data into the amplitudes (**amplitude encoding**) and $n=30$ qubits can "hold" a billion-dimensional vector — exponential compression! The linear algebra that follows (such as the celebrated HHL algorithm for linear systems) then enjoys, in theory, an exponential speedup.
+
+<Derivation title="Order of magnitude: how many gates to load the data in — and how many measurements to get the answer out?" level="基础" minutes={8} open={true}>
+
+**The price of admission.** Amplitude encoding must turn $N=2^n$ given classical numbers $(x_1,\dots,x_N)$ into the state $\sum_j x_j\ket{j}$. How many elementary gates does it take to prepare a **generic** $n$-qubit state?
+
+Counting degrees of freedom gives the lower bound: the target state has $2^n$ independent amplitudes to specify, while each elementary gate carries only $O(1)$ continuous parameters. For the circuit's parameter count to catch up with the amplitude count, the number of gates must satisfy
+
+$$
+G\gtrsim\frac{2^n}{O(1)}\sim2^n
+$$
+
+(A rigorous counting argument gives exactly $\Theta(2^n)$.) In other words: loading $N$ generic data points takes time $\sim N$ — **exactly as expensive as a classical computer reading the array once**. However fast the subsequent computation, the $O(N)$ loading fee has already eaten the "exponential speedup". For an exponential advantage to survive, only two escape routes remain: the data has special structure that allows cheap preparation, or there exists a still-hypothetical quantum random access memory (QRAM) — whose physical realisation remains an open question.
+
+**The price of exit.** When the computation ends, the answer is the $2^n$ amplitudes of a state $\ket{\psi}$ — but a single measurement collapses out only $n$ classical bits ([section 3.8](/en/ch/03-formalism/08-measurement/)). To read one amplitude to precision $\epsilon$, Born statistics demands preparing and measuring $\sim1/\epsilon^2$ times. Read out the whole vector? That's one round each for $2^n$ amplitudes — exponential time, and the speedup is zeroed out again. Only one style of use survives: **ask the state only a few global questions** (one expectation value, one overlap), and never demand the complete answer.
+
+**Conclusion.** Before evaluating any quantum machine learning proposal, ask the two customs questions: **how does the classical data get in? how does the answer get out?** Tang's 2018 "dequantisation" results are the famous footnote to this principle: granted classical algorithms the same generous data-access assumptions, a batch of "exponentially faster" quantum algorithms — recommendation systems among them — were matched by polynomial classical ones. Half the original advantage came from the quantum mechanics, and half from unequal bookkeeping.
+
+</Derivation>
+
+## Roadblock two: barren plateaus
+
+Variational circuits carry an internal injury as well. Training runs on the gradients $\partial E/\partial\theta_k$, and it can be proven (McClean et al., 2018) that for circuits deep enough and random enough, the gradient has mean zero and a variance that decays **exponentially** in the number of qubits:
+
+$$
+\operatorname{Var}\left[\frac{\partial E}{\partial\theta_k}\right]\sim\frac{1}{2^n}
+$$
+
+The cost-function landscape becomes an exponentially flat expanse — a **barren plateau**. The sting is that measurements carry shot noise: resolving a gradient of size $g$ takes $\sim1/g^2$ samples, and $g\sim2^{-n/2}$ means each single step of gradient descent costs $\sim2^n$ measurements — an exponential training bill, and you have lost at the starting line before the problem is even addressed. The physical intuition: a random deep circuit stirs the state into the trackless depths of a $2^n$-dimensional Hilbert space, where any local observable is numb to any single parameter. The way out is to keep the circuit from being "too random": shallow circuits, ansätze with physical meaning (in chemistry, built along coupled-cluster structure), symmetries that shrink the search space — yet a recent line of analyses shows that precisely these "trainable" structured circuits tend, in turn, to fall within reach of classical simulation. This narrow gate between trainability and quantum advantage is the field's most honest current statement of its own problem.
+
+## So what substance actually remains
+
+**Quantum kernel methods** offer a second route: don't train the quantum circuit at all — use it only to map data points to quantum states, $x\mapsto\ket{\phi(x)}$, measure the overlap $|\braket{\phi(x)}{\phi(x')}|^2$ of two states, and feed it to a classical support vector machine as the kernel. For **specially constructed** problems (built on the hardness of the discrete logarithm), a rigorously proven quantum advantage exists — the in-principle existence proof stands; but for naturally occurring datasets, there is no evidence yet that quantum kernels beat well-chosen classical ones.
+
+The sober overall assessment:
+
+- **The most promising near-term target is quantum data itself** — the outputs of quantum simulators and quantum sensors are natively quantum states, with no data-loading bottleneck; theory and experiment (2022) have already shown exponential advantages for certain learning tasks on quantum experimental data. "Quantum machines learning quantum" is a far healthier business than "quantum machines learning classical data".
+- **A quantum advantage on classical data has not been demonstrated**, and under the three-way squeeze of the loading bottleneck, barren plateaus, and dequantisation, none should be expected soon.
+- Part of the field's value lies in the algorithms themselves, and part in **forcing classical algorithms to improve** (dequantisation produced new classical algorithms) — which is nothing to be ashamed of, scientifically.
+
+<Callout type="insight" title="An evaluation checklist to carry with you">
+Next time you read "quantum X achieves exponential speedup", ask four questions in order:
+
+1. **How does the data get in?** (Loading generic classical data is O(N) — discount the slogan on the spot.)
+2. **How does the answer get out?** (Reading a full vector is exponentially slow; only global properties may be asked.)
+3. **Was it compared against the best classical algorithm?** (The best under equal data-access assumptions — not a decade-old baseline.)
+4. **Is it trainable?** (Deep random circuits have barren plateaus; too much structure risks classical simulability.)
+
+Proposals that pass all four are vanishingly rare — which is exactly what shows the criteria are doing their job. Puncturing press releases with one semester of quantum mechanics: that is this course's practical final exam.
 </Callout>
 
-## Planned contents
+<KeyFormulas
+  items={[
+    { name: 'Variational quantum circuit', latex: 'E(\\vec\\theta)=\\braket{\\psi(\\vec\\theta)}{\\hat H|\\psi(\\vec\\theta)}\\ge E_0', note: 'Chapter 7\'s variational method as a circuit; quantum state preparation and measurement + classical parameter updates' },
+    { name: 'Data-loading bottleneck', latex: '\\text{generic state prep gate count}\\ \\Theta(2^n)\\ \\Longleftrightarrow\\ O(N)', note: 'Loading generic classical data cancels the exponential speedup; reading out the full vector is equally exponential' },
+    { name: 'Barren plateau', latex: '\\operatorname{Var}\\big[\\partial_{\\theta}E\\big]\\sim2^{-n}', note: 'Gradients of deep random circuits vanish exponentially; resolving them takes ~2ⁿ measurements' },
+    { name: 'Quantum kernel', latex: 'K(x,x\')=|\\braket{\\phi(x)}{\\phi(x\')}|^2', note: 'Provable advantage on specially constructed problems; no wins yet on natural data' },
+  ]}
+/>
 
-- Variational quantum circuits
-- Quantum kernel methods
-- The barren plateau problem
-- What is realistic to expect
+<QuizBlock
+  questions={[
+    {
+      id: 'qml-1',
+      type: 'numeric',
+      prompt: 'Using amplitude encoding to load a 1024-dimensional classical vector into a quantum state, what is the minimum number of qubits required?',
+      answer: 10,
+      tolerance: 0,
+      unit: 'qubits',
+      explain: '2¹⁰ = 1024, so 10 qubits can "hold" a thousand-dimensional vector — that is the seductive side. The sober side: preparing a generic 10-qubit state takes on the order of 2¹⁰ gates, so the loading cost is of the same order as a classical read of the array.',
+    },
+    {
+      id: 'qml-2',
+      prompt: 'A "barren plateau" refers to:',
+      options: [
+        'In deep, random variational circuits, the variance of the cost-function gradient decays exponentially with qubit number, so the measurements needed for training grow exponentially',
+        'Quantum computers performing worse at high altitude',
+        'The cost function having a large number of local minima',
+        'Information loss from quantum states collapsing upon measurement',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Local minima are a different (and also real) problem; a barren plateau is worse — the entire landscape is exponentially flat, and even the signal for "which way to step" cannot be measured.',
+        3: 'Measurement collapse bears on readout cost — part of the data-loading bottleneck, not the barren plateau.',
+      },
+      explain: 'Var[∂E/∂θ] ~ 2⁻ⁿ: a random deep circuit stirs the state into the depths of a 2ⁿ-dimensional space, leaving local observables numb to individual parameters. Under shot noise, resolving a gradient that small takes ~2ⁿ samples — training is crushed by exponential cost before the problem is even engaged.',
+    },
+    {
+      id: 'qml-3',
+      prompt: 'Which of the following belong to a sober assessment of quantum machine learning today? (Select all that apply.)',
+      options: [
+        'The variational principle guarantees the VQE energy is an upper bound on the true ground-state energy, and noise cannot push it below the bound',
+        'For naturally occurring classical datasets, a quantum advantage has not been demonstrated',
+        '"Quantum data" (the outputs of quantum sensors and simulators) has no data-loading bottleneck and is the healthier near-term direction',
+        'The exponential speedup of HHL-type algorithms holds in every usage scenario',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The HHL speedup depends on cheap state preparation, a well-conditioned matrix, and a readout that "asks only global properties"; for generic classical data, the exponential costs of loading and readout eat the speedup, and some scenarios have additionally been matched by dequantisation.',
+      },
+      explain: 'Replace the slogan with a ledger: O(N) at the entrance, 1/ε² at the exit, 2ⁿ for training — every line must clear. The scenarios that currently clear them all are concentrated on "learning about quantum systems themselves", which is also the direction the field holds in highest near-term regard.',
+    },
+  ]}
+/>
+
+## Looking back down the ladder
+
+This is the last page of the book's main text. Look back at the steps you have climbed:
+
+Starting from the ultraviolet catastrophe of blackbody radiation ([Chapter 1](/en/ch/01-history/01-classical-crisis/)), you learned to make the wavefunction carry probability (Chapter 2), abstracted it into a vector in Hilbert space (Chapter 3), solved the potential well, the harmonic oscillator, and the hydrogen atom (Chapters 4–6), learned to approximate where exact solutions run out (Chapter 7), made particles indistinguishable (Chapter 8), forged superposition and entanglement into information resources (Chapter 9), admitted that no system is an island (Chapter 10), put on path-integral eyes (Chapter 11), and had quantum mechanics shake hands with relativity (Chapter 12). And in this chapter you have seen the same toolkit at work: explaining the integers of topological materials, driving artificial crystals at nanokelvin, underpinning artificial atoms on a chip, estimating the temperature of black holes, and auditing the quantum promises in press releases.
+
+**You have not finished learning quantum mechanics — no one ever has.** But you have crossed the threshold that actually matters: from "reading other people's retellings" to "reading the original literature". The reviews and lecture notes listed at the end of each section of this chapter are written in a language you already speak; the preprints landing daily in the quant-ph section of arXiv no longer have methods sections that read like scripture in a lost tongue. Pick the direction that made you stop and think for five extra minutes somewhere in this book, find its review article, and read your way in. Nothing is hard to one who knows how — and you, now, are one who knows.
+
+May the scenery be good, all the way through Hilbert space.
+
+(For further reading and entry points into the literature, see [Appendix D](/en/ch/appendix-d-resources/01-resources/).)

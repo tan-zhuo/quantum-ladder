@@ -1,18 +1,132 @@
 ---
-title: 'Recommended reading and resources'
-summary: 'Textbooks, lecture notes, papers, videos and open-source projects.'
+title: Recommended learning resources
 section: 'D.1'
 order: 1
-status: stub
+summary: 'Where to go after this site: a graded route through textbooks from introductory to rigorous, open courses, problem collections, open-source numerical tools and frontier resources — each with one honest sentence on who it suits and why it earns its place.'
+status: done
+prereqs: []
+objectives: []
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+This site set out to be an interactive ladder — but it is not the summit. This page is the map for the rest of the climb: every resource comes with one honest verdict — who it is for, what it does well, where it will trip you up. Where no link is given, the book or course title will get you there in one search; every domain listed is a long-lived official site. The list is deliberately selective rather than exhaustive: each entry is a choice that has stood the test of time, not a line in a catalogue of "every book that exists".
+
+## Textbooks, sorted by gradient
+
+### Introductory (alongside Chapters 1–6 of this site)
+
+| Resource | Verdict |
+| --- | --- |
+| Griffiths & Schroeter, *Introduction to Quantum Mechanics* | The world's most popular first course: warm exposition, superb problems; the narrative order of our Chapter 2 owes it a great deal. A Chinese translation (《量子力学概论》) is available. Weakness: the formalism is treated lightly — after finishing it you will need to build your Dirac-notation muscles elsewhere. |
+| Zeng Jinyan, 《量子力学》 (Quantum Mechanics), vols. I & II | The standard textbook of the Chinese-speaking world: broad coverage and exhaustively worked examples, ideal as a reference to consult again and again. Volume I maps onto our Chapters 1–7. The style leans toward a problem-solving manual; the physical motivation is laid out less carefully than in Griffiths. |
+| Townsend, *A Modern Approach to Quantum Mechanics* | The contrarian route: it opens with spin and the Stern–Gerlach experiment, two-state systems first — the same spirit as our Chapters 5 and 9. Best for someone who has already been through wave mechanics once and wants to rebuild their intuition from a different angle. |
+| Zhao Kaihua, 《新概念物理教程·量子物理》 (New Concept Physics: Quantum Physics) | Phenomena and experiments first, formulas later — the same route as our Chapter 1. An excellent "book zero" to read before any formal textbook. |
+| Feynman, *The Feynman Lectures on Physics*, vol. III | The summit of physical intuition; nobody has yet told the double slit, spin, or two-state systems better. The full text is free at the official site: feynmanlectures.caltech.edu. Not suitable as a first systematic textbook (there are almost no problems to compute), but a perfect companion to any of them. |
+
+### Intermediate (alongside Chapters 7–12)
+
+| Resource | Verdict |
+| --- | --- |
+| Shankar, *Principles of Quantum Mechanics* | Starts from the axioms of linear algebra, self-contained, and never skips a step in a derivation — a gift to self-learners. Its path-integral chapter is the most readable in any textbook of its class. Thick, but worth every page. |
+| Sakurai & Napolitano, *Modern Quantum Mechanics* | The standard graduate text: its treatment of symmetry and angular momentum is the gold standard, and our Chapter 5 borrows from it heavily. It assumes a quick reader, and skipping the problems amounts to not reading it at all. |
+| Cohen-Tannoudji, Diu & Laloë, *Quantum Mechanics* | The encyclopaedic two volumes (three in the new edition): a main-text-plus-complements structure in which every last detail can be looked up with a complete derivation. Divine as a reference; penance as a cover-to-cover read. |
+| Ka Xinglin, 《高等量子力学》 (Advanced Quantum Mechanics) | A Chinese graduate textbook, rigorous and distinctive in style, with a particularly solid treatment of representation theory and angular momentum. |
+| Weinberg, *Lectures on Quantum Mechanics* | A master's late, distilled work, with an unusually candid discussion of the measurement problem and interpretation. Best on a second pass through quantum mechanics — a first-time reader will miss what makes it good. |
+
+### Rigorous and foundational (alongside Chapter 13 and an interest in interpretation)
+
+| Resource | Verdict |
+| --- | --- |
+| Dirac, *The Principles of Quantum Mechanics* | The source of the notation, with a historical standing nothing can replace. Reading it today is like reading a classic in the original: what you gain is *why this language was invented in the first place*. |
+| Landau & Lifshitz, *Quantum Mechanics: Non-Relativistic Theory* | Volume 3 of the Course of Theoretical Physics. Famous for "every sentence is a conclusion"; its handling of the quasi-classical approximation and symmetry is in a class of its own. For readers with a taste for the hard stuff. |
+| Ballentine, *Quantum Mechanics: A Modern Development* | The most systematic critical discussion of the measurement postulates and the ensemble interpretation in any textbook, and mathematically more rigorous too (it takes unbounded operators seriously). Anyone who wants to think honestly about the [foundations](/en/ch/13-frontier/07-foundations/) should read it. |
+| Nielsen & Chuang, *Quantum Computation and Quantum Information* | The "bible" of quantum information, and the natural sequel to our Chapters 9 and 10. Its first two chapters even make an excellent quantum-mechanics refresher. |
+
+<Callout type="insight" title="Choosing books: one main, one companion, one problem set">
+Reading more than one main textbook at a time is a disaster at any stage. A workable combination: one main line (say Griffiths, or Zeng Jinyan) + one perspective-shifting companion (say Feynman, or Townsend) + one problem collection. Before opening an intermediate book, test yourself against our [Chapter 3](/en/ch/03-formalism/01-from-wavefunction-to-vector/): if Dirac notation is not second nature, Sakurai will stop you on page one.
 </Callout>
 
-## Planned contents
+## Open course videos
 
-- Introductory versus advanced textbooks compared
-- Open courses and lecture notes
-- A list of classic papers
-- Usable open-source quantum software
+| Resource | Verdict |
+| --- | --- |
+| MIT OCW 8.04, *Quantum Physics I* | The Allan Adams lectures are electric — his opening "the electron is neither a particle nor a wave" is worth every beginner's time; the Barton Zwiebach version is calmer and more meticulous. All lecture videos, notes, problem sets and solutions are free: ocw.mit.edu. |
+| MIT OCW 8.05 / 8.06, *Quantum Physics II / III* | Taught by Zwiebach: the complete pre-graduate training in formalism, perturbation theory and scattering, dovetailing smoothly with our Chapters 3 and 7. The accompanying notes stand alone as a textbook (later published as *Mastering Quantum Mechanics*). |
+| Susskind, *Theoretical Minimum* series (Stanford) | The minimalist route for the "serious amateur": all skeleton, no flesh. The lowest mathematical bar of any serious course, with a matching book series. |
+| David Tong's lecture notes (Cambridge) | Strictly notes rather than videos: the full Cambridge lecture notes are free online, running from quantum mechanics all the way to quantum field theory, written with rare readability. Search "David Tong lectures" and you are there. |
+| Chinese platforms | Several universities offer quantum mechanics courses on China University MOOC and similar platforms; Bilibili carries re-uploads and subtitled versions of the MIT OCW courses, best used together with the official notes. |
+
+## Problem collections
+
+Between understanding and being able to calculate lies a chasm, and only problems can fill it.
+
+| Resource | Verdict |
+| --- | --- |
+| The problems in Griffiths | Interlock beautifully with the text, grading smoothly from giveaways to "famous hard problems". Self-learners should prefer the editions with solution hints. |
+| Qian Bochu & Zeng Jinyan, 《量子力学习题精选与剖析》 (Selected Problems in Quantum Mechanics, with Analysis) | The benchmark Chinese problem collection: classic problems, detailed dissections, spanning the difficulty band from graduate-entrance exams to qualifying exams. |
+| Schaum's Outline, *Quantum Mechanics* | Hundreds of fully solved examples — good for learning the standard moves by worked example, and for exam cramming. Limited depth: it cannot be your only source. |
+| Flügge, *Practical Quantum Mechanics* | Over two hundred completely solved problems, from 1D potentials to relativistic equations — the encyclopaedia of exactly solvable models. When Appendix C needs test cases, this is the mine to dig in. |
+| The MIT OCW 8.04–8.06 problem sets | Free, with official solutions, and reliably high in both difficulty and physical taste — the trustworthy yardstick for "did I actually learn this?". |
+
+## Numerical and open-source tools
+
+The ecosystem you can pick up directly after [Appendix C](/en/ch/appendix-c-numerics/01-finite-difference/):
+
+| Tool | Verdict |
+| --- | --- |
+| NumPy / SciPy | The foundation of everything. `scipy.linalg` and `scipy.sparse.linalg` are the *entire* dependency list of Appendix C. |
+| QuTiP | The de facto standard for simulating open quantum systems (Python): master equations, Lindblad evolution and Wigner-function visualisation work out of the box, mapping directly onto our Chapter 10. Documentation and tutorials of exceptional quality: qutip.org. |
+| Qiskit | IBM's quantum computing framework — it can submit the circuits of Chapter 9 to real quantum hardware. The companion open-source Qiskit Textbook is itself an excellent introduction to quantum computing. |
+| Cirq / PennyLane | Google's circuit framework, and Xanadu's variational/machine-learning-oriented one; PennyLane connects directly to the theme of [section 13.9](/en/ch/13-frontier/09-quantum-machine-learning/). |
+| QuSpin | Exact diagonalisation, professional edition: it handles symmetry blocking automatically, so the Heisenberg chain of Appendix C.3 reaches much larger N in a few lines. |
+| TeNPy | A Python library for tensor networks / DMRG — the one-dimensional weapon for breaking through the "exponential wall" discussed in C.3. |
+| SymPy | Symbolic computation in Python: checking perturbation expansions, computing commutators, verifying special-function identities — far less prone to dropped minus signs than pen and paper. |
+
+## A list of classic papers
+
+Original papers convey "what the problem looked like at the time" better than any second-hand account. None of the following is hard to find (most have arXiv versions or are reprinted in countless textbooks), and all are fully readable with what you now know:
+
+| Paper | Why read it |
+| --- | --- |
+| Einstein, Podolsky & Rosen (1935), *Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?* | The original "EPR paradox" paper — only four pages. Only by reading it do you learn how persuasive the position being refuted originally was. Pairs with [section 9.4](/en/ch/09-quantum-information/04-bell-chsh/). |
+| Bell (1964), *On the Einstein Podolsky Rosen Paradox* | The stroke that turned a philosophical dispute into a measurable inequality. The mathematics needs no more than high school; the density of ideas is world-class. |
+| Aspect et al. (1982), the experimental tests of Bell's inequality | The loop closed from theory to experiment, and one of the roots of the 2022 Nobel Prize in Physics. |
+| Feynman (1982), *Simulating Physics with Computers* | The birth certificate of quantum computing: simulating quantum systems on classical computers hits an exponential wall (Appendix [C.3](/en/ch/appendix-c-numerics/03-exact-diagonalization-mc/) walks you into it) — so build a quantum computer instead. |
+| Bennett et al. (1993), the quantum teleportation protocol | The original proposal of the protocol of [section 9.5](/en/ch/09-quantum-information/05-teleportation/) — short and clear. |
+| Shor (1994/1997), the factoring algorithm | The paper that turned the whole field from a curiosity into a race; read alongside [section 9.9](/en/ch/09-quantum-information/09-shor/). |
+| Schrödinger (1935), the long essay on the present situation in quantum mechanics (the origin of "Schrödinger's cat") | The birthplace of the word "entanglement" (*Verschränkung*); in the original, the cat is only a supporting character in an ironic aside. |
+| Bennett & Brassard (1984), the BB84 quantum key distribution protocol | The starting point of quantum cryptography: provably secure keys built from nothing but single photons and the no-cloning theorem. |
+| Zurek (2003), *Decoherence, einselection, and the quantum origins of the classical* (RMP review) | The authoritative summary of the decoherence programme, and the direct continuation of our Chapter 10. |
+
+<Callout type="insight" title="How to read a classic paper">
+Learn the material from a textbook first, then go back to the original — the reverse order is a recipe for frustration. As you read, keep two questions in view: what the author did **not** know at the time (which shaped how the paper is written), and which of that era's puzzles have answers today and which still do not. The latter kind (the measurement problem, the sign problem, black-hole information) is exactly the subject of [Chapter 13](/en/ch/13-frontier/07-foundations/).
+</Callout>
+
+## Frontier reviews and online resources
+
+| Resource | Verdict |
+| --- | --- |
+| arXiv (the quant-ph section) | The free preprint repository holding nearly every paper in the field: arxiv.org. Start reading the frontier by following reviews and chasing their references — no need to chew through the newest uploads. |
+| Preskill's quantum information lecture notes (Caltech Ph219) | Free, and rewarding on every re-read, running from quantum information to fault tolerance and topological codes — the standard next step after our Chapters 9, 10 and 13. |
+| Reviews of Modern Physics | The authoritative review journal across physics; when entering any specific direction (decoherence, cold atoms, topological matter), find its review there first and use it as your map. |
+| Quantum (the open-access journal) | The community-run journal of quantum science, all articles free. Browsing its table of contents is itself a way to feel where the field is hot. |
+| Physics Stack Exchange | A question-and-answer archive for conceptual difficulties, with a wealth of high-quality answers. Search before asking; the quality of your question determines the quality of the answer. |
+| PhET interactive simulations (University of Colorado) | A free collection of interactive physics simulations whose quantum section complements our 3D labs: phet.colorado.edu. Excellent for classroom demonstrations and first intuitions. |
+| HyperPhysics | A tree-shaped quick-reference map of physics, fast for looking up the "minimal context" of any single concept. Depth stops at undergraduate level; its strength is the connections. |
+| Quanta Magazine | High-grade long-form science journalism, explaining frontier progress to non-specialists. Good for keeping perspective; not a substitute for study material. |
+
+## Routes by goal
+
+| Your goal | Suggested combination |
+| --- | --- |
+| Passing a course / graduate entrance exams | A close read of Zeng Jinyan (or Griffiths) + the Qian & Zeng problem collection + this site's matching simulations and self-tests to find the gaps |
+| Moving into quantum computing / quantum information | Our Chapters 3, 5, 9, 10 + the first six chapters of Nielsen & Chuang + hands-on work through the Qiskit Textbook, then on to Preskill's notes |
+| Heading for research (condensed matter / AMO) | All of Sakurai + the MIT 8.05/8.06 problem sets + reproducing all three sections of Appendix C by hand, then the RMP review in your own direction |
+| The curiosity-driven self-learner | Feynman vol. III + the Susskind series + this site from start to finish; when the mathematics bites, retreat to Appendix A |
+| Wondering what quantum mechanics is actually saying | Our 13.7 + Ballentine + the Zurek review + Bell's original paper; be prepared for the conclusion "there is no consensus yet" |
+
+<Callout type="check" title="One executable route">
+The shortest closed loop with this site as the skeleton: our Chapters 1–6 + a close read of Griffiths with its problems → Chapters 3 and 7 + the MIT 8.05 notes → then branch by interest: quantum information via Nielsen & Chuang + hands-on Qiskit; many-body and condensed matter via Sakurai + hands-on QuSpin/TeNPy; foundations via Ballentine. At every step keep the three-part ritual — read a chapter, work its problems, write a scrap of code to verify — which is exactly the way of working every interactive simulation on this site is trying to teach you.
+</Callout>
+
+Finally: a list like this is guaranteed to age, and this site is an open-source project — if you find a better resource, a dead entry, or simply disagree, propose a change through the open-source link on the home page. Good maps are made by walking.

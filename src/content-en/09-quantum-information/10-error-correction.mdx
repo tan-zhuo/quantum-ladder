@@ -1,18 +1,296 @@
 ---
-title: 'An introduction to quantum error correction'
-summary: 'Quantum information can be protected.'
+title: An introduction to quantum error correction
 section: '9.10'
 order: 10
-status: stub
+summary: 'No cloning, no peeking — and yet errors can be corrected: the three-qubit code catches them with choral measurements that ask only about parity, never content; the stabiliser formalism turns the trick into a system, and the surface code and threshold theorem carry it into engineering.'
+status: done
+prereqs:
+  - 09-quantum-information/05-teleportation
+  - 09-quantum-information/03-entanglement-measures
+objectives:
+  - 'State the triple bind facing quantum error correction: no cloning, measurement collapse, and continuous errors'
+  - 'Hand-compute the full three-qubit bit-flip code pipeline: encoding, syndrome measurement, lookup-table correction'
+  - Explain the mechanism by which syndrome measurement leaks no data, and how continuous errors get digitised by measurement
+  - "Survey the stabiliser formalism and the surface code, and state the threshold theorem's content and magnitudes"
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Shor's algorithm demands trillions of gate operations with next to no mistakes, while real
+hardware has single-gate error rates around $10^{-3}$ — nine orders of magnitude apart.
+Classical computers cleared this hurdle with error correction: keep three copies, let the
+majority rule. But in the quantum world that old road looks blocked at every turn.
+What this section presents is one of the most beautiful escapes in this book.
+
+## A triple bind
+
+Try transplanting the classical "three copies, majority vote" onto a quantum state
+$\ket{\chi}=\alpha\ket{0}+\beta\ket{1}$ and you slam into three walls at once:
+
+1. **No backups**: making three copies of $\ket{\chi}$ requires a cloning machine, which
+   section 9.5 proved does not exist;
+2. **No peeking**: before voting you would have to read out each copy's value, but measurement
+   collapses $\alpha,\beta$ to 0 or 1 — destroying the data in order to protect it;
+3. **Errors are continuous**: a classical bit can only flip 0↔1, while a qubit's errors are
+   arbitrarily small rotations on the Bloch sphere — a turn of $0.01$ radians is an error too.
+   Are we supposed to keep a correction table for every angle?
+
+Quantum information looks doomed to go unprotected. In 1995, Shor and Steane each found the
+hidden door, and it takes two keys: **replace copying with entanglement, and replace peeking
+with measurements that ask only about relationships, never about content**.
+
+## The three-qubit bit-flip code: the full pipeline by hand
+
+Start with a simplified problem: suppose the channel only applies $X$ (a bit flip) to each
+qubit independently with probability $p$, and set phases aside for now.
+
+**Encoding — entangle, don't clone.** Two CNOTs spread $\ket{\chi}$ across three qubits:
+
+```text
+|χ⟩ ──●──●──      α|0⟩+β|1⟩
+      │  │
+|0⟩ ──⊕──┼──  ⟹   α|000⟩ + β|111⟩
+         │
+|0⟩ ─────⊕──
+```
+
+$$
+\ket{\bar\chi}=\alpha\ket{000}+\beta\ket{111}
+$$
+
+Note that this is **not** three copies $\ket{\chi}^{\otimes3}$ (that would require cloning)
+but a GHZ-type entangled state: one piece of data spread across three-party correlations —
+section 9.3's "information lives in the correlations" turns, for the first time, from an
+obstacle into a shield.
+
+<Derivation title="Syndrome measurement: ask about parity, never content" level="基础" minutes={8} open={true}>
+
+**Step 1: chart the case histories.** The four single-flip scenarios (for small $p$,
+simultaneous multi-qubit flips are negligible):
+
+| Error | Corrupted state |
+| --- | --- |
+| None | $\alpha\ket{000}+\beta\ket{111}$ |
+| $X_1$ | $\alpha\ket{100}+\beta\ket{011}$ |
+| $X_2$ | $\alpha\ket{010}+\beta\ket{101}$ |
+| $X_3$ | $\alpha\ket{001}+\beta\ket{110}$ |
+
+**Step 2: design a check that leaves the data unharmed.** Measuring a single qubit is
+forbidden (it would collapse $\alpha,\beta$), but we may measure **pairwise parities**:
+the operator $Z_1Z_2$ asks "are qubits 1 and 2 the same or opposite?", and $Z_2Z_3$ asks
+the same of qubits 2 and 3. The key check — take the error-free state first:
+
+$$
+Z_1Z_2\big(\alpha\ket{000}+\beta\ket{111}\big)
+=\alpha(+1)(+1)\ket{000}+\beta(-1)(-1)\ket{111}
+=+1\cdot\ket{\bar\chi}
+$$
+
+Both branches share the **same eigenvalue $+1$**: the whole corrupted state is an eigenstate
+of $Z_1Z_2$, so the measurement reads out $+1$ while the state stands perfectly still.
+Now check the $X_1$ case:
+
+$$
+Z_1Z_2\big(\alpha\ket{100}+\beta\ket{011}\big)
+=\alpha(-1)(+1)\ket{100}+\beta(+1)(-1)\ket{011}
+=-1\cdot(\text{original state})
+$$
+
+Again an eigenstate, reading $-1$. **The measurement yields an answer yet disturbs nothing** —
+because all four corrupted states are eigenstates of these two parity operators, the projective
+measurement "projects" onto nothing new at all.
+
+**Step 3: correct by lookup table.** The two readouts (the **syndrome**) have four
+combinations, exactly identifying the four scenarios:
+
+| $Z_1Z_2$ | $Z_2Z_3$ | Diagnosis | Prescription |
+| --- | --- | --- | --- |
+| $+1$ | $+1$ | No error | Do nothing |
+| $-1$ | $+1$ | Qubit 1 flipped | Apply $X_1$ |
+| $-1$ | $-1$ | Qubit 2 flipped | Apply $X_2$ |
+| $+1$ | $-1$ | Qubit 3 flipped | Apply $X_3$ |
+
+After the remedy the state returns exactly to $\alpha\ket{000}+\beta\ket{111}$. At no point
+did anyone learn what $\alpha,\beta$ are — the syndrome only says **where** something differs
+from the crowd, and never breathes a word about **what** the content is. This is precisely the
+mechanism that sidesteps measurement collapse: package the "data information" and the "error
+information" into orthogonal questions, and extract only the latter.
+
+</Derivation>
+
+**Is this insurance worth its premium?** After encoding, an error survives only if at least
+two qubits flip at once:
+
+$$
+p_{\text{logical}}=3p^2(1-p)+p^3=3p^2-2p^3
+$$
+
+At $p=0.1$ we get $p_{\text{logical}}=0.028$ — the error rate drops to roughly a quarter.
+As long as $p<\tfrac12$ the encoding is a net win, and the smaller $p$ is, the bigger the win
+($p^2$ versus $p$).
+
+<Callout type="insight" title="Measurement digitises continuous errors">
+The third wall — errors being continuous — gets demolished by the syndrome measurement almost
+in passing. Suppose some qubit has been rotated only slightly:
+$\ket{\bar\chi}\mapsto\cos\epsilon\,\ket{\bar\chi}+\sin\epsilon\,(X_1\ket{\bar\chi})$.
+The syndrome measurement is projective, and it forces this superposition to **pick one**:
+with probability $\cos^2\epsilon$ it collapses onto the "no error" branch (syndrome $++$,
+nothing to do — the small error is wiped out by the measurement itself!), and with probability
+$\sin^2\epsilon$ onto the "$X_1$ error" branch (syndrome $-+$, apply the prescription).
+**The continuous family of errors is discretised by measurement into finitely many kinds**,
+and a general theorem (Knill–Laflamme) guarantees that a code able to correct the discrete
+errors $X,Y,Z$ automatically corrects every continuous linear combination of them.
+Measurement collapse — the character who has caused nothing but trouble throughout this book —
+here becomes, for the first time, part of the solution.
 </Callout>
 
-## Planned contents
+## From three qubits to stabilisers: one language
 
-- The three-qubit repetition code
-- The stabiliser formalism
-- Basic ideas of the surface code
-- The threshold theorem
+The three-qubit code guards against $X$ but not $Z$: a phase flip turns
+$\alpha\ket{000}+\beta\ket{111}$ into $\alpha\ket{000}-\beta\ket{111}$, both parity checks
+glow green, and the error slips away. The countermeasure is not hard to guess: in the
+Hadamard-rotated basis ($\ket{\pm}$), a $Z$ error *is* an $X$ error, so wrap another
+three-qubit code around the first. Shor's nine-qubit code of 1995 is exactly this two-layer
+nesting (inner layer correcting $X$, outer layer correcting $Z$), the first proof that any
+single-qubit error can be corrected.
+
+Distil this playbook into a general language and you have the **stabiliser formalism**:
+a code is defined by a set of mutually commuting Pauli-string operators $\{S_i\}$ (the
+**stabilisers**), and the code space is their common $+1$ eigenspace:
+
+$$
+S_i\ket{\bar\chi}=+\ket{\bar\chi}\quad\forall i
+$$
+
+The three-qubit code's stabilisers are simply $Z_1Z_2$ and $Z_2Z_3$. The error-correction
+cycle now acquires a standard rhythm: **measure all stabilisers repeatedly → read the
+syndrome → infer the error → correct**. If an error operator $E$ **anticommutes** with some
+$S_i$, that stabiliser's readout flips to $-1$ and the syndrome lights up — a well-designed
+code makes different errors light up different combinations of lamps. With $n$ physical qubits
+and $n-k$ independent stabilisers, a $2^k$-dimensional code space remains, encoding $k$
+logical qubits; how heavy an error can be corrected is set by the **code distance** $d$:
+up to $\lfloor(d-1)/2\rfloor$ errors.
+
+## A bird's-eye view of the surface code and the threshold theorem
+
+Real hardware imposes one more hard constraint: qubits sit on a chip and can only interact
+with their neighbours. The **surface code** is the star scheme born for exactly this, and a
+bird's-eye view takes three strokes:
+
+- **Layout**: qubits tile a two-dimensional chessboard, data qubits alternating with
+  measurement ancillas; each stabiliser involves only four neighbouring data qubits (one kind
+  checks $X$ parity, the other $Z$ parity), so every check is **local**.
+- **The error-correction picture**: errors leave paired "lit lamps" as endpoints on the board,
+  like footprints in snow; a decoder (a classical algorithm) pairs up the lamps and guesses
+  the error chains. Only when errors join into a long chain spanning the board (length about
+  $d$, the board's side) does the logical information get hurt — and a big board makes that
+  exponentially unlikely.
+- **Cost-effectiveness**: it tolerates physical error rates up to about $1\%$ (an extremely
+  forgiving threshold, kind to hardware), at the price of low data density: one logical qubit
+  costs on the order of $d^2$ — hundreds to thousands of physical qubits at practical
+  parameters. Section 9.9's conversion "thousands of logical ⇒ millions of physical" comes
+  from exactly here.
+
+Holding it all up is the **threshold theorem**:
+
+> As long as the physical error rate $p$ is below some threshold $p_{\text{th}}$ (which
+> depends on the code and the noise model; about $10^{-2}$ for the surface code), increasing
+> the code distance drives the logical error rate arbitrarily low:
+> $p_{\text{logical}}\sim(p/p_{\text{th}})^{(d+1)/2}$,
+> while the resource overhead grows only **polynomially** with the target precision.
+
+This theorem is the foundation of the entire quantum-computing industry: it declares that
+"good enough" is a finite bar, not an infinite demand. In 2023–2024, teams at Google and
+Harvard/QuEra demonstrated, one after another, the key milestone that "larger code distance
+really does lower the logical error rate" — error correction stepped from theorem into data.
+
+<Callout type="warning" title="Do not mistake error correction for a one-time fix">
+Error correction is a **continuous check-up**, not a one-shot vaccine: the stabilisers must be
+measured over and over, at a pace far faster than errors accumulate; syndromes must be streamed
+to a classical decoder in real time; and corrections must land before the next round of errors
+arrives. Nor can logical gates act directly on the bare data — in fault-tolerant schemes,
+Clifford gates are cheap, while $T$ gates must be synthesised expensively via "magic-state
+distillation plus gate teleportation" (sections 9.2 and 9.5 each planted half of that seed).
+In a fault-tolerant quantum computer, the vast majority of the hardware and the time is spent
+on error correction itself.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Three-qubit encoding', latex: '\\alpha\\ket{0}+\\beta\\ket{1}\\ \\mapsto\\ \\alpha\\ket{000}+\\beta\\ket{111}', note: 'GHZ-type entanglement, not three copies — no conflict with no-cloning' },
+    { name: 'Syndrome measurement', latex: 'Z_1Z_2,\\ Z_2Z_3:\\ \\text{readouts}\\ (\\pm1,\\pm1)\\ \\text{locate the error}', note: 'Asks parity, never content; the measurement also digitises continuous errors' },
+    { name: 'Logical error rate', latex: 'p_{\\text{logical}}=3p^2-2p^3<p\\ \\ (p<\\tfrac12)', note: 'At p = 0.1 it drops to 0.028; suppression scales as p²' },
+    { name: 'Stabiliser code', latex: 'S_i\\ket{\\bar\\chi}=+\\ket{\\bar\\chi},\\quad ES_i=-S_iE\\Rightarrow\\text{syndrome lights up}', note: 'n physical − (n−k) stabilisers = k logical; corrects ⌊(d−1)/2⌋ errors' },
+    { name: 'Threshold theorem', latex: 'p<p_{\\text{th}}\\ \\Rightarrow\\ p_{\\text{logical}}\\sim(p/p_{\\text{th}})^{(d+1)/2}', note: 'Surface code p_th ≈ 1%; overhead grows polynomially with precision' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ec-1',
+      prompt: 'Why does the encoded state α∣000⟩ + β∣111⟩ not violate the no-cloning theorem?',
+      options: [
+        'It is a three-party entangled state, not three independent copies ∣χ⟩⊗∣χ⟩⊗∣χ⟩',
+        'Because error-correcting codes only work on known states',
+        'Because ∣χ⟩ was measured before encoding',
+        'It actually does violate it — the violation is just very small',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The encoding circuit works for any unknown (α, β) — that is precisely its value.',
+        2: 'No measurement occurs anywhere: the two CNOTs are unitary operations.',
+      },
+      explain: 'Three copies would be (α∣0⟩+β∣1⟩)^⊗3, which expands into 8 basis combinations; the encoded state has only the two branches ∣000⟩ and ∣111⟩. The information is spread into three-party correlations rather than copied three times — entanglement is the legal way to "back up".',
+    },
+    {
+      id: 'ec-2',
+      prompt: 'Why does the syndrome measurement not destroy the superposition coefficients α, β?',
+      options: [
+        'Under each single-qubit error, the corrupted state is an eigenstate of the parity operators, so measurement leaves the state unchanged',
+        'Because the measurement is performed fast enough',
+        'Because Z₁Z₂ and Z₂Z₃ happen to commute',
+        'It actually does destroy them — the correction gates just restore them afterwards',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'The two stabilisers commuting guarantees they can be measured simultaneously, but "no harm to the data" comes from the corrupted state as a whole sitting in a common eigenstate — the α and β branches give identical readouts, so the measurement has no way to tell them apart.',
+      },
+      explain: 'For example, the two branches ∣100⟩ and ∣011⟩ of the X₁-error state both have eigenvalue −1 under Z₁Z₂: the readout reflects only the "parity of qubits 1 and 2", a property independent of α and β, and the projected state is left untouched. The data question and the error question have been designed as two orthogonal sets of questions.',
+    },
+    {
+      id: 'ec-3',
+      type: 'numeric',
+      prompt: 'The physical flip probability is p = 0.1. Under three-qubit protection, what is the logical error rate 3p² − 2p³?',
+      answer: 0.028,
+      tolerance: 0.002,
+      explain: '3(0.01) − 2(0.001) = 0.03 − 0.002 = 0.028, roughly a quarter of the unencoded 0.1. Make p ten times smaller and the advantage becomes a hundredfold — the p² suppression is exactly the statistical dividend of "distance 3 corrects 1 error".',
+    },
+    {
+      id: 'ec-4',
+      prompt: 'Which statements about the surface code and the threshold theorem are correct? (Select all that apply.)',
+      options: [
+        'Every stabiliser measurement of the surface code involves only neighbouring qubits on the chip',
+        'As long as the physical error rate is below threshold (about 1%), increasing the code distance can make the logical error rate arbitrarily low',
+        'One logical qubit typically consumes hundreds to thousands of physical qubits',
+        'When the error rate is above threshold, making the code bigger still slowly suppresses logical errors',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Above threshold, enlarging the code makes things worse — more checks introduce more errors, and the snowball rolls the wrong way. The threshold is a phase transition, not an asymptote.',
+      },
+      explain: 'Local stabilisers plus a two-dimensional layout are the surface code\'s core concession to hardware; the threshold theorem gives p_logical ~ (p/p_th)^{(d+1)/2}, improving exponentially with d for p < p_th and worsening with d for p > p_th. The industry conversion "thousands of logical qubits ⇒ millions of physical qubits" follows from here.',
+    },
+  ]}
+/>
+
+## What comes next
+
+All chapter long we have been sparring with a villain who never quite shows his face: errors,
+decoherence, noise. Error correction tells us **how to beat him**, but never once asked —
+**who is he, exactly?** Why does a qubit left completely alone develop errors on its own?
+Why do errors favour the $Z$ (phase) direction? Why do "measurement" and "noise" look so much
+alike? Answering these questions means leaving the comfort zone of "isolated system + unitary
+evolution" and letting the environment take the stage at last: the system no longer owns a
+state vector of its own, only a density matrix; evolution is no longer unitary, but the
+Lindblad equation. Next chapter — open quantum systems: where noise comes from, and how the
+quantum world turns classical before our eyes.
