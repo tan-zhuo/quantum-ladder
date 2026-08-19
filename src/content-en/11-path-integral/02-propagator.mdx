@@ -1,17 +1,240 @@
 ---
-title: 'The propagator'
-summary: 'K(x,t;x₀,t₀) is what the path integral produces.'
+title: The propagator
 section: '11.2'
 order: 2
-status: stub
+summary: 'Actually compute the "sum over all paths": the full derivation of the free-particle propagator. Its phase turns out to be exactly the classical action, and evolving a Gaussian wave packet with it reproduces wave-packet spreading to the letter.'
+status: done
+prereqs:
+  - 11-path-integral/01-path-integral-idea
+  - 02-wavefunction/10-free-particle
+objectives:
+  - Write down the definition of the propagator and relate it to wavefunction evolution, initial conditions, and the composition property
+  - Define the path integral as a limit of ordinary integrals via time slicing
+  - Compute the free-particle propagator in full and recognise its phase as the classical action
+  - Evolve a Gaussian wave packet with the propagator and reproduce the spreading of section 2.10
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section laid out the manifesto: the amplitude from $a$ to $b$ is the sum of $\ee^{\ii S/\hbar}$ over all paths. But "sum over all paths" is still just a sentence — there are uncountably many paths, so how do you add them? In this section we actually compute the sum, for the simplest system there is: the free particle ($V=0$).
+
+First, let us give this "amplitude from $a$ to $b$" its official name.
+
+## What the propagator is
+
+The **propagator** $K(x_b,t_b;x_a,t_a)$ is defined as the probability amplitude to find the particle at $x_b$ at time $t_b$, given that it was definitely at $x_a$ at time $t_a$. In the language of chapter 3 it is a matrix element of the evolution operator:
+
+$$
+K(x_b,t_b;x_a,t_a)=\bra{x_b}\ee^{-\ii\hat H(t_b-t_a)/\hbar}\ket{x_a}
+$$
+
+Why does it deserve a name of its own? Because **knowing $K$ means knowing all of the dynamics**. Any initial state $\Psi(x_a,t_a)$ is a superposition of position eigenstates, each component propagating independently, so
+
+$$
+\Psi(x_b,t_b)=\int K(x_b,t_b;x_a,t_a)\,\Psi(x_a,t_a)\,\dd x_a
+$$
+
+The propagator is the Schrödinger equation's "universal solution": solve for $K$ once, and the solution for any initial condition is a single integral away. (Mathematically this is exactly the role of a Green's function: $K$ satisfies the Schrödinger equation with the initial condition $K\to\delta(x_b-x_a)$ as $t_b\to t_a$ — at the start the particle is at $x_a$, with zero amplitude anywhere else.)
+
+$K$ also has a **composition** property, inherited directly from the fact that paths can be spliced: going from $a$ to an intermediate point $c$ and then from $c$ to $b$, summed over all intermediate points, equals going from $a$ to $b$ directly:
+
+$$
+K(b,a)=\int K(b,c)\,K(c,a)\,\dd x_c
+$$
+
+This property is about to earn its keep — it lets us chop a long propagation into many short segments.
+
+## Defining the path integral properly: time slicing
+
+<DualView>
+<div slot="left">
+
+**How do you index "all paths"?** The same old trick as the definite integral: discretise first, take the limit after.
+
+Slice the interval $t_a\to t_b$ into $N$ steps of length $\varepsilon=(t_b-t_a)/N$. A path is specified by its positions at the slice times, $x_1,x_2,\dots,x_{N-1}$ (the endpoints $x_0=x_a$, $x_N=x_b$ are fixed), joined by straight segments.
+
+"Sum over all paths" then means: let each $x_j$ range independently over the whole real line — an ordinary $(N-1)$-fold integral — and finally take $N\to\infty$. Last section's picture of "inserting infinitely many boards that are all slit" becomes a rigorous definition here.
+
+</div>
+<div slot="right">
+
+$$
+K(b,a)=\lim_{N\to\infty}\frac1A\int\frac{\dd x_1}{A}\cdots\frac{\dd x_{N-1}}{A}\;\ee^{\ii S(x_0,\dots,x_N)/\hbar}
+$$
+
+where the action of the zigzag path accumulates segment by segment:
+
+$$
+S=\sum_{j=0}^{N-1}\varepsilon\left[\frac{m}{2}\Bigl(\frac{x_{j+1}-x_j}{\varepsilon}\Bigr)^2-V(x_j)\right]
+$$
+
+$A$ is a per-step normalisation constant (needed for the limit to exist); the derivation below fixes it along the way:
+
+$$
+A=\sqrt{\frac{2\pi\ii\hbar\varepsilon}{m}}
+$$
+
+</div>
+</DualView>
+
+## The free particle: computing the integral to the end
+
+<Derivation title="The full derivation of the free-particle propagator" level="进阶" minutes={12} open={true}>
+
+With $V=0$ we face a chain of nested Gaussian-type integrals. Only one tool is needed throughout — the Gaussian integral formula (valid for complex $\alpha$ too, understood by analytic continuation):
+
+$$
+\int_{-\infty}^{\infty}\ee^{\ii\alpha u^2}\dd u=\sqrt{\frac{\pi\ii}{\alpha}}
+$$
+
+**Step 1: the single-step propagator.** Over a short interval $\varepsilon$ there is effectively only the straight-line "path", with amplitude
+
+$$
+K_\varepsilon(x_{j+1},x_j)=\frac1A\exp\!\left[\frac{\ii m(x_{j+1}-x_j)^2}{2\hbar\varepsilon}\right]
+$$
+
+**Step 2: compose two steps.** Use the composition formula to merge two $\varepsilon$ steps into one of $2\varepsilon$, integrating over the intermediate point $x_1$:
+
+$$
+K_{2\varepsilon}(x_2,x_0)=\frac1{A^2}\int\dd x_1\,
+\exp\!\left[\frac{\ii m}{2\hbar\varepsilon}\bigl[(x_2-x_1)^2+(x_1-x_0)^2\bigr]\right]
+$$
+
+Complete the square in $x_1$ inside the exponent:
+
+$$
+(x_2-x_1)^2+(x_1-x_0)^2=2\Bigl(x_1-\frac{x_0+x_2}{2}\Bigr)^2+\frac{(x_2-x_0)^2}{2}
+$$
+
+The second term is independent of $x_1$ and comes outside; the first is killed by the Gaussian formula (set $u=x_1-\frac{x_0+x_2}2$, $\alpha=\frac{m}{\hbar\varepsilon}$):
+
+$$
+K_{2\varepsilon}(x_2,x_0)=\frac1{A^2}\sqrt{\frac{\pi\ii\hbar\varepsilon}{m}}\,
+\exp\!\left[\frac{\ii m(x_2-x_0)^2}{2\hbar(2\varepsilon)}\right]
+$$
+
+**Key observation**: the result has exactly the same shape as the single-step propagator, just with $\varepsilon\to2\varepsilon$. Choosing $A=\sqrt{2\pi\ii\hbar\varepsilon/m}$ makes the prefactor tidy up to exactly $\sqrt{m/2\pi\ii\hbar(2\varepsilon)}$ — this is how the normalisation constant gets fixed "self-consistently".
+
+**Step 3: induction to N steps.** Each intermediate point integrated away leaves the propagator with the same shape and one more time step. After $N$ steps (with $N\varepsilon=t$, writing $t=t_b-t_a$, $x=x_b-x_a$):
+
+$$
+\boxed{\;K(x_b,t_b;x_a,t_a)=\sqrt{\frac{m}{2\pi\ii\hbar t}}\,
+\exp\!\left[\frac{\ii m(x_b-x_a)^2}{2\hbar t}\right]\;}
+$$
+
+The limit $N\to\infty$ is trivial — the shape never depended on $N$ in the first place.
+
+**Step 4: checks.**
+- As $t\to0$ the exponent oscillates infinitely fast and the prefactor diverges — precisely one representation of $\delta(x_b-x_a)$. The initial condition checks out.
+- Substitute back into the Schrödinger equation $\ii\hbar\partial_t K=-\frac{\hbar^2}{2m}\partial_{x_b}^2K$ and the two sides match term by term (verify it yourself — five lines).
+
+</Derivation>
+
+<Callout type="insight" title="The phase is exactly the classical action">
+The classical action for a free particle travelling from $x_a$ to $x_b$ at constant speed (in time $t$) is
+
+$$
+S_{\text{cl}}=\int_0^t\frac{m}{2}\Bigl(\frac{x_b-x_a}{t}\Bigr)^2\dd t'=\frac{m(x_b-x_a)^2}{2t}
+$$
+
+Compare with the result of the derivation: $K\propto\ee^{\ii S_{\text{cl}}/\hbar}$ — after summing infinitely many paths, the phase comes out **exactly** equal to the action of the one classical path, with every quantum correction absorbed into the prefactor $\sqrt{m/2\pi\ii\hbar t}$.
+
+This is not luck reserved for the free particle: whenever the Lagrangian is quadratic in coordinates and velocities (free particle, harmonic oscillator, uniform field), the path integral equals $F(t)\,\ee^{\ii S_{\text{cl}}/\hbar}$ exactly, with the fluctuation part independent of the endpoints. In quadratic systems the last section's stationary-phase argument is promoted from "approximation" to "exact".
 </Callout>
 
-## Planned contents
+## Squaring the books with wave-packet spreading
 
-- Definition and properties of the propagator
-- Computing the free-particle propagator
-- Its relation to Green functions
+If the propagator is right, it has to reproduce physics we already know. [Section 2.10](/en/ch/02-wavefunction/10-free-particle/) computed, by superposing momenta, that a free Gaussian wave packet of initial width $\sigma_0$ spreads with time. Let us redo the calculation with $K$.
+
+Take the initial state to be a Gaussian packet centred at the origin, $\Psi(x_a,0)\propto\ee^{-x_a^2/4\sigma_0^2}$, and insert it into the evolution formula:
+
+$$
+\Psi(x,t)=\int K(x,t;x_a,0)\,\Psi(x_a,0)\,\dd x_a
+\;\propto\;\int\dd x_a\exp\!\left[\frac{\ii m(x-x_a)^2}{2\hbar t}-\frac{x_a^2}{4\sigma_0^2}\right]
+$$
+
+The exponent is again quadratic in $x_a$ — yet another Gaussian integral. Complete the square, integrate, and tidy up:
+
+$$
+|\Psi(x,t)|^2\propto\exp\!\left[-\frac{x^2}{2\sigma(t)^2}\right],\qquad
+\sigma(t)=\sigma_0\sqrt{1+\Bigl(\frac{\hbar t}{2m\sigma_0^2}\Bigr)^2}
+$$
+
+Word for word the result of section 2.10: spreading time $\tau=2m\sigma_0^2/\hbar$, and the narrower the packet, the faster it spreads. Two languages, one physics — the first concrete audit of their equivalence.
+
+<Callout type="warning" title="The propagator is not a probability — don't rush to square it">
+For the free particle, $|K(b,a)|^2$ equals $m/2\pi\hbar t$, independent of $x_b$ — and this is not some sensible "the particle is equally likely everywhere" distribution (it is not even normalisable). The reason is that the initial state $\delta(x-x_a)$ is not a physically realisable state (infinitely narrow, infinite momentum uncertainty). The correct use of $K$ is as an **integral kernel**: sandwiched between genuine, normalisable wavefunctions.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Propagator definition', latex: 'K(b,a)=\\bra{x_b}\\ee^{-\\ii\\hat H(t_b-t_a)/\\hbar}\\ket{x_a}', note: 'Position-representation matrix element of the evolution operator; tends to δ(x_b−x_a) as t_b→t_a' },
+    { name: 'Universal evolution formula', latex: '\\Psi(x_b,t_b)=\\int K(b,a)\\,\\Psi(x_a,t_a)\\,\\dd x_a', note: 'Solve for K once and any initial condition is one integral away' },
+    { name: 'Composition property', latex: 'K(b,a)=\\int K(b,c)\\,K(c,a)\\,\\dd x_c', note: 'The basis of time slicing; also called the Chapman-Kolmogorov relation' },
+    { name: 'Free-particle propagator', latex: 'K=\\sqrt{\\frac{m}{2\\pi\\ii\\hbar t}}\\,\\ee^{\\ii m(x_b-x_a)^2/2\\hbar t}', note: 'Phase = classical action m(Δx)²/2t; a universal feature of quadratic Lagrangians' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pi2-1',
+      prompt: 'The physical meaning of the propagator K(b,a) is:',
+      options: [
+        'The probability amplitude to find the particle at x_b at time t_b, given it was at x_a at time t_a',
+        'The probability for the particle to travel from x_a to x_b',
+        'The amplitude for the particle to follow the classical path from a to b',
+        'The correlation function of the wavefunction at positions x_a and x_b',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Probability requires squaring the amplitude — and since a δ initial state is not normalisable, |K|² cannot itself serve as a probability distribution.',
+        2: 'K contains contributions from all paths; it is only for quadratic Lagrangians that the summed phase happens to equal the classical path’s action.',
+      },
+      explain: 'K is the position-representation matrix element ⟨x_b|U(t)|x_a⟩ of the evolution operator — an amplitude, not a probability; its correct use is as an integral kernel for evolving arbitrary initial states.',
+    },
+    {
+      id: 'pi2-2',
+      prompt: 'The free-particle propagator satisfies K ∝ e^{iS_cl/ħ}, with the phase exactly the classical action. The condition for this "exactly" to hold is:',
+      options: [
+        'The Lagrangian is quadratic in coordinates and velocities',
+        'It holds exactly in any potential',
+        'It holds only in the limit ħ→0',
+        'It holds only for V=0',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'In a general potential, stationary phase is only an approximation (the semiclassical approximation); what makes quadratic systems special is that the higher-order variations vanish.',
+        3: 'The harmonic oscillator and a uniform field also satisfy K = F(t)e^{iS_cl/ħ} exactly — it is not just the free particle.',
+      },
+      explain: 'For a quadratic Lagrangian, S[x_cl+η] = S[x_cl] + a purely quadratic fluctuation term; the fluctuation integral is independent of the endpoints and is absorbed entirely into the prefactor F(t). This is also why the harmonic-oscillator propagator can be found exactly.',
+    },
+    {
+      id: 'pi2-3',
+      prompt: 'Which statements about the time-sliced definition of ∫𝒟x(t) are correct? (Select all that apply.)',
+      options: [
+        'A discretised path is specified by its positions x₁,…,x_{N−1} at the slice times, integrated over in an (N−1)-fold integral',
+        'The normalisation constant A=√(2πiħε/m) is fixed by composition self-consistency',
+        'Only differentiable, smooth paths participate in the sum',
+        'The composition property K(b,a)=∫K(b,c)K(c,a)dx_c is what justifies the slicing method',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'Quite the opposite: as N→∞ the zigzag paths are typically nowhere differentiable, and smooth paths form a set of measure zero in the sum.',
+      },
+      explain: 'Slicing defines the infinite-dimensional integral as a limit of ordinary multiple integrals; integrating away each intermediate point leaves the propagator with the same shape and one more time step, and that self-consistency is what fixes A.',
+    },
+    {
+      id: 'pi2-4',
+      type: 'numeric',
+      prompt: 'An electron Gaussian wave packet has initial width σ₀=1.0 nm. What is its spreading time τ=2mσ₀²/ħ in femtoseconds? (m=9.11×10⁻³¹ kg, ħ=1.055×10⁻³⁴ J·s)',
+      answer: 17.3,
+      tolerance: 1.5,
+      unit: 'fs',
+      explain: 'τ = 2×9.11×10⁻³¹×(10⁻⁹)²/1.055×10⁻³⁴ ≈ 1.73×10⁻¹⁴ s ≈ 17.3 fs. The σ(t) obtained by evolving the Gaussian packet with the propagator agrees exactly with the momentum-superposition method of section 2.10 — two languages keeping books on the same physics must balance.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We have now computed a concrete result from the path-integral side and verified that it satisfies the Schrödinger equation. But "verifying one example" is not "proving the two formulations equivalent". The next section does something more thorough: starting from a short time slice, it **derives** the Schrödinger equation itself — turning chapter 2's starting point into a theorem of the path integral.

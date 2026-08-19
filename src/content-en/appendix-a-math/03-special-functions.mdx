@@ -1,17 +1,222 @@
 ---
-title: 'Special functions in common use'
-summary: 'Hermite, Legendre, Laguerre and the spherical harmonics.'
+title: Special functions in daily use
 section: 'A.3'
 order: 3
-status: stub
+summary: 'Definitions, recurrences, low-order explicit forms and where each appears in the text, for the four families — Hermite, Legendre and spherical harmonics, Laguerre, spherical Bessel — organised to look-up-table standard.'
+status: done
+prereqs:
+  - Basic notions of power series and ordinary differential equations
+objectives:
+  - Know which physical problem each family of special functions solves and in which chapter it appears
+  - Generate higher orders from lower ones using the recurrence relations
+  - Write out the first few explicit expressions from the tables and check the normalisation
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+"Special functions" is an intimidating name for something mundane: they are just **the solutions of a few common differential equations, computed once and for all by our predecessors, numbered and tabulated**. After separating variables in the Schrödinger equation for the standard potentials, the leftover ordinary differential equations are the same handful over and over — and each corresponds to one family of special functions. This section is organised family by family: which equation it solves, how it is defined, its recurrence relations, what the first few look like, and which chapter of the main text uses it.
+
+First, a master index:
+
+| Family | Physical setting | Appears in |
+| --- | --- | --- |
+| Hermite $H_n$ | Harmonic-oscillator eigenstates | [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) |
+| Legendre $P_\ell$ and spherical harmonics $Y_\ell^m$ | Angular momentum; the angular part of any central potential | [5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/), [5.2](/en/ch/05-angular-momentum/02-spherical-harmonics/) |
+| Laguerre $L_n^k$ | Hydrogen radial wavefunctions | [6.3](/en/ch/06-hydrogen/03-hydrogen-solution/) |
+| Spherical Bessel $j_\ell,n_\ell$ | Free-particle radial solutions, 3D scattering | [6.1](/en/ch/06-hydrogen/01-central-force/), [6.2](/en/ch/06-hydrogen/02-radial-equation/) |
+
+## Hermite polynomials
+
+**The problem they solve**: the stationary equation of the harmonic oscillator. Substituting the dimensionless variable $\xi=\sqrt{m\omega/\hbar}\,x$ and peeling off the Gaussian decay factor $\psi=h(\xi)\,\ee^{-\xi^2/2}$, $h$ satisfies the **Hermite equation**
+
+$$
+h''-2\xi h'+2n h=0
+$$
+
+Only when $n$ is a non-negative integer is the solution a polynomial (otherwise the series never terminates and $\psi$ diverges) — this is exactly where the quantisation of the oscillator levels $E_n=(n+\tfrac12)\hbar\omega$ comes from.
+
+**Definition** (Rodrigues formula — one line generates the whole family):
+
+$$
+H_n(\xi)=(-1)^n\,\ee^{\xi^2}\frac{\dd^n}{\dd\xi^n}\ee^{-\xi^2}
+$$
+
+**Recurrence and derivative** (numerics and hand calculation both rely on these two lines — no need to memorise explicit forms):
+
+$$
+H_{n+1}=2\xi H_n-2nH_{n-1},\qquad H_n'=2nH_{n-1}
+$$
+
+**The first few**:
+
+| $n$ | $H_n(\xi)$ |
+| --- | --- |
+| 0 | $1$ |
+| 1 | $2\xi$ |
+| 2 | $4\xi^2-2$ |
+| 3 | $8\xi^3-12\xi$ |
+| 4 | $16\xi^4-48\xi^2+12$ |
+
+**Orthogonality** (with a Gaussian weight function):
+
+$$
+\int_{-\infty}^{\infty}H_m H_n\,\ee^{-\xi^2}\dd\xi=2^n n!\sqrt{\pi}\,\delta_{mn}
+$$
+
+From this follow the normalised oscillator eigenstates
+$\psi_n(x)=\left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{\sqrt{2^n n!}}H_n(\xi)\,\ee^{-\xi^2/2}$.
+$H_n$ is a polynomial of degree $n$ with parity $(-1)^n$ and $n$ real zeros — correspondingly $\psi_n$ has $n$ nodes.
+
+## Legendre polynomials and spherical harmonics
+
+**The problem they solve**: the **angular equation** obtained after separating variables in any central potential $V(r)$ — it does not involve $V$, so the angular solutions are universal. The $\theta$ equation (setting $u=\cos\theta$) is the **Legendre equation**
+
+$$
+\frac{\dd}{\dd u}\!\left[(1-u^2)\frac{\dd P}{\dd u}\right]+\ell(\ell+1)P=0
+$$
+
+Requiring the solution to stay finite at the poles $u=\pm1$ forces $\ell=0,1,2,\dots$ — the origin of angular-momentum quantisation.
+
+**Definition and recurrence**:
+
+$$
+P_\ell(u)=\frac{1}{2^\ell \ell!}\frac{\dd^\ell}{\dd u^\ell}(u^2-1)^\ell,
+\qquad
+(\ell+1)P_{\ell+1}=(2\ell+1)\,u\,P_\ell-\ell P_{\ell-1}
+$$
+
+**The first few**: $P_0=1$, $P_1=u$, $P_2=\tfrac12(3u^2-1)$, $P_3=\tfrac12(5u^3-3u)$.
+
+Adding the index $m$ gives the **associated Legendre functions** $P_\ell^m(u)=(1-u^2)^{|m|/2}\,\dd^{|m|}P_\ell/\dd u^{|m|}$; pairing these with the $\varphi$-direction factor $\ee^{\ii m\varphi}$ and a normalisation constant yields the **spherical harmonics** — the common eigenfunctions of the angular-momentum operators $\hat L^2,\hat L_z$:
+
+$$
+\hat L^2Y_\ell^m=\ell(\ell+1)\hbar^2\,Y_\ell^m,
+\qquad
+\hat L_zY_\ell^m=m\hbar\,Y_\ell^m,
+\qquad m=-\ell,\dots,\ell
+$$
+
+**The most frequently used ones** ([section 5.2](/en/ch/05-angular-momentum/02-spherical-harmonics/) has 3D pictures):
+
+| $Y_\ell^m$ | Expression |
+| --- | --- |
+| $Y_0^0$ | $\sqrt{1/4\pi}$ |
+| $Y_1^0$ | $\sqrt{3/4\pi}\,\cos\theta$ |
+| $Y_1^{\pm1}$ | $\mp\sqrt{3/8\pi}\,\sin\theta\,\ee^{\pm \ii\varphi}$ |
+| $Y_2^0$ | $\sqrt{5/16\pi}\,(3\cos^2\theta-1)$ |
+
+**Orthonormality** (integrated over the whole sphere):
+
+$$
+\int_0^{2\pi}\!\!\int_0^{\pi}Y_{\ell'}^{m'*}\,Y_\ell^m\,\sin\theta\,\dd\theta\,\dd\varphi=\delta_{\ell\ell'}\delta_{mm'}
+$$
+
+The $p_x,p_y,p_z$ orbitals of chemistry are just real linear combinations of $Y_1^{\pm1},Y_1^0$.
+
+## Laguerre polynomials
+
+**The problem they solve**: the hydrogen radial equation. After peeling off the long-range decay $\ee^{-r/na}$ and the short-range behaviour $r^\ell$, the remaining polynomial part satisfies the **associated Laguerre equation**. The series-termination condition delivers the principal quantum number $n$ — this is where the hydrogen levels $E_n=-13.6\,\text{eV}/n^2$ come from (full derivation in [section 6.3](/en/ch/06-hydrogen/03-hydrogen-solution/)).
+
+**Definition** (Rodrigues formula; $L_q^k$ is a polynomial of degree $q$):
+
+$$
+L_q(x)=\frac{\ee^{x}}{q!}\frac{\dd^q}{\dd x^q}\!\left(x^q\ee^{-x}\right),
+\qquad
+L_q^{k}(x)=(-1)^k\frac{\dd^k}{\dd x^k}L_{q+k}(x)
+$$
+
+**The first few**: $L_0=1$, $L_1=1-x$, $L_2=1-2x+\tfrac{x^2}{2}$;
+$L_0^1=1$, $L_1^1=2-x$.
+
+<Callout type="warning" title="Two normalisation conventions coexist">
+Laguerre polynomials come in a "mathematical convention" (the formula above, with the $1/q!$, used by Griffiths) and an "old physics convention" (an extra overall factor of $(q+k)!$, used by some older texts). The two differ only by constants, but the normalisation coefficients of the hydrogen wavefunctions change accordingly. When comparing two books, first check $L_1^1$: the mathematical convention gives $2-x$, the old convention gives $4-2x$ (off by a multiple). scipy's `genlaguerre` uses the mathematical convention.
 </Callout>
 
-## Planned contents
+How the hydrogen radial wavefunction is assembled ($a$ is the Bohr radius):
 
-- Definitions and recurrence relations
-- Orthogonality
-- Explicit low-order expressions
+$$
+R_{n\ell}(r)\;\propto\;\left(\frac{2r}{na}\right)^{\ell}
+L_{n-\ell-1}^{2\ell+1}\!\left(\frac{2r}{na}\right)\ee^{-r/na}
+$$
+
+The polynomial part has $n-\ell-1$ zeros — exactly the number of radial nodes.
+
+## Spherical Bessel functions
+
+**The problem they solve**: the radial equation in regions of zero (or constant) potential. After setting $u=rR$, the radial equation becomes
+$R''+\frac{2}{r}R'+\left[k^2-\frac{\ell(\ell+1)}{r^2}\right]R=0$,
+whose solutions are the **spherical Bessel functions** $j_\ell(kr)$ (regular at the origin) and the **spherical Neumann functions** $n_\ell(kr)$ (divergent at the origin).
+
+**Low-order explicit expressions** (all trigonometric functions over powers — hand-computable):
+
+| $\ell$ | $j_\ell(x)$ | $n_\ell(x)$ |
+| --- | --- | --- |
+| 0 | $\dfrac{\sin x}{x}$ | $-\dfrac{\cos x}{x}$ |
+| 1 | $\dfrac{\sin x}{x^2}-\dfrac{\cos x}{x}$ | $-\dfrac{\cos x}{x^2}-\dfrac{\sin x}{x}$ |
+
+**Recurrence** ($f_\ell$ stands for either $j_\ell$ or $n_\ell$ — same recurrence for both):
+
+$$
+f_{\ell+1}(x)=\frac{2\ell+1}{x}f_\ell(x)-f_{\ell-1}(x)
+$$
+
+**Behaviour at the two ends** (deciding which solution to keep hinges entirely on these two lines):
+
+$$
+j_\ell(x)\xrightarrow{x\to0}\frac{x^\ell}{(2\ell+1)!!},\qquad
+j_\ell(x)\xrightarrow{x\to\infty}\frac{\sin(x-\ell\pi/2)}{x}
+$$
+
+$n_\ell$ diverges at the origin like $x^{-\ell-1}$, so **a region containing the origin can only use $j_\ell$**; the sinusoidal oscillation at large distance (phase shifted by $\ell\pi/2$) is the reference zero for the "phase shift" concept in the partial-wave treatment of 3D scattering.
+
+<KeyFormulas
+  items={[
+    { name: 'Hermite recurrence', latex: 'H_{n+1}=2\\xi H_n-2nH_{n-1},\\qquad H_0=1,\\ H_1=2\\xi', note: 'Harmonic oscillator; ψₙ has n nodes and parity (−1)ⁿ' },
+    { name: 'Legendre recurrence', latex: '(\\ell+1)P_{\\ell+1}=(2\\ell+1)uP_\\ell-\\ell P_{\\ell-1}', note: 'Angular equation of central potentials; finiteness at the poles ⇒ integer ℓ' },
+    { name: 'Spherical-harmonic eigenequations', latex: '\\hat L^2Y_\\ell^m=\\ell(\\ell+1)\\hbar^2Y_\\ell^m,\\quad \\hat L_zY_\\ell^m=m\\hbar Y_\\ell^m', note: 'The angular solution shared by every central potential' },
+    { name: 'Hydrogen radial solution', latex: 'R_{n\\ell}\\propto(2r/na)^{\\ell}\\,L_{n-\\ell-1}^{2\\ell+1}(2r/na)\\,\\ee^{-r/na}', note: 'Number of radial nodes = n − ℓ − 1' },
+    { name: 'Spherical Bessel asymptotics', latex: 'j_\\ell\\xrightarrow{x\\to0}\\frac{x^\\ell}{(2\\ell+1)!!},\\qquad j_\\ell\\xrightarrow{x\\to\\infty}\\frac{\\sin(x-\\ell\\pi/2)}{x}', note: 'Regions containing the origin discard nℓ; the far-field phase is the zero point for partial-wave phase shifts' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apa3-1',
+      prompt: 'How many nodes does the third excited state ψ₃ of the harmonic oscillator have, and what is its parity?',
+      options: ['3 nodes, odd parity', '3 nodes, even parity', '2 nodes, odd parity', '4 nodes, even parity'],
+      answer: 0,
+      distractors: {
+        1: 'H₃ = 8ξ³ − 12ξ contains only odd powers — it is an odd function.',
+        2: 'The degree-n Hermite polynomial has n real zeros, so ψₙ has n nodes.',
+      },
+      explain: 'ψₙ has n nodes (note the off-by-one with the infinite well, where the count is n−1 because n starts at 1 there). Parity is (−1)ⁿ, odd for n = 3.',
+    },
+    {
+      id: 'apa3-2',
+      prompt: 'Why must the radial solution in a region containing r = 0 use jℓ alone, with no admixture of nℓ?',
+      options: [
+        'nℓ diverges at the origin, making the wavefunction non-normalisable or failing the equation',
+        'nℓ is not a solution of the radial equation',
+        'jℓ has lower energy',
+        'It is a mere convention — either choice would do',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'nℓ is the other linearly independent solution of the same equation; its only sin is bad behaviour at the origin.',
+        3: 'In regions that exclude the origin (a spherical shell, the exterior region in scattering) one does keep a combination of both — this is a boundary condition, not a convention.',
+      },
+      explain: 'nℓ ~ x^{−ℓ−1} diverges at the origin. The physical boundary condition (finite wavefunction) selects jℓ; the exterior region of a scattering problem excludes the origin, which is what permits a combination of jℓ and nℓ — and the mixing ratio is precisely the phase-shift information.',
+    },
+    {
+      id: 'apa3-3',
+      prompt: 'How many radial nodes does the hydrogen 3p state (n = 3, ℓ = 1) have?',
+      options: ['1', '2', '3', '0'],
+      answer: 0,
+      distractors: {
+        1: '2 = n − ℓ − 1 would require ℓ = 0 — that is the 3s state.',
+        3: 'Zero radial nodes belong to the "circular orbit" states with ℓ = n − 1, such as 2p and 3d.',
+      },
+      explain: 'Radial nodes = n − ℓ − 1 = 3 − 1 − 1 = 1, from the zeros of the Laguerre polynomial L_{n−ℓ−1}^{2ℓ+1}. Adding the ℓ angular nodal surfaces gives n − 1 nodal surfaces in total.',
+    },
+  ]}
+/>

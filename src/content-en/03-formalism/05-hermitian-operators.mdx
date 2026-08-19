@@ -1,17 +1,279 @@
 ---
-title: 'Hermitian operators and observables'
-summary: 'Why observables have to be Hermitian.'
+title: Hermitian operators and observables
 section: '3.5'
 order: 5
-status: stub
+summary: 'In chapter 2, "observables correspond to operators" was a bare decree. This section turns it into a conclusion: only a Hermitian operator can be an observable.'
+status: done
+prereqs:
+  - 03-formalism/04-linear-operators
+objectives:
+  - Write down the definition of the Hermitian conjugate, and decide whether a given operator is Hermitian
+  - Prove that Hermitian operators have real eigenvalues and that eigenvectors of distinct eigenvalues are orthogonal
+  - Use the spectral theorem to explain why a Hermitian operator''s eigenvectors form a complete basis
+  - Articulate the physical reasons why an observable must be Hermitian
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section noted that linear operators come in infinitely many kinds. This section asks: **which kind earns the title of "observable"?**
+
+## Working backwards from the physics
+
+Set the mathematics aside for a moment and list the three things physics cannot do without:
+
+<DualView>
+<div slot="left">
+
+**Requirement one: measurement results are real numbers.**
+
+Measure a length, an energy, a spin — the readout is always real. So the eigenvalues of $\hat A$ must be real.
+
+**Requirement two: distinct results can be told apart.**
+
+If the result is $a_1$, the state should land among "the states belonging to $a_1$", with no overlap with "the states belonging to $a_2$". Mathematically: eigenvectors of distinct eigenvalues are orthogonal.
+
+**Requirement three: every state can be resolved by this measurement.**
+
+For $\sum_n|c_n|^2=1$ to hold, the eigenvectors must form a complete basis, so that any state can be expanded.
+
+</div>
+<div slot="right">
+
+**The answer: Hermitian operators**
+
+Taken together, the three requirements single out exactly one class of operator. Define the **Hermitian conjugate** $\hat A^\dagger$ of $\hat A$ as the operator satisfying
+
+$$
+\bra{\phi}\hat A^\dagger\ket{\psi}=\bra{\psi}\hat A\ket{\phi}^*
+$$
+
+If
+
+$$
+\hat A^\dagger=\hat A
+$$
+
+then $\hat A$ is **Hermitian** (self-adjoint).
+
+In matrix language: $A^\dagger=(A^{\mathsf T})^*$, and Hermitian means $A_{mn}=A_{nm}^*$ — **transpose-and-conjugate equals itself**. The diagonal elements must therefore be real.
+
+</div>
+</DualView>
+
+## Cashing in the three requirements, one by one
+
+<Derivation title="Proof one: Hermitian operators have real eigenvalues" level="基础" minutes={3} open={true}>
+
+Let $\hat A\ket{a}=a\ket{a}$ with $\braket{a}{a}=1$. Multiply on the left by $\bra{a}$:
+
+$$
+\bra{a}\hat A\ket{a}=a
+$$
+
+Take the complex conjugate and use Hermiticity, $\hat A^\dagger=\hat A$:
+
+$$
+a^*=\bra{a}\hat A\ket{a}^*=\bra{a}\hat A^\dagger\ket{a}=\bra{a}\hat A\ket{a}=a
+$$
+
+So $a=a^*$: the eigenvalue is real. $\blacksquare$
+
+**Compare**: proving the same thing took [section 2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/) half a page — conjugate, subtract, massage into a total derivative, integrate by parts, kill the boundary term via normalisation.
+
+That half page was not wasted: it was **verifying, in the concrete**, the Hermiticity of $\hat H$ (integration by parts shifts the derivative from one side to the other with vanishing boundary term — exactly the content of $\bra{\phi}\hat H\ket{\psi}=\bra{\hat H\phi}\ket{\psi}$).
+
+**Switching languages is not a magic trick: it abstracts that half page once and for all, so it never has to be repeated.**
+
+</Derivation>
+
+<Derivation title="Proof two: eigenvectors of distinct eigenvalues are orthogonal" level="基础" minutes={4}>
+
+Let $\hat A\ket{a_1}=a_1\ket{a_1}$ and $\hat A\ket{a_2}=a_2\ket{a_2}$ with $a_1\ne a_2$.
+
+Evaluate $\bra{a_1}\hat A\ket{a_2}$ two ways:
+
+**Acting to the right**: $\bra{a_1}\hat A\ket{a_2}=a_2\braket{a_1}{a_2}$
+
+**Acting to the left**: by Hermiticity, $\hat A$ acting on the bra gives $a_1^*=a_1$ (already proved real), so $=a_1\braket{a_1}{a_2}$
+
+Subtract:
+
+$$
+(a_1-a_2)\braket{a_1}{a_2}=0
+$$
+
+Since $a_1\ne a_2$, we get $\braket{a_1}{a_2}=0$. $\blacksquare$
+
+**The degenerate case**: if $a_1=a_2$ the equation holds trivially and orthogonality does not follow. But inside the eigenspace you can manufacture an orthogonal basis by Gram-Schmidt. So **an orthonormal set of eigenvectors can always be chosen**.
+
+</Derivation>
+
+<Callout type="insight" title="The spectral theorem: requirement three">
+The third requirement (completeness) runs deeper than the first two — it is the content of the **spectral theorem**:
+
+> In a finite-dimensional space, every Hermitian operator can be diagonalised, and its eigenvectors form an orthonormal complete basis.
+
+The infinite-dimensional version needs more conditions (boundedness, self-adjointness), but it holds for the observables that actually occur in physics.
+
+In Dirac notation, the spectral theorem states the **spectral decomposition**:
+
+$$
+\hat A=\sum_n a_n\ket{a_n}\bra{a_n}
+$$
+
+together with
+
+$$
+\sum_n\ket{a_n}\bra{a_n}=\hat 1
+$$
+
+**The second equation is the completeness relation of [section 3.2](/en/ch/03-formalism/02-dirac-notation/).** Back then we took it as given; now we know where it comes from: the eigenvectors of any observable automatically form a basis.
+
+Chapter 2's claim that "$\{\psi_n\}$ is complete, so any state can be expanded" — here, at last, is the reason.
 </Callout>
 
-## Planned contents
+## Some examples
 
-- Definition of Hermiticity
-- Real eigenvalues, orthogonal eigenvectors
-- The spectral theorem
+<DualView>
+<div slot="left">
+
+**Hermitian**
+
+- $\hat x$ (position): in the position basis, multiplication by the real number $x$
+- $\hat p=-\ii\hbar\partial_x$: the $\ii$ and the derivative each contribute one minus sign, which cancel
+- $\hat H=\hat p^2/2m+V(\hat x)$ (with $V$ real)
+- the projection operator $\ket{\psi}\bra{\psi}$
+- the Pauli matrices $\sigma_x,\sigma_y,\sigma_z$
+
+**Not Hermitian**
+
+- $\hat a_\pm$ (ladder operators): $\hat a_+^\dagger=\hat a_-$ — conjugates of each other, not of themselves
+- $\hat x\hat p$: see the right-hand column
+- $\partial_x$ by itself (missing that $\ii$)
+
+</div>
+<div slot="right">
+
+**Why $\hat p$ must carry the $\ii$**
+
+$$
+\bra{\phi}\partial_x\ket{\psi}=\int\phi^*\psi'\,\dd x
+=-\int\phi'^*\psi\,\dd x=-\bra{\partial_x\phi}\ket{\psi}
+$$
+
+(integration by parts; the boundary term vanishes by normalisation). So $\partial_x^\dagger=-\partial_x$ — **anti-Hermitian**.
+
+Multiply by $-\ii\hbar$ and conjugation sends $\ii\to-\ii$, contributing a second minus sign; the two cancel:
+
+$$
+\hat p^\dagger=(-\ii\hbar\partial_x)^\dagger=(+\ii\hbar)(-\partial_x)=-\ii\hbar\partial_x=\hat p
+$$
+
+[Section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) said "that $\ii$ makes $\hat p$ Hermitian" — this is the full verification.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The product of two Hermitian operators is generally not Hermitian">
+Let $\hat A^\dagger=\hat A$ and $\hat B^\dagger=\hat B$. Conjugation reverses order:
+
+$$
+(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger=\hat B\hat A
+$$
+
+which equals $\hat A\hat B$ only when $\hat A\hat B=\hat B\hat A$ (they commute).
+
+**So $\hat x\hat p$ is not an observable**, because $\hat x$ and $\hat p$ do not commute. To build the corresponding observable you take the symmetrised combination
+
+$$
+\frac{\hat x\hat p+\hat p\hat x}{2}
+$$
+
+This step is compulsory whenever the classical quantity contains $xp$, and it is called the **ordering problem** — classically $xp=px$, yet quantisation forces you to pick an order by hand. That ambiguity is intrinsic to the very process of "quantisation", not a technical inconvenience.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Hermitian conjugate', latex: '\\bra{\\phi}\\hat A^\\dagger\\ket{\\psi}=\\bra{\\psi}\\hat A\\ket{\\phi}^*', note: 'Matrix language: transpose, then complex-conjugate' },
+    { name: 'Hermitian operator', latex: '\\hat A^\\dagger=\\hat A\\ \\Longleftrightarrow\\ A_{mn}=A_{nm}^*', note: 'Diagonal elements must be real' },
+    { name: 'Real eigenvalues', latex: 'a=\\bra{a}\\hat A\\ket{a}=a^*', note: 'Three lines; chapter 2 needed half a page of integrals' },
+    { name: 'Orthogonal eigenvectors', latex: '(a_1-a_2)\\braket{a_1}{a_2}=0', note: 'Distinct eigenvalues ⟹ orthogonal; degenerate ones can be orthogonalised' },
+    { name: 'Spectral decomposition', latex: '\\hat A=\\sum_n a_n\\ket{a_n}\\bra{a_n},\\quad\\sum_n\\ket{a_n}\\bra{a_n}=\\hat 1', note: 'The origin of the completeness relation' },
+    { name: 'Order reversal under conjugation', latex: '(\\hat A\\hat B)^\\dagger=\\hat B^\\dagger\\hat A^\\dagger', note: 'A product of two Hermitian operators is generally not Hermitian' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'herm-1',
+      prompt: 'Why must observables be represented by Hermitian operators? (Select all that apply.)',
+      options: [
+        'Hermitian operators have real eigenvalues, matching the fact that measurement readouts are real',
+        'Eigenvectors of distinct eigenvalues are orthogonal, ensuring distinct results can be told apart',
+        'Their eigenvectors form a complete basis, ensuring any state can be expanded with probabilities summing to 1',
+        'Hermitian operators are always invertible',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'A Hermitian operator can have a zero eigenvalue and then fails to be invertible. Projection operators are an example.',
+      },
+      explain: 'These three are exactly the requirements we worked backwards from. "Observables correspond to operators" was a bare decree in chapter 2; here it becomes a conclusion: the operators satisfying all three are precisely the Hermitian ones.',
+    },
+    {
+      id: 'herm-2',
+      prompt: 'Why is the momentum operator −iħ∂/∂x rather than ħ∂/∂x?',
+      options: [
+        'Because ∂/∂x is anti-Hermitian (integration by parts gives a minus sign), and only the factor of i makes it Hermitian',
+        'Because it must be consistent with the de Broglie relation',
+        'Because of convention',
+        'Because the wavefunction has to be complex',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Consistency with p = ħk is a consequence, not the reason for Hermiticity.',
+        2: 'It is not a convention — drop the i and the eigenvalues come out purely imaginary.',
+        3: 'The wavefunction is complex because of the Schrödinger equation.',
+      },
+      explain: 'Integration by parts gives ∂ₓ† = −∂ₓ. Conjugation sends i → −i, contributing a second minus sign; the two cancel, so (−iħ∂ₓ)† = −iħ∂ₓ. Drop that i and the eigenvalues become purely imaginary — no use as measured values of momentum.',
+    },
+    {
+      id: 'herm-3',
+      prompt: 'If Â and B̂ are both Hermitian, then ÂB̂ is:',
+      options: [
+        'Generally not Hermitian, unless Â and B̂ commute',
+        'Always Hermitian',
+        'Always anti-Hermitian',
+        'Never Hermitian',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Conjugation reverses order: (ÂB̂)† = B̂Â.',
+        2: 'When they commute it is Hermitian.',
+        3: 'Same as above.',
+      },
+      explain: '(ÂB̂)† = B̂†Â† = B̂Â, which equals ÂB̂ only when they commute. That is why x̂p̂ is not an observable and the symmetrised (x̂p̂ + p̂x̂)/2 must be used instead — classically xp = px, yet quantisation forces a choice of order by hand.',
+    },
+    {
+      id: 'herm-4',
+      prompt: 'The direct physical consequence of the spectral theorem is:',
+      options: [
+        'The eigenvectors of any observable form a complete basis, so any state can be expanded by measurement outcome',
+        'All operators can be diagonalised',
+        'Eigenvalues are necessarily discrete',
+        'Measurement necessarily changes the state',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Only Hermitian (more generally, normal) operators are guaranteed diagonalisable.',
+        2: 'Continuous spectra exist too — position and momentum, for instance.',
+        3: 'That measurement changes the state is the projection postulate, not the spectral theorem.',
+      },
+      explain: 'This is where Σ|aₙ⟩⟨aₙ| = 1 comes from. Chapter 2 simply used the fact that {ψₙ} is complete; the reason arrives only here: it is not a coincidence of each particular problem but a universal consequence of Hermiticity.',
+    },
+  ]}
+/>
+
+## What comes next
+
+There can be many Hermitian operators: $\hat x$, $\hat p$, $\hat H$, $\hat L_z$...
+
+A natural question: **can two observables be measured sharply at the same time?** The answer hinges on whether their product cares about the order. The next section upgrades the uncertainty principle from "a corollary of Fourier analysis" to a theorem that holds for any pair of observables.

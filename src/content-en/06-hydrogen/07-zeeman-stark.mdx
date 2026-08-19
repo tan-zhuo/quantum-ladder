@@ -1,17 +1,253 @@
 ---
-title: 'The Zeeman and Stark effects'
-summary: 'How external fields split the levels.'
+title: The Zeeman and Stark effects
 section: '6.7'
 order: 7
-status: stub
+summary: 'Splitting levels from the outside: a magnetic field picks out a direction in space and cracks the m degeneracy open (Zeeman); an electric field mixes degenerate states of opposite parity and promotes the shift from quadratic to linear (Stark). The perturbative idea of "the bigger term calls the tune" gets its first live combat here — straight into Chapter 7.'
+status: done
+prereqs:
+  - 06-hydrogen/06-fine-structure
+  - 05-angular-momentum/05-spin-precession
+objectives:
+  - Write down the magnetic coupling term and explain that the root of the "anomalous" Zeeman pattern is the spin g-factor being 2
+  - Judge the weak- and strong-field limits by comparing energy scales, and name the good quantum numbers in each limit
+  - Explain why the hydrogen ground state shows only a quadratic Stark shift while n = 2 shows a linear one
+  - Use the language of "degenerate states mixed by a perturbation" to anticipate the central difficulty perturbation theory must handle
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Fine structure is the atom's built-in splitting, beyond our control. In this section we take matters into our own hands: put the atom in a magnetic or electric field, turn the knob, and watch the levels crack on command.
+
+This is both the finale of the chapter and a dress rehearsal: for the first time we will systematically face the situation "Hamiltonian = a solvable part + a small tail" — and the regular army that handles it, perturbation theory, is the entire content of the next chapter.
+
+## The phenomenon: a spectrometer next to a magnet
+
+In 1896, Pieter Zeeman in Leiden placed a sodium flame between the poles of an electromagnet and saw the D lines visibly broaden; with a stronger field and a better grating, the lines outright **split into several**. Within days his teacher Lorentz produced the classical explanation: the magnetic field adds to or subtracts from the circular-motion frequency of the radiating charge about the field direction, so every line should split into **three**, with spacing proportional to $B$ — a prediction (the "normal Zeeman effect") that earned teacher and student the 1902 Nobel Prize.
+
+Trouble arrived promptly. More and more lines refused to split in threes: one sodium D line split into four, the other into six; mercury had lines splitting into nine. The patterns, defying all system, were resignedly named the **anomalous Zeeman effect** — "anomalous" meaning "we don't understand it". Pauli's torment by it in the 1920s is legendary: asked by a colleague why he looked so glum, he replied, "How can anyone be happy who is thinking about the anomalous Zeeman effect?"
+
+Yet the answer is already clenched in our fist, back in Chapter 5: **the electron's spin magnetic moment carries a factor $g\approx2$**.
+
+## How a magnetic field enters the Hamiltonian
+
+The atom's magnetic moment has two sources — the circulation of orbital motion, and spin ([section 5.4](/en/ch/05-angular-momentum/04-stern-gerlach/)):
+
+$$
+\hat{\vec\mu}=-\frac{\mu_B}{\hbar}\left(\hat{\vec L}+2\hat{\vec S}\right),
+\qquad
+\mu_B\equiv\frac{e\hbar}{2m_e}=5.788\times10^{-5}\ \text{eV/T}
+$$
+
+$\mu_B$ is the **Bohr magneton**, the natural unit of atomic magnetic moments; the coefficient 2 is the spin $g$-factor. With the field along $z$, the added energy is:
+
+$$
+\hat H_Z=-\hat{\vec\mu}\cdot\vec B=\frac{\mu_B B}{\hbar}\left(\hat L_z+2\hat S_z\right)
+$$
+
+That 2 is the whole source of the "anomaly": without it (pure orbital moment), the energy shift would be a clean $\mu_B B\,m_l$, every level would split by the same amount, and every line would split in three — the normal Zeeman effect. The moment spin joins in, orbit and spin convert to magnetic moment at different "exchange rates", and the pattern scrambles.
+
+## The bigger term calls the tune: weak field versus strong field
+
+Two "small terms" now share the stage: fine structure ($\sim10^{-4}$ eV) and the magnetic term ($\mu_B B$, $5.8\times10^{-5}$ eV per tesla). **Handle the bigger one first, then treat the smaller as a disturbance** — the governing principle of this whole section. The dividing line sits at
+
+$$
+\mu_B B\sim\Delta E_\text{fs}
+\quad\Longrightarrow\quad
+B\sim\text{a few tesla}
+$$
+
+which lands squarely in the middle of laboratory field strengths, so both limits are experimentally accessible.
+
+<DualView>
+<div slot="left">
+
+**Weak field ($B$ well below a few tesla): Zeeman obeys fine structure.**
+
+Spin–orbit coupling first locks $\vec L$ and $\vec S$ into the total angular momentum $\vec J$, about which both precess rapidly; the slow magnetic field feels only the **average component of the moment along $\vec J$**. The good quantum numbers are $(n,l,j,m_j)$, and the shift is:
+
+$$
+\Delta E=g_J\,\mu_B B\,m_j
+$$
+
+$g_J$ is the **Landé g-factor** — the "averaged exchange rate", depending on $l$ and $j$:
+
+$$
+g_J=1+\frac{j(j+1)+s(s+1)-l(l+1)}{2j(j+1)}
+$$
+
+For instance $g_J=2$ for $2\mathrm s_{1/2}$, $2/3$ for $2\mathrm p_{1/2}$, $4/3$ for $2\mathrm p_{3/2}$ — **every level splits by a different amount**, and the line patterns their transitions combine into are naturally many-splendoured. The "anomaly" is hereby fully decoded: it was only ever an alias for "the $g$-factor differs from level to level".
+
+</div>
+<div slot="right">
+
+**Strong field ($B$ well above a few tesla): fine structure obeys Zeeman.**
+
+The magnetic term overpowers spin–orbit coupling; the lock between $\vec L$ and $\vec S$ is torn apart, and each precesses independently about $\vec B$ (the Paschen–Back effect). The good quantum numbers switch to $(n,l,m_l,m_s)$:
+
+$$
+\Delta E=\mu_B B\,(m_l+2m_s)
+$$
+
+The pattern actually simplifies — the lines return to an approximate triplet (selection rules $\Delta m_l=0,\pm1$, with $\Delta m_s=0$).
+
+**One system, and as the field knob turns from small to large, the good quantum numbers change shift**: $(j,m_j)\to(m_l,m_s)$. In the middle ground neither set works, and the only recourse is to diagonalise the Hamiltonian within the degenerate subspace by brute force — a sentence whose full meaning unfolds in [section 7.2](/en/ch/07-approximation/02-degenerate-perturbation/).
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The Zeeman effect is the astronomer's magnetometer">
+The splitting is proportional to $B$ — so read it backwards: **measure the splitting and you have measured the field**. In 1908 George Hale aimed the Mount Wilson telescope at a sunspot and found Zeeman splittings in its spectrum corresponding to about 0.3 T — **the first magnetic field ever measured beyond the Earth** — proving that sunspots are cool regions where magnetism suppresses convection. To this day, stellar surface fields and the micro-gauss whispers of interstellar molecular clouds are measured by Zeeman splitting (or its polarisation signatures). For scale: at 0.3 T, $\mu_B B\approx1.7\times10^{-5}$ eV — about 0.007 nm on a 500 nm line. The gratings of the late nineteenth century were already up to it.
 </Callout>
 
-## Planned contents
+## The Stark effect: the electric field's turn
 
-- Normal and anomalous Zeeman effects
-- Weak-field and strong-field limits
-- The Stark effect: linear and quadratic response
+In 1913, Johannes Stark observed electric-field-induced splitting of hydrogen's Balmer lines. The electric coupling term is the dipole energy:
+
+$$
+\hat H_S=e\mathcal E\,\hat z
+$$
+
+(with $\mathcal E$ the field strength, along $z$). One profound difference from the magnetic case: $\hat z$ is an **odd-parity** operator — and that will push "degeneracy" to centre stage.
+
+<Derivation title="The ground state: why the response is quadratic" level="基础" minutes={6} open={true}>
+
+**First-order shift = the average of the perturbation in the original state** (perturbation theory's first lesson — accept it as a reasonable guess for now; Chapter 7 proves it):
+
+$$
+\Delta E^{(1)}=\braket{\psi_{100}}{\hat H_S\,\psi_{100}}=e\mathcal E\braket{\psi_{100}}{\hat z\,\psi_{100}}
+$$
+
+The ground state is spherically symmetric with even parity: $\lvert\psi_{100}\rvert^2$ is an even function, and multiplied by the odd function $z$ the integral is **identically zero**:
+
+$$
+\Delta E^{(1)}=0
+$$
+
+In physical terms: a ground-state hydrogen atom **has no permanent electric dipole moment** — the field finds no ready-made handle to grab.
+
+**The second-order effect: polarise first, then pull.** The field tugs the electron cloud slightly off-centre, **inducing** a dipole moment $p=\alpha_\text{pol}\mathcal E$, which then couples back to the field:
+
+$$
+\Delta E^{(2)}=-\frac12\alpha_\text{pol}\mathcal E^2,
+\qquad
+\alpha_\text{pol}=4.5\,(4\pi\varepsilon_0)\,a_0^3
+$$
+
+(The coefficient 4.5 is a classic Chapter 7 exercise; take the result on account for now.) Magnitude: even at a laboratory-strong $\mathcal E=10^6$ V/m, the shift is a mere $2\times10^{-10}$ eV — four orders of magnitude below even hyperfine structure. **A non-degenerate state's response to an electric field is pitifully weak.**
+
+</Derivation>
+
+<Derivation title="n = 2: degeneracy promotes quadratic to linear" level="进阶" minutes={7}>
+
+In the $n=2$ shell, $2\mathrm s$ and $2\mathrm p$ are degenerate (in the Coulomb approximation) — and they have **opposite parity**. That changes everything.
+
+**Mixing costs nothing.** Putting the electron in the superposition $c_1\psi_{200}+c_2\psi_{210}$ costs no energy (the two are degenerate), and such a superposition has indefinite parity — **it can possess a permanent dipole moment**. All the field has to do is pick out, from the degenerate pool, the combination whose dipole points its way.
+
+**Compute the matrix elements.** Within the degenerate subspace, the only non-zero matrix element of $\hat H_S$ is (by direct integration):
+
+$$
+\braket{\psi_{200}}{\hat z\,\psi_{210}}=-3a_0
+$$
+
+($\psi_{21\pm1}$ sit out because $\Delta m\ne0$: $\hat z$ does not change $m$.) In the $(\psi_{200},\psi_{210})$ basis the perturbation matrix is anti-diagonal; diagonalising gives the eigenstates and eigenvalues:
+
+$$
+\psi_\pm=\frac{\psi_{200}\mp\psi_{210}}{\sqrt2},
+\qquad
+\Delta E=\pm\,3ea_0\mathcal E
+$$
+
+**A linear response!** The shift is first order in $\mathcal E$ — the atom behaves as a "polar atom" with permanent dipole moment $p=3ea_0$. At the same $\mathcal E=10^6$ V/m:
+
+$$
+\Delta E=3ea_0\mathcal E=3\times(5.29\times10^{-11}\ \text{m})\times(10^6\ \text{V/m})\times e=1.6\times10^{-4}\ \text{eV}
+$$
+
+**Six orders of magnitude** above the ground state's quadratic shift — the power of degeneracy. The fate of the four $n=2$ states: $\psi_\pm$ move up and down, $\psi_{21\pm1}$ stay put — one level splits into three equally spaced tiers.
+
+**The lesson** (carry it into Chapter 7): when a perturbation meets degenerate states, you may not take just any old eigenstate and average — you must first diagonalise the perturbation within the degenerate subspace to find the "correct zeroth-order states". That is precisely the subject of [section 7.2](/en/ch/07-approximation/02-degenerate-perturbation/).
+
+</Derivation>
+
+<Callout type="warning" title="Too strong a field tears the atom apart">
+The Stark shift cannot be extrapolated forever. The electric field tilts the whole Coulomb potential: $V=-e^2/4\pi\varepsilon_0r+e\mathcal E z$ forms a barrier of finite height on the downhill side, and the electron can **tunnel out** — field ionisation. The ground state needs $\sim10^{10}$ V/m before this matters, but the ionising field strength plummets as $1/n^4$: a Rydberg atom at $n=30$ falls apart at a few hundred V/cm. Experimentally this is a gift rather than a nuisance: selective field ionisation is the standard technique for detecting Rydberg atoms one by one. And in the other direction: a laser's oscillating electric field produces the "AC Stark shift", and the level control behind optical tweezers for cold atoms and optical-lattice clocks runs entirely on this section's physics.
+</Callout>
+
+## Closing the chapter
+
+Take inventory of what these seven hydrogen sections leave us: one exact solution (levels + wavefunctions), one complete ledger of symmetries and degeneracies, and one energy ladder — Bohr levels at $10$ eV, fine structure at $10^{-4}$ eV, Lamb and hyperfine at $10^{-6}$ eV, and field-induced splittings tunable by a knob. At every step down the ladder we were doing the same thing: **treating each new effect as a small perturbation of a problem already solved**.
+
+<KeyFormulas
+  items={[
+    { name: 'Zeeman coupling', latex: '\\hat H_Z=\\frac{\\mu_B B}{\\hbar}(\\hat L_z+2\\hat S_z),\\qquad \\mu_B=5.79\\times10^{-5}\\ \\text{eV/T}', note: 'The spin g = 2 is the whole source of the "anomalous" pattern' },
+    { name: 'Weak-field Zeeman', latex: '\\Delta E=g_J\\,\\mu_B B\\,m_j,\\qquad g_J=1+\\frac{j(j+1)+s(s+1)-l(l+1)}{2j(j+1)}', note: 'Weak/strong boundary: μ_B B ∼ fine structure, i.e. B ∼ a few tesla' },
+    { name: 'Strong field (Paschen–Back)', latex: '\\Delta E=\\mu_B B\\,(m_l+2m_s)', note: 'L and S decouple; good quantum numbers change shift to (m_l, m_s)' },
+    { name: 'Ground-state Stark', latex: '\\Delta E=-\\frac12\\alpha_{\\text{pol}}\\mathcal E^2,\\qquad \\alpha_{\\text{pol}}=4.5\\,(4\\pi\\varepsilon_0)a_0^3', note: 'Parity forbids first order; non-degenerate states get only a feeble quadratic response' },
+    { name: 'n=2 linear Stark', latex: '\\Delta E=\\pm3ea_0\\mathcal E,\\qquad \\psi_\\pm=\\frac{\\psi_{200}\\mp\\psi_{210}}{\\sqrt2}', note: 'Degeneracy + opposite parity ⇒ mixing yields a permanent dipole 3ea₀' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'zs-1',
+      prompt: 'The fundamental reason the "anomalous" Zeeman patterns are so complicated is:',
+      options: [
+        'The spin g-factor is 2, so the Landé factor g_J differs between (l, j) levels and the splittings are unequal',
+        'The magnetic field is inhomogeneous',
+        'The nucleus is positively charged',
+        'Repulsion between electrons',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A uniform field is anomalous just the same; Lorentz\'s classical theory predicted triplets for a uniform field, and its error was having no spin.',
+        3: 'Hydrogen has a single electron and is anomalous all the same.',
+      },
+      explain: 'If the moment came from orbit alone (a single exchange rate of 1), every level would split by the same μ_B B and every line into three. Once spin joins at double the rate, g_J varies with (l,j) (2 for 2s₁/₂, 2/3 for 2p₁/₂, 4/3 for 2p₃/₂) and the transition patterns bloom in all varieties. "Anomalous" is just the historical nickname for "different g-factors".',
+    },
+    {
+      id: 'zs-2',
+      prompt: 'To decide between the weak- and strong-field Zeeman regimes, which two energy scales are compared?',
+      options: [
+        'μ_B B versus the fine-structure splitting (about 10⁻⁴ eV), with the boundary at a few tesla',
+        'μ_B B versus 13.6 eV',
+        'μ_B B versus the hyperfine splitting',
+        'The photon energy versus the ionisation energy',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Matching the magnetic term against the Bohr levels would take hundreds of thousands of tesla, far beyond any laboratory; the actual competitor is fine structure.',
+      },
+      explain: '"The bigger term calls the tune": when the magnetic term is weaker than spin–orbit coupling, L and S stay locked into J and you use (j, m_j); when stronger, they decouple and you use (m_l, m_s). In between, neither set of quantum numbers works and you must diagonalise within the degenerate subspace — the core technique of perturbation theory.',
+    },
+    {
+      id: 'zs-3',
+      prompt: 'Which statements about the Stark effect are correct? (Select all that apply.)',
+      options: [
+        'The hydrogen ground state has no first-order shift, because a state of definite parity has no permanent electric dipole moment',
+        'n = 2 shows a linear shift because the degenerate 2s and 2p₀ have opposite parity and can be mixed by the field at no cost',
+        'The mixed states (ψ₂₀₀ ∓ ψ₂₁₀)/√2 carry a permanent dipole moment 3ea₀',
+        'Every atomic state responds linearly to an electric field',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Non-degenerate states have only the quadratic (polarisation) response, orders of magnitude below a linear one.',
+      },
+      explain: '⟨z⟩ vanishes identically in any state of definite parity, killing the first-order shift; within a degenerate subspace, opposite-parity states mix freely, and diagonalising the perturbation yields the linear splitting ±3ea₀ℰ. "First find the right zeroth-order states within the degenerate pool" is the trailer for Chapter 7\'s degenerate perturbation theory.',
+    },
+    {
+      id: 'zs-4',
+      type: 'numeric',
+      prompt: 'In a weak field of B = 1 T, what is the normal Zeeman splitting μ_B B? Answer in units of 10⁻⁵ eV.',
+      answer: 5.79,
+      tolerance: 0.2,
+      unit: '×10⁻⁵ eV',
+      explain: 'μ_B = 5.79×10⁻⁵ eV/T, so at 1 T the splitting is 5.79×10⁻⁵ eV, corresponding to 14 GHz. Note that this is nearly the same size as the fine structure (4.5×10⁻⁵ eV) — so for hydrogen, 1 T already sits in the transition zone between weak and strong fields, and both simplified formulas are only approximations there.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Looking back over the second half of this chapter, we have frankly been driving without a licence: "the first-order shift equals the average of the perturbation", "when degenerate, diagonalise first" — all reasonable guesses acted on before being proven. Time to pay up.
+
+More pressing still: the hydrogen atom is quantum mechanics' last free lunch. **One step further — helium, the hydrogen molecule, any many-body system — and exact solutions do not exist, in principle.** Physics does not grind to a halt; it runs on a systematic machinery of approximations: perturbation theory, the variational method, WKB. In Chapter 7, we build that toolkit piece by piece.

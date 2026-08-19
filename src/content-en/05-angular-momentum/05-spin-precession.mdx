@@ -1,24 +1,287 @@
 ---
-title: 'Spin precession'
-summary: 'How a spin evolves in a magnetic field.'
+title: Spin precession
 section: '5.5'
 order: 5
-status: stub
-sims: ['bloch-sphere']
+summary: 'In a magnetic field a spin circles the field like a gyroscope, at a rate set by the field strength alone. A hospital MRI machine works by listening to that rate.'
+status: done
+prereqs:
+  - 05-angular-momentum/04-stern-gerlach
+  - 03-formalism/09-time-evolution-pictures
+objectives:
+  - Write down the Hamiltonian of a spin in a magnetic field and solve the time evolution completely
+  - Compute the Larmor frequency and explain why it is independent of the spin's initial direction
+  - Explain resonance and Rabi oscillations qualitatively — how a rotating transverse field flips the spin
+  - Walk through the basic NMR/MRI workflow — polarise, flip, listen
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section's SG apparatus answers "which way does the spin point right now". This section asks
+the next natural question: between two measurements, what is the spin **doing**?
+
+This is not mere theoretical fussiness. Every hydrogen nucleus in your body is a spin $\tfrac12$,
+and a hospital's magnetic resonance imaging (MRI) machine spends its whole day talking to them —
+the physics it relies on is precisely the answer to "how does spin evolve between measurements".
+
+## The Hamiltonian: one term is all that survives
+
+Place a particle with magnetic moment $\vec\mu$ in a **uniform** field $\vec B=B\hat z$.
+Uniform means no force (last section's force came from the gradient), so the particle does not move;
+the position ledger is perfectly quiet, and only the spin ledger evolves. The energy is just the classical orientation energy:
+
+$$
+\hat H=-\vec\mu\cdot\vec B=-\gamma B\,\hat S_z
+$$
+
+Here $\vec\mu=\gamma\hat{\vec S}$, and the proportionality constant $\gamma$ is the **gyromagnetic ratio** —
+one fixed value per particle species. For the electron $|\gamma_e|=g_e\mu_B/\hbar$ (with $g_e\approx2.002$);
+the proton's is about 660 times smaller (larger mass, smaller moment).
+
+This is arguably the simplest non-trivial Hamiltonian in quantum mechanics: a $2\times2$ diagonal matrix.
+The eigenstates are just $\ket{\uparrow},\ket{\downarrow}$, with energies
+
+$$
+E_\uparrow=-\frac{\gamma\hbar B}{2},\qquad E_\downarrow=+\frac{\gamma\hbar B}{2}
+$$
+
+(We narrate with $\gamma$ positive; the electron's $\gamma$ is actually negative, which merely reverses the sense of rotation.)
+The gap between the two levels, $\Delta E=\gamma\hbar B$, opens linearly with the field — this is the **Zeeman splitting**
+in its simplest two-level form. Converting that gap to a frequency, write
+
+$$
+\omega\equiv\frac{\Delta E}{\hbar}=\gamma B
+$$
+
+This frequency is about to become the star of the show.
+
+## Solving the evolution: the spin circles the field
+
+<Derivation title="Evolution of an arbitrary initial state and the precession of ⟨S⟩" level="基础" minutes={9} open={true}>
+
+**Step 1: the initial state.** Let the spin at $t=0$ point "up" along some direction $(\theta,\phi=0)$
+(using the general formula of [section 5.3](/en/ch/05-angular-momentum/03-spin-half/); taking $\phi=0$ loses no generality):
+
+$$
+\ket{\chi(0)}=\cos\frac\theta2\ket{\uparrow}+\sin\frac\theta2\ket{\downarrow}
+$$
+
+**Step 2: apply the stationary-state expansion.** The eigenstates of $\hat H$ are ready-made;
+just hang a phase clock $\ee^{-\ii E t/\hbar}$ on each component (see [section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/)):
+
+$$
+\ket{\chi(t)}=\cos\frac\theta2\,\ee^{+\ii\omega t/2}\ket{\uparrow}
++\sin\frac\theta2\,\ee^{-\ii\omega t/2}\ket{\downarrow}
+$$
+
+(substituting $E_\uparrow=-\hbar\omega/2$, $E_\downarrow=+\hbar\omega/2$).
+Pull out the overall phase $\ee^{+\ii\omega t/2}$ and discard it:
+
+$$
+\ket{\chi(t)}\ \sim\ \cos\frac\theta2\ket{\uparrow}
++\ee^{-\ii\omega t}\sin\frac\theta2\ket{\downarrow}
+$$
+
+**Step 3: recognise who this is.** Compare with the general spin state
+$\cos\tfrac\theta2\ket{\uparrow}+\ee^{\ii\phi}\sin\tfrac\theta2\ket{\downarrow}$ —
+this is exactly the "up" state along the direction $(\theta,\ \phi(t)=-\omega t)$!
+The polar angle $\theta$ does not budge; the azimuthal angle rotates uniformly.
+**Evolution = circling the z axis** — a line of latitude on the Bloch sphere.
+
+**Step 4: check the expectation values.** Compute each (sandwich with the Pauli matrices):
+
+$$
+\langle\hat S_z\rangle=\frac\hbar2\cos\theta=\text{const}
+$$
+
+$$
+\langle\hat S_x\rangle=\frac\hbar2\sin\theta\cos\omega t,\qquad
+\langle\hat S_y\rangle=-\frac\hbar2\sin\theta\sin\omega t
+$$
+
+$\langle\vec S\rangle$ is a vector of constant length rotating uniformly about the field direction
+at angular velocity $\omega=\gamma B$ — exactly like a classical gyroscope precessing under gravity.
+This rotation is called **Larmor precession**, and $\omega$ the Larmor frequency.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Intuition: precession is the beat of two tuning forks.**
+
+The spin state is a superposition of $\ket{\uparrow}$ and $\ket{\downarrow}$,
+and the two components' phase clocks tick at different rates (different energies). The relative phase accumulates
+steadily at $\omega=\Delta E/\hbar$ — seen macroscopically, the transverse components go round in a circle.
+
+This is **the same phenomenon** as the superposition of two eigenstates in
+[section 2.7](/en/ch/02-wavefunction/07-infinite-well/), where the probability cloud sloshes at $\omega_{21}$:
+in any two-level superposition, observables oscillate at the frequency of the level gap.
+Spin merely draws the picture on a sphere.
+
+</div>
+<div slot="right">
+
+**Numbers: each particle gets its own radio channel.**
+
+$\omega=\gamma B$; divide by $2\pi$ for an ordinary frequency:
+
+- Electron, $B=1\ \text{T}$: $f=g_e\mu_B B/h\approx28.0\ \text{GHz}$ (microwave).
+- Proton, $B=1\ \text{T}$: $f\approx42.6\ \text{MHz}$ (shortwave radio band).
+- Proton, $B=3\ \text{T}$ (a mainstream MRI magnet): $f\approx127.7\ \text{MHz}$.
+
+The frequency depends only on $\gamma$ and $B$, **not on the spin's initial direction**
+($\theta$ sets the radius of the circle, never the rate). So each nuclear species, at a given field,
+has its own immovable "channel" — to talk to a particular nucleus, tune the radio to its frequency.
+
+</div>
+</DualView>
+
+## Resonance: how to flip a spin
+
+Watching a spin go round in circles is not much use by itself; we also want to **control** it —
+say, flip an up spin to down. The level gap is $\hbar\omega$, so intuition says:
+apply a perturbation at exactly the frequency $\omega$.
+
+Concretely: on top of the large static field $B_0\hat z$, add a small field
+$B_1$ **rotating** in the xy plane ($B_1\ll B_0$) at frequency $\omega_{\text{rf}}$. The qualitative results
+(the full solution uses the rotating-frame trick of section 3.9; here we make the physics clear):
+
+- **Off resonance** ($\omega_{\text{rf}}$ away from $\omega_0=\gamma B_0$): the small field rotates
+  "out of step" with the spin; its push helps one moment and hinders the next, averaging to almost nothing.
+- **On resonance** ($\omega_{\text{rf}}=\omega_0$): view things from a frame rotating along with the spin.
+  The effect of the big field $B_0$ is exactly cancelled by the rotation, leaving only a **stationary**
+  small field $B_1$ — so the spin turns slowly about $B_1$ at the gentle rate $\omega_1=\gamma B_1$,
+  arcing from the north pole down to the south and back. The probability swings back and forth between
+  $\ket{\uparrow}$ and $\ket{\downarrow}$:
+
+$$
+P_{\downarrow}(t)=\sin^2\frac{\omega_1 t}{2}\quad(\text{on resonance})
+$$
+
+This swing is the **Rabi oscillation**. Time the shutdown of the small field precisely and you can park the spin
+anywhere you like: run for $t=\pi/\omega_1$ (a "$\pi$ pulse") and the flip is complete; run half as long
+(a "$\pi/2$ pulse") and the spin lies flat on the equator — the key move NMR uses below.
+
+<Callout type="insight" title="Every two-level system is a spin in disguise">
+Nothing in this section's derivations truly used the physics of a "magnetic moment" — only:
+two levels, an energy gap $\hbar\omega_0$, and an oscillating coupling.
+So the conclusions apply to **every** two-level system: two atomic levels driven by a laser,
+two current states of a superconducting circuit driven by microwaves, two internal states of a trapped ion…
+In the language of quantum computing, Larmor precession on the Bloch sphere is a Z-rotation gate
+and a Rabi pulse is an X/Y-rotation gate — "running magnetic resonance" and "running quantum gates"
+are mathematically the same activity.
+Spin 1/2 is not just a property of particles; it is the universal grammar of two-level physics.
 </Callout>
 
-## Planned contents
+## NMR and MRI: turning this section into a machine
 
-- Larmor precession
-- Magnetic resonance and Rabi oscillations
-- The principles behind NMR and MRI
+The workflow of nuclear magnetic resonance (NMR), in the language of this section, takes three sentences:
 
-## Planned simulations
+1. **Polarise.** Put the sample in a strong field $B_0$. In thermal equilibrium slightly more spins point up
+   than down (the lower-energy state is a touch more populated — only about ten parts per million at room
+   temperature and 3 T, but with $10^{23}$ nuclei in the sample the net magnetisation is plenty),
+   giving the sample a net magnetic moment along z.
+2. **Flip.** Fire a radio-frequency $\pi/2$ pulse tuned to $\omega_0=\gamma B_0$,
+   laying the net moment flat into the xy plane.
+3. **Listen.** The flattened moment precesses at the Larmor frequency like a spinning bar magnet,
+   inducing an oscillating voltage at $\omega_0$ in a pickup coil. Measure that signal's frequency and decay.
 
-- `bloch-sphere`
+Why is it worth listening to? Because the $B$ in $\omega_0=\gamma B$ is **the actual field at the nucleus**,
+slightly shielded by the surrounding electron cloud — the same nucleus in different chemical environments
+shifts in frequency by a few parts per million (the "chemical shift"). From one spectrum a chemist reads off
+molecular structure; that is NMR spectroscopy.
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="bloch-sphere" />`.
+MRI runs the trick in reverse: deliberately make $B_0$ a gradient field that varies with position,
+so that **frequency becomes a barcode for location** — receive a signal at 127.68 MHz and you know it came
+from the slice of tissue where the field matches that frequency. Add the fact that signals decay at different
+rates in different tissues (water and fat have different relaxation times), and a three-dimensional image
+of soft tissue can be reconstructed.
+The hammering noise you hear inside an MRI machine is the gradient coils rapidly switching that "barcode".
+
+<Callout type="warning" title="What precesses is the expectation value, not 'the arrow'">
+"The spin vector circles the field" describes the motion of the **expectation value** $\langle\vec S\rangle$.
+Measure any component along any direction at any moment and you still get only the two outcomes $\pm\tfrac\hbar2$ —
+every conclusion of the SG experiment stands intact. What goes round is the centre of gravity of the probabilities,
+not a physically existing arrow.
+(The coil in NMR really does hear a smooth sine wave, but that is the collective average of $10^{23}$ spins —
+a single spin still answers only "up" or "down".)
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Hamiltonian and splitting', latex: '\\hat H=-\\gamma B\\hat S_z,\\qquad \\Delta E=\\gamma\\hbar B=\\hbar\\omega_0', note: 'Two-level Zeeman splitting; ω₀ is independent of the initial direction' },
+    { name: 'Larmor precession', latex: '\\langle\\hat S_x\\rangle=\\tfrac\\hbar2\\sin\\theta\\cos\\omega_0 t,\\quad \\langle\\hat S_z\\rangle=\\text{const}', note: 'Polar angle fixed, azimuth rotating uniformly: a line of latitude on the Bloch sphere' },
+    { name: 'Larmor frequency', latex: '\\omega_0=\\gamma B', note: 'Proton 42.6 MHz/T, electron 28.0 GHz/T — one channel per particle species' },
+    { name: 'Rabi oscillation', latex: 'P_{\\downarrow}(t)=\\sin^2\\tfrac{\\omega_1 t}{2},\\qquad \\omega_1=\\gamma B_1', note: 'On resonance the populations swing at full amplitude; a π pulse flips completely' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am5-1',
+      prompt: 'During Larmor precession, which of the following quantities changes with time?',
+      options: [
+        '⟨S_x⟩ and ⟨S_y⟩',
+        '⟨S_z⟩',
+        'The precession frequency ω₀',
+        'The magnitude |S|',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'H is proportional to S_z, so S_z commutes with H and is conserved — exactly why the polar angle never changes.',
+        2: 'ω₀ = γB is fixed by the particle species and the field, constant throughout.',
+      },
+      explain: 'The evolution only walks the azimuthal angle, φ = −ω₀t, at a constant rate: the transverse components circle while the longitudinal component and the length stay put. On the Bloch sphere it is a steady cruise along a line of latitude.',
+    },
+    {
+      id: 'am5-2',
+      prompt: 'Why does a Rabi flip require the radio-frequency field to be tuned to ω₀ = γB₀?',
+      options: [
+        'On resonance, in a frame rotating with the spin, the small field B₁ appears stationary and can keep pushing the spin the same way',
+        'Only photons of this frequency can be absorbed by the magnetic field',
+        'Because B₁ must exceed B₀',
+        'Off resonance, energy would not be conserved',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Quite the opposite — B₁ ≪ B₀ is perfectly fine; the whole point of resonance is to let the small field\'s pushes accumulate in full.',
+        3: 'Off resonance the transition is not forbidden; the oscillation amplitude is just far below 1. "Not conserved" is too strong.',
+      },
+      explain: 'Off resonance, B₁ rotates out of step with the spin and its pushes average to zero. On resonance it co-rotates, the effect of B₀ cancels in the rotating frame, and the spin arcs around B₁ at the slow rate ω₁ = γB₁ — the populations swing at full amplitude as sin²(ω₁t/2).',
+    },
+    {
+      id: 'am5-3',
+      prompt: 'Which statements about NMR/MRI are correct? (Select all that apply.)',
+      options: [
+        'MRI uses gradient fields to turn the Larmor frequency into an encoding of position',
+        'The chemical shift comes from the electron cloud slightly shielding the external field',
+        'A single proton induces a smooth sinusoidal voltage in the coil',
+        'The job of the π/2 pulse is to lay the net magnetisation flat into the plane perpendicular to B₀',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The smooth sine wave is the collective effect of some 10²³ spin expectation values; any single measurement on a single spin still gives only ±ħ/2.',
+      },
+      explain: 'NMR reads chemical structure from tiny frequency shifts; MRI deliberately manufactures spatial frequency differences to locate tissue. Both share one line of physics: ω₀ = γB, where B is the true field at the nucleus.',
+    },
+    {
+      id: 'am5-4',
+      type: 'numeric',
+      prompt: 'The proton gyromagnetic ratio is γ = 2.675×10⁸ rad·s⁻¹·T⁻¹. In a 3.0 T MRI magnet, what is the proton Larmor frequency f = γB/2π in MHz? (One decimal place.)',
+      answer: 127.7,
+      tolerance: 0.5,
+      unit: 'MHz',
+      explain: 'f = 2.675×10⁸ × 3.0 / (2π) ≈ 8.025×10⁸/6.283 ≈ 1.277×10⁸ Hz = 127.7 MHz. That is the radio-frequency operating point of a 3 T MRI machine — right next to the FM broadcast band, which is why MRI rooms are electromagnetically shielded.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Up to now we have been playing with a **single** spin. But in real systems angular momenta rarely come alone:
+the electron in hydrogen has both orbital angular momentum $\hat{\vec L}$ and spin $\hat{\vec S}$;
+helium has the spins of two electrons; protons and neutrons assemble into nuclei.
+
+Put two angular momenta side by side — what is the total? The classical answer, "add the vectors",
+runs into immediate trouble in quantum mechanics: not even one vector's three components can be simultaneously sharp,
+so what exactly would you add? The next section gives the correct addition, and its answer will also explain
+"singlet" and "triplet" — words that will keep returning in chemical bonds and entangled states.

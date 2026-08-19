@@ -1,17 +1,247 @@
 ---
-title: 'Bosons and fermions'
-summary: 'The consequence of the spin-statistics theorem.'
+title: Bosons and fermions
 section: '8.2'
 order: 2
-status: stub
+summary: 'Who goes symmetric and who antisymmetric? Nature''s answer has no exceptions: integer spin is symmetric (bosons), half-integer spin antisymmetric (fermions). This section constructs both kinds of wavefunction, introduces the Slater determinant, and states the spin–statistics theorem behind it all.'
+status: done
+prereqs:
+  - 08-identical-particles/01-identity-principle
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - Write down symmetrized and antisymmetrized wavefunctions for any particle number
+  - Express a many-fermion state compactly as a Slater determinant, and translate each determinant property into physics
+  - State the spin-statistics theorem and explain why it comes from relativity
+  - Decide whether a composite particle (such as ⁴He or ³He) is a boson or a fermion
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section ended in a forced choice: the state of identical particles is either fully symmetric or fully antisymmetric. The question it left behind — **who picks which?**
+
+Start with two experimental facts that hint the answer has to do with spin.
+
+## One neutron apart, two different worlds
+
+Helium has two stable isotopes. $^4$He has 2 protons and 2 neutrons; $^3$He has one neutron fewer. Chemically they are all but indistinguishable — both are noble gases too lazy to react. But cool them down:
+
+- **$^4$He** undergoes a superfluid transition at 2.17 K: its viscosity drops below anything measurable, and the liquid can "creep" up the wall of a cup and out over the rim.
+- **$^3$He** does nothing at 2.17 K. Keep cooling by three more orders of magnitude, down to about 2.6 mK, before it grudgingly turns superfluid — and by an entirely different mechanism (the atoms must first pair up two by two).
+
+One neutron of difference, and the transition temperatures differ by nearly a factor of a thousand. The mass ratio ($4:3$) comes nowhere near explaining the gap. The same contrast recurs elsewhere: photons happily pile into a single mode by the trillions (the principle of the laser), while electrons would sooner die than share a state (the protagonist of the next section). Nature's particles evidently come in **two temperaments**: one loves to bunch, the other keeps its distance.
+
+The mathematics of the last section has conveniently prepared two drawers, symmetric and antisymmetric. Now we sort the two temperaments into them.
+
+## The two great families
+
+> **Bosons**: particles whose wavefunction is **symmetric** under exchange of any two of them.
+> Examples: photons (spin 1), $^4$He atoms, the Higgs particle (spin 0).
+>
+> **Fermions**: particles whose wavefunction is **antisymmetric** under exchange of any two of them.
+> Examples: electrons, protons, neutrons, neutrinos (all spin 1/2), $^3$He atoms.
+
+The names honour Bose and Fermi — the statistical distributions each family obeys are named after them. And what is the criterion? Look at the spin:
+
+<Callout type="insight" title="The spin-statistics theorem (statement)">
+**Particles with integer spin ($0,1,2,\dots$) are bosons; particles with half-integer spin ($\frac12,\frac32,\dots$) are fermions.**
+
+No exceptions. The theorem cannot be proved within non-relativistic quantum mechanics — inside this book's framework, "a symmetric wavefunction for spin 1/2" is not self-contradictory. The proof requires relativistic quantum field theory, and its gist is this: pick the statistics the wrong way round (make electrons symmetric, say) and the theory violates one of the following — **energy bounded from below** (otherwise the vacuum collapses without end), **causality** (measurements at spacelike separation must not influence each other), or **non-negative probabilities**. Pauli gave the rigorous proof in 1940. For this book it is enough to accept it as a law that is cleanly stated and has zero experimental counterexamples: this seemingly unrelated link between spin (a rotational property) and statistics (a counting property) is a seal stamped on by relativity.
 </Callout>
 
-## Planned contents
+The "half-integer spin" criterion also explains the fork between $^4$He and $^3$He — we will do that count shortly. First, let us build the wavefunctions.
 
-- Constructing symmetric and antisymmetric wavefunctions
-- The Slater determinant
-- Statement of the spin-statistics theorem
+## The construction: from two particles to N
+
+The two-particle case was written down last section:
+
+$$
+\psi_\pm(\vec{r}_1,\vec{r}_2)=\frac{1}{\sqrt2}\bigl[\phi_a(\vec{r}_1)\phi_b(\vec{r}_2)\pm\phi_b(\vec{r}_1)\phi_a(\vec{r}_2)\bigr]
+$$
+
+With $N$ particles, **every** pairwise exchange must produce the same sign. The recipe: list all $N!$ ways of assigning particles to single-particle states, attach a sign according to the parity of the permutation, and sum.
+
+<Derivation title="The antisymmetric wavefunction for three fermions, and the Slater determinant" level="基础" minutes={7} open={true}>
+
+**Step 1: list all the permutations.** Take three orthonormal single-particle states $\phi_a,\phi_b,\phi_c$, and write the coordinates (including spin) of the three particles as $x_1,x_2,x_3$. There are $3!=6$ assignments:
+
+$$
+\phi_a(x_1)\phi_b(x_2)\phi_c(x_3),\quad \phi_a(x_1)\phi_c(x_2)\phi_b(x_3),\quad\dots
+$$
+
+**Step 2: attach signs by parity.** Permutations reached from the identity by **one** transposition get a minus sign, those reached by two get a plus (one can check this notion of parity is self-consistent):
+
+$$
+\psi_A=\frac{1}{\sqrt{6}}\bigl[
+\phi_a(x_1)\phi_b(x_2)\phi_c(x_3)-\phi_a(x_1)\phi_c(x_2)\phi_b(x_3)
++\phi_b(x_1)\phi_c(x_2)\phi_a(x_3)
+$$
+$$
+\qquad\qquad
+-\phi_b(x_1)\phi_a(x_2)\phi_c(x_3)
++\phi_c(x_1)\phi_a(x_2)\phi_b(x_3)-\phi_c(x_1)\phi_b(x_2)\phi_a(x_3)\bigr]
+$$
+
+Exchange any pair of particles (say $x_1\leftrightarrow x_2$) and the six terms swap positions in pairs with opposite signs, so the whole thing changes sign — antisymmetry holds.
+
+**Step 3: recognise the determinant.** This signed sum of six terms is exactly the expansion of a $3\times3$ determinant:
+
+$$
+\psi_A(x_1,x_2,x_3)=\frac{1}{\sqrt{3!}}
+\begin{vmatrix}
+\phi_a(x_1) & \phi_b(x_1) & \phi_c(x_1)\\
+\phi_a(x_2) & \phi_b(x_2) & \phi_c(x_2)\\
+\phi_a(x_3) & \phi_b(x_3) & \phi_c(x_3)
+\end{vmatrix}
+$$
+
+Each **row** corresponds to a particle, each **column** to a single-particle state. Generalised to $N$ particles this becomes the $N\times N$ **Slater determinant**, with normalisation $1/\sqrt{N!}$.
+
+**Step 4: determinant properties translate straight into physics.**
+
+- **Swapping two rows flips the sign** — exchanging two particles makes the wavefunction antisymmetric. ✔
+- **Two equal columns make the determinant zero** — when two particles occupy the same single-particle state, $\psi_A\equiv0$: no such state exists. That is the entire mathematical content of next section's Pauli exclusion principle, delivered free of charge.
+- **Linear combinations of the columns leave the state unchanged** (up to a constant) — there is considerable freedom in "which set of orbitals", and Hartree–Fock in section 8.6 will exploit it.
+
+The symmetric, bosonic version is analogous: take every sign positive (this all-plus "determinant" is called the permanent), and allow several particles to share the same state.
+
+</Derivation>
+
+<Callout type="warning" title="Do not misremember 'antisymmetric' as applying only to spatial coordinates">
+The $x_i$ in the determinant is the full coordinate, **position plus spin**, and each $\phi$ is a "spin-orbital" — a spatial orbital times a spin state. The antisymmetry requirement applies to the total wavefunction. This matters immediately: when the total wavefunction factors as space × spin, the symmetries of the two factors must be **complementary** — if one is symmetric, the other must be antisymmetric.
+</Callout>
+
+## The division of labour between space and spin: two electrons
+
+The spin states of two electrons (spin 1/2) were combined in [section 5.6](/en/ch/05-angular-momentum/06-clebsch-gordan/): three states with total spin $S=1$ (the triplet) and one with $S=0$ (the singlet). Check their exchange symmetry:
+
+<DualView>
+<div slot="left">
+
+**The triplet is symmetric.** $\ket{\uparrow\uparrow}$ and $\ket{\downarrow\downarrow}$ are obviously exchange-invariant; so is $\frac{1}{\sqrt2}(\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow})$.
+
+**The singlet is antisymmetric.** $\frac{1}{\sqrt2}(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow})$ changes sign under exchange.
+
+The total wavefunction must be antisymmetric, so only two pairings are allowed:
+
+- spatial part **symmetric** × spin **singlet**
+- spatial part **antisymmetric** × spin **triplet**
+
+The spin orientation ends up "deciding" how the electrons distribute themselves in space — even though the Hamiltonian may contain no spin at all. This binding is the key to the helium-spectrum puzzle of section 8.4.
+
+</div>
+<div slot="right">
+
+$$
+\Psi=\psi_{\text{space}}(\vec{r}_1,\vec{r}_2)\times\chi_{\text{spin}}
+$$
+
+Under exchange of the full coordinates each factor contributes a sign, and the product must be $-1$:
+
+$$
+(+1)\times(-1)\quad\text{or}\quad(-1)\times(+1)
+$$
+
+$$
+\chi_{S=1}:\ \begin{cases}\ket{\uparrow\uparrow}\\ \frac{1}{\sqrt2}(\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow})\\ \ket{\downarrow\downarrow}\end{cases}\ (\text{symmetric})
+$$
+
+$$
+\chi_{S=0}:\ \frac{1}{\sqrt2}(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow})\ (\text{antisymmetric})
+$$
+
+</div>
+</DualView>
+
+## What about composite particles?
+
+A proton is made of three quarks; a $^4$He atom of 12 fermions — which statistics does a composite particle obey?
+
+The rule is simple: **exchanging two composite particles = simultaneously exchanging every corresponding pair of their internal constituents.** Each internal fermion pair exchanged contributes a $-1$; each boson pair a $+1$. Therefore:
+
+> A composite containing an **even** number of fermions is a boson; one containing an **odd** number is a fermion.
+
+- $^4$He: 2 protons + 2 neutrons + 2 electrons = 6 fermions → **boson**. It may pile collectively into the lowest quantum state; the 2.17 K superfluid is, at bottom, exactly this "macroscopic bunching".
+- $^3$He: 2 protons + 1 neutron + 2 electrons = 5 fermions → **fermion**. Bunching is forbidden; to go superfluid the atoms must first form pairs (a pair being a boson), at the price of a transition temperature squeezed down to the mK scale.
+- A hydrogen atom (1 proton + 1 electron) = 2 fermions → boson. The rubidium-87 atoms that achieved Bose–Einstein condensation in 1995 (37 electrons + 37 protons + 50 neutrons = 124 fermions) are bosons too, condensing at about 170 nK.
+
+This rule is consistent with the spin-statistics theorem: an odd number of half-integer spins combines to a half-integer total spin, an even number to an integer one (the angular-momentum addition rules of chapter 5).
+
+<Callout type="insight" title="'Composite boson' is a conditional identity">
+Treating $^4$He as a boson tacitly assumes we never resolve its internal structure: as long as the energies in play are far below what it takes to pull the atom apart (ionisation energy about 24.6 eV, versus a superfluid energy scale of $k_BT\sim10^{-4}$ eV), the internal fermions' antisymmetry shows up only through the "statistics of the whole". Truly press two clouds of helium atoms until their electron clouds overlap heavily, and the internal Pauli repulsion steps forward — that is precisely the origin of the hard-core repulsion between atoms.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Slater determinant', latex: '\\psi_A=\\frac{1}{\\sqrt{N!}}\\det\\bigl[\\phi_j(x_i)\\bigr]', note: 'Rows = particles, columns = spin-orbitals; two equal columns make it vanish identically' },
+    { name: 'Spin-statistics theorem', latex: '\\text{integer spin}\\Rightarrow\\text{symmetric (bosons)};\\quad \\text{half-integer}\\Rightarrow\\text{antisymmetric (fermions)}', note: 'A result of relativistic quantum field theory; stated here without proof' },
+    { name: 'Two-electron division of labour', latex: '\\Psi=\\psi_{\\text{space}}\\times\\chi_{\\text{spin}},\\quad (+)\\times(-)\\ \\text{or}\\ (-)\\times(+)', note: 'Singlet pairs with symmetric space, triplet with antisymmetric space' },
+    { name: 'Composite-particle rule', latex: '\\text{odd number of fermions}\\Rightarrow\\text{fermion};\\quad\\text{even}\\Rightarrow\\text{boson}', note: '⁴He is a boson, ³He a fermion' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bf-1',
+      prompt: '⁴He turns superfluid at 2.17 K while ³He waits until about 2.6 mK. The fundamental reason is:',
+      options: [
+        '⁴He contains an even number of fermions and is a boson, free to occupy the lowest state collectively; ³He is a fermion and must pair up before it can behave bosonically',
+        '³He is lighter, so stronger quantum fluctuations destroy the superfluidity',
+        'The interatomic interactions of ³He are much weaker',
+        '⁴He has zero nuclear spin and is undisturbed by magnetic fields',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The masses differ only by 4:3, which cannot explain a near-thousandfold gap in transition temperature; besides, lighter usually means stronger quantum effects, so the direction is wrong too.',
+        2: 'Both are noble-gas atoms with almost identical interactions.',
+        3: 'Magnetic fields are beside the point; this is a difference of statistics.',
+      },
+      explain: 'One neutron changes the parity of the fermion count, and with it the statistics of the whole atom. Bosons can occupy the ground state macroscopically at once; fermions must first form pairs (akin to Cooper pairs in superconductivity), whose energy scale is far lower.',
+    },
+    {
+      id: 'bf-2',
+      prompt: 'Which statements about the Slater determinant are correct? (Select all that apply.)',
+      options: [
+        'Swapping two rows of the determinant corresponds to exchanging two particles, and the wavefunction changes sign',
+        'Two equal columns make the determinant zero, meaning two fermions cannot occupy the same spin-orbital',
+        'It is the exact general solution of the many-fermion problem',
+        'The normalisation factor is 1/√(N!) (for orthonormal single-particle states)',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'A single Slater determinant is only "the simplest antisymmetric state built from N fixed orbitals"; with interactions the true ground state is generally a superposition of many determinants — precisely why Hartree–Fock in section 8.6 can only ever be an approximation.',
+      },
+      explain: 'The algebraic properties of the determinant (sign flip on row swap, vanishing for repeated columns) encode exactly antisymmetry and Pauli exclusion. But it is only one set of "building blocks" in the antisymmetric state space, not the whole space.',
+    },
+    {
+      id: 'bf-3',
+      type: 'numeric',
+      prompt: 'Fully expand the antisymmetric wavefunction of 5 fermions into product states. How many terms are there?',
+      answer: 120,
+      tolerance: 0,
+      unit: '项',
+      explain: 'The Slater determinant of N particles expands into N! terms, and 5! = 120. By 20 particles that is 2.4×10¹⁸ terms — this "bookkeeping despair" is the reason second quantization takes the stage in section 8.5.',
+    },
+    {
+      id: 'bf-4',
+      prompt: 'Two electrons are in a spin triplet. Their spatial wavefunction must be:',
+      options: [
+        'Antisymmetric, with zero probability density for the two electrons at the same position',
+        'Symmetric, with the electrons tending to huddle together',
+        'Unrestricted',
+        'Also a triplet',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the situation paired with the spin singlet.',
+        2: 'The total wavefunction must be antisymmetric; the symmetries of space and spin are locked to each other.',
+        3: '"Triplet" is a statement about spin and has no meaning for the spatial part.',
+      },
+      explain: 'The triplet is spin-symmetric, so total antisymmetry forces the spatial part to be antisymmetric: ψ(r₁,r₂) = −ψ(r₂,r₁), and setting r₁ = r₂ gives ψ = 0. Same-spin electrons automatically avoid each other — this "Fermi hole" becomes a measurable energy difference in section 8.4.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The Slater determinant has handed us a great gift: two equal columns make it vanish — **two fermions cannot occupy the same quantum state**.
+
+The next section unfolds that sentence to its full size: why the periodic table looks the way it does, why atoms have volume, why a white dwarf that has burned its last fuel still refuses to collapse. One minus sign, holding up half the universe.

@@ -2,17 +2,319 @@
 title: 轨道角动量算符
 section: '5.1'
 order: 1
-summary: L = r × p 的量子版本及其对易关系。
-status: stub
+summary: 把经典的 L = r × p 搬进量子力学，得到的三个分量互相不对易——而正是这一点决定了它的一切。
+status: done
+prereqs:
+  - 03-formalism/05-hermitian-operators
+  - 03-formalism/06-commutators
+objectives:
+  - 写出 L̂ 的三个分量算符，并解释为什么它们没有排序歧义
+  - 完整推出 [L̂ₓ, L̂ᵧ] = iħL̂_z，并说明它对「同时测准」意味着什么
+  - 验证 L² 与任一分量对易，说明为什么标准选择是 (L², L_z)
+  - 解释「对易关系本身就是角动量的定义」这句话的含义
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+到目前为止，我们解过的所有问题都是一维的：粒子在一条线上运动。
+但真实的原子是三维的——电子绕着原子核转。
+一旦有「绕着转」，经典力学里立刻出现一个主角：**角动量**。
+
+先看它在经典物理里为什么重要。行星绕太阳、电子绕原子核，
+都是中心力场问题：力永远指向中心。这种情况下
+$\vec L=\vec r\times\vec p$ 是守恒量——它的方向锁定了轨道平面，
+它的大小决定了轨道的「胖瘦」。开普勒第二定律（等面积律）就是角动量守恒的另一种说法。
+
+而实验早就在暗示：原子里的角动量**不是连续的**。
+把发光的原子放进磁场，光谱线会分裂成有限的几条（Zeeman 效应），
+仿佛角动量在空间中只能取几个离散的方向。玻尔模型干脆假设 $L=n\hbar$——
+具体数值后来被证明是错的，但「角动量量子化」的直觉方向完全正确。
+
+这一章要回答的就是：量子力学里的角动量到底长什么样、能取哪些值、
+以及为什么它会带出一个经典物理里完全不存在的新事物——自旋。
+
+## 从经典量到算符
+
+第 3 章的[公设](/ch/03-formalism/07-postulates/)告诉我们造算符的规则：
+把经典表达式里的 $x$ 和 $p$ 换成算符。对角动量：
+
+$$
+\hat{\vec L}=\hat{\vec r}\times\hat{\vec p}
+\quad\Longrightarrow\quad
+\begin{aligned}
+\hat L_x&=\hat y\hat p_z-\hat z\hat p_y\\
+\hat L_y&=\hat z\hat p_x-\hat x\hat p_z\\
+\hat L_z&=\hat x\hat p_y-\hat y\hat p_x
+\end{aligned}
+$$
+
+三个式子其实是一个式子：把 $x\to y\to z\to x$ 轮换就能从一条得到另两条。
+
+<Callout type="note" title="这里没有排序陷阱">
+把经典量翻译成算符时通常要担心排序问题：$xp$ 和 $px$ 不是一回事。
+但 $\hat L_z=\hat x\hat p_y-\hat y\hat p_x$ 里出现的每一对都是**不同方向**的坐标和动量——
+$\hat x$ 与 $\hat p_y$ 对易（$[\hat x,\hat p_y]=0$，见 [3.6 节](/ch/03-formalism/06-commutators/)），
+所以怎么排都一样，翻译没有歧义。三个分量也都自动是厄米算符。
 </Callout>
 
-## 内容规划
+## 关键计算：分量之间对易吗？
 
-- Lx, Ly, Lz 的构造
-- [Lx,Ly] = iħLz
-- L² 与 Lz 可同时确定
+[3.6 节](/ch/03-formalism/06-commutators/)的教训是：两个可观测量能不能同时确定，
+全看它们的对易子。所以拿到三个新算符，第一件事就是算对易子。
 
+<Derivation title="计算 [L̂ₓ, L̂ᵧ]" level="基础" minutes={6} open={true}>
+
+**目标**：$[\hat L_x,\hat L_y]=[\hat y\hat p_z-\hat z\hat p_y,\;\hat z\hat p_x-\hat x\hat p_z]$。
+
+**第一步：展开成四项。** 对易子对两边都是线性的，所以
+
+$$
+[\hat L_x,\hat L_y]
+=[\hat y\hat p_z,\hat z\hat p_x]
+-[\hat y\hat p_z,\hat x\hat p_z]
+-[\hat z\hat p_y,\hat z\hat p_x]
++[\hat z\hat p_y,\hat x\hat p_z]
+$$
+
+**第二步：先扔掉平庸项。** 第二项里出现的算符是 $\hat y,\hat p_z,\hat x$——
+两两全部对易（不同方向的坐标与动量互不干涉），所以整项为零。
+第三项里是 $\hat z,\hat p_y,\hat p_x$，同理为零。只剩第一、四项。
+
+**第三步：算第一项。** 用乘积规则 $[\hat A\hat B,\hat C\hat D]$ 拆开会很繁琐，
+不如注意到这里唯一「有火花」的一对是 $\hat p_z$ 和 $\hat z$（$[\hat z,\hat p_z]=\ii\hbar$），
+其余算符都旁观。把旁观者提出来：
+
+$$
+[\hat y\hat p_z,\hat z\hat p_x]=\hat y\,[\hat p_z,\hat z]\,\hat p_x
+=\hat y(-\ii\hbar)\hat p_x=-\ii\hbar\,\hat y\hat p_x
+$$
+
+（$[\hat p_z,\hat z]=-[\hat z,\hat p_z]=-\ii\hbar$。）
+
+**第四步：算第四项。** 这里有火花的一对是 $\hat z$ 和 $\hat p_z$：
+
+$$
+[\hat z\hat p_y,\hat x\hat p_z]=\hat p_y\,[\hat z,\hat p_z]\,\hat x
+=\ii\hbar\,\hat x\hat p_y
+$$
+
+**第五步：合起来。**
+
+$$
+[\hat L_x,\hat L_y]=-\ii\hbar\,\hat y\hat p_x+\ii\hbar\,\hat x\hat p_y
+=\ii\hbar(\hat x\hat p_y-\hat y\hat p_x)=\ii\hbar\hat L_z
+$$
+
+轮换 $x\to y\to z\to x$ 立刻得到另外两条。三条合写成：
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z,\qquad
+[\hat L_y,\hat L_z]=\ii\hbar\hat L_x,\qquad
+[\hat L_z,\hat L_x]=\ii\hbar\hat L_y
+$$
+
+</Derivation>
+
+结果不是零。这一行小小的计算，后果非常大。
+
+<DualView>
+<div slot="left">
+
+**直觉：角动量矢量「指不准」。**
+
+经典角动量是一支实实在在的箭：三个分量同时有确定值，箭指向确定方向。
+
+量子角动量做不到。$[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\neq0$ 说明
+$L_x$ 和 $L_y$ 一般**不能同时确定**——你把 $L_z$ 测准了，
+$L_x$ 和 $L_y$ 就变成一片概率云。
+
+正确的画面不是一支箭，而是**一个圆锥面**：$L_z$ 确定（锥的高度确定）、
+长度 $|\vec L|$ 确定（锥的斜边确定），但箭在锥面上「哪里都是、哪里都不是」。
+
+</div>
+<div slot="right">
+
+**公式：广义不确定性关系的直接应用。**
+
+把 [3.6 节](/ch/03-formalism/06-commutators/)的广义不确定性关系
+$\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 用在这里：
+
+$$
+\sigma_{L_x}\sigma_{L_y}\ge\frac{\hbar}{2}\left|\langle\hat L_z\rangle\right|
+$$
+
+注意右边是**期望值**而不是常数：与 $\sigma_x\sigma_p\ge\hbar/2$ 不同，
+这条下界随态变化。$\langle\hat L_z\rangle=0$ 的态上，
+$L_x$ 与 $L_y$ 是允许同时为零的——比如角动量完全为零的球对称态。
+
+</div>
+</DualView>
+
+## 有什么是能同时确定的？
+
+三个分量互相打架，那还有没有和它们「和平共处」的量？
+有：角动量的**大小的平方**
+
+$$
+\hat L^2\equiv\hat L_x^2+\hat L_y^2+\hat L_z^2
+$$
+
+<Derivation title="验证 [L², L̂_z] = 0" level="基础" minutes={4}>
+
+逐项算。先用一个通用的小工具（乘积规则）：
+
+$$
+[\hat A^2,\hat B]=\hat A[\hat A,\hat B]+[\hat A,\hat B]\hat A
+$$
+
+**第一项** $[\hat L_x^2,\hat L_z]$：由 $[\hat L_x,\hat L_z]=-\ii\hbar\hat L_y$，
+
+$$
+[\hat L_x^2,\hat L_z]=\hat L_x(-\ii\hbar\hat L_y)+(-\ii\hbar\hat L_y)\hat L_x
+=-\ii\hbar(\hat L_x\hat L_y+\hat L_y\hat L_x)
+$$
+
+**第二项** $[\hat L_y^2,\hat L_z]$：由 $[\hat L_y,\hat L_z]=\ii\hbar\hat L_x$，
+
+$$
+[\hat L_y^2,\hat L_z]=\ii\hbar(\hat L_y\hat L_x+\hat L_x\hat L_y)
+$$
+
+**第三项** $[\hat L_z^2,\hat L_z]=0$（任何算符和自己的幂对易）。
+
+三项相加，前两项**恰好一正一负抵消**：
+
+$$
+[\hat L^2,\hat L_z]=0
+$$
+
+由对称性（式子里三个方向地位平等），$\hat L^2$ 与 $\hat L_x,\hat L_y$ 也对易。
+
+</Derivation>
+
+所以量子力学允许我们同时确定的最大组合是：**长度加一个分量**。
+习惯上选 $(\hat L^2,\hat L_z)$——选 $z$ 没有任何物理特殊性，纯粹是记号传统
+（真做实验时，「$z$ 方向」就是你磁场指的方向）。
+这正是圆锥图像的代数来源：锥的斜边（$|\vec L|$）和高（$L_z$）可以同时确定，
+方位角不行。
+
+<Callout type="warning" title="别把圆锥图像当真相">
+「矢量在锥面上转」是个方便的比喻，但别过度当真：
+并不存在一支「真实的箭」在锥面上高速扫动。
+在 $(\hat L^2,\hat L_z)$ 的共同本征态上，$L_x$ 与 $L_y$ 根本**没有值**——
+测量哪个都会得到随机结果，只是平均为零。
+锥面画的是「所有与已知信息相容的方向」，不是运动轨迹。
+</Callout>
+
+<Callout type="insight" title="对易关系本身就是角动量的定义">
+回头看这一节，我们真正用到「$\vec L=\vec r\times\vec p$」的地方只有一处：推出对易关系。
+之后的一切——不确定性、圆锥图像、$(\hat L^2,\hat L_z)$ 这对搭档——都只依赖
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\ \text{及其轮换}
+$$
+
+这提示了一个大胆的反转：**不如把对易关系本身当作角动量的定义**。
+任何三个厄米算符，只要满足这组对易关系，就是一种角动量——
+不管它有没有 $\vec r\times\vec p$ 的形式。
+
+这个反转不是玩形式游戏。本章后面会遇到一种角动量（自旋），
+它**没有**任何 $\vec r\times\vec p$ 可言，却完全满足这组对易关系。
+把定义放在代数上，正是为它预留的位置。
+</Callout>
+
+## 为什么说对易子能决定谱
+
+下一步自然是问：$\hat L^2$ 和 $\hat L_z$ 的本征值是多少？
+
+按第 2 章的老办法，应该写出微分方程去解。但这里有一条惊人的捷径：
+**光靠对易关系，一行微分方程都不解，就能把全部本征值定出来。**
+
+思路的种子已经见过：谐振子的代数解法里，$[\hat a,\hat a^\dagger]=1$
+一条对易关系就迫使能级排成 $\hbar\omega$ 的等间隔阶梯——
+对易子规定「爬梯」的步长，正定性规定梯子的底，谱就被锁死了。
+角动量的对易关系更复杂（右边不是常数而是算符），但同一套策略仍然有效：
+用 $\hat L_x\pm\ii\hat L_y$ 造出在 $L_z$ 本征值上一格一格爬的「梯算符」，
+再用 $\hat L^2$ 有限这一条把梯子的顶和底堵住。
+
+<KeyFormulas
+  items={[
+    { name: '角动量算符', latex: '\\hat L_z=\\hat x\\hat p_y-\\hat y\\hat p_x\\quad(x\\to y\\to z\\to x\\ \\text{轮换})', note: '各项内部坐标与动量方向不同，无排序歧义，自动厄米' },
+    { name: '基本对易关系', latex: '[\\hat L_x,\\hat L_y]=\\ii\\hbar\\hat L_z\\ \\text{及其轮换}', note: '角动量的真正定义；满足它的都是角动量' },
+    { name: '不确定性关系', latex: '\\sigma_{L_x}\\sigma_{L_y}\\ge\\frac{\\hbar}{2}\\lvert\\langle\\hat L_z\\rangle\\rvert', note: '下界依赖于态；⟨L_z⟩=0 时允许两者同时为零' },
+    { name: '相容的搭档', latex: '[\\hat L^2,\\hat L_i]=0\\quad(i=x,y,z)', note: '长度加一个分量可同时确定，习惯取 (L², L_z)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am1-1',
+      prompt: '为什么 L̂_z = x̂p̂_y − ŷp̂_x 的构造不存在算符排序歧义？',
+      options: [
+        '每一项中的坐标和动量属于不同方向，彼此对易',
+        '因为角动量是守恒量',
+        '因为 x̂ 和 p̂_y 都是厄米算符',
+        '量子化规则规定必须按字母顺序排',
+      ],
+      answer: 0,
+      distractors: {
+        1: '守恒与否要看哈密顿量，与排序问题无关。',
+        2: '两个厄米算符的乘积一般不厄米（除非它们对易）——恰好这里对易，所以才没问题，但理由是对易而不是各自厄米。',
+      },
+      explain: '[x̂, p̂_y] = 0：只有同方向的坐标和动量才互相「起火花」。x̂p̂_y 与 p̂_y x̂ 完全相同，翻译唯一确定。',
+    },
+    {
+      id: 'am1-2',
+      prompt: '关于 σ_{L_x}σ_{L_y} ≥ (ħ/2)|⟨L̂_z⟩|，下列说法正确的是：（多选）',
+      options: [
+        '它是广义不确定性关系对 [L̂_x, L̂_y] = iħL̂_z 的直接应用',
+        '它的下界依赖于所处的量子态',
+        '它说明任何态上 L_x 与 L_y 都不能同时确定',
+        '⟨L̂_z⟩ = 0 的态上，L_x 与 L_y 允许同时取确定值',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: '角动量为零的球对称态上三个分量都确定为零——因为此时下界也是零。',
+      },
+      explain: '与 [x̂,p̂] = iħ（常数）不同，这里对易子是算符，其期望值随态变化。这就是「下界依赖于态」的来源，也是 l = 0 态能三个分量同时为零的原因。',
+    },
+    {
+      id: 'am1-3',
+      prompt: '既然三个分量互不对易，为什么还能把 L̂² 和 L̂_z 一起用作标签？',
+      options: [
+        '因为 [L̂², L̂_z] = 0，两者存在共同本征态',
+        '因为 L̂² 不是可观测量，不参与测量',
+        '因为 z 方向在物理上特殊',
+        '因为 L̂² 是常数',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'z 没有任何特殊性，选它纯属约定；选 x 或 y 得到的物理完全一样。',
+        3: 'L̂² 是算符，本征值随态不同而不同，只是在单个本征态上取定值。',
+      },
+      explain: '推导中 [L̂_x², L̂_z] 与 [L̂_y², L̂_z] 恰好一正一负抵消。对易意味着可同时对角化（见 3.6 节），所以「长度 + 一个分量」是量子力学允许同时确定的最大组合。',
+    },
+    {
+      id: 'am1-4',
+      type: 'numeric',
+      prompt: '某态的 L̂² 本征值为 6ħ²（下一节会看到这对应 l = 2）。角动量的大小 |L| 是 ħ 的多少倍？（保留三位小数）',
+      answer: 2.449,
+      tolerance: 0.01,
+      unit: 'ħ',
+      explain: '|L| = √6 ħ ≈ 2.449ħ。注意它比 L_z 能取到的最大值 2ħ 还大——角动量矢量永远无法完全指向 z 轴，否则 L_x = L_y = 0 同时确定，违反不确定性关系。这正是圆锥图像的定量版本。',
+    },
+  ]}
+/>
+
+## 接下来
+
+我们已经把赌注押在了对易关系上：宣称光靠
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\ \text{及其轮换}
+$$
+
+就能定出 $\hat L^2$ 与 $\hat L_z$ 的全部本征值。
+
+下一节兑现这个承诺——用梯算符一步步爬出整个谱。而且答案里会藏一个惊喜：
+代数允许的本征值比轨道运动实际用到的**多出一半**，
+那多出来的一半，正是自旋的座位。

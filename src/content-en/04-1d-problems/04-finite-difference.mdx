@@ -1,17 +1,252 @@
 ---
-title: 'Solving the Schrödinger equation numerically'
-summary: 'Finite differences turn a differential equation into a matrix eigenvalue problem.'
+title: Solving the Schrödinger equation numerically
 section: '4.4'
 order: 4
-status: stub
+summary: 'Swap the continuous x axis for a row of grid points and the Schrödinger equation becomes a tridiagonal matrix eigenvalue problem — ten lines of code solve the bound states of any potential.'
+status: done
+prereqs:
+  - 02-wavefunction/09-harmonic-oscillator
+  - 03-formalism/04-linear-operators
+  - 04-1d-problems/03-transfer-matrix
+objectives:
+  - Derive the three-point difference formula for the second derivative from Taylor expansions, and state the order of the error
+  - Write the Hamiltonian as a tridiagonal matrix and account for where every matrix element comes from
+  - Solve the harmonic oscillator with a stock eigenvalue routine and compare against the exact solution
+  - "Run grid-convergence checks, identifying the two independent error sources: grid spacing and box size"
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section ended by saying it plainly: real potentials are smooth, and a staircase of piecewise-constant slabs is no long-term plan. And looking back at chapter 2, the potentials we can solve **exactly** can be counted on one hand — infinite well, finite well, harmonic oscillator, square barrier — each cracked by its own bespoke trick (a standing-wave condition, a transcendental equation, ladder operators). Change the potential even slightly — two wells of unequal depth, say, or a tilted floor from an applied field — and every trick fails at once.
+
+But [chapter 3](/en/ch/03-formalism/) wrote down the way out long ago, even if it sounded like philosophy at the time: **wavefunctions are components of a vector, operators are matrices** ([section 3.1](/en/ch/03-formalism/01-from-wavefunction-to-vector/), [section 3.4](/en/ch/03-formalism/04-linear-operators/)). The "matrices" there were infinite-dimensional and would not fit in a computer. This section does something impolite: it **chops** the infinite dimensions down to finite — the $x$ axis becomes a row of grid points, $\psi(x)$ becomes a column of numbers, and $\hat H$ genuinely becomes a matrix you can print out and look at. Energy levels? The matrix's eigenvalues. Wavefunctions? Its eigenvectors. The rest goes to the linear algebra library.
+
+## Step one: turn the function into an array
+
+Choose an interval $[-L/2,\,L/2]$ large enough that the bound-state wavefunctions have long since decayed to nothing at the endpoints, and scatter $N$ equally spaced grid points across it:
+
+$$
+x_n=-\frac{L}{2}+nh,\qquad h=\frac{L}{N+1},\qquad n=1,2,\dots,N
+$$
+
+The wavefunction is demoted from a continuous curve to a column of samples $\psi_n\equiv\psi(x_n)$. The potential likewise becomes a column of numbers $V_n\equiv V(x_n)$ — **and this is why no potential is special any more**: however exotic the potential, it is just a different column of numbers in an array.
+
+The kinetic term of the stationary Schrödinger equation contains $\psi''$. Here comes the trouble: with only a row of discrete points left, what do we do about derivatives?
+
+## Step two: compute the second derivative from the neighbours
+
+<Derivation title="Derivation: the three-point difference formula and its error" level="基础" minutes={7} open={true}>
+
+**The idea**: the second derivative at a point measures how much the curve bends there, and bending can be probed by asking "how much higher is the average of the two neighbours than the point itself". The tool for turning that sentence into a formula is the Taylor expansion.
+
+**Step 1: expand to both sides.** Assuming $\psi$ is smooth enough, expand about $x_n$ to fourth order:
+
+$$
+\psi_{n\pm1}=\psi(x_n\pm h)=\psi_n\pm h\psi_n'+\frac{h^2}{2}\psi_n''\pm\frac{h^3}{6}\psi_n'''+\frac{h^4}{24}\psi_n''''+\cdots
+$$
+
+**Step 2: add.** When the two expansions are added, every **odd-order** term ($\pm h\psi'$, $\pm h^3\psi'''/6$) comes with opposite signs and cancels in pairs — which is the entire motivation for taking neighbours placed symmetrically left and right:
+
+$$
+\psi_{n+1}+\psi_{n-1}=2\psi_n+h^2\psi_n''+\frac{h^4}{12}\psi_n''''+\cdots
+$$
+
+**Step 3: solve for $\psi''$.** Rearrange and divide by $h^2$:
+
+$$
+\psi_n''=\frac{\psi_{n+1}-2\psi_n+\psi_{n-1}}{h^2}-\frac{h^2}{12}\psi_n''''+\cdots
+$$
+
+Dropping the correction term gives the **three-point difference formula**:
+
+$$
+\boxed{\ \psi''(x_n)\approx\frac{\psi_{n+1}-2\psi_n+\psi_{n-1}}{h^2}\ }
+$$
+
+**The error is $O(h^2)$**: the leading error term $-\frac{h^2}{12}\psi''''$ shrinks with the **square** of the grid spacing. Halve $h$ and the error drops to a quarter — this "halve and check for four" fingerprint is one we will verify with our own eyes in the numerical experiment shortly.
+
+**Read the formula's face**: the numerator is exactly "sum of the two neighbours minus twice the point itself", i.e. twice the gap between the neighbours' average and the point — dovetailing perfectly with the opening intuition. Where $\psi$ is locally a straight line the numerator vanishes: straight lines do not bend, the second derivative is zero, correct.
+
+</Derivation>
+
+## Step three: the Hamiltonian shows its matrix form
+
+Insert the difference formula into the stationary equation $-\frac{\hbar^2}{2m}\psi''+V\psi=E\psi$; at grid point $n$:
+
+$$
+-\frac{\hbar^2}{2mh^2}\psi_{n+1}+\left(\frac{\hbar^2}{mh^2}+V_n\right)\psi_n-\frac{\hbar^2}{2mh^2}\psi_{n-1}=E\,\psi_n
+$$
+
+The left side is a linear operation on the column vector $(\psi_1,\dots,\psi_N)$ — which is to say a matrix multiplication, $H\boldsymbol\psi=E\boldsymbol\psi$, with
+
+$$
+H=\begin{pmatrix}
+\frac{\hbar^2}{mh^2}+V_1&-\frac{\hbar^2}{2mh^2}&&\\[2pt]
+-\frac{\hbar^2}{2mh^2}&\frac{\hbar^2}{mh^2}+V_2&-\frac{\hbar^2}{2mh^2}&\\[2pt]
+&\ddots&\ddots&\ddots
+\end{pmatrix}
+$$
+
+A **tridiagonal** matrix: the diagonal holds "kinetic baseline + local potential", the entries hugging the diagonal hold the coupling between neighbouring grid points, and everything else is zero — because the three-point formula only talks to its immediate neighbours.
+
+Two details to settle properly:
+
+- **Boundary conditions**: the equation at $n=1$ involves $\psi_0$, and at $n=N$ involves $\psi_{N+1}$ — the values at the interval's endpoints. We simply set $\psi_0=\psi_{N+1}=0$, which amounts to locking the system into an infinite box of width $L$. As long as $L$ is big enough that the bound states have decayed exponentially to zero well before the walls, the two fake walls are harmless (how big is "big enough" — see the warning below).
+- **The matrix is real and symmetric** — the discrete incarnation of chapter 3's Hermitian operator. The theorem of [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) is honoured verbatim: all eigenvalues real, all eigenvectors mutually orthogonal. Theory's guarantee and numerics' verification settle their accounts on the spot, in the code below.
+
+<DualView>
+<div slot="left">
+
+**Look back at section 3.1 — that sentence is now literal fact.** "$\psi(x)$ is the components of a state vector in the position basis" — now the components really are $N$ numbers sitting in an array. "$\hat H$ is an operator" — now it is an $N\times N$ real symmetric matrix. "Solve the stationary equation" — now it is one call to an eigenvalue decomposition.
+
+Abstract language first, concrete computation catching up later: that order of events replays again and again in physics.
+
+</div>
+<div slot="right">
+
+$$
+\hat H\ket{\psi}=E\ket{\psi}
+\;\longrightarrow\;
+H\boldsymbol{\psi}=E\boldsymbol{\psi}
+$$
+
+$$
+\braket{\phi}{\psi}=\int\phi^*\psi\,\dd x
+\;\longrightarrow\;
+\sum_n\phi_n^*\psi_n\,h
+$$
+
+The $h$ in the inner product is the relic of the integration measure $\dd x$ — do not lose it when normalising.
+
+</div>
+</DualView>
+
+## Step four: run it
+
+Practise on the harmonic oscillator (in dimensionless units $\hbar=m=\omega=1$, the levels should be $n+\frac12$). Tridiagonal matrices have a dedicated fast routine, `eigh_tridiagonal`, so there is no need to store $N^2$ zeros:
+
+```python
+import numpy as np
+from scipy.linalg import eigh_tridiagonal
+
+def solve(V, L, N):
+    """Solve -psi''/2 + V(x) psi = E psi on [-L/2, L/2] with N interior grid points."""
+    x = np.linspace(-L/2, L/2, N + 2)[1:-1]     # drop the two boundary points
+    h = x[1] - x[0]
+    diag = 1.0 / h**2 + V(x)                    # diagonal: kinetic baseline + potential
+    off  = -0.5 / h**2 * np.ones(N - 1)         # off-diagonal: neighbour coupling
+    E, psi = eigh_tridiagonal(diag, off, select='i', select_range=(0, 5))
+    return x, E, psi / np.sqrt(h)               # divide by √h so that Σ|ψ|²h = 1
+
+x, E, psi = solve(lambda x: 0.5 * x**2, L=16, N=1000)
+print(E)        # [0.499992  1.499960  2.499896  3.499800  4.499673  5.499513]
+```
+
+All six levels deviate from the exact values $0.5,1.5,\dots,5.5$ only in the fourth or fifth decimal place. And verify chapter 3's promise while we are here: `psi[:,0] @ psi[:,1] * h` prints $0.0$ — distinct eigenstates strictly orthogonal, to machine precision.
+
+## Step five: doubt your results
+
+The most important discipline in numerical work: **a result must prove that it has converged**. The numbers above carry two independent error sources, each with its own check.
+
+**Error one: finite grid spacing $h$.** Refine the grid and watch what moves:
+
+| $N$ | 50 | 100 | 200 | 400 | 800 |
+| --- | --- | --- | --- | --- | --- |
+| error in $E_0$ | $3.1\times10^{-3}$ | $7.9\times10^{-4}$ | $2.0\times10^{-4}$ | $5.0\times10^{-5}$ | $1.2\times10^{-5}$ |
+
+Each doubling of $N$ (halving of $h$) shrinks the error almost exactly to $1/4$ — the $O(h^2)$ fingerprint the derivation predicted, plain as day. The practical version of this discipline: **double $N$, recompute, and only quote the digits that did not move.**
+
+**Error two: finite box $L$.** Fake walls placed too close pinch the wavefunction. The check is the same in spirit: enlarge $L$, recompute, and trust the result only if it stays put.
+
+<Callout type="warning" title="Two knobs, two ways to fail">
+- **$L$ too small**: the wavefunction's exponential tails get clipped by the walls and the levels are pushed **up** (a smaller box means more zero-point energy — remember section 2.7's $1/L^2$). Symptom: enlarging $L$ still visibly moves the low levels.
+- **$h$ too coarse**: too few samples per wavelength, so the bending cannot be measured. The high excited states suffer first — the faster $\psi_n$ oscillates, the worse the damage, which is why the errors in the table above creep up with level number. Rule of thumb: **at least a dozen or so grid points in the shortest oscillation period**.
+
+The two knobs pull against each other: with $N$ fixed, enlarging $L$ simultaneously coarsens $h$. The correct posture is to check each one separately and converge each on its own.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="The discrete world has exact solutions of its own">
+The error of the difference method need not be probed by numerical experiment alone — the **discrete** infinite-well problem can be solved exactly. Substitute $\psi_n=\sin(n\pi j h/L)$ into the difference equation (with $V=0$), and a trigonometric identity gives the eigenvalues
 
-- Three-point differences for the second derivative
-- Eigenvalues of a tridiagonal matrix
-- Boundary conditions and grid-convergence checks
+$$
+E_j^{(h)}=\frac{\hbar^2}{mh^2}\left[1-\cos\frac{j\pi h}{L}\right]
+$$
+
+As $h\to0$, $1-\cos x\approx x^2/2-x^4/24$, and expanding yields $E_j^{(h)}\approx E_j\left[1-\frac{1}{12}\left(\frac{j\pi h}{L}\right)^2\right]$: the error is indeed $O(h^2)$ and grows as the square of $j$ — higher levels are hurt more. Everything checks out. One more subtle message: the bracket carries a minus sign — **the difference method computes the levels low** (the discrete Laplacian underestimates the bending of fast oscillations).
+
+This idea of putting a continuum problem on a grid is far more than a numerical trick: lattice field theory (lattice QCD) is today's only systematic way to compute the strong interaction, and the tight-binding models of solid-state physics simply declare that crystals were grids all along. That $1-\cos$ spectrum above is exactly the standard shape of a tight-binding band.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Three-point difference', latex: '\\psi\'\'(x_n)\\approx\\frac{\\psi_{n+1}-2\\psi_n+\\psi_{n-1}}{h^2},\\quad \\text{error}\\ -\\frac{h^2}{12}\\psi\'\'\'\'', note: 'Odd-order terms cancel by symmetry; halving h cuts the error to 1/4' },
+    { name: 'Discrete Hamiltonian', latex: 'H_{nn}=\\frac{\\hbar^2}{mh^2}+V_n,\\qquad H_{n,n\\pm1}=-\\frac{\\hbar^2}{2mh^2}', note: 'Real symmetric tridiagonal matrix; real eigenvalues, orthogonal eigenvectors' },
+    { name: 'Exact discrete well spectrum', latex: 'E_j^{(h)}=\\frac{\\hbar^2}{mh^2}\\left[1-\\cos\\frac{j\\pi h}{L}\\right]\\approx E_j\\left[1-\\frac{(j\\pi h/L)^2}{12}\\right]', note: 'The difference method computes levels low; the error grows as j² for higher levels' },
+    { name: 'Discrete inner product', latex: '\\braket{\\phi}{\\psi}\\to\\sum_n\\phi_n^*\\psi_n\\,h', note: 'Normalisation and orthogonality checks must carry the measure h' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fd-1',
+      prompt: 'In deriving the three-point difference formula, the purpose of adding the expansions of ψ(x+h) and ψ(x−h) is:',
+      options: [
+        'To make all odd-order derivative terms cancel in pairs, exposing the second derivative directly',
+        'To improve numerical stability',
+        'To guarantee the matrix is tridiagonal',
+        'To eliminate the potential term',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Stability is about how errors propagate; what happens here is the construction of the formula.',
+        2: 'The tridiagonal structure is the natural consequence of "using only the immediate neighbours", not the goal of the addition step.',
+        3: 'The potential term enters the equation after the kinetic term is differenced, and has nothing to do with the expansion.',
+      },
+      explain: 'In the ±h expansions the odd-order terms carry opposite signs, so adding kills them: first and third derivatives all exit, leaving 2ψ + h²ψ″ + h⁴ψ⁗/12 + ⋯. This is also why the error starts at the h² term (rather than h) — symmetric sampling earns a free order of accuracy.',
+    },
+    {
+      id: 'fd-2',
+      prompt: 'The discrete Hamiltonian matrix is real and symmetric. Which of chapter 3\'s promises does this cash in numerically? (Select all that apply.)',
+      options: [
+        'All eigenvalues are real',
+        'Eigenvectors belonging to distinct eigenvalues are mutually orthogonal',
+        'The eigenvectors form a complete basis (N orthogonal vectors in an N-dimensional space)',
+        'The eigenvalues are necessarily non-negative',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Hermiticity does not guarantee non-negativity; with a deep enough potential (a well with V < 0) the bound-state energies are negative.',
+      },
+      explain: 'A real symmetric matrix is the finite-dimensional special case of a Hermitian operator, and here the spectral theorem carries none of functional analysis\'s subtleties: N real eigenvalues, N orthogonal eigenvectors, spanning the whole space. The code\'s psi[:,0]·psi[:,1]·h = 0 is the machine-precision edition of section 3.5\'s theorem.',
+    },
+    {
+      id: 'fd-3',
+      prompt: 'With N = 400 the ground-state energy error is 5.0×10⁻⁵. Everything else unchanged, raising N to 800 makes the error roughly:',
+      options: [
+        '1.2×10⁻⁵ (about 1/4)',
+        '2.5×10⁻⁵ (about 1/2)',
+        '5.0×10⁻⁵ (unchanged)',
+        '6×10⁻⁶ (about 1/8)',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the behaviour of an O(h) method; the three-point formula is O(h²).',
+        2: 'An error that does not budge with N means either a bug or an error pinned by some other source (such as the box size).',
+        3: '1/8 corresponds to O(h³); symmetric differencing does not hand you a free third order.',
+      },
+      explain: 'Halve h, multiply the error by 1/4 — the fingerprint of O(h²) convergence. Run backwards, this is also the most practical self-check: if doubling N does not show the "divide by 4", suspect that the error is dominated by the box size or by a bug.',
+    },
+    {
+      id: 'fd-4',
+      type: 'numeric',
+      prompt: 'An infinite well of width L is solved by finite differences with grid spacing h = L/10. Using the exact discrete spectrum E₁⁽ʰ⁾/E₁ ≈ 1 − (πh/L)²/12, estimate the relative error of the ground-state energy, as a percentage.',
+      answer: 0.82,
+      tolerance: 0.1,
+      unit: '%',
+      explain: '(π/10)²/12 = 0.098696/12 ≈ 0.00822, i.e. about 0.82% (the exact discrete spectrum gives 0.8198%; the expansion is already very accurate). Note the sign: the computed level comes out low. For more accuracy on the same grid, Richardson extrapolation of the h and h/2 results removes the h² error wholesale.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The method is in place and the code exists, but every change of potential still means fiddling afresh with the grid, the units, and the checks — like cooking every meal starting from lighting the fire. The next section packages all of it into a **general-purpose solver**: feed it any potential curve and it returns levels and wavefunctions, quality checklist included. Then we use it to do something analytic methods cannot — solve the **double well** — and watch a pair of levels squeeze to within a percent of each other, reading off tunneling, the ammonia maser, and the embryo of the chemical bond.

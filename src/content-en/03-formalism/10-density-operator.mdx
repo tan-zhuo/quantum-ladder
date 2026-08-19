@@ -1,17 +1,397 @@
 ---
-title: 'Introducing the density operator'
-summary: 'What to do when you do not know which state the system is in.'
+title: A first look at the density operator
 section: '3.10'
 order: 10
-status: stub
+summary: 'When you do not know which state the system is in — or when it has no state of its own at all — the state vector is not enough. The density operator is the tool that is.'
+status: done
+prereqs:
+  - 03-formalism/09-time-evolution-pictures
+objectives:
+  - Write down density operators for pure and mixed states, and state the three basic properties of ρ
+  - Use Tr(ρ²) to test purity, and explain its range of values
+  - Distinguish "superposition" from "mixture", and explain how experiment tells them apart
+  - Explain why the reduced density operator is indispensable
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous nine sections quietly assumed that the system has one definite state vector $\ket{\psi}$.
+
+This section handles the two situations where that is not enough — and in real experiments those two situations are practically the norm.
+
+## Two kinds of "not knowing"
+
+<DualView>
+<div slot="left">
+
+**Case one: classical ignorance**
+
+Silver atoms flying out of an oven with completely random spin directions. You know each atom has a definite spin state — you just don't know which.
+
+This is **classical probability**: 50% $\ket{\uparrow}$, 50% $\ket{\downarrow}$.
+
+Note that this is **not** the superposition $\frac{1}{\sqrt2}(\ket{\uparrow}+\ket{\downarrow})$ — that is a definite state with spin along $+x$, entirely different from "not knowing whether it is up or down". How to tell them apart is spelled out below.
+
+</div>
+<div slot="right">
+
+**Case two: it has no state of its own**
+
+Take two particles in the entangled state
+
+$$
+\ket{\Psi}=\frac{1}{\sqrt2}\big(\ket{\uparrow}_A\ket{\downarrow}_B-\ket{\downarrow}_A\ket{\uparrow}_B\big)
+$$
+
+The whole has a definite state. But **what state does particle A have on its own?**
+
+The answer: none. There exists no $\ket{\psi}_A$ such that $\ket{\Psi}=\ket{\psi}_A\otimes\ket{\phi}_B$.
+
+This is not a matter of ignorance — even with complete information about the whole, A still has no state vector of its own.
+
+</div>
+</DualView>
+
+Both cases call for the same new tool.
+
+## The density operator
+
+**Pure state** (you know it is $\ket{\psi}$):
+
+$$
+\hat\rho=\ket{\psi}\bra{\psi}
+$$
+
+This is the projection operator of [section 3.2](/en/ch/03-formalism/02-dirac-notation/).
+
+**Mixed state** (in $\ket{\psi_i}$ with probability $p_i$):
+
+$$
+\hat\rho=\sum_i p_i\ket{\psi_i}\bra{\psi_i},\qquad p_i\ge0,\ \sum_ip_i=1
+$$
+
+<Callout type="insight" title="Why this combination is the right one">
+The key is that expectation values must come out right. If the system is in $\ket{\psi_i}$ with probability $p_i$, the expectation of $\hat A$ should be the individual expectations weighted by the classical probabilities:
+
+$$
+\langle A\rangle=\sum_ip_i\bra{\psi_i}\hat A\ket{\psi_i}
+$$
+
+And this can be written, exactly, as a trace:
+
+$$
+\langle A\rangle=\operatorname{Tr}(\hat\rho\hat A)
+$$
+
+The Derivation below checks it.
 </Callout>
 
-## Planned contents
+<Derivation title="Verifying the trace formula ⟨A⟩ = Tr(ρÂ)" level="基础" minutes={3}>
 
-- The density operator of a pure state, ρ = |ψ⟩⟨ψ|
-- Properties of ρ: Hermitian, unit trace, positive semi-definite
-- Tr(ρ²) as a purity test
+Take any orthonormal basis $\{\ket{n}\}$:
+
+$$
+\operatorname{Tr}(\hat\rho\hat A)=\sum_n\bra{n}\hat\rho\hat A\ket{n}
+=\sum_n\sum_ip_i\braket{n}{\psi_i}\bra{\psi_i}\hat A\ket{n}
+$$
+
+Swap the two numbers (both are complex numbers, so they commute), then do the sum over $n$ using completeness $\sum_n\ket{n}\bra{n}=\hat 1$:
+
+$$
+=\sum_ip_i\bra{\psi_i}\hat A\Big(\sum_n\ket{n}\bra{n}\Big)\ket{\psi_i}=\sum_ip_i\bra{\psi_i}\hat A\ket{\psi_i}
+$$
+
+which is exactly the required form. $\blacksquare$
+
+**Note that the trace is independent of the choice of basis**, so this formula works in any representation.
+
+</Derivation>
+
+## The three properties of ρ
+
+<DualView>
+<div slot="left">
+
+**1. Hermitian**: $\hat\rho^\dagger=\hat\rho$
+
+Because each $\ket{\psi_i}\bra{\psi_i}$ is Hermitian and the $p_i$ are real.
+
+**2. Unit trace**: $\operatorname{Tr}\hat\rho=1$
+
+$$
+\operatorname{Tr}\hat\rho=\sum_ip_i\braket{\psi_i}{\psi_i}=\sum_ip_i=1
+$$
+
+corresponding to "total probability 1".
+
+**3. Positive semidefinite**: $\bra{\phi}\hat\rho\ket{\phi}\ge0$
+
+$$
+\bra{\phi}\hat\rho\ket{\phi}=\sum_ip_i|\braket{\phi}{\psi_i}|^2\ge0
+$$
+
+corresponding to "probabilities are non-negative".
+
+</div>
+<div slot="right">
+
+**The converse also holds**
+
+Any operator satisfying these three is the density operator of some physical state. So the three can serve directly as a definition:
+
+> A quantum state = a Hermitian, unit-trace, positive-semidefinite operator
+
+This is more general than "a normalised state vector", and closer to experiment — **the most general thing you can prepare in a laboratory is a $\hat\rho$**.
+
+Hermiticity lets you diagonalise:
+
+$$
+\hat\rho=\sum_k\lambda_k\ket{k}\bra{k}
+$$
+
+with $\lambda_k\ge0$, $\sum_k\lambda_k=1$. These eigenvalues are **the classical probability distribution in the eigenbasis**.
+
+</div>
+</DualView>
+
+## Purity: telling pure from mixed
+
+<Callout type="insight" title="The single number Tr(ρ²) is enough">
+$$
+\operatorname{Tr}(\hat\rho^2)=\sum_k\lambda_k^2
+$$
+
+**Pure state**: a single $\lambda=1$ with the rest zero, so
+
+$$
+\operatorname{Tr}(\hat\rho^2)=1
+$$
+
+(Direct check: $\hat\rho^2=\ket{\psi}\braket{\psi}{\psi}\bra{\psi}=\hat\rho$ — a pure state's $\hat\rho$ is a projection operator.)
+
+**Mixed state**: $\sum_k\lambda_k=1$ but each is less than 1, and squaring makes them smaller, so
+
+$$
+\operatorname{Tr}(\hat\rho^2)<1
+$$
+
+**Maximally mixed state** (all $\lambda_k=1/d$ in a $d$-dimensional space):
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac1d
+$$
+
+For spin 1/2 ($d=2$) that is $1/2$ — the minimum, corresponding to "knowing nothing at all".
+
+$$
+\frac1d\le\operatorname{Tr}(\hat\rho^2)\le1
+$$
+
+This number is called the **purity**. On the Bloch sphere it has a direct geometric meaning: pure states sit on the surface, mixed states inside, and the maximally mixed state at the centre ([section 9.1](/en/ch/09-quantum-information/01-qubit-bloch-sphere/)).
+</Callout>
+
+## Superposition versus mixture: how experiment tells them apart
+
+This is the most crucial point of the section — and the easiest to muddle when learning.
+
+<DualView>
+<div slot="left">
+
+**Superposition** (a pure state)
+
+$$
+\ket{+}=\frac{1}{\sqrt2}\big(\ket{\uparrow}+\ket{\downarrow}\big)
+$$
+
+$$
+\hat\rho_\text{pure}=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix}
+$$
+
+$\operatorname{Tr}\rho^2=1$.
+
+**Mixture**
+
+"50% up, 50% down"
+
+$$
+\hat\rho_\text{mix}=\frac12\begin{pmatrix}1&0\\0&1\end{pmatrix}
+$$
+
+$\operatorname{Tr}\rho^2=1/2$.
+
+</div>
+<div slot="right">
+
+**Measure along z: identical**
+
+Both give 50% up, 50% down. **Measuring only z can never tell them apart.**
+
+**Measure along x: they split at once**
+
+$\hat\rho_\text{pure}$: it simply is $\ket{+_x}$, so
+
+$$
+P(+_x)=1
+$$
+
+$\hat\rho_\text{mix}$:
+
+$$
+P(+_x)=\operatorname{Tr}(\hat\rho_\text{mix}\ket{+_x}\bra{+_x})=\frac12
+$$
+
+**The difference lives entirely in the off-diagonal elements.** They are called the **coherences**, and they are where the capacity to interfere resides. What decoherence does is wipe them out ([section 10.5](/en/ch/10-open-systems/05-decoherence/)).
+
+</div>
+</DualView>
+
+<Callout type="warning" title="One and the same ρ admits infinitely many ''preparation recipes''">
+The maximally mixed state can be written
+
+$$
+\hat\rho=\frac12\ket{\uparrow}\bra{\uparrow}+\frac12\ket{\downarrow}\bra{\downarrow}
+$$
+
+or just as well
+
+$$
+\hat\rho=\frac12\ket{+_x}\bra{+_x}+\frac12\ket{-_x}\bra{-_x}
+$$
+
+The two are **the same operator** (both equal $\frac12\hat 1$).
+
+So the question "which pure states was this mixture made from?" has **no unique answer** — and no measurement can distinguish the recipes even in principle, because every prediction enters only through $\operatorname{Tr}(\hat\rho\hat A)$, and $\hat\rho$ is the same.
+
+**This is a feature, not a bug.** The security of quantum teleportation and quantum key distribution rests precisely on it: the reduced state an eavesdropper obtains is identical to the legitimate users', and no information can be extracted from it ([sections 9.5](/en/ch/09-quantum-information/05-teleportation/)–[9.6](/en/ch/09-quantum-information/06-superdense-coding/)).
+</Callout>
+
+## The reduced density operator
+
+Back to case two from the opening.
+
+<Derivation title="Extracting a single particle''s state from an entangled state" level="进阶" minutes={6}>
+
+For a composite system $\hat\rho_{AB}$, **trace out** the degrees of freedom of B:
+
+$$
+\hat\rho_A=\operatorname{Tr}_B\hat\rho_{AB}=\sum_j\bra{j}_B\hat\rho_{AB}\ket{j}_B
+$$
+
+For the singlet $\ket{\Psi}=\frac{1}{\sqrt2}(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow})$:
+
+$$
+\hat\rho_{AB}=\frac12\big(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}\big)\big(\bra{\uparrow\downarrow}-\bra{\downarrow\uparrow}\big)
+$$
+
+Trace over B (taking $\ket{j}_B\in\{\ket{\uparrow}_B,\ket{\downarrow}_B\}$). The cross terms contain $\braket{\uparrow}{\downarrow}_B=0$ and all vanish, leaving
+
+$$
+\hat\rho_A=\frac12\ket{\uparrow}\bra{\uparrow}+\frac12\ket{\downarrow}\bra{\downarrow}=\frac12\hat 1
+$$
+
+**On its own, A is maximally mixed**, with $\operatorname{Tr}\rho_A^2=1/2$.
+
+**This deserves a pause:** the whole $\ket{\Psi}$ is pure ($\operatorname{Tr}\rho_{AB}^2=1$ — we hold complete information about it), yet each of its parts is maximally mixed — **we know nothing about them**.
+
+In the classical world this is impossible: know the whole and you know the parts. In the quantum world, information can reside entirely in the **correlations**, and in neither party alone.
+
+This is the defining feature of entanglement. [Section 9.3](/en/ch/09-quantum-information/03-entanglement-measures/) turns "how entangled" into a number using the von Neumann entropy of $\hat\rho_A$, $S=-\operatorname{Tr}(\rho\ln\rho)$.
+
+</Derivation>
+
+<Callout type="insight" title="How ρ evolves: the von Neumann equation">
+Differentiate $\hat\rho=\sum_ip_i\ket{\psi_i}\bra{\psi_i}$ term by term with the Schrödinger equation:
+
+$$
+\ii\hbar\frac{\dd\hat\rho}{\dd t}=[\hat H,\hat\rho]
+$$
+
+Note it differs from the Heisenberg equation $\frac{\dd\hat A_H}{\dd t}=\frac{\ii}{\hbar}[\hat H,\hat A_H]$ **by a minus sign** — because $\hat\rho$ is a state, not an observable, and it evolves in the Schrödinger picture.
+
+From $\hat\rho(t)=\hat U\hat\rho(0)\hat U^\dagger$ it follows that $\operatorname{Tr}(\rho^2)$ is **invariant** under unitary evolution: a pure state stays pure forever.
+
+**So how does decoherence turn pure states into mixed ones?** Because decoherence is not the unitary evolution of an isolated system — it is "evolve unitarily together with the environment, then trace the environment out". The tracing step is not unitary, and that is where the purity is lost. The evolution equation for open systems (the Lindblad equation) is in [section 10.4](/en/ch/10-open-systems/04-lindblad/).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Density operator', latex: '\\hat\\rho=\\sum_ip_i\\ket{\\psi_i}\\bra{\\psi_i}', note: 'A pure state is the one-term special case' },
+    { name: 'Expectation value', latex: '\\langle A\\rangle=\\operatorname{Tr}(\\hat\\rho\\hat A)', note: 'The trace is representation-independent — compute in any basis' },
+    { name: 'Three properties', latex: '\\hat\\rho^\\dagger=\\hat\\rho,\\quad\\operatorname{Tr}\\hat\\rho=1,\\quad\\hat\\rho\\ge0', note: 'The converse holds too — usable directly as a definition' },
+    { name: 'Purity', latex: '\\frac1d\\le\\operatorname{Tr}(\\hat\\rho^2)\\le1', note: '= 1 for pure states; = 1/d for the maximally mixed state' },
+    { name: 'Reduced density operator', latex: '\\hat\\rho_A=\\operatorname{Tr}_B\\hat\\rho_{AB}', note: 'A part of an entangled state is necessarily mixed' },
+    { name: 'Von Neumann equation', latex: '\\ii\\hbar\\frac{\\dd\\hat\\rho}{\\dd t}=[\\hat H,\\hat\\rho]', note: 'Differs from the Heisenberg equation by a minus sign' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'dens-1',
+      prompt: 'How does experiment distinguish the superposition (|↑⟩+|↓⟩)/√2 from the mixture "50% |↑⟩, 50% |↓⟩"?',
+      options: [
+        'Measure along x: the superposition gives a definite result, the mixture gives 50/50',
+        'Measuring along z suffices',
+        'The two are identical under every measurement',
+        'Measuring the energy suffices',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Along z both give 50/50 — completely indistinguishable.',
+        2: 'They are different physical states; you just need the right measurement direction.',
+        3: 'Their energy expectation values can coincide.',
+      },
+      explain: 'The difference lives entirely in the off-diagonal elements (the coherences) of the density matrix. Measuring along z looks only at the diagonal, so it sees no difference; measuring along x rotates the off-diagonal elements onto the diagonal, and the difference appears at once. Wiping out those off-diagonal elements is exactly what decoherence does.',
+    },
+    {
+      id: 'dens-2',
+      prompt: 'Which statements about Tr(ρ²) are correct? (Select all that apply.)',
+      options: [
+        'It equals 1 for a pure state',
+        'It is less than 1 for a mixed state',
+        'The maximally mixed state in d dimensions gives 1/d',
+        'It is invariant under unitary evolution',
+      ],
+      answer: [0, 1, 2, 3],
+      explain: 'A pure state''s ρ is a projection operator, ρ² = ρ, whose trace is 1. Unitary evolution ρ → UρU† preserves purity, so an isolated system''s pure state stays pure forever. Decoherence can lower the purity only because it includes the "trace out the environment" step — which is not unitary.',
+    },
+    {
+      id: 'dens-3',
+      prompt: 'Computing the reduced density operator of the entangled singlet gives ρ_A = ½·1. This shows:',
+      options: [
+        'The whole is pure yet each part is maximally mixed — the information lives in the correlations, not in either party',
+        'The spin of particle A really is random',
+        'The calculation went wrong',
+        'Entangled states are not legitimate quantum states',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'It is not "secretly some value we merely don''t know" — A has no state vector of its own at all.',
+        2: 'This is the standard result for an entangled state.',
+        3: 'Entangled states are perfectly legitimate.',
+      },
+      explain: 'Classically, knowing the whole means knowing the parts; quantum mechanically it does not. This is the defining feature of entanglement, and the source of security in quantum teleportation and quantum key distribution — the reduced state an eavesdropper holds contains no information.',
+    },
+    {
+      id: 'dens-4',
+      prompt: 'Why can one and the same density operator correspond to several different "preparation recipes"?',
+      options: [
+        'Because every prediction enters only through Tr(ρÂ); identical ρ means identical predictions, so the preparation details are indistinguishable in principle',
+        'Because the definition of the density operator is not rigorous',
+        'Because measurement precision is limited',
+        'Because mixed states are not real physical states',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The definition is perfectly rigorous.',
+        2: 'It has nothing to do with precision — the indistinguishability is a matter of principle.',
+        3: 'Mixed states are the most common states in any laboratory.',
+      },
+      explain: '½|↑⟩⟨↑| + ½|↓⟩⟨↓| and ½|+ₓ⟩⟨+ₓ| + ½|−ₓ⟩⟨−ₓ| are the same operator, ½·1. That is a feature, not a bug: the security of quantum cryptography is built precisely on the eavesdropper''s inability to distinguish these preparations.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Chapter 3's toolkit is now complete. The final section settles the accounts: it redoes, in the new language, the derivations that consumed so many pages in chapter 2.
+
+You will watch some proofs shrink from half a page to three lines — and others turn from "solve a partial differential equation" into "do some algebra".

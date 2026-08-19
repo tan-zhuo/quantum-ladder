@@ -1,17 +1,184 @@
 ---
-title: 'Antiparticles and the Dirac sea'
-summary: 'The negative-energy solutions are not junk.'
+title: Antiparticles and the negative-energy sea
 section: '12.4'
 order: 4
-status: stub
+summary: 'With no floor to the spectrum, what keeps atoms stable? Dirac''s answer was to fill the vacuum: the negative-energy sea. A hole in the sea is a positron — written on paper in 1931, found in a cloud chamber in 1932.'
+status: done
+prereqs:
+  - 12-relativistic/03-dirac-equation
+  - 08-identical-particles/03-pauli-exclusion
+sims: []
+objectives:
+  - 'Explain why the negative-energy solutions can neither be deleted nor left alone: a bottomless spectrum would collapse every atom within nanoseconds'
+  - 'Lay out the Dirac-sea picture: how Pauli exclusion blocks the downward cascade, and how a hole behaves as a positively charged particle'
+  - Recount the prediction of the positron and Anderson's cloud-chamber discovery, and give a modern application of annihilation (PET)
+  - Point out the three hard flaws of the Dirac sea and the modern field-theory (Feynman-Stückelberg) reading
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the close of last section, the Dirac equation had won the probability and lost the spectrum: every momentum carries a negative-energy solution $E=-\sqrt{p^2c^2+m^2c^4}$, with levels running from $-mc^2$ all the way down to negative infinity. This section tells the story of the boldest patch in the history of physics — the patch itself was later dismantled, but what it predicted stayed, and collected a Nobel Prize.
+
+## How concrete the disaster is
+
+First compute the consequences of a "bottomless spectrum", to appreciate how lethal the problem is.
+
+In a quantum system, excited states decay to lower levels and emit photons — hydrogen's $2p\to1s$ takes only about 1.6 ns. Now the Dirac equation says: there are levels below $1s$, below $-mc^2$, and **no lowest rung**. Then nothing stops the cascade:
+
+$$
+e^-(1s)\;\to\;e^-(E<-mc^2)+\gamma\;\to\;e^-(E\ll-mc^2)+\gamma+\gamma\;\to\;\cdots
+$$
+
+Each rung down releases another photon; the energy falls ever more negative, the photons multiply without end. Estimates put the rate of this "downward radiation" at nanosecond scale — **no stable atom should exist anywhere in the universe**, and you and I should at this moment be a puff of gamma rays. This is worse than KG's negative probability: negative probability merely defied interpretation, while a bottomless spectrum collides head-on with the observed fact that things exist.
+
+Can we just delete the negative-energy solutions? No — same reason as last section: incompleteness. Worse, in an external field the transition matrix elements between positive- and negative-energy states are non-zero — the dynamics itself will ferry particles into the states you deleted.
+
+## Dirac turns the tables: fill the vacuum
+
+In 1930 Dirac proposed a scheme that still reads as breathtakingly audacious.
+
+<DualView>
+<div slot="left">
+
+**The picture.** Redefine the "vacuum": the supposedly empty state is in fact the state in which **every negative-energy level is already occupied by an electron** — a boundless "negative-energy sea".
+
+Why does this stabilise atoms? Because electrons are fermions, subject to the Pauli exclusion principle of [section 8.3](/en/ch/08-identical-particles/03-pauli-exclusion/): at most one electron per state. A positive-energy electron wants to fall? Every level below is **already taken**. The cascade catastrophe is walled off wholesale by exclusion.
+
+The price is turning the vacuum into an infinitely deep "electron warehouse". Dirac's wager: the warehouse is uniform and identical everywhere, so it cannot itself be observed — only its **disturbances** can.
+
+</div>
+<div slot="right">
+
+**Disturbance one: pair creation.** Strike a negative-energy electron in the sea (energy $-|E|$) with a photon of energy $\geq2mc^2$ and lift it to a positive level ($+|E'|\geq mc^2$). The sea is left with a **hole**.
+
+**Disturbance two: reading the hole.** Relative to the filled-sea vacuum, missing one electron of "energy $-|E|$, charge $-e$" appears as a **surplus** of energy $+|E|$ and charge $+e$:
+
+$$
+\text{hole}=\text{a particle with the electron's mass and opposite charge}
+$$
+
+What experiment sees in one pair creation is: a photon vanishes, and an electron plus a positively charged "anti-electron" appear. Conversely, a positive-energy electron drops into a hole, both vanish, and photons come out — **annihilation**:
+
+$$
+e^++e^-\to\gamma+\gamma
+$$
+
+</div>
+</DualView>
+
+<Derivation title="The pair-creation threshold: why 1.022 MeV" level="基础" minutes={6}>
+
+**The minimum energy.** Lifting a sea electron from the highest negative level ($-mc^2$, at $p=0$) to the lowest positive level ($+mc^2$) requires at least
+
+$$
+E_{\text{min}}=mc^2-(-mc^2)=2mc^2
+=2\times0.511\ \text{MeV}=1.022\ \text{MeV}
+$$
+
+This is the energy threshold for a gamma photon to create an electron-positron pair, matched by experiment to the last decimal. (Strictly, a single free photon creating a pair also needs a nucleus nearby to carry off the recoil momentum, or energy and momentum conservation cannot both be satisfied — the threshold value itself is unchanged.)
+
+**The ledger in reverse.** A positron and electron at rest annihilate into two photons, each carrying away
+
+$$
+E_\gamma=mc^2=511\ \text{keV}
+$$
+
+The two photons fly out back to back (momentum conservation). This 511 keV line is the positron's "fingerprint" in astronomy and medicine: a hospital **PET** scan (positron emission tomography) injects the patient with a positron-emitting tracer, the detector ring catches each back-to-back pair of 511 keV photons, and the annihilation point is reconstructed along the line between them — that is how the metabolic map of a living body is drawn. Antimatter is no science-fiction prop; it clocks in at the hospital every day.
+
+</Derivation>
+
+## From paper to cloud chamber
+
+The birth of this prediction was not dignified. Dirac at first did not dare invent a new particle and proposed that the hole "is the proton" — after all, the proton was then the only known positive particle. The idea was swiftly executed by mathematics: Weyl proved the hole's mass must **exactly equal** the electron's, and the proton is 1836 times heavier; besides, "the electron in a hydrogen atom falling into its own proton-hole" would mean hydrogen atoms annihilate spontaneously. In 1931 Dirac accepted his fate and wrote it down in black and white: there should exist a new particle "as yet unobserved by experimental physics, with the same mass as the electron and opposite charge".
+
+In 1932, Carl Anderson at Caltech saw a track in a cosmic-ray cloud-chamber photograph: its curvature in the magnetic field showed **positive** charge, but the ionisation density and radius of curvature showed a mass far below the proton's — consistent with an electron. To pin down the particle's direction of flight he placed a 6 mm lead plate across the middle of the chamber: after crossing the plate the particle lost energy and curved more sharply, fixing the direction — and with it the sign of the charge, beyond dispute. The **positron** had arrived — the first time humanity found a particle in an equation before finding it in nature. Dirac received the Nobel Prize in 1933, Anderson in 1936.
+
+<Callout type="insight" title="The equation was smarter than its inventor">
+Dirac later famously remarked, in essence, that his equation was smarter than he was. In 1928 he only wanted to repair negative probability; nobody had ordered antimatter. But once "relativity + quantum mechanics + a stable vacuum" are demanded together, antiparticles cease to be optional and become inevitable. Today this is a general theorem: every charged particle has an antiparticle of exactly equal mass and opposite charge — the antiproton (1955), the antineutron (1956), even laboratory antihydrogen (1995 to the present), all reporting for duty. Nothing shows theoretical physics' deepest charm better: every symbol you write down for consistency's sake may turn out to be an order form on nature.
 </Callout>
 
-## Planned contents
+## Dismantling the scaffolding: the modern view
 
-- The Dirac sea picture and its problems
-- Predicting and finding the positron
-- The modern field-theory reading
+The Dirac sea did great service, but it is scaffolding, not the building. Three hard flaws:
+
+1. **An infinite background.** The filled sea carries infinite negative energy and infinite charge density, waved away with "a uniform background cannot be observed"; gravity does not accept the excuse — energy gravitates however uniform it is.
+2. **What about bosons?** The KG equation has negative-energy solutions too, but spin-0 particles do not obey Pauli exclusion, so "fill the sea" fails in principle. Yet pions have antiparticles all the same — clearly the explanation missed the root.
+3. **Asymmetric bookkeeping.** The electron is a "particle" and the positron a "hole", yet in experiment the two are perfectly symmetric in status.
+
+<Callout type="warning" title="The modern reading: not a sea, a field">
+Quantum field theory recast the whole affair. Once the electron field is quantised, the negative-energy solutions are no longer read as "levels waiting to be filled" but relabelled by the **Feynman-Stückelberg convention**: a negative-energy solution describes a **positive-energy antiparticle** (formally, "a negative-energy mode propagating backwards in time = a positive-energy antiparticle propagating forwards in time" — a change of variables, not time travel). The vacuum returns to being genuinely empty: the infinite background disappears, bosons and fermions are treated alike, and particle and antiparticle are symmetric by birth — all three flaws healed at once.
+
+The Dirac sea now stands as a great lesson in the history of teaching: **a picture that is not entirely correct can make predictions that are entirely correct.** Its sound core — negative-energy solutions encode antiparticles — was inherited by field theory intact.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'The negative-energy catastrophe', latex: 'E=-\\sqrt{p^2c^2+m^2c^4}\\;\\Rightarrow\\;\\text{spectrum unbounded below}', note: 'Left untreated, atoms cascade downward on nanosecond timescales' },
+    { name: 'The Dirac sea', latex: '\\ket{\\text{vacuum}}=\\prod_{E<0}\\ket{\\text{occupied}}', note: 'Pauli exclusion blocks the downward channel; works only for fermions' },
+    { name: 'Hole = antiparticle', latex: '\\text{missing}(-|E|,\\,-e)\\;\\equiv\\;\\text{surplus}(+|E|,\\,+e)', note: 'Mass exactly equal to the electron’s — ruling out "the hole is the proton"' },
+    { name: 'Pair creation and annihilation', latex: 'E_\\gamma\\geq2mc^2=1.022\\ \\text{MeV},\\qquad e^+e^-\\to2\\gamma\\,(511\\ \\text{keV})', note: '511 keV back-to-back photons: the physics behind PET imaging' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel4-1',
+      prompt: 'If the negative-energy solutions are left untreated, the direct disaster Dirac theory predicts is:',
+      options: [
+        'Positive-energy electrons radiate photons and fall rung by rung into the bottomless negative spectrum; atoms collapse on nanosecond timescales',
+        'The probability density becomes negative',
+        'Electrons would exceed the speed of light',
+        'The wavefunction cannot be normalised',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Negative probability is the KG equation’s disease; Dirac’s ρ=ψ†ψ is strictly non-negative — that is precisely its success.',
+        3: 'The negative-energy solutions are perfectly well-normalised plane-wave modes; the problem is dynamical instability, not normalisation.',
+      },
+      explain: 'With a radiation channel open and no floor to the spectrum, excited states always have "further to fall": the cascade toward E→−∞ releases unbounded energy. The crisis cannot be fixed by deleting solutions (incompleteness, and external fields induce positive-negative transitions) — only by reinterpretation.',
+    },
+    {
+      id: 'rel4-2',
+      prompt: 'In the Dirac-sea scheme, the mechanism preventing electrons from falling into negative levels is:',
+      options: [
+        'The Pauli exclusion principle: all negative levels are already filled, and fermions cannot double-occupy',
+        'There are no transition matrix elements between negative and positive levels',
+        'Energy conservation forbids the transition',
+        'Coulomb repulsion between the negative-energy electrons',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite — the transition matrix elements are non-zero, which is exactly why "all seats taken" is needed as the block.',
+        2: 'The transition is accompanied by photon emission; the energy books balance perfectly, and no conservation law forbids it.',
+      },
+      explain: 'This also exposes the scheme’s limits: spin-0 bosons do not obey exclusion, so the sea picture fails for them — yet bosonic antiparticles like π⁺/π⁻ exist all the same. The fundamental explanation must wait for field theory.',
+    },
+    {
+      id: 'rel4-3',
+      prompt: 'Which statements about the prediction and discovery of the positron are correct? (Select all that apply.)',
+      options: [
+        'Dirac initially proposed the hole was the proton, vetoed by "the hole’s mass must equal the electron’s"',
+        'Anderson used a lead plate to slow the particle and determine its direction of flight, thereby fixing the sign of its charge',
+        'The positron was discovered experimentally first and explained by theory afterwards',
+        'A positron-electron pair at rest annihilates into two back-to-back 511 keV photons — the basis of PET imaging',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The order was exactly reversed: predicted on paper in 1931, found in the cloud chamber in 1932 — the first particle in history to be "computed before it was found".',
+      },
+      explain: 'The hole’s mass equals the electron’s exactly (Weyl), so the proton, off by a factor 1836, was out; the sharper curvature after the lead plate fixed the direction, and the bend in the magnetic field gave positive charge; tracing annihilation photon pairs back along their line is the principle of PET.',
+    },
+    {
+      id: 'rel4-4',
+      type: 'numeric',
+      prompt: 'The energy threshold for a photon to create an electron-positron pair is 2mc². Taking the electron’s mc²=0.511 MeV, find the threshold energy (MeV).',
+      answer: 1.022,
+      tolerance: 0.01,
+      unit: 'MeV',
+      explain: '2×0.511=1.022 MeV, corresponding to a gamma photon of wavelength about 1.2 pm (a nucleus is also needed to carry off the recoil). This is the quantitative version of section 12.1’s "the single-particle picture fails at energies ≳2mc²": above this threshold, particle number can no longer be held fixed.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Spin emerged from the algebra (12.3), antiparticles from the negative-energy solutions (this section) — and the Dirac equation is not done giving gifts. The last one is also the most precisely verified by experiment: the electron's magnetic moment. Put the Dirac equation in a magnetic field, take the non-relativistic limit, and $g=2$ drops out automatically; expand one order further and the fine-structure trio hand-stitched in section 6.6 (relativistic correction, spin-orbit coupling, the Darwin term) appears in one stroke, all by itself.

@@ -1,17 +1,324 @@
 ---
-title: 'Orbital angular-momentum operators'
-summary: 'The quantum version of L = r × p and its commutation relations.'
+title: Orbital angular momentum operators
 section: '5.1'
 order: 1
-status: stub
+summary: 'Carry the classical L = r × p into quantum mechanics and the three components refuse to commute with each other — and that single fact determines everything about it.'
+status: done
+prereqs:
+  - 03-formalism/05-hermitian-operators
+  - 03-formalism/06-commutators
+objectives:
+  - Write down the three component operators of L̂ and explain why they have no ordering ambiguity
+  - Derive [L̂ₓ, L̂ᵧ] = iħL̂_z in full and state what it means for measuring components simultaneously
+  - Verify that L² commutes with any one component, and explain why the standard choice is (L², L_z)
+  - Explain what is meant by saying that the commutation relations themselves define angular momentum
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Every problem we have solved so far has been one-dimensional: a particle moving along a line.
+But real atoms are three-dimensional — the electron orbits the nucleus.
+And the moment anything "goes around", classical mechanics hands us a leading character: **angular momentum**.
+
+First, why does it matter classically? A planet around the Sun, an electron around a nucleus —
+these are central-force problems: the force always points at the centre. In that situation
+$\vec L=\vec r\times\vec p$ is conserved — its direction locks the orbital plane in place,
+and its magnitude sets how "fat" or "thin" the orbit is. Kepler's second law (equal areas in equal times)
+is nothing but angular momentum conservation in disguise.
+
+Meanwhile, experiment had long been hinting that angular momentum in atoms is **not continuous**.
+Put a glowing atom in a magnetic field and its spectral lines split into a finite number of components
+(the Zeeman effect), as if angular momentum could only point in a few discrete directions in space.
+The Bohr model simply postulated $L=n\hbar$ — the specific values later turned out to be wrong,
+but the intuition of "quantised angular momentum" was pointing exactly the right way.
+
+This chapter answers the questions: what does angular momentum actually look like in quantum mechanics,
+which values can it take, and why does it drag in something with no classical counterpart whatsoever — spin.
+
+## From classical quantity to operator
+
+The [postulates](/en/ch/03-formalism/07-postulates/) of chapter 3 give us the recipe for building operators:
+take the classical expression and replace $x$ and $p$ by operators. For angular momentum:
+
+$$
+\hat{\vec L}=\hat{\vec r}\times\hat{\vec p}
+\quad\Longrightarrow\quad
+\begin{aligned}
+\hat L_x&=\hat y\hat p_z-\hat z\hat p_y\\
+\hat L_y&=\hat z\hat p_x-\hat x\hat p_z\\
+\hat L_z&=\hat x\hat p_y-\hat y\hat p_x
+\end{aligned}
+$$
+
+The three formulas are really one formula: cycle $x\to y\to z\to x$ and each line turns into the next.
+
+<Callout type="note" title="No ordering trap here">
+Translating a classical quantity into an operator usually raises the ordering worry: $xp$ and $px$ are not the same thing.
+But every pair that appears in $\hat L_z=\hat x\hat p_y-\hat y\hat p_x$ is a coordinate and a momentum along **different directions** —
+$\hat x$ commutes with $\hat p_y$ ($[\hat x,\hat p_y]=0$, see [section 3.6](/en/ch/03-formalism/06-commutators/)),
+so any ordering gives the same operator and the translation is unambiguous. All three components also come out automatically Hermitian.
 </Callout>
 
-## Planned contents
+## The key calculation: do the components commute?
 
-- Constructing Lx, Ly, Lz
-- [Lx,Ly] = iħLz
-- L² and Lz can be simultaneously definite
+The lesson of [section 3.6](/en/ch/03-formalism/06-commutators/) was that whether two observables
+can be simultaneously sharp is decided entirely by their commutator. So the first thing to do
+with three new operators is to compute their commutators.
+
+<Derivation title="Computing [L̂ₓ, L̂ᵧ]" level="基础" minutes={6} open={true}>
+
+**Goal**: $[\hat L_x,\hat L_y]=[\hat y\hat p_z-\hat z\hat p_y,\;\hat z\hat p_x-\hat x\hat p_z]$.
+
+**Step 1: expand into four terms.** The commutator is linear in both slots, so
+
+$$
+[\hat L_x,\hat L_y]
+=[\hat y\hat p_z,\hat z\hat p_x]
+-[\hat y\hat p_z,\hat x\hat p_z]
+-[\hat z\hat p_y,\hat z\hat p_x]
++[\hat z\hat p_y,\hat x\hat p_z]
+$$
+
+**Step 2: throw away the trivial terms first.** The operators appearing in the second term are $\hat y,\hat p_z,\hat x$ —
+every pair among them commutes (coordinates and momenta along different directions leave each other alone), so the whole term vanishes.
+The third term contains $\hat z,\hat p_y,\hat p_x$ and dies for the same reason. Only the first and fourth terms survive.
+
+**Step 3: the first term.** Grinding through the product rule for $[\hat A\hat B,\hat C\hat D]$ would be tedious.
+Better to notice that the only pair with any "spark" here is $\hat p_z$ and $\hat z$ ($[\hat z,\hat p_z]=\ii\hbar$);
+every other operator is a bystander. Pull the bystanders out front:
+
+$$
+[\hat y\hat p_z,\hat z\hat p_x]=\hat y\,[\hat p_z,\hat z]\,\hat p_x
+=\hat y(-\ii\hbar)\hat p_x=-\ii\hbar\,\hat y\hat p_x
+$$
+
+(Using $[\hat p_z,\hat z]=-[\hat z,\hat p_z]=-\ii\hbar$.)
+
+**Step 4: the fourth term.** Here the sparking pair is $\hat z$ and $\hat p_z$:
+
+$$
+[\hat z\hat p_y,\hat x\hat p_z]=\hat p_y\,[\hat z,\hat p_z]\,\hat x
+=\ii\hbar\,\hat x\hat p_y
+$$
+
+**Step 5: put it together.**
+
+$$
+[\hat L_x,\hat L_y]=-\ii\hbar\,\hat y\hat p_x+\ii\hbar\,\hat x\hat p_y
+=\ii\hbar(\hat x\hat p_y-\hat y\hat p_x)=\ii\hbar\hat L_z
+$$
+
+Cycling $x\to y\to z\to x$ immediately yields the other two. All three together:
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z,\qquad
+[\hat L_y,\hat L_z]=\ii\hbar\hat L_x,\qquad
+[\hat L_z,\hat L_x]=\ii\hbar\hat L_y
+$$
+
+</Derivation>
+
+The result is not zero. That one small line of algebra has enormous consequences.
+
+<DualView>
+<div slot="left">
+
+**Intuition: the angular momentum vector cannot be pinned down.**
+
+Classical angular momentum is an honest arrow: all three components have definite values at once, and the arrow points in a definite direction.
+
+Quantum angular momentum cannot manage that. $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\neq0$ says that
+$L_x$ and $L_y$ generally **cannot both be sharp**: nail down $L_z$,
+and $L_x$ and $L_y$ dissolve into a cloud of probabilities.
+
+The right picture is not an arrow but **a cone**: $L_z$ is definite (the cone's height is fixed),
+the length $|\vec L|$ is definite (the cone's slant is fixed), but on the surface of the cone
+the arrow is "everywhere and nowhere".
+
+</div>
+<div slot="right">
+
+**Formula: a direct application of the generalised uncertainty relation.**
+
+Apply the generalised uncertainty relation of [section 3.6](/en/ch/03-formalism/06-commutators/),
+$\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$, to this pair:
+
+$$
+\sigma_{L_x}\sigma_{L_y}\ge\frac{\hbar}{2}\left|\langle\hat L_z\rangle\right|
+$$
+
+Note that the right-hand side is an **expectation value**, not a constant: unlike $\sigma_x\sigma_p\ge\hbar/2$,
+this bound changes from state to state. In a state with $\langle\hat L_z\rangle=0$,
+$L_x$ and $L_y$ are allowed to vanish simultaneously — for instance a spherically symmetric state with zero angular momentum altogether.
+
+</div>
+</DualView>
+
+## Is anything simultaneously sharp?
+
+The three components fight each other — so is there any quantity that lives at peace with them?
+There is: the **squared magnitude** of the angular momentum,
+
+$$
+\hat L^2\equiv\hat L_x^2+\hat L_y^2+\hat L_z^2
+$$
+
+<Derivation title="Verifying [L², L̂_z] = 0" level="基础" minutes={4}>
+
+Work term by term. First a small general-purpose tool (the product rule):
+
+$$
+[\hat A^2,\hat B]=\hat A[\hat A,\hat B]+[\hat A,\hat B]\hat A
+$$
+
+**First term** $[\hat L_x^2,\hat L_z]$: using $[\hat L_x,\hat L_z]=-\ii\hbar\hat L_y$,
+
+$$
+[\hat L_x^2,\hat L_z]=\hat L_x(-\ii\hbar\hat L_y)+(-\ii\hbar\hat L_y)\hat L_x
+=-\ii\hbar(\hat L_x\hat L_y+\hat L_y\hat L_x)
+$$
+
+**Second term** $[\hat L_y^2,\hat L_z]$: using $[\hat L_y,\hat L_z]=\ii\hbar\hat L_x$,
+
+$$
+[\hat L_y^2,\hat L_z]=\ii\hbar(\hat L_y\hat L_x+\hat L_x\hat L_y)
+$$
+
+**Third term** $[\hat L_z^2,\hat L_z]=0$ (any operator commutes with its own powers).
+
+Add the three: the first two are **equal and opposite and cancel exactly**:
+
+$$
+[\hat L^2,\hat L_z]=0
+$$
+
+By symmetry (the three directions enter on an equal footing), $\hat L^2$ commutes with $\hat L_x$ and $\hat L_y$ as well.
+
+</Derivation>
+
+So the largest combination quantum mechanics lets us fix simultaneously is: **the length plus one component**.
+The conventional choice is $(\hat L^2,\hat L_z)$ — there is nothing physically special about $z$; it is pure notational tradition
+(in a real experiment, "the $z$ direction" is simply wherever your magnetic field points).
+This is the algebraic origin of the cone picture: the slant of the cone ($|\vec L|$) and its height ($L_z$)
+can be fixed together; the azimuthal angle cannot.
+
+<Callout type="warning" title="Don't take the cone picture literally">
+"The vector sweeps around the cone" is a convenient metaphor, but do not over-trust it:
+there is no "real arrow" whizzing around the surface.
+In a joint eigenstate of $(\hat L^2,\hat L_z)$, $L_x$ and $L_y$ simply **have no values** —
+measuring either gives a random outcome whose average happens to be zero.
+The cone depicts "all directions consistent with what is known", not a trajectory.
+</Callout>
+
+<Callout type="insight" title="The commutation relations themselves define angular momentum">
+Look back over this section: the only place we actually used "$\vec L=\vec r\times\vec p$" was to derive the commutation relations.
+Everything after that — the uncertainty relation, the cone picture, the $(\hat L^2,\hat L_z)$ partnership — depends only on
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\ \text{and its cyclic partners}
+$$
+
+That suggests a bold reversal: **take the commutation relations themselves as the definition of angular momentum**.
+Any three Hermitian operators satisfying this algebra count as an angular momentum —
+whether or not they have the form $\vec r\times\vec p$.
+
+This reversal is not a formal game. Later in this chapter we will meet an angular momentum (spin)
+that has **no** $\vec r\times\vec p$ about it at all, yet satisfies the algebra perfectly.
+Putting the definition on the algebra is precisely how we reserve a seat for it.
+</Callout>
+
+## Why the commutator can determine the spectrum
+
+The natural next question: what are the eigenvalues of $\hat L^2$ and $\hat L_z$?
+
+The chapter-2 approach would be to write down a differential equation and solve it. But here there is an astonishing shortcut:
+**from the commutation relations alone, without solving a single differential equation, every eigenvalue can be pinned down.**
+
+We have already seen the seed of the idea: in the algebraic solution of the harmonic oscillator, the single
+commutation relation $[\hat a,\hat a^\dagger]=1$ forces the levels into an evenly spaced ladder of $\hbar\omega$ —
+the commutator sets the rung spacing, positivity sets the bottom, and the spectrum is locked in.
+The angular momentum algebra is more intricate (the right-hand side is an operator, not a constant), but the same strategy works:
+build "ladder operators" $\hat L_x\pm\ii\hat L_y$ that climb the $L_z$ eigenvalues one rung at a time,
+then use the finiteness of $\hat L^2$ to cap the ladder at both ends.
+
+<KeyFormulas
+  items={[
+    { name: 'Angular momentum operators', latex: '\\hat L_z=\\hat x\\hat p_y-\\hat y\\hat p_x\\quad(x\\to y\\to z\\to x\\ \\text{cyclic})', note: 'Coordinates and momenta in each term point along different directions: no ordering ambiguity, automatically Hermitian' },
+    { name: 'Fundamental commutation relations', latex: '[\\hat L_x,\\hat L_y]=\\ii\\hbar\\hat L_z\\ \\text{and cyclic}', note: 'The true definition of angular momentum; anything satisfying it qualifies' },
+    { name: 'Uncertainty relation', latex: '\\sigma_{L_x}\\sigma_{L_y}\\ge\\frac{\\hbar}{2}\\lvert\\langle\\hat L_z\\rangle\\rvert', note: 'The bound depends on the state; when ⟨L_z⟩ = 0 both may vanish together' },
+    { name: 'Compatible partners', latex: '[\\hat L^2,\\hat L_i]=0\\quad(i=x,y,z)', note: 'Length plus one component can be fixed together; conventionally (L², L_z)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am1-1',
+      prompt: 'Why is there no operator-ordering ambiguity in the construction L̂_z = x̂p̂_y − ŷp̂_x?',
+      options: [
+        'In each term the coordinate and the momentum belong to different directions and therefore commute',
+        'Because angular momentum is a conserved quantity',
+        'Because x̂ and p̂_y are both Hermitian operators',
+        'The quantisation rules require alphabetical ordering',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Conservation depends on the Hamiltonian and has nothing to do with ordering.',
+        2: 'The product of two Hermitian operators is generally not Hermitian (unless they commute) — they do happen to commute here, but the reason is the commuting, not the individual Hermiticity.',
+      },
+      explain: '[x̂, p̂_y] = 0: only a coordinate and a momentum along the same direction "spark". x̂p̂_y and p̂_y x̂ are identical, so the translation is uniquely determined.',
+    },
+    {
+      id: 'am1-2',
+      prompt: 'Which statements about σ_{L_x}σ_{L_y} ≥ (ħ/2)|⟨L̂_z⟩| are correct? (Select all that apply.)',
+      options: [
+        'It is the generalised uncertainty relation applied directly to [L̂_x, L̂_y] = iħL̂_z',
+        'Its lower bound depends on the quantum state',
+        'It shows that L_x and L_y can never be simultaneously sharp in any state',
+        'In a state with ⟨L̂_z⟩ = 0, L_x and L_y may take definite values simultaneously',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'In a spherically symmetric state with zero angular momentum all three components are definitely zero — because the bound is zero there too.',
+      },
+      explain: 'Unlike [x̂,p̂] = iħ (a constant), the commutator here is an operator, and its expectation value varies with the state. That is why the bound is state-dependent, and why an l = 0 state can have all three components zero at once.',
+    },
+    {
+      id: 'am1-3',
+      prompt: 'If the three components refuse to commute with one another, why can L̂² and L̂_z still be used together as labels?',
+      options: [
+        'Because [L̂², L̂_z] = 0, so they share common eigenstates',
+        'Because L̂² is not an observable and plays no role in measurement',
+        'Because the z direction is physically special',
+        'Because L̂² is a constant',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'There is nothing special about z; choosing it is pure convention — choosing x or y gives identical physics.',
+        3: 'L̂² is an operator whose eigenvalue differs from state to state; it only takes a fixed value on a single eigenstate.',
+      },
+      explain: 'In the derivation, [L̂_x², L̂_z] and [L̂_y², L̂_z] cancel exactly, one positive and one negative. Commuting means simultaneously diagonalisable (section 3.6), so "length + one component" is the largest set quantum mechanics allows to be sharp together.',
+    },
+    {
+      id: 'am1-4',
+      type: 'numeric',
+      prompt: 'A state has L̂² eigenvalue 6ħ² (next section: this corresponds to l = 2). What is the magnitude |L| in units of ħ? (Give three decimal places.)',
+      answer: 2.449,
+      tolerance: 0.01,
+      unit: 'ħ',
+      explain: '|L| = √6 ħ ≈ 2.449ħ. Note that this exceeds the largest value L_z can reach, 2ħ — the angular momentum vector can never point fully along the z axis, since that would fix L_x = L_y = 0 simultaneously and violate the uncertainty relation. This is the quantitative version of the cone picture.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We have placed our bet on the commutation relations: the claim is that
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar\hat L_z\ \text{and its cyclic partners}
+$$
+
+alone determine every eigenvalue of $\hat L^2$ and $\hat L_z$.
+
+The next section makes good on that promise — climbing out the entire spectrum rung by rung with ladder operators.
+And the answer hides a surprise: the algebra allows **half again as many** eigenvalues as orbital motion actually uses.
+That extra half is the seat reserved for spin.

@@ -1,23 +1,248 @@
 ---
-title: 'Superdense coding'
-summary: 'Two classical bits carried by one qubit.'
+title: Superdense coding
 section: '9.6'
 order: 6
-status: stub
-sims: ['quantum-circuit']
+summary: 'Share a Bell pair in advance and mailing one qubit carries two classical bits: the four Pauli gates tune one entangled pair through the four orthogonal Bell states — teleportation''s mirror image.'
+status: done
+prereqs:
+  - 09-quantum-information/05-teleportation
+  - 09-quantum-information/02-quantum-gates
+objectives:
+  - 'Work through the superdense coding protocol in full: four encoding operations, four Bell states, the decoding circuit, all by hand'
+  - Explain why "touching only your own half" is enough to reach all four Bell states
+  - 'Show that 2 bits is the ceiling: without pre-shared entanglement, 1 qubit carries at most 1 bit (Holevo)'
+  - Write the resource equations of superdense coding and teleportation side by side and see the duality
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the end of the last section we read teleportation's trade slip backwards:
+pre-share 1 ebit, then **mail 1 qubit** — how many classical bits does that exchange for?
+Section 9.1's Holevo argument says one qubit yields at most 1 bit on readout,
+yet this section will legally read out 2. Watch entanglement cut the postage in half.
+
+## The concrete problem: one particle per shipment, four things to say
+
+Alice needs to send Bob a two-bit message — one of 00, 01, 10, 11
+(say "buy / sell / hold / liquidate"). But the channel is expensive, and this month's quota is
+down to **one qubit**.
+
+## Without entanglement, one qubit is worth one bit
+
+First, the ceiling on the naive scheme. Alice encodes the message into a single qubit's state and
+mails it; Bob measures on arrival. Section 9.1 told us: a measurement has only two exits, and
+distinct non-orthogonal states cannot be reliably distinguished. To send 2 bits reliably, Bob must
+separate the four states **unambiguously**, which requires four mutually orthogonal states —
+but a single qubit's Hilbert space is only two-dimensional, with room for at most 2 orthogonal
+states. Dead end. (This is exactly a special case of Holevo's theorem: with no auxiliary resource,
+$n$ qubits ≤ $n$ classical bits.)
+
+The way out: **Bob is allowed to hold something in advance.** As long as the two share a Bell pair
+beforehand, the "room for manoeuvre" of Alice's half doubles.
+
+## The full protocol, by hand
+
+Beforehand: the two share $\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}$,
+particle A with Alice, particle B with Bob.
+
+```text
+            encode (Alice, local)     mail A          decode (Bob, local)
+ A ────────[ I / X / Z / ZX ]────────────────●──[H]──[measure]→ m₁
+   ╲                                         │
+    Φ⁺                                       │
+   ╱                                         │
+ B ──────────────────────────────────────────⊕──────[measure]→ m₂
+```
+
+<Derivation title="Four Pauli gates dial up four Bell states" level="基础" minutes={7} open={true}>
+
+**Step 1: encode.** According to the message, Alice applies one gate to **her own half**:
+
+- Message 00: do nothing ($I$). The state is unchanged:
+
+$$
+(I\otimes I)\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}=\ket{\Phi^+}
+$$
+
+- Message 01: apply $X$ (flip A). Acting term by term on the first qubit:
+
+$$
+(X\otimes I)\,\frac{\ket{00}+\ket{11}}{\sqrt2}
+=\frac{\ket{10}+\ket{01}}{\sqrt2}=\ket{\Psi^+}
+$$
+
+- Message 10: apply $Z$ (a minus sign on A's $\ket{1}$):
+
+$$
+(Z\otimes I)\,\frac{\ket{00}+\ket{11}}{\sqrt2}
+=\frac{\ket{00}-\ket{11}}{\sqrt2}=\ket{\Phi^-}
+$$
+
+- Message 11: first $X$, then $Z$:
+
+$$
+(ZX\otimes I)\ket{\Phi^+}
+=(Z\otimes I)\,\frac{\ket{10}+\ket{01}}{\sqrt2}
+=\frac{\ket{01}-\ket{10}}{\sqrt2}=\ket{\Psi^-}
+$$
+
+Four messages $\mapsto$ four Bell states, and the Bell states are **mutually orthogonal** —
+the orthogonality needed for reliable discrimination is all there; it just lives in the two-qubit space.
+
+**Step 2: mail it.** Alice sends particle A to Bob. Both particles are now in Bob's hands.
+
+**Step 3: decode = Bell measurement.** Run the circuit from the end of section 9.5 in reverse
+reading: CNOT (A controlling B) then $H$ on A maps the four Bell states back onto the four
+computational basis states. Verify one case (take $\ket{\Psi^-}$; the rest go the same way):
+
+$$
+\ket{\Psi^-}\xrightarrow{\ \mathrm{CNOT}\ }
+\frac{\ket{01}-\ket{11}}{\sqrt2}
+=\frac{\ket{0}-\ket{1}}{\sqrt2}\otimes\ket{1}
+\xrightarrow{\ H\otimes I\ }\ket{1}\otimes\ket{1}=\ket{11}
+$$
+
+The complete table of all four cases:
+
+| Message | Alice's gate | State in the channel | Readout $m_1m_2$ |
+| --- | --- | --- | --- |
+| 00 | $I$ | $\ket{\Phi^+}$ | 00 |
+| 01 | $X$ | $\ket{\Psi^+}$ | 01 |
+| 10 | $Z$ | $\ket{\Phi^-}$ | 10 |
+| 11 | $ZX$ | $\ket{\Psi^-}$ | 11 |
+
+Bob reads out two bits deterministically. **No probabilities, no guessing** — because the four
+candidate states are orthogonal.
+
+</Derivation>
+
+<Callout type="insight" title="Why touching only one half is enough">
+It feels deeply wrong: Alice never lays a finger on particle B, yet switches the **whole** system
+freely among four orthogonal states. The secret is section 9.3's old friend: in a maximally
+entangled state all the information lives in the **correlations**, not in either half.
+$X$ rewrites "are the two particles alike or opposite" ($\Phi$-type versus $\Psi$-type),
+$Z$ rewrites "is the relative phase plus or minus" (superscript $+$ versus $-$) —
+both switches are properties of the correlation, and can be flipped from either end.
+The local view feels nothing: under all four encodings, particle A's reduced state is $I/2$,
+so an eavesdropper who intercepts A sees only white noise. Superdense coding comes with built-in
+secrecy: without B's half, not one of the 2 bits can be extracted.
 </Callout>
 
-## Planned contents
+<DualView>
+<div slot="left">
 
-- The protocol step by step
-- Its duality with teleportation
+**Mirror image of teleportation.** The two protocols burn the same fuel (1 ebit),
+in exactly opposite directions:
 
-## Planned simulations
+- Teleportation: spend 2 classical bits to **ship 1 qubit**;
+- Superdense coding: spend 1 qubit to **ship 2 classical bits**.
 
-- `quantum-circuit`
+One hauls quantum cargo over a classical channel; the other hauls classical cargo over a quantum
+channel. This mirror pair shows there is no fixed exchange rate between qubits and cbits —
+the rate is set by the entanglement reserves on hand.
+The very notion of "entanglement as a consumable communication resource"
+was established by these two protocols of 1992/1993.
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="quantum-circuit" />`.
+</div>
+<div slot="right">
+
+The resource equations side by side (consumed on the left of the arrow, produced on the right):
+
+$$
+1\ \text{ebit}+2\ \text{cbit}\ \longrightarrow\ 1\ \text{qubit}
+$$
+
+$$
+1\ \text{ebit}+1\ \text{qubit}\ \longrightarrow\ 2\ \text{cbit}
+$$
+
+Neither can be reverse-engineered into a free lunch: substitute the second into the first and one
+round cancels on each side, giving $2\,\text{ebit} + \text{a round trip of channel} \to$ back where
+you started — entanglement only dwindles with use, never appreciates out of thin air
+(LOCC cannot increase entanglement, section 9.3).
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The ceiling is 2 — don't dream up 'dense coding squared'">
+Can we press on and use more entanglement to make one qubit carry 3 bits, 4 bits? No.
+With pre-shared entanglement the Holevo bound doubles to **2** bits per qubit, and superdense
+coding already maxes it out. Just count degrees of freedom: what Bob finally holds is the
+four-dimensional space of **two** qubits, with room for at most 4 orthogonal states — 2 bits, full
+stop. Alice mails one particle yet uses the whole four-dimensional space only because Bob's half
+was in place all along; the particle she mails is "the second half of the key", not the whole safe.
+Bennett and Wiesner proposed the protocol in 1992; Innsbruck demonstrated it with entangled photons
+in 1996 (their Bell measurement could resolve only three classes, giving a measured capacity of
+about 1.58 bits; later experiments closed in on 2).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Encoding', latex: '(\\sigma\\otimes I)\\ket{\\Phi^+},\\quad \\sigma\\in\\{I,X,Z,ZX\\}', note: 'Four Pauli operations ↦ four mutually orthogonal Bell states' },
+    { name: 'Decoding', latex: '(H\\otimes I)\\,\\mathrm{CNOT}:\\ \\ket{B_{m_1m_2}}\\mapsto\\ket{m_1m_2}', note: 'The Bell-measurement circuit; deterministic readout' },
+    { name: 'Resource equation', latex: '1\\ \\text{ebit}+1\\ \\text{qubit}\\to 2\\ \\text{cbit}', note: 'Dual to teleportation\'s 1 ebit + 2 cbit → 1 qubit' },
+    { name: 'Holevo bound', latex: '\\chi\\le n\\ \\text{bit}\\ (\\text{no entanglement}),\\quad 2n\\ \\text{bit}\\ (\\text{pre-shared entanglement})', note: 'Superdense coding exactly saturates it; no "denser" coding exists' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'sd-1',
+      prompt: 'Alice wants to send the message 10. Which gate should she apply to her particle?',
+      options: ['Z', 'X', 'I', 'ZX'],
+      answer: 0,
+      distractors: {
+        1: 'X turns ∣Φ⁺⟩ into ∣Ψ⁺⟩, which by the agreed codebook means message 01.',
+        3: 'ZX gives ∣Ψ⁻⟩, which means message 11.',
+      },
+      explain: '(Z⊗I)∣Φ⁺⟩ = (∣00⟩ − ∣11⟩)/√2 = ∣Φ⁻⟩, and Bob’s Bell measurement reads out 10. The codebook: I→00, X→01, Z→10, ZX→11 (the convention itself is arbitrary, as long as both parties agree).',
+    },
+    {
+      id: 'sd-2',
+      prompt: 'An eavesdropper Eve intercepts the particle A that Alice mailed (but cannot get B). How much of the message can she read?',
+      options: [
+        'Nothing at all: under all four encodings, A’s reduced state is I/2',
+        'The first bit',
+        'Both bits',
+        'The full message, with 50% probability',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Both encoding switches (alike/opposite, plus/minus phase) are correlation properties; looking at A alone, neither can be measured.',
+      },
+      explain: 'Trace out either half of any of the four Bell states and ρ_A always equals I/2 — the same computation as section 9.3’s "locally white noise" for Bell states. The message lives in the correlations; without B’s half, the information content is strictly zero.',
+    },
+    {
+      id: 'sd-3',
+      type: 'numeric',
+      prompt: 'The two parties share 3 Bell pairs and Alice mails 3 qubits in total. Using superdense coding, how many classical bits can be reliably transmitted at most?',
+      answer: 6,
+      tolerance: 0,
+      unit: 'bit',
+      explain: 'Each Bell pair plus each mailed qubit carries 2 bits: 3 × 2 = 6. Note that both resources are consumed per round: one entangled pair short, or one particle unmailed, and you drop back to the entanglement-free rate of 1 qubit = 1 bit.',
+    },
+    {
+      id: 'sd-4',
+      prompt: 'Which statements about the relationship between superdense coding and teleportation are correct? (Select all that apply.)',
+      options: [
+        'Both consume the same entanglement resource (1 ebit per round)',
+        'Superdense coding sends classical information over a quantum channel; teleportation sends quantum information over a classical channel',
+        'Cascading the two protocols yields a net gain of entanglement from nothing',
+        'The Bell measurement is a key step in both protocols',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'One cascade round exactly breaks even — and you still pay the channel fees; under LOCC entanglement only decreases (section 9.3). No perpetual motion machine.',
+      },
+      explain: 'The dual structure: 1 ebit + 2 cbit → 1 qubit (teleportation) versus 1 ebit + 1 qubit → 2 cbit (superdense coding). In teleportation the Bell measurement sits with the sender Alice; in superdense coding, with the receiver Bob — mirrored through and through.',
+    },
+  ]}
+/>
+
+## What comes next
+
+So far, entanglement has helped us **move** information: sending states, carrying messages.
+The next question is more ambitious: can quantum mechanics help us **compute** faster?
+The Deutsch–Jozsa algorithm of 1992 delivered the first clean "yes" —
+a question that classically takes exponentially many queries, answered quantumly in one.
+Next section: how superposition and interference become computing power.

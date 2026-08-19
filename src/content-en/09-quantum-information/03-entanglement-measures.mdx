@@ -1,17 +1,282 @@
 ---
-title: 'Quantifying entanglement'
-summary: 'Entanglement is not yes-or-no; it can be quantified.'
+title: Quantifying entanglement
 section: '9.3'
 order: 3
-status: stub
+summary: 'Fitting entanglement with a measuring stick: the more mixed the reduced density matrix, the deeper the entanglement — von Neumann entropy and concurrence upgrade "is it entangled?" to "how entangled is it?".'
+status: done
+prereqs:
+  - 09-quantum-information/02-quantum-gates
+  - 03-formalism/10-density-operator
+objectives:
+  - Decide whether a two-qubit pure state is separable or entangled, and justify it via the Schmidt decomposition
+  - Compute the reduced density matrix of a given pure state and evaluate its entanglement entropy
+  - Use the concurrence formula C = 2|αδ − βγ| to estimate the entanglement of a two-qubit pure state quickly
+  - Explain why "globally pure, locally mixed" is the essential signature of entanglement
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section's CNOT built the Bell state $\frac{\ket{00}+\ket{11}}{\sqrt2}$,
+and we proved it cannot be written as a product. But "cannot be written as a product" is only a
+qualitative verdict. Twist the parameters a little:
+
+$$
+\ket{\psi_1}=\frac{\ket{00}+\ket{11}}{\sqrt2},\qquad
+\ket{\psi_2}=0.99\ket{00}+\sqrt{1-0.99^2}\,\ket{11}
+$$
+
+Neither can be written as a product; both are entangled. Yet $\ket{\psi_2}$ is almost $\ket{00}$ —
+intuition says its entanglement is "much fainter". Intuition needs to become a number:
+the Bell experiments of section 9.4 and the teleportation of section 9.5 both consume entanglement,
+and **how much is consumed, and whether there is enough, must be computable**.
+
+## First, lay the foundation: separable versus entangled
+
+The general two-qubit pure state is
+
+$$
+\ket{\psi}=\alpha\ket{00}+\beta\ket{01}+\gamma\ket{10}+\delta\ket{11}
+$$
+
+If it can be written as $\ket{a}\otimes\ket{b}$ it is called **separable** (each qubit minding its
+own business); otherwise it is **entangled**. The criterion fits on one line: a product state's
+coefficient matrix $\begin{pmatrix}\alpha&\beta\\\gamma&\delta\end{pmatrix}$ has rank 1, i.e.
+
+$$
+\alpha\delta-\beta\gamma=0
+\quad\Longleftrightarrow\quad \text{separable}
+$$
+
+A non-zero determinant means entanglement — and it even hints that the "amount of entanglement"
+should have something to do with the size of $|\alpha\delta-\beta\gamma|$. We will come back to
+that at the end.
+
+## Where the old tools fall short: the wavefunction has no "local readout"
+
+Chapter 3's state vector describes the whole system. But in an entangled state, **a single qubit
+simply has no state vector of its own** — there is no $\ket{a}$ that correctly predicts every
+experiment performed on particle A alone.
+This is exactly why [section 3.10](/en/ch/03-formalism/10-density-operator/) introduced the density
+operator: everything local lives in the **reduced density matrix**,
+
+$$
+\rho_A=\mathrm{Tr}_B\,\ket{\psi}\bra{\psi}
+$$
+
+(Tracing out B = averaging away all of B's possible outcomes, with their weights.) The key observation:
+
+<Derivation title="The Bell state's reduced density matrix: globally pure, locally maximally mixed" level="基础" minutes={6} open={true}>
+
+**Goal**: compute $\rho_A$ for $\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}$.
+
+**Step 1: write the full density operator.**
+
+$$
+\ket{\Phi^+}\bra{\Phi^+}
+=\frac12\Big(\ket{00}\bra{00}+\ket{00}\bra{11}+\ket{11}\bra{00}+\ket{11}\bra{11}\Big)
+$$
+
+**Step 2: trace out B.** The rule: $\mathrm{Tr}_B$ keeps only terms whose B-side "left and right labels
+match" — the partial trace of $\ket{i}_A\ket{j}_B\bra{k}_A\bra{l}_B$ is $\delta_{jl}\ket{i}_A\bra{k}_A$.
+Term by term:
+
+- $\ket{00}\bra{00}$: B side is $\ket{0}\bra{0}$, trace 1, leaving $\ket{0}\bra{0}_A$;
+- $\ket{00}\bra{11}$: B side is $\ket{0}\bra{1}$, trace 0 — **the whole term vanishes**;
+- $\ket{11}\bra{00}$: vanishes for the same reason;
+- $\ket{11}\bra{11}$: leaves $\ket{1}\bra{1}_A$.
+
+$$
+\rho_A=\frac12\ket{0}\bra{0}+\frac12\ket{1}\bra{1}=\frac{I}{2}
+$$
+
+**Step 3: read off the physics.** $\rho_A=I/2$ is the **maximally mixed state** — the centre of last
+section's Bloch sphere. Looking at particle A alone, every axis measures fifty-fifty; statistically
+it is indistinguishable from "a coin that has been tossed but not yet looked at".
+The cross terms (the coherences) were killed in the partial trace by the orthogonality on B's side:
+**the global coherence has moved into the correlations, and locally only noise remains.**
+
+Compare a separable state $\ket{a}\otimes\ket{b}$: the partial trace gives $\rho_A=\ket{a}\bra{a}$
+directly, still pure.
+
+</Derivation>
+
+<Callout type="insight" title="Entanglement's essential signature: globally pure, locally mixed">
+In the classical world, a definite whole implies definite parts: know the ordering of the entire
+deck and you know every card. Quantum entanglement snaps this piece of common sense:
+$\ket{\Phi^+}$ as a whole is a completely definite pure state (zero entropy),
+yet each of its halves is a **maximally uncertain** mixed state.
+The information is neither in A nor in B, but in "how A and B are correlated".
+And so the strategy for quantifying entanglement follows naturally:
+**the more mixed the parts, the deeper the entanglement.**
 </Callout>
 
-## Planned contents
+## Quantifying "mixedness": Schmidt decomposition and entanglement entropy
 
-- Separable versus entangled states
-- Concurrence
-- Von Neumann entropy
+Any bipartite pure state can be brought, via the singular value decomposition, into **Schmidt form**:
+
+$$
+\ket{\psi}=\sum_k \sqrt{\lambda_k}\,\ket{u_k}_A\ket{v_k}_B,
+\qquad \lambda_k\ge0,\ \sum_k\lambda_k=1
+$$
+
+where $\ket{u_k}$ and $\ket{v_k}$ are orthonormal bases on the A and B sides respectively.
+For two qubits, $k$ runs to at most 2. The payoff is immediate:
+
+$$
+\rho_A=\sum_k\lambda_k\ket{u_k}\bra{u_k},\qquad
+\rho_B=\sum_k\lambda_k\ket{v_k}\bra{v_k}
+$$
+
+**The two reduced density matrices have the same eigenvalues** — the Schmidt coefficients $\lambda_k$.
+A single non-zero $\lambda$ ⇔ product state; two non-zero $\lambda$'s ⇔ entangled.
+Weigh the mixedness with chapter 3's von Neumann entropy:
+
+$$
+E(\psi)\equiv S(\rho_A)=-\mathrm{Tr}\,\rho_A\log_2\rho_A
+=-\sum_k\lambda_k\log_2\lambda_k
+$$
+
+This is the **entanglement entropy** (base 2, measured in bits). Three benchmark points:
+
+| State | Schmidt coefficients | $E$ |
+| --- | --- | --- |
+| Product state $\ket{a}\otimes\ket{b}$ | $1,\ 0$ | $0$ |
+| $\cos\chi\ket{00}+\sin\chi\ket{11}$ | $\cos^2\chi,\ \sin^2\chi$ | $0<E<1$ |
+| Bell state | $\tfrac12,\ \tfrac12$ | $1$ (maximal) |
+
+A state with entanglement entropy 1 is called **maximally entangled**; "spending 1 ebit" means using
+up one such pair — the unit in which the protocols of sections 9.5 and 9.6 keep all their accounts.
+
+<DualView>
+<div slot="left">
+
+**Why is entropy the "right" ruler?** Because it is not an arbitrary pick: one can prove that with
+local operations plus phone calls (LOCC), the two parties **can neither create new entanglement nor
+increase the entanglement entropy** — like energy, it is a conserved resource on the books.
+And it is operational: from $n$ pairs with entanglement entropy $E$ one can (asymptotically) distil
+about $nE$ Bell pairs, and conversely dilute $nE$ Bell pairs to prepare them.
+"Entropy = the number of Bell pairs it exchanges for" — that is what earns it the name of a measure.
+
+</div>
+<div slot="right">
+
+For $\ket{\psi_2}=0.99\ket{00}+0.141\ket{11}$:
+
+$$
+\lambda_1=0.9801,\quad\lambda_2=0.0199
+$$
+
+$$
+E=-0.9801\log_2 0.9801-0.0199\log_2 0.0199\approx 0.141
+$$
+
+Under 15% of a Bell state — the intuition of "faint entanglement" now has a number.
+Distilling a single Bell pair costs on average about 7 such pairs.
+
+</div>
+</DualView>
+
+## The shortcut formula: concurrence
+
+Entropy requires a partial trace and then a diagonalisation; for two qubits there is a shortcut.
+The criterion determinant $\alpha\delta-\beta\gamma$ from the opening delivers the **concurrence**:
+
+$$
+C=2\,|\alpha\delta-\beta\gamma|,\qquad 0\le C\le 1
+$$
+
+$C=0$ is separable, $C=1$ maximally entangled. Its relation to the Schmidt coefficients is
+$C=2\sqrt{\lambda_1\lambda_2}$, and it corresponds monotonically to the entropy:
+
+$$
+E=h\!\left(\frac{1+\sqrt{1-C^2}}{2}\right),\qquad
+h(p)\equiv-p\log_2 p-(1-p)\log_2(1-p)
+$$
+
+Check it: $\ket{\Phi^+}$ has $\alpha=\delta=\tfrac{1}{\sqrt2}$, $\beta=\gamma=0$,
+so $C=2\cdot\tfrac12=1$; the state $\cos\chi\ket{00}+\sin\chi\ket{11}$ gives $C=\sin 2\chi$ —
+as $\chi$ turns from 0 to 45°, the entanglement climbs smoothly from 0 to 1.
+
+<Callout type="warning" title="Two common misunderstandings">
+1. **"Entanglement = correlation"? More than that.** A pair of classical coins (tossed together,
+   read together) is also perfectly correlated, but that corresponds to a separable mixed state.
+   What makes entanglement special is being **correlated along every measurement axis**:
+   a Bell state is perfectly correlated measured along $z$, and still perfectly correlated along $x$ —
+   classical correlations cannot win on both axes at once, and that is precisely the vein the Bell
+   inequality mines in the next section.
+2. **Mixed-state entanglement is not this simple.** This section's entropy and concurrence formulas
+   hold only for **pure states**. Mixed states carry classical noise from the start, "mixed" no
+   longer equals "entangled", and heavier machinery such as Wootters' formula is needed (not covered
+   in this book). Deciding whether a general mixed state is entangled is, in general dimensions,
+   even NP-hard.
+</Callout>
+
+To "see" these correlations, visit [Lab module 08: entanglement and Bell non-locality](/en/lab/08-entanglement/) —
+the spectacle of two particles whose individual readouts are perfectly random yet strictly
+correlated when combined is waiting there.
+
+<KeyFormulas
+  items={[
+    { name: 'Separability criterion (pure states)', latex: '\\alpha\\delta-\\beta\\gamma=0\\ \\Leftrightarrow\\ \\ket{\\psi}=\\ket{a}\\otimes\\ket{b}', note: 'Coefficient matrix has rank 1; non-zero means entangled' },
+    { name: 'Schmidt decomposition', latex: '\\ket{\\psi}=\\sum_k\\sqrt{\\lambda_k}\\ket{u_k}_A\\ket{v_k}_B', note: 'Both reduced ρ share the same spectrum {λ_k}' },
+    { name: 'Entanglement entropy', latex: 'E=S(\\rho_A)=-\\sum_k\\lambda_k\\log_2\\lambda_k', note: 'Product states 0, Bell states 1 (unit: ebit)' },
+    { name: 'Concurrence', latex: 'C=2|\\alpha\\delta-\\beta\\gamma|=2\\sqrt{\\lambda_1\\lambda_2}', note: 'Two-qubit pure-state shortcut, monotonically tied to E' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'em-1',
+      prompt: 'What is the entanglement entropy of the state (∣00⟩ + ∣01⟩ + ∣10⟩ + ∣11⟩)/2?',
+      options: ['0 — it is the product state ∣+⟩⊗∣+⟩', '1 — it is maximally entangled', '1/2', '2'],
+      answer: 0,
+      distractors: {
+        1: 'Four equal coefficients do not imply entanglement: check αδ − βγ = (1/2)(1/2) − (1/2)(1/2) = 0.',
+      },
+      explain: 'With α=β=γ=δ=1/2 the determinant vanishes, so the state is separable: it is exactly ∣+⟩⊗∣+⟩. "Many superposition terms" does not mean "deeply entangled" — the test is always αδ − βγ or the reduced density matrix.',
+    },
+    {
+      id: 'em-2',
+      prompt: 'Measuring only particle A of the Bell state ∣Φ⁺⟩ (along any axis), what do you observe?',
+      options: [
+        'Completely random ±1, 50% each, regardless of the measurement axis',
+        'A definite result along z, random along x',
+        'The outcome depends on whether particle B has been measured, so it can be used for faster-than-light communication',
+        'Always +1',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'ρ_A = I/2 is the isotropic centre of the sphere: fifty-fifty along every axis.',
+        2: 'Whatever B does, A’s local statistics are fully determined by ρ_A = I/2 and do not budge — which is exactly why it cannot be used to communicate (section 9.5 covers this in detail).',
+      },
+      explain: 'ρ_A = I/2 sits at the centre of the Bloch sphere and gives 50/50 for every measurement axis. Entanglement only shows itself when the two records are compared; either side alone is forever white noise — the microscopic mechanism of the no-signalling principle.',
+    },
+    {
+      id: 'em-3',
+      type: 'numeric',
+      prompt: 'What is the concurrence C of the state cos30°∣00⟩ + sin30°∣11⟩? (Give three decimal places.)',
+      answer: 0.866,
+      tolerance: 0.01,
+      explain: 'C = 2|αδ| = 2·cos30°·sin30° = sin60° = √3/2 ≈ 0.866. In general C = sin2χ: as long as the weights are not strictly 0 or 1 the entanglement is non-zero, and it peaks at equal weights (χ=45°).',
+    },
+    {
+      id: 'em-4',
+      type: 'numeric',
+      prompt: 'What is the entanglement entropy E of the state √0.9∣00⟩ + √0.1∣11⟩, in ebits? (Give two decimal places.)',
+      answer: 0.47,
+      tolerance: 0.03,
+      unit: 'ebit',
+      explain: 'λ = 0.9, 0.1, so E = −0.9log₂0.9 − 0.1log₂0.1 ≈ 0.137 + 0.332 ≈ 0.47 ebit. With a ninety-ten split the entanglement is not even half an ebit — and this number is exactly its exchange rate into Bell states.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We can now weigh entanglement, but a more fundamental account is still owed.
+Einstein's old objection is not answered by "the entropy equals 1":
+perhaps the two particles secretly agreed on all their answers before separating — the so-called
+correlations being nothing but two copies of the same crib sheet?
+This "local hidden variable" hypothesis sounds unassailable,
+yet it can be hauled before the tribunal of experiment. Next section: the Bell inequality,
+and how quantum mechanics received its loophole-free final verdict in 2015.

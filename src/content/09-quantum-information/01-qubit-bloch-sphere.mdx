@@ -2,24 +2,262 @@
 title: 量子比特与 Bloch 球
 section: '9.1'
 order: 1
-summary: 二能级系统的完整几何图像。
-status: stub
-sims: ['bloch-sphere']
+summary: 把自旋 1/2 改名叫 qubit：一个二能级系统的全部纯态恰好铺满一个球面，此后整章的门、纠缠与算法都在这张地图上进行。
+status: done
+prereqs:
+  - 03-formalism/02-dirac-notation
+  - 03-formalism/08-measurement
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - 用两个实参数（θ, φ）写出任意 qubit 纯态，并说清为什么只需要两个
+  - 在 Bloch 球上定位 ∣0⟩、∣1⟩、∣±⟩、∣±i⟩ 六个标准态
+  - 把 Bloch 矢量与 Pauli 算符期望值对上号：r = ⟨σ⟩
+  - 解释「正交态在球上是对径点而不是垂直方向」这件反直觉的事
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+第 5 章我们花了大力气研究自旋 1/2：一个只有两个基本状态的系统，
+态空间是二维复向量空间，测量由 Pauli 算符描述。
+当时它是「最小的角动量」。从本章开始，它换一个身份登场——
+**信息的最小量子载体**。
+
+## 一个具体的问题：两能级系统里到底装了多少信息？
+
+经典比特只有两个状态：0 或 1。一枚硬币、一个开关、一个电平。
+现在把它换成一个量子二能级系统——比如一个自旋 1/2 粒子，
+约定
+
+$$
+\ket{0}\equiv\ket{\uparrow},\qquad \ket{1}\equiv\ket{\downarrow}
+$$
+
+按第 3 章的叠加原理，合法的状态远不止这两个：
+
+$$
+\ket{\psi}=\alpha\ket{0}+\beta\ket{1},\qquad
+\alpha,\beta\in\mathbb{C},\quad |\alpha|^2+|\beta|^2=1
+$$
+
+这样的系统叫**量子比特**（qubit）。问题来了：$\alpha,\beta$ 是两个复数，
+四个实参数——难道一个 qubit 装着「无穷多信息」？
+经典的「0 或 1」图像在这里彻底失效，我们需要一张新地图，
+把所有合法状态一次画全。
+
+## 旧工具的缺口
+
+第 3 章告诉我们两条约束：归一化吃掉一个实参数，
+**整体相位不可观测**再吃掉一个。剩下两个实参数——
+所以 qubit 纯态的集合是个二维曲面。是什么曲面？
+
+<Derivation title="从 (α, β) 到球面坐标 (θ, φ)" level="基础" minutes={6} open={true}>
+
+**第一步：用模与辐角改写。** 令 $\alpha=r_0\ee^{\ii\gamma_0}$、$\beta=r_1\ee^{\ii\gamma_1}$，
+归一化要求 $r_0^2+r_1^2=1$，于是可以设
+
+$$
+r_0=\cos\frac{\theta}{2},\qquad r_1=\sin\frac{\theta}{2},\qquad \theta\in[0,\pi]
+$$
+
+（为什么是 $\theta/2$ 而不是 $\theta$？先按下不表，第三步见分晓。）
+
+**第二步：扔掉整体相位。** 提出公共因子 $\ee^{\ii\gamma_0}$：
+
+$$
+\ket{\psi}=\ee^{\ii\gamma_0}\left(\cos\frac{\theta}{2}\ket{0}
++\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}\right),
+\qquad \varphi\equiv\gamma_1-\gamma_0
+$$
+
+整体相位没有任何可测后果（所有概率、所有期望值都不变），删去。剩下
+
+$$
+\ket{\psi}=\cos\frac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1},
+\qquad \theta\in[0,\pi],\ \varphi\in[0,2\pi)
+$$
+
+$(\theta,\varphi)$ 正是球面坐标：**qubit 的纯态集合是一个单位球面**，称为 Bloch 球。
+
+**第三步：验证 θ/2 的合理性——算 Pauli 期望值。** 回忆第 5 章的
+$\sigma_z\ket{0}=\ket{0}$、$\sigma_z\ket{1}=-\ket{1}$，以及 $\sigma_x,\sigma_y$ 的矩阵。逐个计算：
+
+$$
+\braket{\psi}{\sigma_z|\psi}=\cos^2\frac{\theta}{2}-\sin^2\frac{\theta}{2}=\cos\theta
+$$
+
+$$
+\braket{\psi}{\sigma_x|\psi}=2\cos\frac{\theta}{2}\sin\frac{\theta}{2}\cos\varphi=\sin\theta\cos\varphi
+$$
+
+$$
+\braket{\psi}{\sigma_y|\psi}=\sin\theta\sin\varphi
+$$
+
+三个期望值拼起来正是单位矢量的直角坐标：
+
+$$
+\vec r\equiv(\langle\sigma_x\rangle,\langle\sigma_y\rangle,\langle\sigma_z\rangle)
+=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta)
+$$
+
+如果第一步写的是 $\cos\theta$ 而不是 $\cos(\theta/2)$，这里就会得到 $\cos 2\theta$，
+坐标对不上。**半角是复二维空间到实三维球面映射的固有代价**——
+它正是第 5 章「自旋转 360° 波函数变号、转 720° 才复原」的同一件事。
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**一张态的地图。** 北极是 $\ket{0}$，南极是 $\ket{1}$，
+赤道上是两者的等权叠加，纬度决定权重、经度决定相对相位。
+六个最常用的态占据三条坐标轴的端点：
+
+- $z$ 轴：$\ket{0}$（北极）、$\ket{1}$（南极）
+- $x$ 轴：$\ket{\pm}=\tfrac{1}{\sqrt2}(\ket{0}\pm\ket{1})$
+- $y$ 轴：$\ket{\pm\ii}=\tfrac{1}{\sqrt2}(\ket{0}\pm\ii\ket{1})$
+
+测量也有了几何语言：沿 $\hat n$ 方向测自旋，
+得「+」的概率只取决于态矢量与 $\hat n$ 的夹角。
+
+</div>
+<div slot="right">
+
+$$
+\ket{\psi}=\cos\frac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}
+$$
+
+沿 $\hat n$ 方向测量（算符 $\hat n\cdot\vec\sigma$），结果 $\pm1$ 的概率：
+
+$$
+P_\pm=\frac{1\pm\hat n\cdot\vec r}{2}
+$$
+
+夹角为 $\Theta$ 时 $P_+=\cos^2(\Theta/2)$。特例：$\vec r$ 与 $\hat n$ 同向必得 $+1$，
+反向必得 $-1$，垂直则五五开。
+
+</div>
+</DualView>
+
+<Callout type="warning" title="正交 ≠ 垂直">
+$\ket{0}$ 与 $\ket{1}$ 在 Hilbert 空间里正交（内积为零），
+但在 Bloch 球上是**对径点**（夹角 180°），不是 90°。
+球面上夹角 90° 的两个态（比如 $\ket{0}$ 与 $\ket{+}$）内积模方是 $1/2$，完全不正交。
+换算关系就是上面的半角公式：Hilbert 空间夹角 = Bloch 球夹角的一半。
+读 Bloch 球时最容易犯的错就是把这两种「角度」混为一谈。
 </Callout>
 
-## 内容规划
+<Callout type="insight" title="为什么说 qubit「装着无穷、取出有限」">
+球面上确实有连续无穷多个点，制备哪一个态是我们的自由——
+从这个意义上说 qubit 的「状态空间」远大于经典比特。
+但**一次测量只能得到 1 个经典比特**：不论沿哪个轴测，结果非 + 即 −，
+而且测完态就塌缩到极点上，$(\theta,\varphi)$ 的其余信息被抹掉。
+Holevo 定理（本章不证）把这句话变成定理：$n$ 个 qubit 最多可靠传递 $n$ 个经典比特。
+「无穷的态空间」与「有限的可提取信息」之间的张力，
+正是后面隐形传态（9.5 节）和密集编码（9.6 节）玩出花样的舞台。
+</Callout>
 
-- 量子比特的定义
-- Bloch 球坐标
-- 与自旋 1/2 的对应
+## 与自旋 1/2 逐条对号
 
-## 计划中的交互模拟
+qubit 不是新物理，它就是第 5 章的自旋 1/2 换了记号。对照表：
 
-- `bloch-sphere`
+| 自旋 1/2（第 5 章） | qubit（本章） |
+| --- | --- |
+| $\ket{\uparrow},\ket{\downarrow}$（$S_z$ 本征态） | 计算基 $\ket{0},\ket{1}$ |
+| $S_x,S_y,S_z=\frac{\hbar}{2}\sigma_{x,y,z}$ | Pauli 门 $X,Y,Z$（下一节） |
+| 磁场中的进动 $\ee^{-\ii\omega t\sigma_z/2}$ | 相位门 / 单比特旋转 |
+| Stern–Gerlach 沿 $\hat n$ 测量 | 沿 $\hat n$ 的投影测量 |
+| 转 720° 才回到自身 | 半角 $\theta/2$ |
 
-模拟组件写好后在 `src/components/mdx/Sim.astro` 的 REGISTRY 里登记，
-正文里用 `<Sim name="bloch-sphere" />` 嵌入即可。
+实际的 qubit 未必真是自旋：超导电路取最低两个能级，
+离子阱取两条超精细能级，光子取两个偏振方向。
+只要是「二维复空间 + 幺正演化 + 投影测量」，数学上就与自旋 1/2 一模一样——
+这正是第 3 章形式体系的威力：**物理载体不同，Hilbert 空间同构**。
+
+想亲手转一转这个球，可以去[实验室模块 05：自旋与 Bloch 球](/lab/05-spin/)，
+拖动球面上的点，读数里的 $\ket{\psi}$ 会同步变化，还能看进动与测量塌缩。
+
+## 混合态住在球内部
+
+纯态铺满球面，那球的内部是什么？是第 3 章
+[3.10 节](/ch/03-formalism/10-density-operator/)引入的**混合态**。任何 qubit 密度算符都能写成
+
+$$
+\rho=\frac{1}{2}\left(I+\vec r\cdot\vec\sigma\right),\qquad |\vec r|\le 1
+$$
+
+$|\vec r|=1$ 是纯态（球面），$|\vec r|<1$ 是混合态（球内），
+球心 $\vec r=0$ 是最大混合态 $\rho=I/2$——沿任何轴测都五五开，一无所知。
+这个图像在 9.3 节（约化密度矩阵度量纠缠）和第 10 章（退相干把球面「缩」进球心）
+会反复出现，先记住：**越靠近球心，态越「不纯」**。
+
+<KeyFormulas
+  items={[
+    { name: 'qubit 纯态', latex: '\\ket{\\psi}=\\cos\\frac{\\theta}{2}\\ket{0}+\\ee^{\\ii\\varphi}\\sin\\frac{\\theta}{2}\\ket{1}', note: 'θ∈[0,π] 纬度，φ∈[0,2π) 经度；整体相位已删去' },
+    { name: 'Bloch 矢量', latex: '\\vec r=(\\langle\\sigma_x\\rangle,\\langle\\sigma_y\\rangle,\\langle\\sigma_z\\rangle)', note: '纯态 |r| = 1；正交态是对径点' },
+    { name: '测量概率', latex: 'P_\\pm=\\frac{1\\pm\\hat n\\cdot\\vec r}{2}', note: '沿 n̂ 测 n̂·σ 得 ±1 的概率；夹角 Θ 时 P₊=cos²(Θ/2)' },
+    { name: '密度算符', latex: '\\rho=\\frac{1}{2}(I+\\vec r\\cdot\\vec\\sigma),\\quad |\\vec r|\\le 1', note: '球面=纯态，球内=混合态，球心=I/2' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qb-1',
+      prompt: '态 ∣ψ⟩ = (∣0⟩ + i∣1⟩)/√2 的 Bloch 矢量指向哪里？',
+      options: ['+y 轴', '+x 轴', '+z 轴', 'x-y 平面内与 x 轴成 45°'],
+      answer: 0,
+      distractors: {
+        1: '+x 轴对应相对相位 e^{i·0}=1，即 (∣0⟩+∣1⟩)/√2。',
+        3: 'Bloch 经度 φ 就是相对相位的辐角，i = e^{iπ/2} 给 φ = 90°，正好落在 y 轴上，不是 45°。',
+      },
+      explain: '等权叠加 ⇒ θ = π/2（赤道）；相对相位 i = e^{iπ/2} ⇒ φ = π/2，即 +y 轴。可代入 ⟨σ_y⟩ = sinθ sinφ = 1 验证。',
+    },
+    {
+      id: 'qb-2',
+      prompt: '关于 Bloch 球，下列哪些说法正确？（多选）',
+      options: [
+        'Hilbert 空间中正交的两个态在球上是对径点',
+        '球面上相隔 90° 的两个态内积为零',
+        '球内部的点表示混合态',
+        '整体相位不同的两个态在球上是同一个点',
+      ],
+      answer: [0, 2, 3],
+      distractors: {
+        1: '球面夹角 90° 对应 Hilbert 空间夹角 45°，内积模方为 cos²(45°) = 1/2，并不为零。',
+      },
+      explain: '半角关系：Hilbert 空间夹角是 Bloch 球夹角的一半，正交（内积零）⇔ 球上 180°。整体相位在构造 (θ,φ) 时已被删去，混合态 ρ = (I + r·σ)/2 以 |r| < 1 填满球内。',
+    },
+    {
+      id: 'qb-3',
+      type: 'numeric',
+      prompt: 'qubit 处于 ∣0⟩，沿与 z 轴成 60° 的方向 n̂ 测量 n̂·σ。求得到 +1 的概率。',
+      answer: 0.75,
+      tolerance: 0.02,
+      explain: 'P₊ = (1 + n̂·r)/2 = (1 + cos60°)/2 = (1 + 0.5)/2 = 0.75。等价地 P₊ = cos²(Θ/2) = cos²30° = 3/4。注意用的是夹角本身的余弦，不是半角的余弦平方——两条公式殊途同归。',
+    },
+    {
+      id: 'qb-4',
+      prompt: '一次测量最多能从一个未知 qubit 态里读出多少经典信息？',
+      options: [
+        '1 个比特：结果非 + 即 −，且测后态已塌缩',
+        '2 个实数：θ 和 φ 都能读出',
+        '无穷多：球面上有连续无穷个点',
+        '0 个：单次结果完全随机，毫无信息',
+      ],
+      answer: 0,
+      distractors: {
+        1: '单次测量只给一个二值结果；要估计 θ、φ 需要对大量相同制备的副本反复测量。',
+        3: '结果的统计分布依赖于态，单次结果也携带（至多 1 比特的）信息。',
+      },
+      explain: '态空间连续不等于可提取信息无穷：投影测量只有两个出口，且塌缩销毁了其余信息。这就是 Holevo 定理的直觉版本，也是 9.5、9.6 节协议设计时必须绕开的硬约束。',
+    },
+  ]}
+/>
+
+## 接下来
+
+地图有了，该学怎么在地图上移动了。经典计算机用与、或、非门加工比特；
+量子计算机用什么加工 qubit？答案藏在第 3 章的时间演化公设里：
+一切操作都必须是幺正的——在 Bloch 球上，这意味着**转动**。
+下一节我们把最常用的几种转动列成一张「门」的清单，
+并回答一个更深的问题：要多少种门，才够拼出所有可能的操作？

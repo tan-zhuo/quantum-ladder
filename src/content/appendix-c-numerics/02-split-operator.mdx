@@ -2,17 +2,252 @@
 title: 分步算符法
 section: 'C.2'
 order: 2
-summary: 本站波包动画背后的算法。
-status: stub
+summary: 本站波包动画背后的算法：位置空间乘势能相位、动量空间乘动能相位，FFT 来回切换——严格保模、二阶收敛，附完整代码与陷阱清单。
+status: done
+prereqs:
+  - 02-wavefunction/04-time-dependent-schrodinger
+  - appendix-a-math/02-fourier
+objectives:
+  - 说出算符分裂的思想与 Strang 分裂的误差阶
+  - 写出用 FFT 演化波包的完整程序
+  - 解释为什么该算法严格保模，并知道周期边界带来的陷阱
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+含时薛定谔方程的解 $\Psi(t)=\ee^{-\ii\hat Ht/\hbar}\Psi(0)$ 写起来一行，
+算起来麻烦：$\hat H=\hat T+\hat V$ 里动能 $\hat T$ 在位置表象是微分算符。
+**分步算符法**（split-operator method）的观察是：
+
+- $\ee^{-\ii\hat V\Delta t/\hbar}$ 在**位置表象**是对角的——逐点乘一个相位，零成本；
+- $\ee^{-\ii\hat T\Delta t/\hbar}$ 在**动量表象**是对角的——也是逐点乘相位；
+- 两个表象之间的换基恰好是傅里叶变换（[A.2](/ch/appendix-a-math/02-fourier/)），
+  而 FFT 把它做到了 $O(N\log N)$。
+
+于是每一步演化 = 乘相位 → FFT → 乘相位 → 逆 FFT。
+正文里[波包撞势垒](/ch/02-wavefunction/11-tunneling/)、
+[自由波包扩散](/ch/02-wavefunction/10-free-particle/)的动画全是这个算法在跑。
+
+## 分裂公式与误差阶
+
+麻烦在于 $\hat T$ 与 $\hat V$ **不对易**，所以
+$\ee^{-\ii(\hat T+\hat V)\Delta t/\hbar}\ne\ee^{-\ii\hat T\Delta t/\hbar}\ee^{-\ii\hat V\Delta t/\hbar}$。
+但 $\Delta t$ 很小时可以近似拆开，拆法的对称性决定精度：
+
+<Derivation title="Trotter 与 Strang：为什么对称拆分多赚一阶" level="进阶" minutes={6}>
+
+记 $\hat A=-\ii\hat T\Delta t/\hbar$、$\hat B=-\ii\hat V\Delta t/\hbar$，两者都是 $O(\Delta t)$ 的小量。
+Baker–Campbell–Hausdorff 公式（把两个指数并成一个时，对易子会出来捣乱）：
+
+$$
+\ee^{\hat A}\ee^{\hat B}=\exp\left(\hat A+\hat B+\tfrac12[\hat A,\hat B]+\cdots\right)
+$$
+
+**朴素拆分（Trotter）**：$\ee^{\hat A}\ee^{\hat B}$ 与目标 $\ee^{\hat A+\hat B}$
+差在 $\tfrac12[\hat A,\hat B]=O(\Delta t^2)$——单步误差二阶，
+走完固定总时间要 $t/\Delta t$ 步，全局误差 $O(\Delta t)$：一阶方法。
+
+**对称拆分（Strang）**：把势能劈成两半夹住动能，
+
+$$
+\ee^{\hat B/2}\,\ee^{\hat A}\,\ee^{\hat B/2}
+=\exp\left(\hat A+\hat B+O(\Delta t^3)\right)
+$$
+
+$O(\Delta t^2)$ 的对易子项被对称性抵消（左右互为镜像，奇数阶误差反号相消），
+单步误差三阶，**全局误差 $O(\Delta t^2)$**：二阶方法。
+额外代价几乎为零——相邻两步的「半步势能」还可以合并成一步。
+
+</Derivation>
+
+一步演化的完整流程（Strang 分裂）：
+
+$$
+\Psi\ \xrightarrow{\ \times\,\ee^{-\ii V\Delta t/2\hbar}\ }
+\ \xrightarrow{\ \text{FFT}\ }
+\ \xrightarrow{\ \times\,\ee^{-\ii\hbar k^2\Delta t/2m}\ }
+\ \xrightarrow{\ \text{FFT}^{-1}\ }
+\ \xrightarrow{\ \times\,\ee^{-\ii V\Delta t/2\hbar}\ }\ \Psi'
+$$
+
+<Callout type="insight" title="免费的严格保模">
+每一步都只做两类操作：逐点乘模为 1 的相位、幺正的 FFT。
+所以**不管 Δt 多大，总概率严格守恒到机器精度**——误差只出现在相位（能量）上，
+不会出现「概率漏掉」这种一眼露馅的病。对比之下，朴素的显式差分格式
+（如直接对时间做 Euler 步）是不稳定的，模会指数增长。
 </Callout>
 
-## 内容规划
+## 完整代码：波包撞方势垒
 
-- 算符分裂与 Trotter 误差
-- FFT 的作用
-- 幺正性与吸收边界
+$E\approx V_0$ 的波包打在势垒上，一半穿过一半弹回（自然单位 $\hbar=m=1$）：
 
+```python
+import numpy as np
+
+# ---- 网格 ----
+L, N = 40.0, 1024
+x = np.linspace(-L/2, L/2, N, endpoint=False)
+dx = x[1] - x[0]
+k = 2 * np.pi * np.fft.fftfreq(N, d=dx)     # FFT 约定下的动量网格
+
+# ---- 势能：中间一道方势垒 ----
+V0, a = 2.0, 1.0
+V = np.where(np.abs(x) < a / 2, V0, 0.0)
+
+# ---- 初态：从左边入射的高斯波包（中心动量 k0，动能 k0²/2 = 2 = V0）----
+x0, k0, sigma = -10.0, 2.0, 1.5
+psi = np.exp(-(x - x0)**2 / (4 * sigma**2) + 1j * k0 * x)
+psi /= np.sqrt(np.sum(np.abs(psi)**2) * dx)   # 归一化
+
+# ---- 预先算好演化因子（Strang 分裂：V/2 → T → V/2）----
+dt, steps = 0.005, 2000
+expV_half = np.exp(-0.5j * V * dt)
+expT      = np.exp(-0.5j * k**2 * dt)
+
+for _ in range(steps):
+    psi = expV_half * psi                        # 半步势能
+    psi = np.fft.ifft(expT * np.fft.fft(psi))    # 整步动能（动量空间）
+    psi = expV_half * psi                        # 半步势能
+
+# ---- 检验：模守恒 + 透射/反射概率 ----
+norm = np.sum(np.abs(psi)**2) * dx
+T = np.sum(np.abs(psi[x >  a/2])**2) * dx
+R = np.sum(np.abs(psi[x < -a/2])**2) * dx
+print(f"演化 {steps} 步后  norm = {norm:.12f}")
+print(f"透射 T = {T:.4f}   反射 R = {R:.4f}   T + R = {T+R:.4f}")
+```
+
+实测输出：
+
+```text
+演化 2000 步后  norm = 1.000000000000
+透射 T = 0.5119   反射 R = 0.4865   T + R = 0.9984
+```
+
+关键行说明：
+
+- `np.fft.fftfreq(N, d=dx)`：给出 FFT 约定下每个数组下标对应的波数
+  （前一半是正 $k$、后一半是负 $k$），乘 $2\pi$ 后就是动量网格。
+  **自己手排 $k$ 数组是本算法头号错误来源**——顺序排错，波包会瞬间碎掉。
+- `endpoint=False`：FFT 隐含周期边界，$x=-L/2$ 与 $x=+L/2$ 是同一个点，不能重复取。
+- 演化因子在循环外**预先算好**：每步只剩逐点乘法和两次 FFT。
+- norm 精确到 12 位——保模是结构性的，不依赖 $\Delta t$ 小。
+- $T+R=0.9984$ 不是误差：还差的 0.0016 是仍滞留在势垒区 $\lvert x\rvert<a/2$ 内的概率。
+- 中途每隔若干步把 `np.abs(psi)**2` 画出来，就是正文里的隧穿动画。
+
+## 收敛阶检验
+
+在谐振子势里演化一个相干态，用极小步长的解当参考，看误差随 $\Delta t$ 的变化：
+
+```python
+import numpy as np
+
+L, N = 40.0, 1024
+x = np.linspace(-L/2, L/2, N, endpoint=False)
+dx = x[1] - x[0]
+k = 2 * np.pi * np.fft.fftfreq(N, d=dx)
+V = 0.5 * x**2                        # 谐振子势
+
+psi0 = np.exp(-(x - 3.0)**2 / 2)      # 相干态：来回摆而不变形
+psi0 = psi0 / np.sqrt(np.sum(np.abs(psi0)**2) * dx)
+
+def evolve(psi, dt, steps):
+    expV_half = np.exp(-0.5j * V * dt)
+    expT = np.exp(-0.5j * k**2 * dt)
+    for _ in range(steps):
+        psi = expV_half * np.fft.ifft(expT * np.fft.fft(expV_half * psi))
+    return psi
+
+T_total = 2.0
+ref = evolve(psi0.copy(), T_total / 6400, 6400)   # 极小步长作参考解
+
+print("   dt        误差 ‖ψ - ψ_ref‖    误差比")
+prev = None
+for steps in [50, 100, 200, 400]:
+    psi = evolve(psi0.copy(), T_total / steps, steps)
+    err = np.sqrt(np.sum(np.abs(psi - ref)**2) * dx)
+    ratio = f"{prev/err:.2f}" if prev else "  --"
+    print(f" {T_total/steps:.4f}     {err:.3e}      {ratio}")
+    prev = err
+```
+
+实测输出：
+
+```text
+   dt        误差 ‖ψ - ψ_ref‖    误差比
+ 0.0400     1.162e-03        --
+ 0.0200     2.905e-04      4.00
+ 0.0100     7.257e-05      4.00
+ 0.0050     1.809e-05      4.01
+```
+
+步长减半、误差准确变为 1/4——Strang 分裂的 $O(\Delta t^2)$ 全局误差，
+和推导完全一致。
+
+<Callout type="warning" title="三个陷阱：都来自「FFT 隐含周期边界」">
+1. **波包会从右边穿出、左边钻回。** 盒子是一个圆环。演化太久，
+   透射波会绕回来污染反射波。对策：盒子取大、及时停表，
+   或在两端加**吸收层**——一段虚势能 $-\ii\Gamma(x)$（它故意破坏保模，把到边的概率「吃掉」，
+   模拟粒子一去不返）。
+2. **动量也有上限。** 网格能表示的最大动量是 $k_{\max}=\pi/dx$。
+   波包动量接近它时发生混叠（aliasing）——高动量成分伪装成反向低动量，图像出现莫名其妙的碎波。
+   对策：保证 $\lvert k_0\rvert+3/\sigma\ll\pi/dx$，或加密网格。
+3. **势能跳变处的假振铃。** 方势垒的锐利边缘含无限高的傅里叶分量，网格截断后在边缘附近
+   留下小振荡。物理结论（T、R）通常不受影响，但要画波函数细节时可把势垒边缘平滑化。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Strang 分裂', latex: '\\ee^{-\\ii\\hat H\\Delta t/\\hbar}\\approx\\ee^{-\\ii\\hat V\\Delta t/2\\hbar}\\,\\ee^{-\\ii\\hat T\\Delta t/\\hbar}\\,\\ee^{-\\ii\\hat V\\Delta t/2\\hbar}', note: '对称拆分；全局误差 O(Δt²)，朴素拆分只有 O(Δt)' },
+    { name: '误差来源', latex: '\\ee^{\\hat A}\\ee^{\\hat B}=\\ee^{\\hat A+\\hat B+\\frac12[\\hat A,\\hat B]+\\cdots}', note: 'BCH 公式：T 与 V 不对易才需要拆分技巧' },
+    { name: '每步流程', latex: '\\Psi\\to\\ee^{-\\ii V\\Delta t/2\\hbar}\\Psi\\to\\mathcal{F}\\to\\ee^{-\\ii\\hbar k^2\\Delta t/2m}\\to\\mathcal{F}^{-1}\\to\\ee^{-\\ii V\\Delta t/2\\hbar}', note: '两次 FFT + 三次逐点乘相位；严格保模' },
+    { name: '网格动量上限', latex: 'k_{\\max}=\\pi/\\dd x', note: '接近上限即混叠；周期边界 = 盒子是圆环' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apc2-1',
+      prompt: '为什么分步算符法不管步长多大都严格保持总概率？',
+      options: [
+        '每一步只由逐点相位乘法和 FFT 组成，全都是幺正操作',
+        '因为步长误差是二阶小量',
+        '因为归一化在每步结束后被手动重置',
+        '因为势能是实函数，能量守恒',
+      ],
+      answer: 0,
+      distractors: {
+        1: '误差阶管的是相位（能量）精度，与保模无关——保模是结构性质。',
+        2: '代码里只在初始化时归一化过一次，之后从未重置。',
+      },
+      explain: '模为 1 的相位因子和幺正的傅里叶变换都不改变向量的模。误差全部落在「演化对不对」上，而不是「概率丢没丢」上。加入吸收虚势能 −iΓ 时才会故意破坏这条性质。',
+    },
+    {
+      id: 'apc2-2',
+      prompt: '把时间步长从 0.04 减到 0.01（1/4），Strang 分裂的全局误差大约变为？',
+      options: ['1/16', '1/4', '1/2', '1/64'],
+      answer: 0,
+      distractors: {
+        1: '那是一阶（朴素 Trotter）拆分的行为。',
+        3: '1/64 对应三阶方法；Strang 是二阶。',
+      },
+      explain: '全局误差 ∝ Δt²，Δt → Δt/4 给出误差 → 1/16。收敛表里步长每减半误差比 4.00，就是同一条规律。',
+    },
+    {
+      id: 'apc2-3',
+      prompt: '模拟散射时跑得太久，发现左侧「反射波」突然多出一坨。最可能的解释是？',
+      options: [
+        '透射波从右边界绕回来了——FFT 的周期边界把盒子变成了圆环',
+        '算法不保模，概率在增长',
+        '势垒发射了新粒子',
+        '浮点误差累积',
+      ],
+      answer: 0,
+      distractors: {
+        1: '保模是严格的，norm 打印出来仍是 1.000000000000。',
+        3: '薛定谔方程是单粒子方程，不产生粒子。',
+      },
+      explain: '周期边界意味着 x = +L/2 与 x = −L/2 相连。对策：加大盒子、缩短模拟时间，或在边缘加虚势能吸收层把出射波吃掉。',
+    },
+  ]}
+/>

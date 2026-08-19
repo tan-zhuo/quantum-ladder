@@ -1,18 +1,303 @@
 ---
-title: 'The WKB approximation'
-summary: 'The semiclassical approximation and its quantisation condition.'
+title: The WKB approximation
 section: '7.4'
 order: 4
-status: stub
+summary: 'When the potential varies slowly enough, the wavefunction is a local plane wave at every point — yielding a quantisation condition and the exponential formula for tunnelling probabilities.'
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - 02-wavefunction/11-tunneling
+objectives:
+  - Derive the WKB wavefunction, with its 1/√p amplitude factor, from the "local plane wave" ansatz
+  - State the validity condition of WKB and explain why it fails precisely at the turning points
+  - Reproduce the harmonic-oscillator levels from the Bohr-Sommerfeld condition
+  - Estimate barrier penetration with the tunnelling factor, and explain why alpha-decay lifetimes span thirty orders of magnitude
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last three sections all computed energy levels — the system sits quietly in a bound state and we ask what its energy is. This section asks a completely different question, and it starts with a cold case from nuclear physics.
+
+Uranium-238 emits a 4.3 MeV alpha particle with a half-life of 4.5 billion years; polonium-212 also emits alpha particles, at 8.8 MeV, with a half-life of 0.3 microseconds. **A factor of 2 in energy, a factor of $10^{23}$ in lifetime.** In 1911 Geiger and Nuttall plotted a batch of alpha emitters and found a tidy law linking the logarithm of the lifetime to the energy — but nobody could explain the law, let alone that absurd span.
+
+Worse still, classical mechanics does not even permit the alpha particle to get out. Inside the nucleus it feels the attractive nuclear force; once outside, it faces Coulomb repulsion from the residual nucleus (charge about $90e$), a barrier standing roughly **28 MeV** tall at the nuclear surface. A 4.3 MeV particle charging a 28 MeV wall — the classical verdict is unambiguous: it never gets out. And yet the uranium ore sits there, decaying.
+
+A particle showing up under the barrier — we solved tunnelling exactly for the square barrier back in [section 2.11](/en/ch/02-wavefunction/11-tunneling/). But the Coulomb barrier is not square; no exact solution can be written down, and we need a tool that works for a barrier of **any shape**. Perturbation theory is no help: the tunnelling probability is an exponentially small quantity of the form $\ee^{-\text{large number}}$, whose dependence on the Hamiltonian is **non-analytic** — any finite-order power series gives exactly zero. We need an approximation purpose-built for exponentials.
+
+## The local plane wave
+
+The stationary equation
+
+$$
+\frac{\dd^2\psi}{\dd x^2}=-\frac{p^2(x)}{\hbar^2}\psi,
+\qquad p(x)\equiv\sqrt{2m\left[E-V(x)\right]}
+$$
+
+If $V$ is constant, the solutions are plane waves $\ee^{\pm\ii px/\hbar}$ with wavelength $\lambda=h/p$. The core idea of WKB (Wentzel–Kramers–Brillouin) fits in one sentence: **if $V(x)$ barely changes over one wavelength, the wavefunction is still approximately a plane wave at every point — only the wavelength adjusts point by point to the local $p(x)$.** Like a train of water waves crossing a gentle slope: the slope is gentle, the wave stays a wave, only its spacing gradually changes.
+
+<Derivation title="The WKB wavefunction: phase integral and 1/√p amplitude" level="基础" minutes={10} open={true}>
+
+**Step 1: write the wavefunction as amplitude times phase.**
+
+Any complex function can be written
+
+$$
+\psi(x)=A(x)\,\ee^{\ii\phi(x)}
+$$
+
+(with $A,\phi$ real). Substitute into the stationary equation and set real and imaginary parts to zero separately:
+
+$$
+A''-A\,(\phi')^2=-\frac{p^2}{\hbar^2}A
+\qquad\text{(real part)}
+$$
+
+$$
+2A'\phi'+A\phi''=0
+\qquad\text{(imaginary part)}
+$$
+
+No approximation yet.
+
+**Step 2: the imaginary-part equation solves exactly.**
+
+Multiply the imaginary-part equation by $A$ and it is precisely a total derivative, $\left(A^2\phi'\right)'=0$, so
+
+$$
+A=\frac{C}{\sqrt{\phi'}}
+$$
+
+**Step 3: make the one and only approximation.**
+
+The $A''$ term in the real-part equation is the contribution of the amplitude's curvature. The "slowly varying potential" assumption translates as: the amplitude changes far more slowly than the phase oscillates. Drop $A''$ (we check this in a moment), and what is left is
+
+$$
+(\phi')^2=\frac{p^2}{\hbar^2}
+\quad\Longrightarrow\quad
+\phi(x)=\pm\frac{1}{\hbar}\int^x p(x')\,\dd x'
+$$
+
+**Assemble:**
+
+$$
+\psi(x)\approx\frac{C}{\sqrt{p(x)}}\,
+\exp\!\left[\pm\frac{\ii}{\hbar}\int^x p(x')\,\dd x'\right]
+$$
+
+**The phase is the integral of the momentum** — the plane wave's $px/\hbar$ generalised into the point-by-point accumulation $\int p\,\dd x/\hbar$.
+
+**The $1/\sqrt p$ amplitude has a clean physical reading**: the probability density is $|\psi|^2\propto1/p\propto1/v$. A classical particle lingers where it moves slowly — this is the correspondence principle from the end of [section 2.7](/en/ch/02-wavefunction/07-infinite-well/) all over again: WKB is an approximation with the classical limit built in.
+
+**Step 4: the classically forbidden region.**
+
+Where $E$ falls below $V$, $p$ turns pure imaginary. Writing $\kappa(x)=\sqrt{2m[V(x)-E]}/\hbar$,
+the oscillating solution becomes an exponential one:
+
+$$
+\psi(x)\approx\frac{C}{\sqrt{\kappa(x)}}\,
+\exp\!\left[\pm\int^x\kappa(x')\,\dd x'\right]
+$$
+
+— the wavefunction seeping into the forbidden region decays exponentially with the accumulated $\int\kappa\,\dd x$. The seed of tunnelling is planted right here.
+
+</Derivation>
+
+**When does the approximation hold?** Go back and check the discarded $A''$ term; the condition tidies up to
+
+$$
+\left|\frac{\dd\lambda}{\dd x}\right|\ll1,
+\qquad \lambda(x)=\frac{2\pi\hbar}{p(x)}
+$$
+
+**The wavelength's change over one wavelength must be far smaller than the wavelength itself** — the precise version of "the potential varies slowly". It holds well in two situations: a gentle potential, or high energy (large $p$, short $\lambda$ — relative to a short enough wavelength, even an ordinary potential counts as "gentle"). Hence WKB's other name, the **semiclassical approximation**:
+$\lambda\to0$ is exactly the limit where quantum degenerates into classical.
+
+<Callout type="warning" title="Turning points: the approximation collapses exactly where it matters most">
+At a classical turning point (where $E=V(x)$, the spot where a classical particle reverses) $p\to0$,
+$\lambda\to\infty$, the condition is violated as badly as possible, and $1/\sqrt p$ even diverges.
+And of course the edges of every bound state and the entry and exit of every barrier are turning points — WKB goes on strike precisely where it is needed most.
+
+The standard remedy: near a turning point replace the potential with a straight line, where the equation solves exactly (Airy functions), and use that as an "adapter" to weld the WKB solutions on the two sides together. The welding yields a set of **connection formulas** — tedious to derive, but with a short output: two ready-to-use conclusions, the quantisation condition for bound states and the penetration factor for barriers. Let us collect the goods.
 </Callout>
 
-## Planned contents
+## First deliverable: the quantisation condition
 
-- The WKB wavefunction
-- Connection formulas and turning points
-- Recovering Bohr–Sommerfeld quantisation
-- The tunnelling factor
+For a bound state oscillating back and forth between two turning points $x_1,x_2$, the connection formulas require the phase integral to satisfy
+
+$$
+\int_{x_1}^{x_2}p(x)\,\dd x=\left(n+\frac12\right)\pi\hbar,
+\qquad n=0,1,2,\dots
+$$
+
+This is the **Bohr–Sommerfeld quantisation condition** — the rule Bohr and Sommerfeld once wrote down by guesswork in the old quantum theory ([section 1.4](/en/ch/01-history/04-bohr-model/)), here derived properly from the Schrödinger equation, plus a $\tfrac12$ they could never have guessed (it comes from the wavefunction's exponential tails beyond the turning points — each "soft bounce" steals $\pi/2$ of phase).
+
+**Test: the harmonic oscillator.** With $V=\tfrac12m\omega^2x^2$, the phase integral is the area of an ellipse and comes out to $\pi E/\omega$. Insert into the condition:
+
+$$
+\frac{\pi E}{\omega}=\left(n+\frac12\right)\pi\hbar
+\quad\Longrightarrow\quad
+E_n=\left(n+\frac12\right)\hbar\omega
+$$
+
+**Identical to the exact result, word for word** — even the zero-point energy is right (a fluke of the harmonic oscillator; no other potential gets that treatment, though at large $n$ the WKB levels always approach the exact ones). An approximation that hands you an entire spectrum for free — astonishing value for money.
+
+## Second deliverable: the tunnelling factor
+
+For a wide barrier (with entry and exit turning points $x_1,x_2$), the connection formulas give the penetration probability
+
+$$
+T\approx\ee^{-2\gamma},\qquad
+\gamma=\frac{1}{\hbar}\int_{x_1}^{x_2}\kappa(x)\,\dd x
+=\frac{1}{\hbar}\int_{x_1}^{x_2}\sqrt{2m\left[V(x)-E\right]}\,\dd x
+$$
+
+How to read it: the wavefunction decays by $\ee^{-\gamma}$ crossing the forbidden region, and the probability is the amplitude squared. **The exponent is an area-like integral over the whole barrier** — the taller and wider the barrier, the heavier the particle, the more $\gamma$ grows linearly and
+$T$ collapses exponentially.
+
+Plug in a threshold-level number first: an electron hitting a square barrier standing $1\ \text{eV}$ above its energy and $0.5\ \text{nm}$ wide.
+
+$$
+\kappa=\frac{\sqrt{2mc^2\cdot(1\,\text{eV})}}{\hbar c}
+=\frac{\sqrt{2\times511000}}{197.3}\approx5.1\ \text{nm}^{-1},
+\qquad
+T\approx\ee^{-2\times5.1\times0.5}\approx6\times10^{-3}
+$$
+
+One success in about one hundred and sixty attempts — and the scanning tunnelling microscope earns its living on exactly this:
+$\gamma$'s exponential sensitivity to width makes the tunnelling current change by nearly an order of magnitude for every 0.1 nm of tip height,
+which is why an STM can "feel out" the bumps of individual atoms.
+
+<Derivation title="Alpha decay: Gamow unlocks thirty orders of magnitude" level="进阶" minutes={10}>
+
+In 1928 Gamow (and, independently, Gurney and Condon) aimed the tunnelling factor at uranium. The model: the alpha particle rattles inside the nucleus (radius $r_0\approx9\ \text{fm}$), and at each wall collision escapes through the Coulomb barrier with probability $T$
+
+$$
+V(r)=\frac{2(Z-2)e^2}{4\pi\varepsilon_0 r}\qquad(r>r_0)
+$$
+
+(The $2$ is the alpha particle's charge number, $Z-2$ the residual nucleus. Uranium decays to thorium, $Z-2=90$,
+$V(r_0)\approx\dfrac{2\times90\times1.44\ \text{MeV}\cdot\text{fm}}{9\ \text{fm}}\approx29\ \text{MeV}$,
+far above $E_\alpha\approx4.3\ \text{MeV}$ — a classically forbidden region worthy of the name.)
+
+The outer turning point sits where $V(r_2)=E$. Integrate $\kappa$ along the Coulomb tail (an elementary substitution does it); in the limit $r_2\gg r_0$ the leading term is
+
+$$
+2\gamma\approx\frac{2\pi\cdot2(Z-2)e^2}{4\pi\varepsilon_0\hbar}\sqrt{\frac{m_\alpha}{2E}}
+\ \propto\ \frac{Z-2}{\sqrt{E}}
+$$
+
+**The logarithm of the decay rate is proportional to $-1/\sqrt E$** — exactly the Geiger–Nuttall empirical line, derived for the first time seventeen years after its discovery.
+
+**The order-of-magnitude ledger**: plugging in numbers for uranium-238 gives $2\gamma\approx90$, i.e. $T\sim\ee^{-90}\sim10^{-39}$. The alpha particle hits the wall at a rate of about $v/2r_0\sim10^{21}\ \text{s}^{-1}$, so the lifetime is
+
+$$
+\tau\sim\frac{1}{10^{21}\times10^{-39}}\ \text{s}=10^{18}\ \text{s}\approx3\times10^{10}\ \text{yr}
+$$
+
+The same order of magnitude as the measured 4.5 billion years — for an estimate carrying a 90 in its exponent, that is a resounding success.
+
+**The answer to the thirty-order riddle**: as the energy rises from 4.3 to 8.8 MeV, $1/\sqrt E$ shrinks by only about a third — but it rides an exponent of order 90: $2\gamma$ drops from $\sim90$ to $\sim50$, and with the barrier details stacked on,
+$T$ swings by tens of orders of magnitude. **The absurd span of lifetimes is just the exponential function going about its daily business.**
+The other end of the same exponential lever is the stars: protons in the solar core ignite fusion by tunnelling, and the tunnelling probability's extreme sensitivity to temperature sets the burn rate of every star.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Three approximations, three flavours.** Perturbation theory expands in "orders of the perturbation", the variational method closes in with "the size of the trial family", and WKB expands in **powers of $\hbar$** — the phase is order $1/\hbar$, the amplitude order $\hbar^0$, and there the truncation stops. So its quality has nothing to do with any perturbation being small; all that matters is how fast the wavelength changes relative to the potential. High energies, heavy particles, gentle potentials are its home turf; low levels, sharp potentials, and the neighbourhoods of turning points are its minefield.
+
+</div>
+<div slot="right">
+
+$$
+\psi\sim\exp\!\left[\frac{\ii}{\hbar}\left(S_0+\frac{\hbar}{\ii}S_1+\cdots\right)\right]
+$$
+
+Order by order: $S_0=\pm\int p\,\dd x$ (the classical action!), and $S_1$ yields $1/\sqrt p$. Validity condition and failure point:
+
+$$
+\left|\frac{\dd\lambda}{\dd x}\right|\ll1,\qquad
+p(x_{\text{turning}})=0\ \Rightarrow\ \text{connection formulas take over}
+$$
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Exponentials are perturbation theory's blind spot and WKB's home turf">
+Treat the square barrier's $T\approx\ee^{-2a\sqrt{2m(V_0-E)}/\hbar}$ as a function of $V_0$ and Taylor-expand it around "infinitely tall barrier" — every order is zero. An exponentially small quantity depends on its parameters non-analytically, and power series are congenitally blind to it. Tunnelling, alpha decay, field ionisation, vacuum decay — this whole family of "exponential phenomena" is the exclusive territory of WKB (and the classical action behind it). The rule of thumb for picking a tool: **if the answer looks like a power, use perturbation theory; if it looks like $\ee^{-S/\hbar}$, use WKB.**
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'WKB wavefunction', latex: "\\psi\\approx\\frac{C}{\\sqrt{p(x)}}\\exp\\left[\\pm\\frac{\\ii}{\\hbar}\\int^x p\\,\\dd x'\\right]", note: 'In the forbidden region p→iħκ, oscillation becomes exponential decay; |ψ|²∝1/v is the classical dwell time' },
+    { name: 'Validity condition', latex: '\\left|\\frac{\\dd\\lambda}{\\dd x}\\right|\\ll1', note: 'The wavelength barely changes over one wavelength; maximally violated at turning points' },
+    { name: 'Quantisation condition', latex: '\\int_{x_1}^{x_2}p\\,\\dd x=\\left(n+\\tfrac12\\right)\\pi\\hbar', note: 'Bohr-Sommerfeld + half-integer correction; exact for the harmonic oscillator' },
+    { name: 'Tunnelling factor', latex: 'T\\approx\\ee^{-2\\gamma},\\quad\\gamma=\\frac{1}{\\hbar}\\int_{x_1}^{x_2}\\sqrt{2m(V-E)}\\,\\dd x', note: 'Alpha decay: 2γ∝(Z−2)/√E, i.e. the Geiger-Nuttall law' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'wkb-1',
+      prompt: 'The validity condition of the WKB approximation is:',
+      options: [
+        'The de Broglie wavelength barely changes over a distance of one wavelength',
+        'The potential energy is far smaller than the total energy',
+        'The perturbation matrix elements are far smaller than the level spacing',
+        'The particle moves at nearly the speed of light',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The potential may be strong, as long as it varies gently; WKB works beautifully for the high levels of a deep well.',
+        2: 'That is the criterion of perturbation theory; WKB never needs the Hamiltonian split into a big piece plus a small one.',
+      },
+      explain: 'The "local plane wave" picture requires the wave to oscillate many times before it feels the potential change, i.e. |dλ/dx| ≪ 1. High energy (short wavelength) or a gentle potential both satisfy it; at a turning point p→0, λ→∞ and the condition is maximally violated.',
+    },
+    {
+      id: 'wkb-2',
+      prompt: 'The physical interpretation of the WKB amplitude factor 1/√p(x) is:',
+      options: [
+        'The probability density goes as 1/v — the classical particle’s dwell time at each point',
+        'A mathematical requirement of normalisation, with no physical meaning',
+        'The wavefunction must diverge at the turning points',
+        'Larger momentum means a larger wavefunction',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'The divergence at turning points is a symptom of the approximation failing, not a physical requirement — the true wavefunction is finite there.',
+        3: 'The relation is exactly the other way round: the amplitude is small where p is large.',
+      },
+      explain: '|ψ|² ∝ 1/p ∝ 1/v: linger longer where you move slower. This is the correspondence-principle mechanism of section 2.7 appearing automatically in WKB — the semiclassical approximation weaves the classical probability distribution into the wavefunction from birth.',
+    },
+    {
+      id: 'wkb-3',
+      prompt: 'Why can a factor of 2 in alpha-decay energy produce a factor of 10²³ in lifetime?',
+      options: [
+        'The decay rate goes as e^(−2γ) with 2γ ∝ 1/√E a large number of order tens; a moderate change in the exponent gets amplified into tens of orders of magnitude',
+        'The higher-energy alpha particle hits the nuclear wall 10²³ times more often',
+        'The Coulomb barrier of a heavy nucleus grows exponentially with energy',
+        'It is experimental error; the real lifetimes differ little',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The wall-collision rate changes only as √E, less than a factor of 2 — the prefactor cannot begin to explain the span.',
+        3: 'The barrier is set by the nuclear charge, independent of the alpha particle’s energy; what changes is the "depth and length" the particle travels under the barrier.',
+      },
+      explain: '2γ is about 90 for U-238 and about 50 for the high-energy nuclei: sliding the exponent from e⁻⁹⁰ to e⁻⁵⁰ is already some 17 orders of magnitude, and barrier-parameter differences make up the rest. That is why the Geiger-Nuttall law, ln(lifetime) ∝ 1/√E, is a straight line.',
+    },
+    {
+      id: 'wkb-4',
+      type: 'numeric',
+      prompt: 'An electron tunnels through a square barrier 1.0 eV above its energy and 0.50 nm wide. Estimate the penetration probability with T ≈ e^(−2κa). (Hint: κ = √(2mc²·ΔE)/ħc, mc² = 511000 eV, ħc = 197.3 eV·nm)',
+      answer: 0.006,
+      tolerance: 0.002,
+      unit: '',
+      explain: 'κ = √(2×511000×1.0)/197.3 ≈ 5.12 nm⁻¹, so T ≈ e^(−2×5.12×0.5) = e^(−5.12) ≈ 0.006. Widen the barrier by just 0.1 nm and T drops to about 0.002 — the atomic-scale sensitivity of the scanning tunnelling microscope comes precisely from this exponential steepness.',
+    },
+  ]}
+/>
+
+## What comes next
+
+So far, every Hamiltonian in this chapter has been **time-independent**: the levels are eternal, and a stationary state, once moved in, never moves out. Yet in the real world atoms absorb and emit light, and excited states rarely live beyond a few nanoseconds. Where is the contradiction? In the assumption "the Hamiltonian does not depend on time" — when a light wave hits an atom, what the atom feels is an **electric field oscillating in time**. The next section bolts a time axis onto perturbation theory, to compute one of the most useful classes of numbers in quantum mechanics: transition probabilities.

@@ -1,17 +1,282 @@
 ---
-title: 'Fermi’s golden rule'
-summary: 'The transition-rate formula and where it applies.'
+title: Fermi's golden rule
 section: '7.6'
 order: 6
-status: stub
+summary: 'When the final states form a continuum, the oscillating transition probability becomes a constant transition rate — one formula that rules every calculation of emission, absorption and scattering.'
+status: done
+prereqs:
+  - 07-approximation/05-time-dependent-perturbation
+objectives:
+  - Explain why a continuum of final states turns t² growth and oscillation into a constant rate
+  - Complete the derivation of the golden rule, making clear how sinc² becomes an energy-conserving δ function in the long-time limit
+  - Recast the pair of factors "energy conservation + how many places to go" in the language of the density of states
+  - Estimate the order of magnitude of the hydrogen 2p→1s spontaneous-emission lifetime (nanoseconds), and state the golden rule's window of validity in time
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section left a crack. For a single final state, first-order theory gives a probability that either grows madly as $t^2$ (on resonance)
+or oscillates back and forth (off resonance). Yet excited atoms in the laboratory wear an entirely different face:
+a population of hydrogen atoms in the 2p state loses a fixed **fraction** every nanosecond, its number sliding smoothly down as $\ee^{-t/\tau}$ with
+$\tau=1.6\ \text{ns}$ — no oscillation, no acceleration. "A fixed fraction per unit time" means there exists a
+constant **transition rate** $\Gamma$. Where does this constant rate spring from?
+
+The difference hides in the nature of the final states. Last section we tacitly assumed the transition's destination was **one** discrete state;
+but when an atom emits light, the destination is "the atom drops to 1s **plus** a photon flies away" —
+and the photon can fly in any direction, carry either of two polarisations, and take any frequency within the resonance width.
+**The final state is not a point; it is a continuum.** When we measure "has the atom decayed yet?", we do not care
+which way the photon went, so the probability must be summed over the whole continuum. It is this summation that flattens the oscillations into a rate.
+
+## Counting the final states: the density of states
+
+To sum over a continuum, we first need to answer "how many states are there per unit energy interval near $E$?"
+That quantity is the **density of states**, written $\rho(E)$: there are
+$\rho(E)\,\dd E$ states with energy between $E$ and $E+\dd E$. It is a pure counting problem, with no dynamics in it.
+
+The most common example: a particle (or photon) placed in a large box of volume $V=L^3$,
+with momentum quantised onto the lattice $\vec k=\frac{2\pi}{L}(n_x,n_y,n_z)$.
+Each state occupies a volume $(2\pi/L)^3$ of $k$-space; count the lattice points in a spherical shell of radius $k$,
+convert to energy, and out comes $\rho(E)$. For photons ($E=\hbar ck$, two polarisations):
+
+$$
+\rho_{\text{photon}}(E)=\frac{V E^2}{\pi^2\hbar^3c^3}
+$$
+
+The box is only scaffolding: in any physical answer, $V$ always cancels against the $1/V$ normalisation factor in the matrix element,
+and the final rate is independent of the box size.
+
+## From sinc² to a rate
+
+<Derivation title="Deriving the golden rule" level="基础" minutes={10} open={true}>
+
+**Step 1: sum the single-state probability over the continuum of final states.**
+
+Take the cleanest case first: a perturbation $\hat V$ switched on suddenly at $t=0$ and held constant thereafter
+(the periodic perturbation $\hat V\cos\omega t$, after the rotating-wave approximation, is completely isomorphic — just replace
+$V_{fi}\to V_{fi}/2$ and the detuning by $\Delta=\omega_{fi}-\omega$).
+The last section's first-order amplitude integral gives (writing $\Delta\equiv\omega_{fi}$):
+
+$$
+P_{i\to f}(t)=\frac{|V_{fi}|^2}{\hbar^2}\,t^2\,
+\mathrm{sinc}^2\!\left(\frac{\Delta t}{2}\right),
+\qquad \mathrm{sinc}\,x\equiv\frac{\sin x}{x}
+$$
+
+The total transition probability is the sum over all final states; use the density of states to write it as an integral ($\dd E_f=\hbar\,\dd\Delta$):
+
+$$
+P(t)=\int P_{i\to f}(t)\,\rho(E_f)\,\dd E_f
+=\frac{t^2}{\hbar}\int|V_{fi}|^2\rho\,
+\mathrm{sinc}^2\!\left(\frac{\Delta t}{2}\right)\dd\Delta
+$$
+
+**Step 2: see what sinc² looks like at long times.**
+
+As a function of $\Delta$, $\mathrm{sinc}^2(\Delta t/2)$ has a main peak of height 1 and width about $4\pi/t$.
+The larger $t$, the narrower the peak — and once it is narrower than any scale over which $|V_{fi}|^2\rho$ varies with energy,
+the factor $|V_{fi}|^2\rho$ is essentially constant across the peak and can be pulled out at its central value:
+
+$$
+P(t)\approx\frac{t^2}{\hbar}\,|V_{fi}|^2\rho\,\Big|_{\Delta=0}
+\int_{-\infty}^{\infty}\mathrm{sinc}^2\!\left(\frac{\Delta t}{2}\right)\dd\Delta
+$$
+
+The remaining integral is the standard result $\int\mathrm{sinc}^2u\,\dd u=\pi$, which after the change of variable equals $2\pi/t$.
+
+**Step 3: the miracle.**
+
+$$
+P(t)\approx\frac{t^2}{\hbar}\cdot\frac{2\pi}{t}\cdot|V_{fi}|^2\rho
+=\frac{2\pi}{\hbar}\,|V_{fi}|^2\rho\;t
+$$
+
+The peak width's $1/t$ shaves one power off the $t^2$: **the total probability grows linearly in time**.
+Linear growth is the very definition of "constant rate", so
+
+$$
+\boxed{\ \Gamma=\frac{2\pi}{\hbar}\,|V_{fi}|^2\,\rho(E_f)\Big|_{E_f=E_i+\hbar\omega}\ }
+$$
+
+This is **Fermi's golden rule** (it was actually Dirac who derived it; Fermi called it
+"golden rule number two" in his lecture notes, and the name stuck — yet another miscarriage of justice in the history of physics naming).
+
+**What happened, retold in pictures**: the probability for each single final state oscillates,
+but final states at different detunings oscillate with different periods. In the sum, the states sitting exactly on the resonance shell grow steadily,
+while those slightly off rise and fall out of phase with one another — **summing over the continuum averages the oscillations away**,
+leaving only the net outflow through the resonance shell. Mathematically this is the limit
+
+$$
+\lim_{t\to\infty}\frac{t}{2\pi\hbar}\,\mathrm{sinc}^2\!\left(\frac{(E_f-E_i-\hbar\omega)t}{2\hbar}\right)
+=\delta(E_f-E_i-\hbar\omega)
+$$
+
+The sinc² peak sharpens into a δ function: **in the long-time limit energy conservation is strictly enforced**,
+which is why the golden rule is often written with an explicit δ function (after integrating over final states the two forms agree).
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Rate = the channel's "bandwidth" times the "traffic".** The golden rule splits the transition rate into two factors:
+
+- $|V_{fi}|^2$ — how tightly the perturbation ties the initial and final states together (how wide each lane is);
+- $\rho(E_f)$ — how many lanes there are on the energy-conserving shell.
+
+However large the matrix element, with nowhere to go ($\rho=0$) the rate is zero:
+put an excited atom inside the band gap of a photonic crystal, where the photon states at the relevant frequency have been "emptied out",
+and spontaneous emission really is suppressed — the density of states is not a bookkeeping device but a piece of physical reality you can engineer.
+
+</div>
+<div slot="right">
+
+$$
+\Gamma=\frac{2\pi}{\hbar}\,|\bra{f}\hat V\ket{i}|^2\,\rho(E_f)
+$$
+
+or, equivalently, with the final-state sum written out:
+
+$$
+\Gamma=\frac{2\pi}{\hbar}\sum_f|V_{fi}|^2\,\delta(E_f-E_i-\hbar\omega)
+$$
+
+A constant rate yields exponential decay: $\dot N=-\Gamma N\Rightarrow N(t)=N_0\ee^{-\Gamma t}$,
+lifetime $\tau=1/\Gamma$, natural linewidth $\hbar\Gamma$ (the energy–time uncertainty relation showing yet another face).
+
+</div>
+</DualView>
+
+## An order-of-magnitude calculation: why the atom lives 1.6 nanoseconds
+
+The golden rule's most famous client: spontaneous emission. A hydrogen atom falls from 2p back to 1s, releasing a 10.2 eV photon.
+The matrix element comes from the electric-dipole interaction ($\hat V\sim e\vec r\cdot\vec{\mathcal E}$,
+dipole moment of order $ea_0$); the density of states is the photon formula above. Feed both into the golden rule,
+sum over photon directions and polarisations, and the rate tidies up to
+
+$$
+\Gamma\approx\frac{4\alpha}{3}\,\frac{\omega^3a_0^2}{c^2}\times|\text{matrix element}/ea_0|^2
+$$
+
+($\alpha\approx1/137$ is the fine-structure constant.) The arithmetic: $\omega=1.55\times10^{16}\ \text{rad/s}$,
+taking the matrix-element factor as 1 for now:
+
+$$
+\Gamma\approx\frac{4}{3\times137}\times\frac{(1.55\times10^{16})^3\times(5.29\times10^{-11})^2}{(3\times10^8)^2}
+\approx1.1\times10^{9}\ \text{s}^{-1}
+$$
+
+The exact matrix element $|\bra{1s}z\ket{2p_0}|=0.745\,a_0$ squeezes in a further factor of 0.55,
+giving $\Gamma=6.3\times10^8\ \text{s}^{-1}$, i.e.
+
+$$
+\tau=\frac{1}{\Gamma}\approx1.6\ \text{ns}
+$$
+
+in exact agreement with experiment. Take a moment to feel what this number means: the light wave's period is $2\pi/\omega\sim0.4\ \text{fs}$,
+so the atom oscillates through **four million periods** before emitting one photon — the coupling of atom to light field (powers of $\alpha$)
+is genuinely feeble, which in turn explains why first-order perturbation theory is so trustworthy here.
+
+Push the same rule outward and you get the whole of spectroscopy and scattering physics: photoabsorption cross-sections, beta-decay rates
+(Fermi's own use for it), electron–phonon scattering in solids, the resistance of metals —
+for any problem where "an initial state flows through a weak coupling into a continuum of final states", step one is always to write down the golden rule.
+
+<Callout type="insight" title="Where does irreversibility come from?">
+The Schrödinger equation is reversible, and the transition probability to any single final state really does oscillate back and forth.
+But after summing over a continuum of final states, the return paths drift out of phase with one another and never realign —
+the irreversibility of exponential decay **is not an added assumption but the statistical consequence of "infinitely many final states"**.
+(In cavity quantum electrodynamics, lock the atom into a tiny cavity supporting a single mode: the continuum collapses back to one state,
+and the oscillation instantly revives — atom and photon swap the excitation back and forth to the Rabi beat.)
+This is a trailer for the open systems of Chapter 10: reversible microscopic laws + a vast environment = apparently irreversible behaviour.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="The golden rule's window in time">
+"Constant rate" holds only in an **intermediate stretch of time**, bounded at both ends:
 
-- Continuum final states and density of states
-- Deriving the golden rule
-- Applications to absorption and scattering
+- **Lower bound**: $t$ must be large enough that the sinc² peak width $\sim\hbar/t$ is far smaller than the energy scale over which $|V|^2\rho$ varies,
+  or the δ-function approximation is illegitimate. At very early times the decay actually goes as $t^2$ (which underlies the "quantum Zeno effect":
+  sufficiently frequent measurement can freeze a decay).
+- **Upper bound**: the derivation assumed $\Gamma t\ll1$, the initial state not yet visibly drained.
+  Happily, extrapolating the constant rate to $\ee^{-\Gamma t}$ is usually correct (the rate has no memory of history),
+  but when $\hbar\Gamma$ approaches the level spacing or the structural scale of the density of states, the exponential law itself starts to warp.
+
+In real systems this window is enormous: for hydrogen it opens at the femtosecond scale and closes at the nanosecond scale — six orders of magnitude —
+and that is what makes the golden rule "golden".
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Golden rule', latex: '\\Gamma=\\frac{2\\pi}{\\hbar}\\,|V_{fi}|^2\\,\\rho(E_f)', note: 'Rate = coupling strength × number of final states on the energy shell' },
+    { name: 'δ-function limit', latex: '\\lim_{t\\to\\infty}\\frac{t}{2\\pi\\hbar}\\,\\mathrm{sinc}^2\\!\\left(\\tfrac{(E_f-E_i-\\hbar\\omega)t}{2\\hbar}\\right)=\\delta(E_f-E_i-\\hbar\\omega)', note: 'Energy conservation strictly enforced in the long-time limit' },
+    { name: 'Photon density of states', latex: '\\rho_{\\text{photon}}(E)=\\frac{VE^2}{\\pi^2\\hbar^3c^3}', note: 'The box volume V eventually cancels against the matrix element’s 1/V' },
+    { name: 'Exponential decay', latex: 'N(t)=N_0\\,\\ee^{-\\Gamma t},\\qquad\\tau=1/\\Gamma', note: 'Hydrogen 2p→1s: Γ=6.3×10⁸ s⁻¹, τ≈1.6 ns' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fgr-1',
+      prompt: 'The transition probability to a single final state oscillates. Why does summing over a continuum of final states produce a constant rate?',
+      options: [
+        'Final states at different detunings oscillate with different periods; the sum averages the oscillations away, leaving only the net outflow on the resonance shell',
+        'Energy is not conserved for continuum final states, so the oscillation loses meaning',
+        'The summation makes the matrix elements larger',
+        'The continuum final states collide with each other and destroy the coherence',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite: in the long-time limit sinc² collapses to a δ function and energy conservation is strictly enforced.',
+        3: 'The final states do not interact with each other at all; the "averaging away" is pure interference statistics of drifting phases.',
+      },
+      explain: 'The sinc² peak height goes as t² and its width as 1/t; integrated over final states, the product gives a total probability ∝ t — and linear growth is a constant rate. The oscillations are not destroyed by any mechanism; infinitely many oscillations of different periods simply never come back into phase.',
+    },
+    {
+      id: 'fgr-2',
+      prompt: 'Put an excited atom inside the band gap of a photonic crystal (where the photon density of states at the relevant frequency is zero). What happens?',
+      options: [
+        'Spontaneous emission is suppressed — ρ(E_f)=0 means zero rate, no matter how large the matrix element',
+        'The atom radiates faster because the energy is pent up',
+        'No effect; spontaneous emission depends only on the atom itself',
+        'The atom absorbs instead of emitting',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'The golden rule says outright that the rate is proportional to the final-state density: with no photon states to go to, the transition has nowhere to go. Both suppressing and enhancing spontaneous emission (the Purcell effect) are mature experiments.',
+        1: 'The rate is set by Γ = (2π/ħ)|V|²ρ, and ρ=0 gives Γ=0.',
+      },
+      explain: 'The density of states stands on equal footing with the matrix element in the rate formula — and it can be engineered: photonic crystals and microcavities switch spontaneous emission on and off by reshaping ρ(E). Even the "vacuum" is a designable environment.',
+    },
+    {
+      id: 'fgr-3',
+      prompt: 'Which statements about the golden rule’s window of validity in time are correct? (Select all that apply.)',
+      options: [
+        'At very short t the δ-function approximation fails and the decay behaves as t²',
+        'The derivation requires the initial state not yet visibly drained (Γt ≪ 1)',
+        'In real atomic systems this window often spans many orders of magnitude',
+        'The golden rule holds strictly for times of any length',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Both ends are bounded: t² behaviour at early times (the root of the quantum Zeno effect), and reliance on the validity of the e^(−Γt) extrapolation at late times.',
+      },
+      explain: 'The lower bound comes from the sinc² peak having to be narrower than the energy structure of |V|²ρ; the upper bound from first-order theory’s P ≪ 1. For hydrogen the window opens at femtoseconds and closes at nanoseconds — wide enough to deserve the name "golden".',
+    },
+    {
+      id: 'fgr-4',
+      type: 'numeric',
+      prompt: 'The spontaneous-emission rate of hydrogen 2p→1s is Γ = 6.3×10⁸ s⁻¹. Find the lifetime τ of the 2p state, in ns.',
+      answer: 1.6,
+      tolerance: 0.1,
+      unit: 'ns',
+      explain: 'τ = 1/Γ = 1/(6.3×10⁸) s ≈ 1.6×10⁻⁹ s = 1.6 ns. Against the 0.4 fs period of the light wave, the atom oscillates through some four million periods before emitting a single photon — the coupling of atom to vacuum light field is weak (powers of α), which is exactly why first-order perturbation theory is reliable.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Time-dependent perturbation theory handles disturbances that are "fast but weak": the light field oscillates millions of periods before triggering a single transition.
+Now twist the dial to the opposite end — what if the disturbance is **extremely slow**? Compress the well gradually, rotate the magnetic field gently:
+will the system jump away, or follow along obediently? The answer (the adiabatic theorem) is useful in its own right,
+but in 1984 Berry discovered a character in the story that had been overlooked for half a century:
+a system carried slowly around a closed loop comes back with a phase imprinted on its wavefunction that depends **only on the geometry of the path**.
+This "geometric phase" went on to thread together the Aharonov–Bohm effect and the entire field of topological matter.

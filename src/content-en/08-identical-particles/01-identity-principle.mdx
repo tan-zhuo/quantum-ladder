@@ -1,17 +1,240 @@
 ---
-title: 'The principle of indistinguishability'
-summary: 'Swap two electrons and nothing about the world should change.'
+title: The identity principle
 section: '8.1'
 order: 1
-status: stub
+summary: 'Classical particles can be labelled; quantum particles cannot. Out of this innocent-looking difference grow the Pauli exclusion principle, the periodic table, and the pressure that holds up a white dwarf — this section digs out the root.'
+status: done
+prereqs:
+  - 03-formalism/07-postulates
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - State precisely what "identical particles" means, and explain why quantum particles cannot be labelled even in principle
+  - Write down the exchange operator and prove its eigenvalues can only be ±1
+  - Explain why physical states must be eigenstates of the exchange operator
+  - Contrast state counting for distinguishable versus identical particles, and compute the numbers explicitly
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous seven chapters dealt almost exclusively with **one** particle: an electron in a potential well, in a hydrogen atom, hopping between levels under a perturbation. On the rare occasions two particles appeared (the entangled states of [section 3.10](/en/ch/03-formalism/10-density-operator/), for instance), we took it for granted that we could call them "particle 1" and "particle 2".
+
+This chapter has to face an awkward fact: **when the two particles are of the same kind, the labels "1" and "2" simply will not stick.** And this is not a technical difficulty — it is a matter of principle. Its consequences are astonishingly large: without it there would be no chemistry, no solids, no floor that fails to collapse under your feet.
+
+## A thought experiment: labelling billiard balls
+
+Start in the classical world. On the table sit two perfectly identical white billiard balls, factory specifications exactly the same. Are they "identical"?
+
+In one sense, yes. But you can still tell them apart, and the method is simple: **keep watching.** At $t=0$ name the one on the left A and the one on the right B, then track their trajectories the whole time. However they collide and swap places, at every instant you can say "the one on the left right now is A" (or B). Classical particles have continuous, definite trajectories, and a trajectory is a built-in label. Even without a pen, the label is always there.
+
+Now replace them with two electrons. Trouble arrives:
+
+1. **Electrons have no trajectories.** As chapter 2 explained, an electron is described by a wavefunction, and its position takes a value only when measured. Between two measurements, "which path did it take?" has no answer (think of the double slit).
+2. **Wave packets overlap.** When two electrons come close, their wavefunctions merge into one blur in space. When the next measurement finds an electron somewhere, it is **impossible in principle** to answer "which of the two is this?" — not because the apparatus is too crude, but because the question has no counterpart in the theory at all.
+3. **Electrons carry no distinguishing "serial number".** Every electron has exactly the same mass, charge, and spin; experiments have checked the uniformity of the electron mass to better than one part in $10^{8}$. No electron is even slightly "older" than any other.
+
+This gives us the definition of **identical particles**: particles whose intrinsic properties (mass, charge, spin, and so on) are all exactly equal, so that no physical procedure whatsoever can tell them apart. Any two electrons in the universe are identical; an electron and a proton are not (their masses differ by a factor of 1836); even a proton and a neutron are not (their charges differ).
+
+<Callout type="insight" title="Why is every electron exactly the same?">
+To classical intuition, "two things exactly alike" is a coincidence, and it is the coincidence that would need explaining. Quantum field theory offers a beautiful answer: electrons are not little balls manufactured one by one, but **excitations of a single electron field** — just as two wave packets on the same string necessarily obey the same wave equation. "All electrons are identical" is not a coincidence; it is a direct corollary of "there is only one electron field". Chapter 12 will return to this picture. For now, simply accept the experimental fact: identity is exact, not approximate.
 </Callout>
 
-## Planned contents
+## Where the existing formalism breaks
 
-- What "identical particles" means
-- The exchange operator and its eigenvalues
-- Why only symmetric and antisymmetric states exist
+By the rules of chapter 3, the state of a two-particle system is a wavefunction $\psi(\vec{r}_1,\vec{r}_2)$ — ignoring spin for now, with $\vec{r}_1$ the coordinate of "particle 1" and $\vec{r}_2$ that of "particle 2".
+
+But we have just argued that for identical particles the labels "particle 1" and "particle 2" carry **no physical meaning** — they are mere bookkeeping symbols we use when writing formulas. So we must demand: **no observable prediction may depend on how the labels are assigned.**
+
+The probability density is observable, so at the very least
+
+$$
+|\psi(\vec{r}_1,\vec{r}_2)|^2=|\psi(\vec{r}_2,\vec{r}_1)|^2
+$$
+
+The probability of "finding one particle at $a$ and another at $b$" must not change just because you swapped the labels around. Note that a generic function of two variables can easily violate this — for example $\psi\propto\ee^{-r_1}\,\ee^{-2r_2}$ (one particle in an inner shell, one in an outer) plainly does not satisfy it. **Identity is a genuine restriction on the state space, not empty talk.**
+
+## The exchange operator
+
+Promote "swapping labels" to an operator. Define the **exchange operator** $\hat{P}_{12}$:
+
+$$
+\hat{P}_{12}\,\psi(\vec{r}_1,\vec{r}_2)=\psi(\vec{r}_2,\vec{r}_1)
+$$
+
+<Derivation title="The eigenvalues of the exchange operator can only be ±1" level="基础" minutes={5} open={true}>
+
+**Step 1: exchanging twice is the same as doing nothing.**
+
+$$
+\hat{P}_{12}^2\,\psi(\vec{r}_1,\vec{r}_2)=\hat{P}_{12}\,\psi(\vec{r}_2,\vec{r}_1)=\psi(\vec{r}_1,\vec{r}_2)
+$$
+
+This holds for arbitrary $\psi$, so $\hat{P}_{12}^2=\hat{1}$.
+
+**Step 2: find the eigenvalues.**
+
+Suppose $\hat{P}_{12}\psi=\lambda\psi$. Apply $\hat{P}_{12}$ once more to both sides:
+
+$$
+\hat{P}_{12}^2\psi=\lambda\hat{P}_{12}\psi=\lambda^2\psi
+$$
+
+But the left-hand side is just $\psi$, so $\lambda^2=1$, that is
+
+$$
+\lambda=+1\quad\text{or}\quad\lambda=-1
+$$
+
+**Step 3: the two families of eigenstates.**
+
+- $\lambda=+1$: $\psi(\vec{r}_2,\vec{r}_1)=+\psi(\vec{r}_1,\vec{r}_2)$, called **symmetric**;
+- $\lambda=-1$: $\psi(\vec{r}_2,\vec{r}_1)=-\psi(\vec{r}_1,\vec{r}_2)$, called **antisymmetric**.
+
+Both satisfy $|\psi(\vec{r}_1,\vec{r}_2)|^2=|\psi(\vec{r}_2,\vec{r}_1)|^2$ — the modulus squared swallows the sign.
+
+**Step 4: this property is never lost in time.**
+
+The Hamiltonian of identical particles is necessarily symmetric in the two coordinates (equal masses, and a potential energy unchanged when the coordinates are swapped), for example $\hat{H}=\frac{\hat p_1^2}{2m}+\frac{\hat p_2^2}{2m}+V(\vec{r}_1)+V(\vec{r}_2)+U(|\vec{r}_1-\vec{r}_2|)$. For such an $\hat{H}$, exchanging then evolving gives the same result as evolving then exchanging:
+
+$$
+[\hat{P}_{12},\hat{H}]=0
+$$
+
+By the result of [section 3.6](/en/ch/03-formalism/06-commutators/), $\hat{P}_{12}$ is a conserved quantity: a state that starts symmetric stays symmetric forever, and one that starts antisymmetric stays antisymmetric. The symmetry is a particle's "identity for life".
+
+</Derivation>
+
+## Why it must be one or the other
+
+All we have proved so far is: **if** a state is an eigenstate of $\hat{P}_{12}$, its eigenvalue is ±1. But a general state can be a superposition of the two, say $\psi=c_S\psi_S+c_A\psi_A$, which under exchange becomes $c_S\psi_S-c_A\psi_A$ — a different state. The modulus squared of such a superposition is **not** invariant under exchange (the cross term flips sign), so it makes label-dependent predictions and must be ruled out.
+
+Quantum mechanics therefore adds one more postulate (sometimes called the **symmetrization postulate**):
+
+> The physical states of a system of identical particles must be eigenstates of the exchange operator: either fully symmetric under every pairwise exchange, or fully antisymmetric.
+
+This cannot be derived from the earlier postulates. It has the same standing as the five postulates of [section 3.7](/en/ch/03-formalism/07-postulates/): an independent assumption, tested by experiment again and again.
+
+<DualView>
+<div slot="left">
+
+**The intuitive version.** Labels are our invention; nature does not recognise them. Any mathematical object that "changes when you relabel" contains surplus information — like describing an unnumbered deck of cards with numbered ones, where every arrangement of the numbers corresponds to the same deck.
+
+What makes quantum mechanics special is that it permits the description to **pick up a minus sign** under relabelling, because every probability depends only on the modulus squared. Classical probability theory has no such loophole — probabilities themselves must be fully symmetric. That single sign's worth of freedom is the entire fork in the road between quantum and classical statistics.
+
+</div>
+<div slot="right">
+
+**The formula version.** The two-particle state space $\mathcal{H}=\mathcal{H}_1\otimes\mathcal{H}_2$ decomposes into symmetric and antisymmetric subspaces:
+
+$$
+\mathcal{H}=\mathcal{H}_S\oplus\mathcal{H}_A
+$$
+
+The symmetrization postulate says: physical states are allowed to live in only one of the two, and the particle species decides which.
+
+Starting from an arbitrary $\phi_a(\vec{r}_1)\phi_b(\vec{r}_2)$, the two legal combinations are
+
+$$
+\psi_\pm(\vec{r}_1,\vec{r}_2)=\frac{1}{\sqrt2}\bigl[\phi_a(\vec{r}_1)\phi_b(\vec{r}_2)\pm\phi_b(\vec{r}_1)\phi_a(\vec{r}_2)\bigr]
+$$
+
+(The normalisation factor is $1/\sqrt2$ when $a\ne b$ and the orbitals are orthogonal.)
+
+</div>
+</DualView>
+
+<Callout type="warning" title="'Only ±1' is strictly true only in three dimensions">
+The argument above has a hidden premise: exchanging twice is exactly the identity. In three-dimensional space, the path that swaps two particles and swaps them back can be continuously shrunk to "doing nothing", and the conclusion holds. But in systems confined to **two** dimensions, the winding sense of the exchange path cannot be erased, and particles can acquire an arbitrary phase $\ee^{\ii\theta}$ — such quasiparticles are called **anyons**, the protagonists of the fractional quantum Hall effect and topological quantum computing. This book stays in the three-dimensional world, where "symmetric or antisymmetric, pick one" always holds; just remember the rule comes with a domain of validity.
+</Callout>
+
+## Identity changes the counting: a concrete example
+
+The most direct observable consequence of identity is that **the number of states changes**. Take 3 single-particle levels $\varepsilon_1,\varepsilon_2,\varepsilon_3$ and put 2 particles in them:
+
+| Particle type | Allowed states | Count |
+| --- | --- | --- |
+| Distinguishable | $\phi_i(1)\phi_j(2)$, any $i,j$ | $3\times3=9$ |
+| Identical, symmetric | symmetric combinations of $\phi_i\phi_j$ ($i\le j$, including $i=j$) | $6$ |
+| Identical, antisymmetric | $\psi_-$, requiring $i\ne j$ | $3$ |
+
+The three countings correspond to three statistical distributions: Maxwell–Boltzmann (classical), Bose–Einstein, and Fermi–Dirac. Look at the antisymmetric row: when $i=j$, $\psi_-\equiv0$ — **the state with two particles in the same level has simply vanished**. That is the embryo of the Pauli exclusion principle, two sections from now. Notice also that for symmetric particles the fraction of "crowded into the same level" states ($3/6$) is **higher** than in the distinguishable case ($3/9$): symmetric particles have a statistical tendency to bunch, and both lasers and Bose–Einstein condensation run on it.
+
+<Callout type="insight" title="When may we pretend particles are distinguishable?">
+The electrons in your lab are identical to the electrons on the Moon — does computing your apparatus really require antisymmetrizing the entire universe? No. When the two particles' wavefunctions **never overlap at any time** (far apart, or separated by a high barrier), the exchange term $\phi_b(\vec{r}_1)\phi_a(\vec{r}_2)$ contributes exactly zero to every measurement, and antisymmetrization changes nothing but an unobservable overall convention. Treating the particles as distinguishable then gives results correct to the letter. Identity effects enter only where wavefunctions overlap — inside atoms, in metals, in white dwarfs, which are precisely the cases that matter most.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Exchange operator', latex: '\\hat{P}_{12}\\,\\psi(\\vec{r}_1,\\vec{r}_2)=\\psi(\\vec{r}_2,\\vec{r}_1),\\qquad \\hat{P}_{12}^2=\\hat{1}', note: 'Its eigenvalues can only be ±1' },
+    { name: 'Symmetrization postulate', latex: '\\hat{P}_{12}\\ket{\\psi}=\\pm\\ket{\\psi}', note: 'Physical states must pick one; the sign is fixed by the particle species' },
+    { name: 'Conservation', latex: '[\\hat{P}_{12},\\hat{H}]=0', note: 'The symmetry is an identity for life; evolution never changes it' },
+    { name: 'Basic two-particle combinations', latex: '\\psi_\\pm=\\frac{1}{\\sqrt2}\\bigl[\\phi_a(\\vec{r}_1)\\phi_b(\\vec{r}_2)\\pm\\phi_b(\\vec{r}_1)\\phi_a(\\vec{r}_2)\\bigr]', note: 'The antisymmetric combination vanishes identically when a = b' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'idp-1',
+      prompt: 'Why can classical particles be "labelled" while identical quantum particles cannot?',
+      options: [
+        'Classical particles have continuous, definite trajectories that serve as labels; once quantum wave packets overlap, "which one is this" corresponds to no observable in the theory',
+        'Classical particles are big, so it is easy to mark them',
+        'Quantum particles are too small for instruments to resolve',
+        'Quantum particles are constantly being created and annihilated',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The thought experiment needs no actual mark — tracking the trajectory is itself the label.',
+        2: 'It is not a matter of precision: the theory contains no observable called "particle identity" at all.',
+        3: 'In non-relativistic quantum mechanics particle number is conserved; this chapter involves no real creation or annihilation.',
+      },
+      explain: 'The last resort for telling particles apart is the trajectory. Quantum particles have none, and once wave packets overlap, no measurement can match "what I just detected" to "which one it was before" — a limitation of principle, not of technology.',
+    },
+    {
+      id: 'idp-2',
+      prompt: 'Which statements about the exchange operator P̂₁₂ are correct? (Select all that apply.)',
+      options: [
+        'P̂₁₂² = 1, so its eigenvalues can only be +1 or −1',
+        'The Hamiltonian of identical particles satisfies [P̂₁₂, Ĥ] = 0, so the symmetry is conserved',
+        'Every two-particle state is automatically an eigenstate of P̂₁₂',
+        'Invariance of |ψ|² under exchange is guaranteed once ψ is an eigenstate of P̂₁₂',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'A superposition of symmetric and antisymmetric components is not an eigenstate — and precisely because such mathematically legal but physically illegal states exist, the symmetrization postulate is needed to exclude them.',
+      },
+      explain: 'Exchanging twice equals doing nothing gives λ² = 1; a Hamiltonian symmetric in the coordinates gives conservation; and for an eigenstate (λ = ±1) the modulus squared is automatically exchange-invariant. Only "automatically an eigenstate" fails — which is exactly why the symmetrization postulate is an independent assumption.',
+    },
+    {
+      id: 'idp-3',
+      type: 'numeric',
+      prompt: 'Place 2 identical particles in 4 single-particle levels. If the wavefunction must be antisymmetric (and only this degree of freedom counts), how many distinct allowed states are there?',
+      answer: 6,
+      tolerance: 0,
+      unit: '个',
+      explain: 'An antisymmetric combination requires the two particles to occupy different levels, and (a,b) versus (b,a) give the same state (up to a sign), so the count is C(4,2) = 6. For comparison: distinguishable particles give 16 states and symmetric particles give 10 (6 different-level combinations plus 4 doubly occupied).',
+    },
+    {
+      id: 'idp-4',
+      prompt: 'An electron on Earth and an electron on the Moon are also identical. Why can a lab calculation on Earth ignore the Moon electron?',
+      options: [
+        'Their wavefunctions do not overlap, so the exchange term contributes exactly zero to every observable',
+        'The distance is so large that the Coulomb force is negligible',
+        'The Moon electron is in a mixed state',
+        'Identity holds only for electrons within the same atom',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The size of the force is a separate issue — even with strictly zero interaction, identity effects persist whenever the wavefunctions overlap.',
+        2: 'Whether the state is mixed is irrelevant.',
+        3: 'Identity is universal; there is no "same atom" fine print.',
+      },
+      explain: 'Every observable consequence of antisymmetrization comes from interference between the exchange term and the direct term. With no wavefunction overlap, the exchange term never shows up in any measurement, and antisymmetrization degenerates into a rewriting of notation. Identity effects enter only in the overlap region — which is exactly the battleground of the rest of this chapter.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We have proved that physical states must be "symmetric or antisymmetric — pick one", but not answered: **who picks which?**
+
+The answer is startlingly tidy: the particle's spin decides, with no exceptions — half-integer spin is always antisymmetric, integer spin always symmetric. The next section introduces the names of these two great families, fermions and bosons, and the theorem that welds spin to statistics.

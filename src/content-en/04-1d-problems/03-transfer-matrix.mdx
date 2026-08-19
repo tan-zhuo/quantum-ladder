@@ -1,17 +1,275 @@
 ---
-title: 'The transfer-matrix method'
-summary: 'A general method for any piecewise-constant potential.'
+title: The transfer matrix method
 section: '4.3'
 order: 3
-status: stub
+summary: 'Package each slab of potential as a 2×2 matrix, and an entire multilayer structure becomes a matrix product — the double barrier''s razor-sharp resonance and the energy bands of a superlattice both grow straight out of the multiplication.'
+status: done
+prereqs:
+  - 02-wavefunction/11-tunneling
+  - 04-1d-problems/02-scattering-phase-shift
+objectives:
+  - Derive the 2×2 matrices for a single interface and a uniform propagation stretch, and explain why multiplying matrices equals matching slab by slab
+  - Read the transmission and reflection off the total matrix, and use det M = 1 to establish probability-current conservation
+  - "Demonstrate resonant tunneling with real double-barrier numbers: T soaring from a few percent to 1"
+  - Explain how energy bands emerge in a periodic structure from the condition |Tr M| ≤ 2
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section ended by laying the problem on the table: every extra slab of potential means one more region, two more undetermined coefficients, two more matching equations. The single square barrier of [section 2.11](/en/ch/02-wavefunction/11-tunneling/) took 4 equations and plenty of sweat; a resonant-tunneling diode is a three-layer barrier-well-barrier stack, 8 equations; a semiconductor superlattice starts at a hundred layers. The brute-force route of solving simultaneous equations has hit its end.
+
+Look at the problem from a different angle. The slab-by-slab matching is in fact highly repetitive: **the same thing happens in every slab** — two waves propagate some distance, then get converted at an interface, via the continuity conditions, into the next slab's two waves. For a repeated linear operation, mathematics has a ready-made packaging: **matrices**. One $2\times2$ matrix per slab, and the whole potential is the matrices multiplied together in order. A hundred layers? A hundred matrix multiplications — the blink of an eye for a computer, and barely a page by hand.
+
+This is the **transfer matrix method**.
+
+## Two building blocks
+
+In a piecewise-constant potential, the solution in slab $j$ (potential $V_j$, width $d_j$, left endpoint $x_j$) is always a superposition of two waves:
+
+$$
+\psi_j(x)=A_j\,\ee^{\ii k_j(x-x_j)}+B_j\,\ee^{-\ii k_j(x-x_j)},\qquad
+k_j=\frac{\sqrt{2m(E-V_j)}}{\hbar}
+$$
+
+$A_j$ is the amplitude of the right-moving wave, $B_j$ of the left-moving one (when $E<V_j$, $k_j$ is purely imaginary and the two terms automatically become growing and decaying exponentials — the inside-the-barrier solutions of section 2.11, no separate rule needed). **The entire content of a slab is one pair of numbers $(A_j,B_j)$.** The method's core question is single: given this slab's $(A_j,B_j)$, how do we get the next slab's?
+
+<Derivation title="Derivation: the propagation matrix and the interface matrix" level="基础" minutes={8} open={true}>
+
+Getting from $(A_j,B_j)$ to $(A_{j+1},B_{j+1})$ takes two gates.
+
+**Gate one: cross the slab.** The right-moving wave travels from the left end to the right end (distance $d_j$) and accumulates phase $\varphi_j=k_jd_j$; the left-moving wave accumulates $-\varphi_j$. At the right endpoint, the two waves' "local amplitudes" are $A_j\ee^{\ii\varphi_j}$ and $B_j\ee^{-\ii\varphi_j}$. As a matrix:
+
+$$
+P_j=\begin{pmatrix}\ee^{\ii\varphi_j}&0\\0&\ee^{-\ii\varphi_j}\end{pmatrix}
+$$
+
+Diagonal — propagation never mixes left- and right-movers; it only rotates each one's phase (or, inside a barrier, grows and shrinks them).
+
+**Gate two: cross the interface.** At an interface, $\psi$ and $\psi'$ are continuous ($V$ is finite — the old rule from [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/)). Using the local amplitudes from the previous step (write $\tilde A=A_j\ee^{\ii\varphi_j}$, $\tilde B=B_j\ee^{-\ii\varphi_j}$), the two conditions read
+
+$$
+\tilde A+\tilde B=A_{j+1}+B_{j+1}
+$$
+
+$$
+k_j(\tilde A-\tilde B)=k_{j+1}(A_{j+1}-B_{j+1})
+$$
+
+Adding and subtracting, solve for the new amplitudes (write $r=k_j/k_{j+1}$):
+
+$$
+A_{j+1}=\frac{1+r}{2}\tilde A+\frac{1-r}{2}\tilde B,\qquad
+B_{j+1}=\frac{1-r}{2}\tilde A+\frac{1+r}{2}\tilde B
+$$
+
+That is, the **interface matrix**
+
+$$
+S_{j\to j+1}=\frac12\begin{pmatrix}1+r&1-r\\1-r&1+r\end{pmatrix},\qquad r=\frac{k_j}{k_{j+1}}
+$$
+
+**Check**: when $k_{j+1}=k_j$ (no step) we get $r=1$ and $S$ collapses to the identity — no interface, no conversion, correct. When $r\ne1$ the off-diagonal entries are non-zero: **the interface stirs left- and right-movers together**, which is exactly where reflection comes from, matching section 2.11's picture that "reflection needs an impedance mismatch".
+
+**Assembly.** Pass through the gates in order, leftmost slab to rightmost:
+
+$$
+\begin{pmatrix}A_N\\B_N\end{pmatrix}=
+\underbrace{S_{N-1\to N}P_{N-1}\cdots S_{1\to2}P_1S_{0\to1}}_{\displaystyle M}
+\begin{pmatrix}A_0\\B_0\end{pmatrix}
+$$
+
+Mind the order of multiplication: the matrix the wave passes through first sits **rightmost**, like walking through a string of doors. The physics of the entire potential is condensed into one $2\times2$ complex matrix $M$.
+
+</Derivation>
+
+## Reading the scattering quantities off M
+
+Let the wave come in from the left: $A_0=1$ (incident), $B_0=r_{\text{amp}}$ (reflection, to be found), and in the rightmost slab $B_N=0$ (no wave source on the right — the problem's one and only physical input, same as section 2.11). Expand the second row of $M$:
+
+$$
+0=M_{21}+M_{22}\,r_{\text{amp}}
+\;\Longrightarrow\;
+r_{\text{amp}}=-\frac{M_{21}}{M_{22}}
+$$
+
+Substituting into the first row gives the transmission amplitude $t=A_N=\det M/M_{22}$. When the two outer regions share the same potential, one can verify block by block that $\det P_j=1$ and $\det S=r$; in the product all the step ratios cancel telescopically, $\det M=1$, and so
+
+$$
+T=\frac{1}{|M_{22}|^2},\qquad R=\frac{|M_{21}|^2}{|M_{22}|^2},\qquad T+R=1
+$$
+
+The last step uses a universal structural fact about $M$ (time-reversal symmetry gives $|M_{22}|^2-|M_{21}|^2=\det M=1$). Current conservation, once again, comes free.
+
+<Callout type="warning" title="A hidden numerical trap">
+When $k_j$ is imaginary inside a barrier, the diagonal entries of $P_j$ become $\ee^{\pm\kappa d}$. For a thick, tall barrier, $\ee^{\kappa d}$ blows past floating point ($\kappa d=800$ already exceeds the double-precision ceiling) — even though in the final answer it is supposed to cancel against other huge numbers. A single barrier under ten nanometres is fine, but chain up dozens of barriers and the error snowballs. Production research codes usually switch to a scattering-matrix recursion to cure it at the root. Every example in this chapter stays in the safe zone; you only need to remember where the trap lies.
 </Callout>
 
-## Planned contents
+## The first trophy: double-barrier resonance
 
-- The transfer matrix of a single step
-- Multiplying matrices for multilayer structures
-- The connection to semiconductor superlattices
+Let's practise on a real device — the core structure of a **resonant-tunneling diode** (RTD): two AlGaAs barriers sandwiched in GaAs. Typical parameters: barrier height $V_0=0.3$ eV, each barrier 2 nm wide, a 6 nm well in between, and electron effective mass $m^*=0.067\,m_e$ (that is $m^*c^2\approx34.2$ keV — electrons in the crystal come out "lighter", a gift of the band structure).
+
+Five slabs, four interfaces, $M$ a product of 8 matrices. Scanning energy by energy for $T(E)$:
+
+| $E$ (eV) | 0.050 | **0.068** | 0.100 | 0.200 | **0.275** |
+| --- | --- | --- | --- | --- | --- |
+| $T$ | 0.035 | **1.000** | 0.071 | 0.167 | **1.000** |
+
+At $E=0.068$ eV the transmission reaches **exactly 1** — even though a single 2 nm barrier at this energy manages only $T_1\approx0.20$, and naive intuition says two barriers "in series" should give $T_1^2\approx0.04$. The resonance amplifies that by a factor of 24, all the way to complete transparency. Move slightly off resonance and $T$ collapses back to a few percent.
+
+<DualView>
+<div slot="left">
+
+**This is a quantum Fabry–Pérot interferometer.** In optics, two partially reflecting mirrors enclose a cavity; when the cavity length holds an integer number of half-wavelengths, the waves bouncing back and forth inside interfere constructively and the overall transmission reaches 1 — a laser's resonant cavity is exactly this.
+
+Here the two barriers are the "mirrors" and the well between them is the cavity. At the resonance energy, the electron wave bounces back and forth in the well, its amplitude building higher and higher; the successive wave trains leaking out through the right barrier add exactly in phase, while the successive reflections to the left cancel exactly.
+
+In last section's language: the well hides a **quasi-bound state**, the phase shift surges by $\pi$ near 0.068 eV, and the particle lingers long in the well before leaving.
+
+</div>
+<div slot="right">
+
+**The resonance energy can be predicted.** Treat the well crudely as an infinite well of width $w=6$ nm:
+
+$$
+E_1=\frac{\pi^2(\hbar c)^2}{2m^*c^2w^2}=\frac{\pi^2\times197.3^2}{2\times34200\times36}\approx0.156\ \text{eV}
+$$
+
+Too big by more than a factor of two — because the barriers are finite, the wavefunction seeps into each side by about
+
+$$
+\frac{1}{\kappa}=\frac{\hbar c}{\sqrt{2m^*c^2(V_0-E)}}\approx1.6\ \text{nm}
+$$
+
+Redo it with the effective width $w_{\text{eff}}=6+2\times1.6=9.1$ nm:
+
+$$
+E_1\approx\frac{\pi^2\times197.3^2}{2\times34200\times9.1^2}\approx0.067\ \text{eV}
+$$
+
+Almost on top of the exact scan's 0.068 eV. The second resonance at 0.275 eV corresponds to the well's $n=2$ level.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The resonant-tunneling diode: where negative resistance comes from">
+Biasing an RTD amounts to tilting the whole potential, so the incident electrons' energy relative to the well level becomes continuously tunable. Raise the voltage and the electrons of the Fermi sea first come **into alignment** with the resonant level — the current leaps up; keep raising it and the level is pushed **below** the incident energy window — the current, instead of rising, **drops**.
+
+Voltage up, current down: **negative differential resistance**. No ordinary resistor can do that; it is the resonance curve's sharp peak printed directly onto the current-voltage characteristic. RTDs use it to build terahertz oscillators running at hundreds of GHz — that spike in the table, $T$ going from 0.07 to 1.0 and back down, is their entire working principle.
+
+The narrower the peak, the longer the quasi-bound state lives (last section's $\tau\approx2\hbar/\Gamma$): thicken the barriers and the mirror reflectivity rises, the peak narrows, the lifetime stretches — the same logic as an optical cavity's quality factor.
+</Callout>
+
+Incidentally, the table above can be reproduced in about twenty lines of code (the full numerical toolkit unfolds over the next two sections):
+
+```python
+import numpy as np
+
+hbarc, mstar = 197.3, 0.067 * 511000.0     # eV·nm; GaAs effective mass
+
+def transmission(E, widths, heights):
+    """widths/heights: widths (nm) and potentials (eV) of the inner slabs; the two ends are V=0 electrodes."""
+    Vs = [0.0] + list(heights) + [0.0]
+    ks = [np.sqrt(2 * mstar * (E - V + 0j)) / hbarc for V in Vs]
+    ds = [0.0] + list(widths)               # slab 0 needs no propagation
+    M = np.eye(2, dtype=complex)
+    for j in range(len(ds)):
+        phi = ks[j] * ds[j]
+        P = np.diag([np.exp(1j * phi), np.exp(-1j * phi)])
+        r = ks[j] / ks[j + 1]
+        S = 0.5 * np.array([[1 + r, 1 - r], [1 - r, 1 + r]])
+        M = S @ P @ M                       # first traversed, first multiplied (on the right)
+    t = (M[0, 0] * M[1, 1] - M[0, 1] * M[1, 0]) / M[1, 1]
+    return abs(t) ** 2
+
+# Double barrier: 2 nm barrier / 6 nm well / 2 nm barrier
+print(transmission(0.0682, [2, 6, 2], [0.3, 0.0, 0.3]))   # → 1.000
+```
+
+The complex square root hands the $E<V$ slabs an imaginary wavenumber automatically, so barriers and wells need no separate treatment — the manual "rewrite everything with $\kappa$" chore of section 2.11 is swallowed by one `0j`.
+
+## From two layers to infinitely many: the birth of energy bands
+
+The transfer matrix's most beautiful application is the **periodic structure**. Take "barrier + well" as one period with matrix $M_1$; a superlattice repeating it $N$ times has total matrix $M_1^N$ — no equations to re-match.
+
+Whether a wave can still get through as $N\to\infty$ comes down to whether $M_1^N$ stays bounded. Linear algebra gives a crisp criterion: with $\det M_1=1$, the two eigenvalues of $M_1$ are reciprocals $\lambda,1/\lambda$, and $\lambda+1/\lambda=\operatorname{Tr}M_1$. Hence —
+
+- $|\operatorname{Tr}M_1|\le2$: the eigenvalues are unit-modulus phase factors $\ee^{\pm\ii qL}$, and the wave propagates without decay — these energies form the **allowed bands**;
+- $|\operatorname{Tr}M_1|>2$: one eigenvalue exceeds 1 and the other falls below it, and the wave decays exponentially — the **forbidden gaps**.
+
+The trace of a $2\times2$ matrix undulates with energy, sweeping inside and outside the range between $\pm2$, and the energy axis gets sliced into alternating allowed bands and gaps — this is the Kronig–Penney model, the simplest edition of solid-state band theory. The discrete levels of an isolated well broaden into bands under multilayer coupling; the difference between semiconductors, insulators, and conductors traces back to whether the Fermi energy lands in an allowed band or a gap. The RTD's single resonance peak can be viewed as "an allowed band with only one period" — the two perspectives merge here.
+
+<KeyFormulas
+  items={[
+    { name: 'Propagation matrix', latex: 'P_j=\\begin{pmatrix}\\ee^{\\ii k_jd_j}&0\\\\0&\\ee^{-\\ii k_jd_j}\\end{pmatrix}', note: 'Diagonal: propagation never mixes left- and right-movers; for E<V it turns into growing/decaying exponentials automatically' },
+    { name: 'Interface matrix', latex: 'S=\\frac12\\begin{pmatrix}1+r&1-r\\\\1-r&1+r\\end{pmatrix},\\quad r=\\frac{k_j}{k_{j+1}}', note: 'Non-zero off-diagonal entries mean reflection; equal k collapses it to the identity' },
+    { name: 'Scattering quantities', latex: 'M=S\\cdots PS,\\quad T=\\frac{1}{|M_{22}|^2},\\quad R=\\frac{|M_{21}|^2}{|M_{22}|^2}', note: 'With equal potentials at both ends, det M = 1 and T+R=1 holds automatically' },
+    { name: 'Band criterion', latex: '|\\operatorname{Tr}M_1|\\le2\\ \\Rightarrow\\ \\text{allowed band},\\qquad |\\operatorname{Tr}M_1|>2\\ \\Rightarrow\\ \\text{gap}', note: 'M₁ is the matrix of a single period; the Kronig–Penney model' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tm-1',
+      prompt: 'The transfer matrix method turns a multilayer potential problem into a product of matrices. The fundamental reason it can do so is:',
+      options: [
+        'Each slab\'s solution is fully determined by two coefficients, and both propagation and interface matching are linear transformations of that pair',
+        'The Schrödinger equation is a second-order differential equation',
+        'Every potential can be approximated as piecewise constant',
+        'Matrix multiplication is faster than solving simultaneous equations',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The second-order equation guarantees a two-dimensional solution space — necessary background, but what turns "matching slab by slab" into "multiplying matrices" is the linearity and composability of the operations.',
+        2: 'That addresses the method\'s range of applicability, not why it can be written as matrices.',
+        3: 'Speed is a consequence, not a cause; the essence is packaging a repeated linear operation for reuse.',
+      },
+      explain: 'The state of each slab = one pair of complex numbers (A, B); propagation is the diagonal transformation P, crossing an interface is the constant matrix S — both linear. A relay of linear transformations is a matrix product, so a hundred-layer structure = a hundred 2×2 multiplications.',
+    },
+    {
+      id: 'tm-2',
+      prompt: 'A double barrier has T = 1 at resonance, while a single one of its barriers has T₁ ≈ 0.2 at that energy. The correct explanation of this "1 exceeds 0.2²" is:',
+      options: [
+        'Waves making multiple round trips in the well interfere constructively in transmission and destructively in reflection, just as in a Fabry–Pérot cavity',
+        'One of the two barriers has stopped working',
+        'The particle gained extra energy from the well',
+        'The T₁² calculation forgot a factor of 2',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Both barriers reflect perfectly normally; it is precisely because the reflection is strong that the wave can build up inside the cavity.',
+        2: 'Energy is conserved throughout; what the resonance changes is the phase relationship between the path amplitudes.',
+        3: 'The picture of multiplying probabilities is itself wrong: quantum mechanics superposes amplitudes, not probabilities — the round-trip paths must be summed as amplitudes first, then squared.',
+      },
+      explain: 'Multiplying T₁ by itself presumes "two barrier crossings are independent events", discarding the coherence of the waves bouncing in the well. At resonance the successive transmitted wave trains add in phase; summing the geometric series drives the amplitude up to 1 over the only remaining loss — perfect transmission. RTDs and laser cavities share this machinery.',
+    },
+    {
+      id: 'tm-3',
+      prompt: 'In a periodic potential the single-period matrix M₁ satisfies det M₁ = 1. An energy in a forbidden gap means: (select all that apply)',
+      options: [
+        '|Tr M₁| exceeds 2',
+        'One eigenvalue of M₁ has modulus above 1 and the other below 1',
+        'The wave decays exponentially through the structure and cannot propagate in the infinite-period limit',
+        'The Schrödinger equation has no solution at that energy',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'A solution always exists — it is just of the exponentially growing/decaying type: in a finite-thickness periodic structure it shows up as feeble tunneling-style transmission, and in the infinite structure it fails to form a propagating state.',
+      },
+      explain: 'det M₁ = 1 pairs the eigenvalues as λ and 1/λ, with λ + 1/λ = Tr M₁. |Tr| ≤ 2 gives phase factors (Bloch waves, allowed bands); |Tr| > 2 gives real growing/decaying exponentials (gaps). The entire band structure grows out of this one trace criterion.',
+    },
+    {
+      id: 'tm-4',
+      type: 'numeric',
+      prompt: 'Treating the RTD\'s 6 nm well crudely as an infinite well, estimate the ground-state level (the zeroth-order estimate of the resonance energy), in eV. Electron effective mass m*c² = 0.067×511000 ≈ 34240 eV, ħc = 197.3 eV·nm.',
+      answer: 0.156,
+      tolerance: 0.012,
+      unit: 'eV',
+      explain: 'E₁ = π²(ħc)²/(2m*c²w²) = 9.870×38927/(2×34240×36) ≈ 0.156 eV. The exact scan gives 0.068 eV — smaller by more than half, because the wavefunction seeps about 1/κ ≈ 1.6 nm into each barrier; redoing it with the effective width 9.1 nm immediately yields 0.067 eV. "Seepage widens the well and pulls the level down" is the universal fingerprint of finite barriers.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The transfer matrix sweeps up the whole class of piecewise-constant potentials. But its signature skill is exactly what exposes its limit: real potentials are mostly **smooth** — interaction potentials in molecules, confinement potentials in quantum dots, potentials tilted by an applied field — none of them looks like a staircase. Force a staircase approximation and, as the slab count climbs, even assembling matrices by hand loses its elegance.
+
+Time to hand the whole thing to the computer. The next section chops the $x$ axis itself into a dense grid of points, and the differential equation transforms into a **tridiagonal matrix eigenvalue problem** — chapter 3's slogan "operators are matrices" becomes completely literal for the first time: the Hamiltonian is a matrix you can print out and look at, the energy levels are its eigenvalues, and it all fits in ten lines of code.

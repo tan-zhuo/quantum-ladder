@@ -1,24 +1,220 @@
 ---
-title: 'Feynman’s path-integral idea'
-summary: 'The particle takes every path at once.'
+title: Feynman's path-integral idea
 section: '11.1'
 order: 1
-status: stub
-sims: ['path-integral']
+summary: 'Tear every barrier out of the double slit: a particle going from A to B takes every possible path, each contributing a phase e^{iS/ħ}. The classical world is just what survives near the stationary-phase point.'
+status: done
+prereqs:
+  - 01-history/06-double-slit
+  - 02-wavefunction/04-time-dependent-schrodinger
+objectives:
+  - Use the "more slits, more screens, remove the boards" thought experiment to explain why we sum over all paths
+  - Write down the amplitude e^{iS/ħ} of a single path and explain the role the action S plays here
+  - Use the stationary-phase argument to show why only the Newtonian path survives as ħ→0
+  - Estimate S/ħ for a macroscopic object and judge how far a system is from the classical limit
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+For ten chapters we have spoken quantum mechanics in only one language: the wavefunction obeys the Schrödinger equation, $\ii\hbar\partial_t\Psi=\hat H\Psi$, and given the initial state you solve for the future. That language has served us well, but it hides the most naive question of all — "which way did the particle go?" The wavefunction spreads over all of space, and you simply cannot say which route the particle took.
+
+In 1948 Feynman gave us a second language. Its starting point is exactly the glaring fact we left hanging in [section 1.6](/en/ch/01-history/06-double-slit/): in the double-slit experiment, the arrival pattern of a single electron somehow "knows" about both slits. Back then we said "the electron's wave passes through both slits at once." Feynman pushed that sentence to its logical extreme.
+
+## From two slits to infinitely many
+
+Recall the double-slit rule: the total amplitude to arrive at a point on the screen is the **sum** of the amplitudes of the two routes,
+
+$$
+A_{\text{tot}}=A_{\text{slit}\,1}+A_{\text{slit}\,2}
+$$
+
+The probability is $|A_{\text{tot}}|^2$, and the cross term is the interference fringes.
+
+Now run a thought experiment, upgrading it in three steps:
+
+**Step 1: more slits.** Cut three slits in the barrier, then four… then $N$. The rule does not change: the total amplitude is the sum over $N$ routes.
+
+**Step 2: more screens.** Insert a second barrier between source and screen, also riddled with slits. A "path" must now specify which slit of the first barrier the particle threads, then which slit of the second — the number of paths multiplies. The total amplitude is still the sum over **all** of these zigzag routes.
+
+**Step 3: remove the boards.** Cut ever more slits in each barrier until the whole board is slit — that is, remove the board; then pack the barriers ever more densely, until there is a "board" at every point of space. The zigzag "which slits in which order" now becomes an **arbitrary continuous path** from source to screen.
+
+What is left once every board is gone? Vacuum. But the summation rule has no reason to fail at the instant the last board is removed. We are forced to a startling conclusion:
+
+<Callout type="insight" title="The central statement of the path integral">
+The total amplitude for a particle to go from the spacetime point $(x_a,t_a)$ to $(x_b,t_b)$ is the sum of the amplitudes of **all** paths connecting the two points — not just the straight line, but every detour, every backtrack, every path that jitters beyond recognition:
+
+$$
+K(b,a)=\sum_{\text{all paths}\,x(t)}A[x(t)]
+$$
+
+The double slit is not a special case so much as this rule degenerating to "only two routes left open". Free propagation through vacuum is the same rule with "every route open".
 </Callout>
 
-## Planned contents
+## What does each path contribute?
 
-- From two slits to infinitely many
-- Action and the phase e^\{iS/ħ\}
-- Stationary phase at the classical path
+The first half of the rule (sum over paths) was forced on us by the double slit. The second half must answer: what is the amplitude $A[x(t)]$ of a single path?
 
-## Planned simulations
+Feynman's answer is startlingly short: **every path has the same magnitude of amplitude; only the phase differs**, and the phase is set by the path's **action**:
 
-- `path-integral`
+$$
+A[x(t)]=\text{(const)}\times\ee^{\ii S[x(t)]/\hbar}
+$$
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="path-integral" />`.
+The action is an old friend from classical mechanics: along a given path, accumulate "kinetic minus potential energy" (the Lagrangian $L$) over time,
+
+$$
+S[x(t)]=\int_{t_a}^{t_b}L\,\dd t=\int_{t_a}^{t_b}\left[\frac{m\dot x^2}{2}-V(x)\right]\dd t
+$$
+
+In plain words: $S$ is a "score" assigned to each path — moving fast earns kinetic-energy points, loitering where the potential is high loses points. Classical mechanics' **principle of least action** says the true path is the one that makes $S$ stationary (usually a minimum) — Newton's equation is precisely the mathematical statement of $\delta S=0$.
+
+$S$ has dimensions of energy × time, the same as $\hbar$, so $S/\hbar$ is a pure number and can serve as a phase angle. That is no coincidence — we are about to see that the ratio of $S$ to $\hbar$ is exactly what decides "how quantum" a system is.
+
+<DualView>
+<div slot="left">
+
+**The little-arrow picture.** Think of each path as a small arrow of fixed length, pointing at the angle $S/\hbar$. Computing the total amplitude means chaining infinitely many little arrows tip to tail.
+
+If two neighbouring paths have nearly the same action, their arrows point nearly the same way and reinforce each other when added; if their actions differ by something of order $\pi\hbar$, the arrows point opposite ways and cancel.
+
+So the question becomes: **which band of paths has an action insensitive to deformations of the path?** In that band the arrows all point the same way — they dominate the sum.
+
+</div>
+<div slot="right">
+
+Writing the sum over paths in formal notation (a weighted infinite-dimensional integral):
+
+$$
+K(b,a)=\int\mathcal{D}x(t)\;\ee^{\ii S[x(t)]/\hbar}
+$$
+
+$\int\mathcal{D}x(t)$ reads "integrate over all paths"; its rigorous definition (a limit of time slices) waits until [section 11.2](/en/ch/11-path-integral/02-propagator/).
+
+The first-order variation of the action with respect to the path:
+
+$$
+S[x+\eta]=S[x]+\delta S[\eta]+O(\eta^2)
+$$
+
+The path with $\delta S=0$ is the classical path $x_{\text{cl}}(t)$ — the one obeying Newton's equation.
+
+</div>
+</DualView>
+
+## Where did the classical world go? Stationary phase
+
+If an electron really takes every route, why does a baseball appear to fly along a single parabola? The answer hides in the **cancellation** of phases.
+
+<Derivation title="The stationary-phase argument: why only the Newtonian path survives as ħ→0" level="基础" minutes={7}>
+
+Examine the contributions of two classes of paths.
+
+**Class 1: paths far from the classical one.** Take a path $x(t)$ with $\delta S\neq0$, meaning any slight deformation changes the action at first order. Call the deformation $\eta$; the phase changes by roughly $\delta S[\eta]/\hbar$.
+
+The key is the $\hbar$ in the denominator. For a macroscopic system the typical $S$ is enormously larger than $\hbar$ (we estimate it below), so even a deformation $\eta$ too small to measure produces a huge phase change: the little arrows of neighbouring paths spin wildly, pointing at every possible angle. Add them up — **near-total cancellation**.
+
+This is the same phenomenon as the integral $\int\ee^{\ii\lambda f(u)}\dd u$ tending to zero as $\lambda\to\infty$ (the rapidly oscillating positive and negative parts wipe each other out).
+
+**Class 2: paths near the classical one.** At $x_{\text{cl}}$ we have $\delta S=0$, so the action responds to deformations only at **second** order:
+
+$$
+S[x_{\text{cl}}+\eta]=S[x_{\text{cl}}]+O(\eta^2)
+$$
+
+There is therefore a whole swath of paths with nearly identical phases; their arrows align and reinforce. The width of this "coherence band" is set by the $O(\eta^2)$ term reaching a phase of order $\pi$: for a free particle one can estimate $\eta\sim\sqrt{\hbar T/m}$ ($T$ being the time of flight).
+
+**Conclusion.** The total amplitude comes almost entirely from a bundle of paths of width about $\sqrt{\hbar T/m}$ around the classical one. As $\hbar\to0$ (or $S\gg\hbar$) this bundle shrinks to a single line — the particle "takes the Newtonian path".
+
+**Order-of-magnitude check.** A baseball ($m=0.145$ kg) flying at 40 m/s for 0.5 s has $S\sim E_k T\approx116\times0.5\approx58$ J·s, so
+
+$$
+\frac{S}{\hbar}\approx\frac{58}{1.05\times10^{-34}}\approx5\times10^{35}
+$$
+
+Stray from the classical path by even $10^{-17}$ m and the phase winds through many full turns. The baseball has no choice. The electron in the double slit, by contrast, has an action difference between its two routes of order $\hbar$ — which is why it "takes both".
+
+</Derivation>
+
+<Callout type="insight" title="The mystery of least action, solved">
+Classical mechanics carried an odd question no one ever answered: how does a particle "know" which path has the least action? Did it try all of them first?
+
+The path integral's answer: **yes, it literally tried them all.** Every path is taken; every path contributes an amplitude. It is just that the non-stationary-phase contributions cancel one another, and what survives is precisely the $\delta S=0$ path. The principle of least action is not a mysterious preference of nature — it is interference's survivorship bias.
+</Callout>
+
+<Callout type="warning" title="Two easy misconceptions">
+1. **"All paths" is wilder than you think.** The overwhelming majority of paths in the sum are everywhere continuous but nowhere differentiable — jagged like Brownian trajectories. Smooth paths form a set of measure zero. "The particle followed some smooth trajectory" is only an approximate statement valid in the macroscopic limit.
+2. **The path integral is not a new theory.** It makes exactly the same predictions as the Schrödinger equation ([section 11.3](/en/ch/11-path-integral/03-to-schrodinger/) proves the equivalence) — it is the same quantum mechanics in different notation. Some problems are easier with wavefunctions (bound states, energy levels), others with path integrals (tunnelling, field theory, the link to statistical mechanics) — one more well-made tool in the box.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Sum over paths', latex: 'K(b,a)=\\int\\mathcal{D}x(t)\\,\\ee^{\\ii S[x(t)]/\\hbar}', note: 'Every path joining a and b contributes — equal magnitude, differing only in phase' },
+    { name: 'Action', latex: 'S[x(t)]=\\int_{t_a}^{t_b}\\Bigl[\\frac{m\\dot x^2}{2}-V(x)\\Bigr]\\dd t', note: "Classical mechanics' scoring function; same dimensions as ħ" },
+    { name: 'Classical path', latex: '\\delta S[x_{\\text{cl}}]=0', note: 'Stationary phase = Newton’s equation; coherence-band width about √(ħT/m)' },
+    { name: 'Classical-limit criterion', latex: 'S/\\hbar\\gg1', note: 'About 10³⁶ for a baseball, about 1 for a double-slit electron — that is the dividing line' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pi1-1',
+      prompt: 'In the path integral, what determines the amplitude of a single path?',
+      options: [
+        'The magnitude is the same for all paths; the phase equals the path’s action divided by ħ',
+        'The magnitude is inversely proportional to the path length, so shorter paths contribute more',
+        'Only paths satisfying Newton’s equation have non-zero amplitude',
+        'The magnitude is set by the potential energy along the path',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Path length enters only indirectly, through the action; the modulus of the amplitude is identical for every path.',
+        2: 'Every path has non-zero amplitude; the classical path is special because the phase is stationary in its neighbourhood, not because other paths are forbidden.',
+      },
+      explain: 'A[x(t)] ∝ e^{iS/ħ}: democracy taken to its limit — every path gets equal weight, and all the difference lives in the phase. The classical path wins by stationary-phase interference, not by favouritism.',
+    },
+    {
+      id: 'pi1-2',
+      prompt: 'Why does only the classical path’s contribution survive as ħ→0 (or S≫ħ)? (Select all that apply.)',
+      options: [
+        'Away from the classical path the action changes at first order, the phase spins rapidly, and contributions cancel',
+        'Near the classical path δS=0, so a whole bundle of paths shares nearly the same phase and adds coherently',
+        'The amplitudes of non-classical paths decay exponentially with the deviation',
+        'The coherence band around the classical path has width about √(ħT/m), which shrinks to a line as ħ→0',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'All paths have the same amplitude magnitude; what decays is the net contribution after summation (through phase cancellation), not any single path’s amplitude.',
+      },
+      explain: 'This is the stationary-phase mechanism: in non-stationary regions the little arrows point every which way and sum to zero, while in the stationary band they align and dominate; the band width ∼√(ħT/m) contracts to the classical trajectory as ħ→0.',
+    },
+    {
+      id: 'pi1-3',
+      prompt: 'In the language of path integrals, the double-slit experiment is:',
+      options: [
+        'The special case of the sum over all paths in which the barrier leaves only two routes open',
+        'An example where the path integral fails and one must return to the wavefunction language',
+        'A proof that only two paths exist',
+        'A demonstration of the classical limit',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Quite the opposite — there are still infinitely many paths through each slit (bending every possible way); the two slits merely sort the paths into two big families.',
+        3: 'The two path families of a double-slit electron differ in action by ∼ħ — deep quantum territory, as far from the classical limit as it gets.',
+      },
+      explain: 'This section’s thought experiment is exactly the double slit run in reverse: more slits, more screens, remove the boards — "two routes" deforms continuously into "all routes". Throughout, there is only ever one rule: amplitudes add.',
+    },
+    {
+      id: 'pi1-4',
+      type: 'numeric',
+      prompt: 'A baseball of m=0.145 kg flies at a constant 40 m/s for 0.5 s; take S≈kinetic energy × time. Find log₁₀(S/ħ). (ħ=1.05×10⁻³⁴ J·s)',
+      answer: 35.7,
+      tolerance: 0.5,
+      unit: '',
+      explain: 'S ≈ ½×0.145×40²×0.5 ≈ 58 J·s, S/ħ ≈ 5.5×10³⁵, log₁₀ ≈ 35.7. The phase winds through of order 10³⁵ turns, so the slightest deviation from the classical path is cancelled away — which is why baseballs never diffract.',
+    },
+  ]}
+/>
+
+## What comes next
+
+"Sum over all paths" is still only a manifesto. To make it compute actual numbers, we must first define $\int\mathcal{D}x(t)$ properly and then carry the infinite-dimensional integral through completely for the simplest system — the free particle. The result is called the **propagator**, and it will lock onto the wave-packet spreading of chapter 2 with a satisfying click.

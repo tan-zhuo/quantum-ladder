@@ -1,17 +1,234 @@
 ---
-title: 'An introduction to second quantisation'
-summary: 'Treat particle number itself as a quantum number.'
+title: A first look at second quantization
 section: '8.5'
 order: 5
-status: stub
+summary: 'The term count of an antisymmetrized wavefunction explodes as N!, yet the information in it is just "how many particles in each state". The occupation-number representation compresses the determinant to one line, and creation and annihilation operators turn symmetry into algebra — the doorway to many-body physics and quantum field theory.'
+status: done
+prereqs:
+  - 08-identical-particles/02-bosons-fermions
+  - 02-wavefunction/09-harmonic-oscillator
+objectives:
+  - Explain why the occupation-number representation is the "right" bookkeeping for identical particles
+  - Write down the commutation relations for bosons and the anticommutation relations for fermions, and explain where the difference comes from
+  - Prove that fermion occupation numbers can only be 0 or 1 — the algebraic version of Pauli exclusion
+  - Rewrite one-body and two-body Hamiltonians with creation and annihilation operators, and read off the physics of each term
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section ended with a hopeless tally: the antisymmetric wavefunction of 26 electrons, expanded in product states, has $26!\approx4\times10^{26}$ terms. Never mind solving it — merely **writing it down** exceeds the storage capacity of the universe.
+
+But before despairing, ask how much information those terms actually carry.
+
+## The bookkeeping is exhausting because the ledger records what it shouldn't
+
+Take 3 fermions occupying orbitals $\phi_a,\phi_b,\phi_c$; the Slater determinant expands into 6 terms. How are these 6 terms related? **They are 6 ways of saying the same sentence.** Each one says "orbitals $a,b,c$ each house one particle", merely permuting "which particle lives in which room" — and the very first lesson of [section 8.1](/en/ch/08-identical-particles/01-identity-principle/) was that particles have no labels, so "which particle" is not a legitimate question at all.
+
+The $N!$ explosion is the translation tax we pay for insisting on describing a **label-free world** in a **labelled language**. The actual information content of the whole state is one sentence:
+
+> Orbital $a$: 1 particle; orbital $b$: 1 particle; orbital $c$: 1 particle; all others: 0.
+
+So let the notation record only that sentence. Fix a set of single-particle orbitals $\{\phi_1,\phi_2,\dots\}$ and define the **occupation-number representation**:
+
+$$
+\ket{n_1,n_2,n_3,\dots}
+$$
+
+where $n_i$ is the number of particles in orbital $\phi_i$. The 6-term determinant above becomes $\ket{1,1,1,0,0,\dots}$; a ten-particle state of $10!=3\,628\,800$ terms is just $\ket{1,1,\dots,1,0,\dots}$. Every detail of symmetrization and antisymmetrization is **built into** the definition of the symbol (by convention it stands for that normalised determinant or symmetric sum) and never has to be written by hand again.
+
+The space these states span is called **Fock space** — it merges the state spaces of "0 particles" (the vacuum $\ket{0}$), "1 particle", "2 particles", and so on into one. For the first time, particle number is a **quantum number** rather than a premise of the theory.
+
+## Moving particles between orbitals: creation and annihilation operators
+
+New notation needs matching operators. Define the **creation operator** $\hat a_i^\dagger$: add one particle to orbital $\phi_i$; and the **annihilation operator** $\hat a_i$: remove one particle from orbital $\phi_i$ (returning zero if there is none to remove).
+
+This algebra should feel familiar — in the harmonic oscillator of [section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/), $\hat a^\dagger,\hat a$ climb up and down the ladder of levels. What read as "up one level" there reads here as "one more quantum in this mode". The oscillator's ladder is exactly **the occupation number of a single mode**; all we do now is give every orbital a ladder of its own.
+
+For **bosons**, copy the oscillator's commutation relations, one set per orbital, different orbitals independent:
+
+$$
+[\hat a_i,\hat a_j^\dagger]=\delta_{ij},\qquad
+[\hat a_i,\hat a_j]=[\hat a_i^\dagger,\hat a_j^\dagger]=0
+$$
+
+The matrix elements copy over too: $\hat a_i^\dagger\ket{\dots,n_i,\dots}=\sqrt{n_i+1}\,\ket{\dots,n_i+1,\dots}$, with $n_i$ unbounded — bosons love to bunch, and the $\sqrt{n+1}$ factor even **rewards** bunching (it is the root of stimulated emission beating spontaneous emission).
+
+For **fermions**, the antisymmetry must be written into the algebra. The correct move is to replace commutators by **anticommutators** (writing $\{\hat A,\hat B\}=\hat A\hat B+\hat B\hat A$):
+
+$$
+\{\hat c_i,\hat c_j^\dagger\}=\delta_{ij},\qquad
+\{\hat c_i,\hat c_j\}=\{\hat c_i^\dagger,\hat c_j^\dagger\}=0
+$$
+
+Why anticommutators? Look at $i\ne j$: $\hat c_i^\dagger\hat c_j^\dagger=-\hat c_j^\dagger\hat c_i^\dagger$ — **filling $j$ then $i$ differs from filling $i$ then $j$ by a minus sign**. That is exactly the sign flip of exchanging two particles, now promoted to a grammatical rule of the operators: you could not violate it if you tried.
+
+<Derivation title="Pauli exclusion in two lines of algebra" level="基础" minutes={6} open={true}>
+
+**Step 1: put two fermions in the same orbital.** Set $i=j$ in the anticommutation relation:
+
+$$
+\{\hat c_i^\dagger,\hat c_i^\dagger\}=2(\hat c_i^\dagger)^2=0
+\quad\Longrightarrow\quad(\hat c_i^\dagger)^2=0
+$$
+
+Creating two particles in the same orbital gives the zero vector — not some high-energy state, but **no state at all**. What section 8.3 said with determinants is one line of algebra here.
+
+**Step 2: occupation numbers can only be 0 or 1.** Define the number operator $\hat n_i=\hat c_i^\dagger\hat c_i$ and square it:
+
+$$
+\hat n_i^2=\hat c_i^\dagger\hat c_i\hat c_i^\dagger\hat c_i
+=\hat c_i^\dagger\bigl(1-\hat c_i^\dagger\hat c_i\bigr)\hat c_i
+=\hat c_i^\dagger\hat c_i-\hat c_i^\dagger\hat c_i^\dagger\hat c_i\hat c_i
+$$
+
+The first step used $\hat c_i\hat c_i^\dagger=1-\hat c_i^\dagger\hat c_i$ (the $i=j$ component of the anticommutation relation). The last term contains $(\hat c_i^\dagger)^2=0$, so
+
+$$
+\hat n_i^2=\hat n_i\quad\Longrightarrow\quad n_i(n_i-1)=0\quad\Longrightarrow\quad n_i\in\{0,1\}
+$$
+
+The eigenvalue equation $n^2=n$ has only two roots. **Pauli exclusion = the anticommutation relations of fermion operators**, no more and no less. Compare bosons: $[\hat a_i,\hat a_i^\dagger]=1$ gives $n_i=0,1,2,\dots$ without bound.
+
+**Step 3 (a bookkeeping detail): the sign convention.** Fermion operators act with a tracking sign:
+
+$$
+\hat c_i^\dagger\ket{n_1,\dots,n_i,\dots}=(-1)^{\sum_{j<i}n_j}\,(1-n_i)\ket{n_1,\dots,n_i+1,\dots}
+$$
+
+The factor $(-1)^{\sum_{j<i}n_j}$ counts the occupied orbitals listed before $i$ — it guarantees that repeated operations agree term by term with the determinant expansion. The good news: in practice one almost never writes it by hand; the anticommutation relations take care of everything automatically.
+
+</Derivation>
+
+## Translating the Hamiltonian
+
+For the new language to earn its keep, it must express Hamiltonians. The rules are stated without proof (to verify: sandwich both sides between occupation-number states and compare matrix elements).
+
+**One-body terms** (kinetic energy, external potentials — operators that "touch" one particle at a time):
+
+$$
+\hat H_1=\sum_{ij}h_{ij}\,\hat a_i^\dagger\hat a_j,
+\qquad h_{ij}=\int\phi_i^*(\vec{r})\Bigl[-\frac{\hbar^2}{2m}\nabla^2+V(\vec{r})\Bigr]\phi_j(\vec{r})\,\dd^3r
+$$
+
+**Two-body terms** (interparticle interactions):
+
+$$
+\hat H_2=\frac12\sum_{ijkl}V_{ijkl}\,\hat a_i^\dagger\hat a_j^\dagger\hat a_l\hat a_k,
+\qquad V_{ijkl}=\int\phi_i^*(\vec{r})\phi_j^*(\vec{r}\,')\,U(\vec{r}-\vec{r}\,')\,\phi_k(\vec{r})\phi_l(\vec{r}\,')\,\dd^3r\,\dd^3r'
+$$
+
+<DualView>
+<div slot="left">
+
+**Every term is a little cartoon.** $\hat a_i^\dagger\hat a_j$: take a particle out of orbital $j$ and put it into orbital $i$ — one "hop", with amplitude $h_{ij}$. The diagonal term $h_{ii}\hat n_i$ just counts the particles in $i$ and charges each one an energy $h_{ii}$.
+
+$\hat a_i^\dagger\hat a_j^\dagger\hat a_l\hat a_k$: two particles start in $k,l$, collide once, and scatter into $i,j$ — amplitude $V_{ijkl}$.
+
+The whole Hamiltonian becomes a "menu of processes": which hops and collisions are allowed, and with what amplitudes. The pictorial language of many-body physics (Feynman diagrams being its ultimate form) starts here.
+
+</div>
+<div slot="right">
+
+**Sanity check: a non-interacting system.** Choose the $\phi_i$ as eigen-orbitals of the single-particle Hamiltonian, so $h_{ij}=\varepsilon_i\delta_{ij}$, and
+
+$$
+\hat H=\sum_i\varepsilon_i\,\hat n_i
+$$
+
+Total energy = orbital energy × occupation, at a glance. The Fermi-gas ground state of section 8.3 reads, in this language,
+
+$$
+\ket{\text{FS}}=\prod_{|\vec k|\le k_F}\hat c_{\vec k}^\dagger\ket{0}
+$$
+
+(fill the modes inside the Fermi sphere one by one). The same state, in determinant language, is a determinant of order $\sim10^{23}$.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The name is wrong: nothing gets 'quantized twice'">
+"Second quantization" is a bad name history has left us. No second quantization happens here — from start to finish there is one quantum theory, and all we have done is **change basis** (from the coordinate representation to the occupation-number representation) and change algebraic notation. The particles are the same particles, the Hamiltonian the same Hamiltonian.
+
+The name's origin: historically, people took the particle's wavefunction $\psi(\vec{r})$ and treated it "again" as an operator field $\hat\psi(\vec{r})=\sum_i\phi_i(\vec{r})\hat a_i$, which looked like quantizing the wavefunction a second time. In the modern view it is simply "many-body quantum mechanics in occupation-number notation". The name has stuck, mistake and all; do not let the content follow the mistake.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="The notation's real superpower: particle number can change">
+So far, second quantization looks like an efficient compression format. But it has quietly unlocked something the old language **fundamentally cannot do**: describing processes where **particle number changes**.
 
-- Creation and annihilation operators
-- Fock space
-- Field operators and rewriting the Hamiltonian
+A wavefunction $\psi(\vec{r}_1,\dots,\vec{r}_N)$ has $N$ locked in from its very definition; in Fock space, $\hat a^\dagger$ is born connecting $N$-particle states to $(N+1)$-particle states. The Hamiltonian for an atom emitting light — "the electron drops a level **and a photon is created**" — can only be written in this language (roughly $\hat H_{\text{int}}\sim g\,\hat c_1^\dagger\hat c_2\,\hat b^\dagger+\text{h.c.}$: the electron falls from 2 to 1 while a photon is created by $\hat b^\dagger$). When chapter 7's Fermi golden rule computed transition rates, it dodged the question "where does the photon come from"; quantum field theory's official answer begins here — every mode of the field is a harmonic oscillator, and particles are its quanta of excitation. See chapter 12.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Occupation-number representation', latex: '\\ket{n_1,n_2,\\dots}\\ \\in\\ \\text{Fock space}', note: 'Records only "how many particles per orbital"; (anti)symmetrization is built into the definition' },
+    { name: 'Boson algebra', latex: '[\\hat a_i,\\hat a_j^\\dagger]=\\delta_{ij},\\quad \\hat a_i^\\dagger\\ket{n_i}=\\sqrt{n_i+1}\\,\\ket{n_i+1}', note: 'n unbounded; the √(n+1) factor is the root of stimulated emission' },
+    { name: 'Fermion algebra', latex: '\\{\\hat c_i,\\hat c_j^\\dagger\\}=\\delta_{ij},\\quad(\\hat c_i^\\dagger)^2=0', note: 'Anticommutation = sign flip on exchange; square zero = Pauli exclusion' },
+    { name: 'Hamiltonian', latex: '\\hat H=\\sum_{ij}h_{ij}\\hat a_i^\\dagger\\hat a_j+\\frac12\\sum_{ijkl}V_{ijkl}\\,\\hat a_i^\\dagger\\hat a_j^\\dagger\\hat a_l\\hat a_k', note: 'One-body = hops; two-body = two-particle scattering' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'sq-1',
+      prompt: 'Why can the occupation-number representation compress an N!-term antisymmetric wavefunction into a single symbol without losing information?',
+      options: [
+        'Because those N! terms are just permutations of "which label goes with which orbital", labels carry no physical meaning, and the real information is only the occupation of each orbital',
+        'Because it makes an approximation and drops the small terms',
+        'Because it applies only to non-interacting systems',
+        'Because the phase of the wavefunction does not matter',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'There is no approximation anywhere: |n₁,n₂,…⟩ equals the full determinant (or symmetric sum) by definition.',
+        2: 'It applies with or without interactions — section 8.6 uses it on interacting atoms.',
+        3: 'The phase certainly matters; the fermion sign convention exists precisely to preserve the phase relations.',
+      },
+      explain: 'N! is the translation tax for describing a label-free world in a labelled language. The occupation-number representation speaks the label-free language directly, so the tax is waived.',
+    },
+    {
+      id: 'sq-2',
+      prompt: 'The direct algebraic reason fermion occupation numbers can only be 0 or 1 is:',
+      options: [
+        'The anticommutation relations give (ĉ†)² = 0, hence n̂² = n̂, whose eigenvalues satisfy n(n−1) = 0',
+        'Fermions are too massive for two to fit in one orbital',
+        'The normalisation factor √(n+1) diverges at n = 1',
+        'It is an extra imposed assumption unrelated to the operator algebra',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Mass has nothing to do with it — statistics is set by spin.',
+        2: '√(n+1) is the boson factor, and it does not diverge.',
+        3: 'Quite the opposite: once the anticommutation relations are chosen, the exclusion principle is a theorem, not an assumption.',
+      },
+      explain: '{ĉ†, ĉ†} = 0 means (ĉ†)² = 0; then ĉĉ† = 1 − ĉ†ĉ yields n̂² = n̂. The Pauli exclusion principle is fully encoded in two anticommutation relations.',
+    },
+    {
+      id: 'sq-3',
+      type: 'numeric',
+      prompt: '10 fermions occupy 10 specified orbitals. Fully expanding this state''s Slater determinant into product states gives how many terms? (In the occupation-number representation it is just the symbol |1,1,…,1,0,…⟩.)',
+      answer: 3628800,
+      tolerance: 0,
+      unit: '项',
+      explain: '10! = 3 628 800. That is the efficiency gap between the two languages: one side explodes as N!, the other is forever one line. Same information, different language.',
+    },
+    {
+      id: 'sq-4',
+      prompt: 'Which statements about second quantization are correct? (Select all that apply.)',
+      options: [
+        'It introduces no new physics; it is only a change of representation and notation',
+        'The operator â†ᵢâⱼ describes a particle hopping from orbital j to orbital i',
+        'It naturally describes processes where particle number changes, such as an atom emitting a photon',
+        'The boson-fermion difference appears as the difference between commutation and anticommutation relations',
+      ],
+      answer: [0, 1, 2, 3],
+      distractors: {},
+      explain: 'All four are correct. The first two are the "compression format" side; the third is its real power beyond wavefunction language — the road to quantum field theory; the fourth condenses chapter 8''s two great families into a single sign: [·,·] versus {·,·}.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The language is ready; back to the unfinished practical question: how does one actually compute a many-electron atom? Helium already pushed perturbation theory and the variational method (chapter 7) to their limits; carbon has 6 electrons, iron 26.
+
+The next section introduces an idea that has ruled computational physics for nearly a century: **instead of making each electron face all the others, let it face one averaged "electron cloud"** — then let the cloud and the orbitals feed each other, iterating to self-consistency. The Hartree–Fock method: the many-body problem's first genuinely computable answer.

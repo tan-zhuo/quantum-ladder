@@ -1,17 +1,272 @@
 ---
-title: 'Hilbert space: the essentials'
-summary: 'Inner products, completeness, separability — the parts mathematicians care about and physicists skip.'
+title: Hilbert space essentials
 section: '3.3'
 order: 3
-status: stub
+summary: 'The details mathematicians care about and physicists tend to skip. This section covers only the ones that genuinely affect physical conclusions.'
+status: done
+prereqs:
+  - 03-formalism/02-dirac-notation
+objectives:
+  - State the three conditions the space of quantum states must satisfy, and why each is necessary
+  - Explain the definition of the L² space, and why "normalisable" is equivalent to "square-integrable"
+  - Explain why continuous-spectrum eigenstates do not belong to the space, and how physics handles them
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous two sections have leaned on "states are vectors" throughout, but a few things were stepped around:
+
+- Does the infinite series $\ket{\psi}=\sum_n c_n\ket{n}$ converge? Converge to what?
+- $\ket{x}$ cannot be normalised — what entitles it to serve as a basis?
+- What exactly does "complete" mean?
+
+This section fills those in. **Only the parts that affect physical conclusions** — for rigorous functional analysis, see a mathematics text.
+
+## What the space of states must satisfy
+
+<DualView>
+<div slot="left">
+
+**Condition one: it is a linear space.**
+
+States can be added and multiplied by complex numbers, and the result is again a state. This comes straight from the linearity of the Schrödinger equation, and is the mathematical statement of the [superposition principle](/en/ch/02-wavefunction/04-time-dependent-schrodinger/).
+
+**Condition two: it has an inner product.**
+
+$\braket{\phi}{\psi}$ is defined and satisfies the three properties of the previous section. Without an inner product there is no normalisation, no orthogonality, no probability — the Born rule would have nowhere to live.
+
+**Condition three: it is complete (in the analyst's sense).**
+
+Every Cauchy sequence converges to an element of the space.
+
+</div>
+<div slot="right">
+
+**Definition**
+
+A space satisfying all three is a **Hilbert space**, usually written $\mathcal H$.
+
+**The first postulate of quantum mechanics** ([section 3.7](/en/ch/03-formalism/07-postulates/)) reads:
+
+> The state of a physical system is described by a normalised vector in some Hilbert space.
+
+$$
+\ket{\psi}\in\mathcal H,\qquad \braket{\psi}{\psi}=1
+$$
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The word ''complete'' has two meanings — keep them apart">
+The ambiguity exists in English just as it does in Chinese, and beginners step on it almost without fail:
+
+**Complete in the analyst's sense (complete metric space)**: every Cauchy sequence has a limit, and the limit lies in the space. This is part of the definition of a Hilbert space, and it says **the space has no holes**.
+
+**Complete as a basis (complete basis)**: $\{\ket{n}\}$ spans the whole space, every state can be expanded, i.e. $\sum_n\ket{n}\bra{n}=\hat 1$. This says **the basis is big enough**.
+
+The two are unrelated. This section is about the first; the completeness relation of the previous section is about the second.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Why the third condition matters: a concrete hole">
+The first two conditions feel natural; the third looks like mathematical fussiness. It is not.
 
-- From inner-product spaces to Hilbert spaces
-- The space L² of square-integrable functions
-- Handling continuous spectra and generalised eigenstates
+Consider the space of all continuous functions, with the inner product $\int f^*g\,\dd x$. Take a sequence of ever-steeper continuous functions:
+
+$$
+f_n(x)=\begin{cases}0,&x<0\\ nx,&0\le x\le 1/n\\ 1,&x>1/n\end{cases}
+$$
+
+In the distance induced by the inner product, $\{f_n\}$ is a Cauchy sequence — its members get ever closer to one another. But the limit is a step function, **discontinuous**, and not in the space.
+
+**The space has a hole.** And in quantum mechanics we take limits constantly: infinite series expansions, continuum limits of wave packets, time evolution. If the space has holes, a perfectly legitimate limiting process may produce something that "is not a state".
+
+$L^2$ plugs those holes, at the cost of containing many discontinuous — even nowhere-differentiable — functions. Physically that costs nothing: real wavefunctions are always smooth, and the extra elements simply guarantee that limits always have somewhere to land.
+</Callout>
+
+## L²: square-integrable functions
+
+The state space for a single particle in one dimension is
+
+$$
+L^2(\mathbb R)=\left\{\psi:\mathbb R\to\mathbb C\ \middle|\ \int_{-\infty}^{\infty}|\psi(x)|^2\dd x<\infty\right\}
+$$
+
+equipped with the inner product $\braket{\phi}{\psi}=\int\phi^*\psi\,\dd x$.
+
+<Callout type="check" title="Why ''square-integrable'', exactly">
+This condition was not picked at random — it is precisely what the Born rule demands.
+
+For $|\psi|^2$ to serve as a probability density, $\int|\psi|^2\dd x$ must be a finite number (which you then divide out to normalise). If the integral diverges, no amount of rescaling produces a distribution with total probability 1.
+
+**"Normalisable" and "square-integrable" are one and the same thing.** The space $L^2$ was singled out by the Born rule, not by mathematical accident.
+</Callout>
+
+<DualView>
+<div slot="left">
+
+**What is in $L^2$, and what is not**
+
+In: every bound state, every wave packet, every state that can physically be prepared.
+
+Not in:
+- plane waves $\ee^{\ii kx}$ ($\int 1\,\dd x=\infty$)
+- $\delta(x-x_0)$ ($\int\delta^2$ diverges)
+- constants, polynomials, anything that fails to decay
+
+Note that $\psi\in L^2$ does **not** require $\psi(x)\to0$ pointwise, nor continuity — only that the integral converges. Physical wavefunctions are additionally required to be smooth enough, but that comes from the Schrödinger equation (which contains second derivatives), not from $L^2$.
+
+</div>
+<div slot="right">
+
+**Separability: why the basis can be countable**
+
+$L^2$ is **separable**: it admits a **countable** orthonormal complete basis.
+
+This property is enormously practical — it guarantees that the "list of numbers" expansion
+
+$$
+\ket{\psi}=\sum_{n=1}^{\infty}c_n\ket{n}
+$$
+
+always works, with no need for uncountably many coefficients.
+
+The infinite well's $\{\psi_n\}$ and the harmonic oscillator's $\{\psi_n\}$ are both bases of this kind. **Any $L^2$ function can be expanded in harmonic-oscillator eigenstates**, even one that has nothing to do with the oscillator.
+
+</div>
+</DualView>
+
+## The continuous spectrum: the "eigenstates" that live outside the space
+
+Now for the question we have been dodging.
+
+The solutions of the position operator's eigenvalue equation $\hat x\ket{x_0}=x_0\ket{x_0}$ are, in the position basis, $\delta(x-x_0)$. The momentum operator's eigenstates are plane waves. **Neither belongs to $L^2$.**
+
+<Callout type="misconception" title="''Not in the space'' does not mean ''useless''">
+A common misconception: since $\ket{x}$ is not a legitimate state, using it must be wrong.
+
+The right attitude: $\ket{x}$ and $\ket{p}$ are **generalised eigenstates** — extraordinarily useful **bookkeeping devices** that represent no preparable physical state.
+
+Analogy: the $\delta$ function is not a function, yet under an integral sign it works beautifully. In the same way, $\ket{x}$ only means something when it gets "integrated away":
+
+$$
+\ket{\psi}=\int\psi(x)\ket{x}\,\dd x
+$$
+
+The left-hand side is a legitimate state; no individual term on the right is. There is no contradiction — just as a finite integral can be built by accumulating infinitely many infinitesimals.
+</Callout>
+
+<DualView>
+<div slot="left">
+
+**Normalisation becomes a δ function**
+
+Discrete spectrum:
+
+$$
+\braket{m}{n}=\delta_{mn}
+$$
+
+Continuous spectrum:
+
+$$
+\braket{x}{x'}=\delta(x-x'),\qquad \braket{p}{p'}=\delta(p-p')
+$$
+
+This is called **δ normalisation**. Formally it parallels the discrete case (Kronecker δ replaced by Dirac δ): every formula carries over, with sums traded for integrals.
+
+</div>
+<div slot="right">
+
+**Mixed spectra**
+
+Some Hamiltonians have both a discrete and a continuous spectrum — the finite well of [section 2.8](/en/ch/02-wavefunction/08-finite-well/) is one: finitely many bound states at negative energy, plus a continuum of scattering states at positive energy.
+
+The completeness relation then reads
+
+$$
+\sum_n\ket{n}\bra{n}+\int\ket{E}\bra{E}\,\dd E=\hat 1
+$$
+
+Hydrogen works the same way: the discrete ladder $-13.6/n^2$, plus the ionised continuum at $E>0$.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The rigorous version: rigged Hilbert space">
+Mathematics has a clean framework for all this, the **rigged Hilbert space** (also known as a Gelfand triple):
+
+$$
+\Phi\subset\mathcal H\subset\Phi'
+$$
+
+$\Phi$ is a smaller space of "very well-behaved functions" (say, rapidly decreasing ones), and $\Phi'$ is its dual, which contains generalised objects like $\delta$ functions and plane waves. The generalised eigenstates live in $\Phi'$.
+
+This framework makes every formal manipulation above rigorous. **You do not need it for physics** — the δ-normalisation rules work perfectly well — but it is reassuring to know the whole thing can be made rigorous. Von Neumann sorted out the mathematical foundations of quantum mechanics back in 1932; the physicist's formal manipulations are not a castle in the air.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Hilbert space', latex: '\\text{linear space + inner product + complete in the analyst''s sense}', note: 'Where quantum states live; the first postulate' },
+    { name: 'L² space', latex: 'L^2=\\{\\psi:\\int|\\psi|^2\\dd x<\\infty\\}', note: '"Normalisable" = "square-integrable", singled out by the Born rule' },
+    { name: 'δ normalisation', latex: '\\braket{x}{x\'}=\\delta(x-x\'),\\quad\\braket{p}{p\'}=\\delta(p-p\')', note: 'Orthonormality, continuous-spectrum edition' },
+    { name: 'Mixed-spectrum completeness', latex: '\\sum_n\\ket{n}\\bra{n}+\\int\\ket{E}\\bra{E}\\dd E=\\hat 1', note: 'The finite well and hydrogen both need this form' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'hilb-1',
+      prompt: 'Why is the space of quantum states taken to be "square-integrable functions" rather than something else?',
+      options: [
+        'Because the Born rule requires ∫|ψ|²dx to be finite before it can be normalised into a probability distribution',
+        'Because square-integrable functions are all continuous',
+        'Because it is mathematically simplest',
+        'Because the Schrödinger equation only has solutions for square-integrable functions',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'L² contains discontinuous functions, even nowhere-differentiable ones.',
+        2: 'Simplicity is not the reason; the space is singled out by a physical requirement.',
+        3: 'The equation has solutions in a much wider class of functions — plane waves, for example.',
+      },
+      explain: '"Normalisable" and "square-integrable" are the same sentence. L² is not a space mathematicians happened to pick; it is a direct consequence of the Born rule.',
+    },
+    {
+      id: 'hilb-2',
+      prompt: 'Which statements about |x⟩ and |p⟩ are correct? (Select all that apply.)',
+      options: [
+        'They do not belong to L², so they represent no preparable physical state',
+        'They are useful bookkeeping devices, meaningful only when integrated away',
+        'They are δ-normalised: ⟨x|x′⟩ = δ(x−x′)',
+        'Using them leads to incorrect physical predictions',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Used according to the δ-normalisation rules, the results are entirely correct; the rigged Hilbert space puts these manipulations on rigorous footing.',
+      },
+      explain: 'Compare the δ function itself: not a function, yet it works beautifully under an integral sign. In |ψ⟩ = ∫ψ(x)|x⟩dx the left side is legitimate while no term on the right is — the same situation as a finite integral built from infinitesimals.',
+    },
+    {
+      id: 'hilb-3',
+      prompt: 'The "complete" in the definition of a Hilbert space versus the "complete" in the completeness relation Σ|n⟩⟨n| = 1:',
+      options: [
+        'They are two different concepts: the former says the space has no holes, the latter says the basis is big enough',
+        'They are two ways of writing the same concept',
+        'The former follows from the latter',
+        'The latter follows from the former',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'One is a topological property, the other a property of a basis.',
+        2: 'The two are mutually independent.',
+        3: 'Same as above.',
+      },
+      explain: 'English overloads the single word "complete". Analytic completeness says every Cauchy sequence converges (no holes in the space); basis completeness says every state can be expanded. In finite dimensions Cauchy completeness holds automatically, yet a given basis can still fail to be complete.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The space is ready, and the states live inside it. The next question: **what operations can be performed on this space**?
+
+The answer is linear operators. And among all linear operators, only a very small class earns the title of "observable" — chapter 2's unexplained decree begins, from the next section on, to become a derivable conclusion.

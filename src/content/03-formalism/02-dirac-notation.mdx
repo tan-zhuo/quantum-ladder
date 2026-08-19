@@ -2,17 +2,316 @@
 title: Dirac 符号完整规则
 section: '3.2'
 order: 2
-summary: bra、ket、内积、外积、算符的矩阵元。
-status: stub
+summary: 一套把「矢量、内积、投影、换基」全部压缩成几个尖括号的记号。学会它，第 2 章的推导会缩短到原来的几分之一。
+status: done
+prereqs:
+  - 03-formalism/01-from-wavefunction-to-vector
+objectives:
+  - 正确读写 ket、bra、内积、外积与算符的矩阵元
+  - 用完备性关系 Σ|n⟩⟨n| = 1 在任意两个表象之间换算
+  - 说明投影算符 |ψ⟩⟨ψ| 的几何含义
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节说清了「态是矢量，波函数是它的分量」。这一节给这套说法配一副称手的记号。
+
+## ket：态本身
+
+一个量子态记作
+
+$$
+\ket{\psi}
+$$
+
+读作「ket psi」。**它代表态本身，不带任何基的信息**——就像上一节里那个箭头，而不是 $(3,4,0)$。
+
+<Callout type="check" title="一条容易搞混的对应">
+$\ket{\psi}$ **不等于** $\psi(x)$。
+
+$\psi(x)$ 是 $\ket{\psi}$ 在位置基下的分量，写成
+
+$$
+\psi(x)=\braket{x}{\psi}
+$$
+
+同理 $\phi(k)=\braket{k}{\psi}$，$c_n=\braket{n}{\psi}$。
+
+**同一个 $\ket{\psi}$，你想要哪套分量，就拿对应的基去「点」它。**
 </Callout>
 
-## 内容规划
+## bra：用来做内积的那一半
 
-- ⟨φ|ψ⟩ 的定义与性质
-- |ψ⟩⟨ψ| 投影算符
-- 完备性关系 Σ|n⟩⟨n| = 1
+每个 ket $\ket{\psi}$ 都配一个 bra $\bra{\psi}$。把两者拼起来就是内积：
 
+$$
+\braket{\phi}{\psi}=\int\phi^*(x)\psi(x)\,\dd x
+$$
+
+（"bra-ket" 这个词来自英文的 bracket「括号」，狄拉克把它劈成了两半。）
+
+<DualView>
+<div slot="left">
+
+**内积的三条性质**
+
+$$
+\braket{\phi}{\psi}=\braket{\psi}{\phi}^*
+$$
+
+交换顺序取复共轭——因为 $\int\phi^*\psi$ 与 $\int\psi^*\phi$ 互为共轭。
+
+$$
+\braket{\psi}{\psi}\ge0,\quad\text{且}=0\iff\ket{\psi}=0
+$$
+
+长度平方非负。归一化的态满足 $\braket{\psi}{\psi}=1$。
+
+$$
+\bra{\phi}\big(a\ket{\psi_1}+b\ket{\psi_2}\big)=a\braket{\phi}{\psi_1}+b\braket{\phi}{\psi_2}
+$$
+
+对右边线性，对左边**反**线性（提出来的系数要取共轭）。
+
+</div>
+<div slot="right">
+
+**第 2 章的式子换个写法**
+
+归一化：
+
+$$
+\int|\Psi|^2\dd x=1
+\ \longrightarrow\
+\braket{\Psi}{\Psi}=1
+$$
+
+展开系数：
+
+$$
+c_n=\int\psi_n^*\Psi\,\dd x
+\ \longrightarrow\
+c_n=\braket{n}{\Psi}
+$$
+
+正交归一：
+
+$$
+\int\psi_m^*\psi_n\dd x=\delta_{mn}
+\ \longrightarrow\
+\braket{m}{n}=\delta_{mn}
+$$
+
+期望值：
+
+$$
+\int\Psi^*\hat A\Psi\,\dd x
+\ \longrightarrow\
+\bra{\Psi}\hat A\ket{\Psi}
+$$
+
+</div>
+</DualView>
+
+## 算符夹在中间
+
+$\hat A\ket{\psi}$ 是另一个 ket。把它与 $\bra{\phi}$ 做内积，得到**矩阵元**：
+
+$$
+\bra{\phi}\hat A\ket{\psi}
+$$
+
+这个记号有意的模糊之处在于：你既可以读成「$\bra{\phi}$ 与 $(\hat A\ket{\psi})$ 的内积」，也可以读成「$(\bra{\phi}\hat A)$ 与 $\ket{\psi}$ 的内积」。两种读法结果相同，所以不必加括号。
+
+**这就是矩阵元这个名字的来源**：在基 $\{\ket{n}\}$ 下，$A_{mn}=\bra{m}\hat A\ket{n}$ 正是算符的矩阵表示。
+
+## 外积：反过来拼
+
+把 ket 放左边、bra 放右边：
+
+$$
+\ket{\phi}\bra{\psi}
+$$
+
+这不是一个数，而是一个**算符**——它作用在任何 ket 上都会给出一个 ket：
+
+$$
+\big(\ket{\phi}\bra{\psi}\big)\ket{\chi}=\ket{\phi}\underbrace{\braket{\psi}{\chi}}_{\text{一个数}}
+$$
+
+<Callout type="insight" title="投影算符">
+最重要的特例是 $\ket{\psi}$ 与自己的外积（$\ket{\psi}$ 已归一化）：
+
+$$
+\hat P_\psi=\ket{\psi}\bra{\psi}
+$$
+
+作用在任意 $\ket{\chi}$ 上：
+
+$$
+\hat P_\psi\ket{\chi}=\ket{\psi}\braket{\psi}{\chi}
+$$
+
+**它把 $\ket{\chi}$ 投影到 $\ket{\psi}$ 的方向上**，投影的长度是 $\braket{\psi}{\chi}$。跟三维空间里 $(\hat n\cdot\vec v)\hat n$ 一模一样。
+
+两条一眼可验的性质：
+
+$$
+\hat P_\psi^2=\ket{\psi}\underbrace{\braket{\psi}{\psi}}_{=1}\bra{\psi}=\hat P_\psi
+$$
+
+**投影两次等于投影一次**（第二次已经在那条线上了，不动）。这条性质叫**幂等**，它是「投影」这件事的代数定义。
+
+$$
+\hat P_\psi^\dagger=\hat P_\psi
+$$
+
+投影算符是厄米的——[3.5 节](/ch/03-formalism/05-hermitian-operators/)会说清这意味着什么。测量公设正是用投影算符写出来的（[3.8 节](/ch/03-formalism/08-measurement/)）。
+</Callout>
+
+## 完备性关系：整章最有用的一个恒等式
+
+设 $\{\ket{n}\}$ 是一组正交归一完备基。「完备」的意思是任何态都能展开：
+
+$$
+\ket{\psi}=\sum_n c_n\ket{n},\qquad c_n=\braket{n}{\psi}
+$$
+
+把 $c_n$ 代回去：
+
+$$
+\ket{\psi}=\sum_n \ket{n}\braket{n}{\psi}=\left(\sum_n\ket{n}\bra{n}\right)\ket{\psi}
+$$
+
+对任意 $\ket{\psi}$ 都成立，所以括号里那个算符就是恒等算符：
+
+$$
+\boxed{\ \sum_n\ket{n}\bra{n}=\hat 1\ }
+$$
+
+连续基的版本把求和换成积分：
+
+$$
+\int\ket{x}\bra{x}\,\dd x=\hat 1,\qquad \int\ket{p}\bra{p}\,\dd p=\hat 1
+$$
+
+<Callout type="insight" title="它的实际用法：想换基就往里塞一个 1">
+因为 $\hat 1$ 乘任何东西都不变，你可以在任意位置插入一个完备性关系。**这是整套记号里最常用的一招。**
+
+**例 1：把内积写成积分。**
+
+$$
+\braket{\phi}{\psi}
+=\bra{\phi}\hat 1\ket{\psi}
+=\int\braket{\phi}{x}\braket{x}{\psi}\dd x
+=\int\phi^*(x)\psi(x)\,\dd x
+$$
+
+第 2 章那个内积定义，在这里是**推出来的**，不是规定的。
+
+**例 2：把矩阵元写成积分。**
+
+$$
+\bra{\phi}\hat A\ket{\psi}=\int\!\!\int\braket{\phi}{x}\bra{x}\hat A\ket{x'}\braket{x'}{\psi}\,\dd x\,\dd x'
+$$
+
+对 $\hat A=\hat x$ 这类局域算符，$\bra{x}\hat x\ket{x'}=x\,\delta(x-x')$，双重积分塌成单重积分。
+
+**例 3：傅里叶变换是什么。**
+
+$$
+\psi(x)=\braket{x}{\psi}=\int\braket{x}{p}\braket{p}{\psi}\dd p=\frac{1}{\sqrt{2\pi\hbar}}\int \ee^{\ii px/\hbar}\,\phi(p)\,\dd p
+$$
+
+用到 $\braket{x}{p}=\ee^{\ii px/\hbar}/\sqrt{2\pi\hbar}$（动量本征态在位置基下的分量，就是平面波）。
+
+**傅里叶变换不是一条外加的数学工具，它就是位置基与动量基之间的换基矩阵。**
+</Callout>
+
+<Callout type="warning" title="记号上的两个坑">
+**1. $\ket{\psi}$ 里写的是标签，不是变量。** $\ket{n}$、$\ket{\uparrow}$、$\ket{0}$、$\ket{\text{猫活着}}$ 都合法——尖括号里放什么都只是给这个态起个名字。初学时常犯的错是把 $\ket{\psi(x)}$ 这样写，那是把分量塞进了标签里。
+
+**2. 系数出 bra 时要取共轭。** 若 $\ket{\chi}=a\ket{\psi}$，则 $\bra{\chi}=a^*\bra{\psi}$。忘掉这个共轭，算概率时会得到复数。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '态与分量', latex: '\\psi(x)=\\braket{x}{\\psi},\\quad c_n=\\braket{n}{\\psi}', note: '想要哪套分量，就用对应的基去点它' },
+    { name: '内积', latex: '\\braket{\\phi}{\\psi}=\\braket{\\psi}{\\phi}^*,\\quad\\braket{\\psi}{\\psi}=1', note: '对右线性、对左反线性' },
+    { name: '投影算符', latex: '\\hat P_\\psi=\\ket{\\psi}\\bra{\\psi},\\qquad \\hat P^2=\\hat P=\\hat P^\\dagger', note: '幂等 + 厄米，就是「投影」的代数定义' },
+    { name: '完备性关系', latex: '\\sum_n\\ket{n}\\bra{n}=\\hat 1,\\qquad \\int\\ket{x}\\bra{x}\\dd x=\\hat 1', note: '想换基就往式子里塞一个 1' },
+    { name: '换基矩阵元', latex: '\\braket{x}{p}=\\frac{1}{\\sqrt{2\\pi\\hbar}}\\ee^{\\ii px/\\hbar}', note: '傅里叶变换 = 位置基与动量基之间的换基' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'dirac-1',
+      prompt: '下列哪个式子是正确的？',
+      options: [
+        'ψ(x) = ⟨x|ψ⟩',
+        '|ψ⟩ = ψ(x)',
+        'ψ(x) = |x⟩⟨ψ|',
+        '⟨ψ| = ψ*(x)',
+      ],
+      answer: 0,
+      distractors: {
+        1: '|ψ⟩ 是态本身，ψ(x) 只是它在位置基下的一个分量。',
+        2: '右边是一个算符（外积），左边是一个数。',
+        3: '⟨ψ| 是一个 bra，不是函数值。',
+      },
+      explain: '这是整套记号里最需要分清的一条：态与分量不是同一个东西。同一个 |ψ⟩ 在能量基下写成 cₙ = ⟨n|ψ⟩，在动量基下写成 φ(p) = ⟨p|ψ⟩。',
+    },
+    {
+      id: 'dirac-2',
+      prompt: '|φ⟩⟨ψ| 是什么？',
+      options: [
+        '一个算符：作用在 ket 上给出 ket',
+        '一个复数',
+        '一个 bra',
+        '一个 ket',
+      ],
+      answer: 0,
+      distractors: {
+        1: '那是内积 ⟨φ|ψ⟩，bra 在左 ket 在右。',
+        2: '外积不是 bra。',
+        3: '外积不是 ket。',
+      },
+      explain: '(|φ⟩⟨ψ|)|χ⟩ = |φ⟩⟨ψ|χ⟩ = （一个数）×|φ⟩，输入 ket 输出 ket，所以是算符。特例 |ψ⟩⟨ψ| 是投影算符，测量公设就是用它写的。',
+    },
+    {
+      id: 'dirac-3',
+      prompt: '完备性关系 Σₙ|n⟩⟨n| = 1 的主要用途是：',
+      options: [
+        '在任意位置插入它，把式子从一个表象换到另一个表象',
+        '证明态是归一化的',
+        '定义算符的厄米共轭',
+        '计算能量本征值',
+      ],
+      answer: 0,
+      distractors: {
+        1: '归一化是 ⟨ψ|ψ⟩ = 1，另一回事。',
+        2: '厄米共轭有独立的定义，见 3.5 节。',
+        3: '本征值要解本征方程。',
+      },
+      explain: '因为它等于恒等算符，插到哪里都不改变式子的值，却能把抽象的 ⟨φ|Â|ψ⟩ 展开成具体的积分或求和。「想换基就塞一个 1」是这套记号最实用的一招。',
+    },
+    {
+      id: 'dirac-4',
+      prompt: '关于投影算符 P̂ = |ψ⟩⟨ψ|（|ψ⟩ 已归一化），正确的是：（多选）',
+      options: [
+        'P̂² = P̂',
+        'P̂ 是厄米的',
+        'P̂|χ⟩ 给出 |χ⟩ 在 |ψ⟩ 方向上的分量',
+        'P̂ 的本征值只能是 0 或 1',
+      ],
+      answer: [0, 1, 2, 3],
+      explain: 'P̂² = |ψ⟩⟨ψ|ψ⟩⟨ψ| = |ψ⟩⟨ψ| = P̂，用到 ⟨ψ|ψ⟩ = 1。由 P̂² = P̂ 得本征值满足 λ² = λ，故 λ = 0 或 1——分别对应「在这条线上」与「垂直于这条线」。这四条合起来就是「投影」的完整代数刻画。',
+    },
+  ]}
+/>
+
+## 接下来
+
+记号有了。但有几个数学上的问题一直被我们绕过去：$\sum_n c_n\ket{n}$ 在什么意义下收敛？$\ket{x}$ 不可归一化，凭什么还能当基用？
+
+下一节把这些补上——这是全章唯一一节以数学为主的内容，而且会尽量只讲对物理有影响的那部分。

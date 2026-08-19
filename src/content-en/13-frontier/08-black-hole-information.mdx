@@ -1,17 +1,167 @@
 ---
-title: 'The information problem in quantum gravity'
-summary: 'Do black holes destroy information?'
+title: The information problem in quantum gravity
 section: '13.8'
 order: 8
-status: stub
+summary: 'Black holes evaporate, and Hawking''s calculation says what comes out is pure thermal radiation — so does the information thrown in evaporate with it? Unitarity and general relativity collide head-on here, and the Page curve is the verdict of a fifty-year lawsuit.'
+status: done
+prereqs:
+  - 03-formalism/09-time-evolution-pictures
+  - 09-quantum-information/03-entanglement-measures
+  - 10-open-systems/02-mixed-states
+objectives:
+  - Derive the Hawking temperature and black-hole entropy by dimensional estimate, and explain why "entropy proportional to area" is astonishing
+  - State the two sides of the information paradox clearly, unitary evolution versus thermal Hawking radiation
+  - Explain what the Page curve means, and what the "island formula" progress since 2019 has changed
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Feed a diary into a shredder and the information is not destroyed — in principle the strips can be reassembled; burn it, and the same holds: the microscopic state of flame and smoke carries the entire text, merely beyond practical recovery. Quantum mechanics underwrites this "never lost in principle": time evolution, from [section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/), is unitary, $\hat U^\dagger\hat U=1$ — pure states always evolve into pure states, and distinct initial states always evolve into distinct final states. **Unitarity = the universe does not destroy information.**
+
+Now throw the diary into a black hole.
+
+Before 1974 one could still shrug and say "the information is inside the horizon, just out of reach". But that year Hawking proved that a black hole is not an eternal tomb — it **evaporates**. Doing quantum field theory in the curved spacetime near a black hole, he found that the horizon continuously radiates particles outward; the black hole's mass slowly bleeds away until (in principle) it is gone entirely. And Hawking's calculation says the radiation is **exactly thermal**: its temperature depends only on the black hole's mass, and it carries no memory whatsoever of "what was eaten".
+
+The diary went in, the black hole is gone, and all that came out is thermal noise. Where did the information go? This is the **black hole information paradox** — quantum mechanics (unitarity) and general relativity (the horizon) delivering irreconcilable answers to the same question, which is why it is widely regarded as the most important clue on the road to quantum gravity.
+
+## First, get the numbers: how hot is a black hole, how big is its entropy
+
+<Derivation title="Order of magnitude: the Hawking temperature and the Bekenstein–Hawking entropy" level="进阶" minutes={10} open={true}>
+
+**Step 1: the black hole's only scale.**
+
+A black hole of mass $M$ has just one characteristic length — the Schwarzschild radius (the radius at which the escape velocity reaches the speed of light; the classical derivation $\frac12mv^2=\frac{GMm}{r}$ with $v=c$ happens to give the right answer):
+
+$$
+r_s=\frac{2GM}{c^2}
+$$
+
+A solar mass corresponds to $r_s\approx3$ km.
+
+**Step 2: guess the temperature by dimensions.**
+
+The radiation originates in quantum fluctuations near the horizon, and the only wavelength scale available is $r_s$. A typical photon has $\lambda\sim r_s$, hence energy $\hbar c/r_s$, so
+
+$$
+k_BT\sim\frac{\hbar c}{r_s}\sim\frac{\hbar c^3}{GM}
+$$
+
+Hawking's rigorous calculation adds only the numerical coefficient:
+
+$$
+T_H=\frac{\hbar c^3}{8\pi GMk_B}
+$$
+
+Plug in a solar mass, $M=2\times10^{30}$ kg:
+
+$$
+T_H\approx\frac{1.05\times10^{-34}\times(3\times10^8)^3}{8\pi\times6.67\times10^{-11}\times2\times10^{30}\times1.38\times10^{-23}}
+\approx6\times10^{-8}\ \text{K}
+$$
+
+**60 nanokelvin** — eight orders of magnitude colder than the cosmic microwave background (2.7 K). So stellar black holes are currently net absorbers of heat and nowhere near evaporating; the evaporation timescale is $\sim10^{67}$ years. The paradox is thus purely a contradiction internal to theory — and that is exactly what makes it precious: a thought experiment that forces the two great theories to lay their cards on the table without any experiment being run. Note one perverse feature: $T\propto1/M$, so the more it evaporates, the smaller and hotter it gets — a black hole's heat capacity is **negative**.
+
+**Step 3: the entropy.**
+
+Where there is a temperature there is an entropy. Apply the first law $\dd (Mc^2)=T\dd S$ and integrate over $M$ ($T\propto1/M$ gives $S\propto M^2$), obtaining the Bekenstein–Hawking entropy:
+
+$$
+S_{BH}=\frac{k_Bc^3A}{4G\hbar}=k_B\,\frac{A}{4\ell_P^2},
+\qquad \ell_P=\sqrt{\frac{G\hbar}{c^3}}\approx1.6\times10^{-35}\ \text{m}
+$$
+
+Read it as: **one unit of entropy (about 0.72 bits) for every 4 Planck areas of horizon**.
+
+For a solar mass, $A=4\pi r_s^2\approx10^8\ \text{m}^2$, so
+
+$$
+S_{BH}/k_B\approx1\times10^{77}
+$$
+
+Compare: the Sun, as an ordinary star, has entropy of order $10^{58}\,k_B$. Collapsing into a black hole multiplies the entropy by 19 orders of magnitude — black holes are the **highest-entropy-density** objects known, and the entropy ledger of the universe is kept almost entirely under their name.
+
+</Derivation>
+
+<Callout type="insight" title="Entropy grows on the area, not in the volume — the holographic principle">
+Ordinary systems have entropy proportional to volume: double the box, double the information it can hold. A black hole's entropy is proportional to its **surface area**. And a black hole is the entropy maximum at a given size (stuff more entropy into any region and it eventually collapses into one) — so **the information capacity of any region of space is capped by the area of its boundary**.
+
+This hints at a radical possibility: the physics inside a three-dimensional region may be completely "encoded" on its two-dimensional boundary, like a hologram. This holographic principle found a precise realisation in string theory's AdS/CFT duality (1997): a spacetime theory with gravity is exactly equivalent to an ordinary quantum theory **without gravity** living on its boundary. Most modern work on the information paradox is conducted on this map — because the boundary theory is manifestly unitary, so in the dual sense the information **cannot** be lost.
 </Callout>
 
-## Planned contents
+## The paradox in precise form: the Page curve
 
-- Black-hole entropy and Hawking radiation
-- The information paradox
-- The Page curve and recent progress
+"Is the information lost or not" can be translated into a computable curve. With the tools of [section 9.3](/en/ch/09-quantum-information/03-entanglement-measures/): let the black hole form from a pure state and radiate as it evaporates, and ask how the entanglement entropy $S_{\text{rad}}$ of the **radiation that has already escaped** changes with time.
+
+**Hawking's answer**: each parcel of radiation is thermal, entangled with a partner inside the horizon; new entanglement only ever accumulates — $S_{\text{rad}}$ **rises monotonically** until the black hole is gone. But then the black hole no longer exists while the radiation remains entangled with something that isn't there: the total state is mixed. Pure state to mixed state — unitarity falls (in the language of [section 10.2](/en/ch/10-open-systems/02-mixed-states/): $\operatorname{Tr}\rho^2$ has dropped from 1 to far below 1).
+
+**Page's answer (1993)**: if unitarity holds and evaporation is a "thoroughly scrambling but law-abiding" unitary process, then $S_{\text{rad}}$ should first rise — early radiation really is entangled with the black hole — peak around the midpoint of evaporation (the **Page time**), and then **turn over and fall**, returning to zero as the black hole disappears: the late radiation gradually "takes back" the entanglement of the early radiation, and the information flows out with the radiation as a whole, in thoroughly scrambled form — as ashes are to a diary.
+
+This rise-then-fall **Page curve** is the verdict criterion: whoever can derive the descending branch from a theory of gravity has solved the core of the paradox. The difficulty: every step of Hawking's semiclassical calculation looks sound, yet it can only ever yield the monotonic rise — and for over forty years nobody could point to the step that fails.
+
+## The 2019 turn: islands, and a gravitational derivation of the Page curve
+
+The breakthrough came from taking the gravitational path integral (the gravity version of the ideas of [chapter 11](/en/ch/11-path-integral/01-path-integral-idea/)) seriously all the way to the end. In 2019, two groups (Penington; Almheiri–Engelhardt–Marolf–Maxfield) discovered that the gravitational path integral for the radiation entropy contains previously overlooked saddle points — **replica wormholes** — which take over as dominant after the Page time and produce a new entropy formula (the **island formula**): the radiation's entropy is the minimum over all ways of "assigning a region inside the horizon (an island) to the radiation's side of the ledger". Late in the evaporation, the island-including assignment wins and the entropy comes down — **for the first time, the Page curve was derived from a (semiclassical) gravity calculation**, with no complete theory of quantum gravity required.
+
+What this means, and what it does not, are worth separating:
+
+- **It means**: semiclassical gravity is smarter than Hawking gave it credit for — the unitary Page curve was hiding in the gravitational path integral all along, tucked into nontrivial saddles. The "information is conserved" side can all but declare victory.
+- **It does not mean**: that we know **how** the information is written into the radiation, or what any individual Hawking photon carries; the physical interpretation of the wormhole saddles, and the formula's standing for real four-dimensional evaporating black holes, remain hotly debated. The verdict is in; the stolen goods have not all been recovered.
+
+<KeyFormulas
+  items={[
+    { name: 'Hawking temperature', latex: 'T_H=\\frac{\\hbar c^3}{8\\pi GMk_B}\\approx6\\times10^{-8}\\ \\text{K}\\ (M=M_\\odot)', note: 'T ∝ 1/M: negative heat capacity, hotter as it shrinks; stellar-mass evaporation takes ~10⁶⁷ years' },
+    { name: 'Bekenstein–Hawking entropy', latex: 'S_{BH}=k_B\\,\\frac{A}{4\\ell_P^2}\\approx10^{77}k_B\\ (M=M_\\odot)', note: 'Entropy ∝ area, not volume — the starting point of holography' },
+    { name: 'Unitarity', latex: '\\hat U^\\dagger\\hat U=1\\ \\Rightarrow\\ \\text{pure}\\to\\text{pure}', note: 'One side of the paradox; the other is the exact thermality of Hawking radiation' },
+    { name: 'Page curve', latex: 'S_{\\text{rad}}(t)\\ \\text{rises, then falls to zero as the black hole vanishes}', note: 'The criterion for unitary evaporation; derived in 2019 from the island formula and the gravitational path integral' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bh-1',
+      prompt: 'The core conflict of the black hole information paradox is:',
+      options: [
+        'Quantum mechanics demands unitary evolution (pure states stay pure), while Hawking\'s calculation gives evaporation into thermal radiation carrying no information about the initial state',
+        'General relativity forbids black holes from evaporating',
+        'Information falls into the black hole faster than light',
+        'The singularity inside makes the wavefunction diverge',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'On the contrary — evaporation is derived precisely by putting quantum field theory on a general-relativistic spacetime; the conflict is over whether the product of evaporation is thermal.',
+        3: 'Falling through the horizon violates no law; the paradox appears in the bookkeeping after the black hole has completely evaporated.',
+      },
+      explain: 'Unitarity says information is never destroyed in principle (shredders and flames included); exactly thermal radiation means the final state is independent of the initial one. Once the black hole is fully evaporated the two cannot both be true — that is the entire paradox.',
+    },
+    {
+      id: 'bh-2',
+      type: 'numeric',
+      prompt: 'What is the Hawking temperature of a solar-mass black hole (M = 2×10³⁰ kg), in nanokelvin? (T_H = ħc³/(8πGMk_B))',
+      answer: 62,
+      tolerance: 8,
+      unit: 'nK',
+      explain: 'T_H ≈ 6.2×10⁻⁸ K ≈ 62 nK, far below the 2.7 K cosmic microwave background — stellar black holes are currently net absorbers, and evaporation must wait until the universe cools below them, for a total timescale of ~10⁶⁷ years. The paradox is thus purely theoretical, yet forceful enough to make both great theories show their hands.',
+    },
+    {
+      id: 'bh-3',
+      prompt: 'Which statements about the Page curve and the post-2019 developments are correct? (Select all that apply.)',
+      options: [
+        'If evaporation is unitary, the radiation entanglement entropy should rise then fall, reaching zero when the black hole disappears',
+        'Hawking\'s original calculation gives a monotonically rising entropy, corresponding to information loss',
+        'The island formula and replica wormholes yielded the first derivation of the Page curve from a semiclassical gravity calculation',
+        'These developments fully explain how the information is written into each Hawking photon',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Not yet — what has been derived is the overall entropy curve (the unitarity books now balance), but the concrete encoding of the information and the physical interpretation of the wormhole saddles remain open problems.',
+      },
+      explain: 'The Page curve is the quantitative criterion for unitary evaporation. The 2019 breakthrough: no full quantum gravity needed — previously neglected saddles of the gravitational path integral (islands/replica wormholes) supply the descending branch. Verdict delivered, mechanism still at large.',
+    },
+  ]}
+/>
+
+## Where to dig deeper
+
+At the popular level: Susskind's *The Black Hole War* chronicles the paradox's first three decades of combat — partisan, but physically sound. At the lecture-note level: Harlow's black hole information notes (arXiv:1409.1231) are the standard graduate text; for the post-2019 developments, see the review by Almheiri et al., *The entropy of Hawking radiation* (arXiv:2006.06872). The tools these references use — entanglement entropy, density matrices, path integrals — you have already met, all of them, in chapters 9, 10 and 11; the only missing layer is curved spacetime, and the reading will feel closer than you expect.
+
+The next section is the book's last: from cosmic scales back to the keyboard in front of you — when quantum computing meets machine learning, what is substance and what is froth.

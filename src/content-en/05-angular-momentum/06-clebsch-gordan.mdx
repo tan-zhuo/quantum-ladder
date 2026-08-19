@@ -1,17 +1,329 @@
 ---
-title: 'Adding angular momenta and Clebsch–Gordan coefficients'
-summary: 'Adding two angular momenta is not ordinary addition.'
+title: Coupling angular momenta and Clebsch–Gordan coefficients
 section: '5.6'
 order: 6
-status: stub
+summary: 'Put two angular momenta together and the right question is not "how do the vectors add" but "how do the four states regroup". The answer: one singlet plus one triplet.'
+status: done
+prereqs:
+  - 05-angular-momentum/03-spin-half
+  - 05-angular-momentum/02-spherical-harmonics
+objectives:
+  - Explain why two bases are needed (product basis and total angular momentum basis), and which question each answers
+  - Construct the singlet and triplet of two coupled spin-1/2 particles from scratch using ladder operators
+  - Interpret Clebsch–Gordan coefficients and use them in probability calculations
+  - Check the general coupling rule |j₁−j₂| ≤ J ≤ j₁+j₂ by dimension counting
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The question posed at the end of the previous section: put two angular momenta together — what is the total?
+
+First, why the question is inescapable. The electron in hydrogen carries both orbital $\hat{\vec L}$ and spin
+$\hat{\vec S}$; helium has the spins of two electrons; in the deuteron, the proton and neutron each carry spin.
+The moment there is more than one share of angular momentum, "how much altogether" becomes compulsory —
+how spectral lines split, whether two electrons can squeeze into the same orbital, where hydrogen's 21 cm
+radio line comes from: all of it hangs on the answer.
+
+Classical mechanics answers with primary-school arithmetic: $\vec J=\vec J_1+\vec J_2$, vector addition,
+with the length continuously adjustable between $|J_1-J_2|$ and $J_1+J_2$ depending on the angle.
+In quantum mechanics that road is blocked from the first step: no single "vector" even has three
+simultaneously sharp components ([section 5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/)),
+so "add them component by component" is a non-starter. We need a different question.
+
+## The right question: two bases
+
+Work the problem to death on the smallest non-trivial example: **two spin 1/2 particles**
+(say, the electron's spin and the proton's spin in hydrogen). Each spin has two states, so the combined
+space is four-dimensional, and the most natural basis is "each particle reports its own state":
+
+$$
+\ket{\uparrow\uparrow},\quad\ket{\uparrow\downarrow},\quad
+\ket{\downarrow\uparrow},\quad\ket{\downarrow\downarrow}
+$$
+
+(first arrow = particle 1, second = particle 2). This **product basis** consists of the joint eigenstates of
+$(\hat S_{1z},\hat S_{2z})$ and answers "which way does **each one** point".
+
+Now define the total spin operator:
+
+$$
+\hat{\vec S}\equiv\hat{\vec S}_1+\hat{\vec S}_2
+$$
+
+(operators acting on different particles commute, $[\hat S_{1i},\hat S_{2j}]=0$).
+It is easy to check that $\hat{\vec S}$ obeys the standard angular momentum commutation relations —
+so the whole machinery of section 5.2 applies automatically:
+$(\hat S^2,\hat S_z)$ have joint eigenstates $\ket{S,M}$ with eigenvalues $S(S+1)\hbar^2$ and $M\hbar$.
+This **total angular momentum basis** answers "how much **altogether**, and which way does the total point".
+
+Each basis answers its own question, but in general you **cannot have both**: $\hat S^2$ contains terms like
+$\hat S_{1x}\hat S_{2x}$ that flip individual spins, and it does not commute with $\hat S_{1z}$.
+"Definite total length" and "definite individual orientations" are an incompatible pair of facts —
+this is exactly where quantum addition parts ways with classical addition. What remains is a pure change of basis:
+expand $\ket{S,M}$ in the product basis. The expansion coefficients are called
+**Clebsch–Gordan (CG) coefficients** — an intimidating name for nothing more than a table of basis-change coefficients.
+
+## Building them by hand: singlet and triplet
+
+<Derivation title="Two spin 1/2 particles: constructing every |S, M⟩ from the product basis" level="基础" minutes={12} open={true}>
+
+**Step 1: sort by M first.** $\hat S_z=\hat S_{1z}+\hat S_{2z}$ is diagonal in the product basis —
+the two z components simply add (the one part that does behave like classical addition):
+
+| Product state | $M$ |
+| --- | --- |
+| $\ket{\uparrow\uparrow}$ | $+1$ |
+| $\ket{\uparrow\downarrow},\ \ket{\downarrow\uparrow}$ | $0$ |
+| $\ket{\downarrow\downarrow}$ | $-1$ |
+
+The largest $M$ is $1$, so the largest $S$ is $1$; and $M=0$ holds two states, meaning one dimension
+does not belong to the $S=1$ family — a preview that an $S=0$ is also hiding here.
+
+**Step 2: pin down the top state.** The $M=+1$ state is unique, so it can only be the top of the $S=1$ family:
+
+$$
+\ket{1,1}=\ket{\uparrow\uparrow}
+$$
+
+(One can verify directly that $\hat S^2\ket{\uparrow\uparrow}=2\hbar^2\ket{\uparrow\uparrow}$,
+i.e. $S(S+1)=2$.)
+
+**Step 3: climb down with the lowering operator.** The total lowering operator is the sum of the two particles' operators:
+$\hat S_-=\hat S_{1-}+\hat S_{2-}$. On the left, the section 5.2 formula gives
+$\hat S_-\ket{1,1}=\hbar\sqrt{1\cdot2-1\cdot0}\ket{1,0}=\hbar\sqrt2\ket{1,0}$;
+on the right, act particle by particle (for spin 1/2, $\hat S_-\ket{\uparrow}=\hbar\ket{\downarrow}$):
+
+$$
+(\hat S_{1-}+\hat S_{2-})\ket{\uparrow\uparrow}
+=\hbar\ket{\downarrow\uparrow}+\hbar\ket{\uparrow\downarrow}
+$$
+
+Setting the two sides equal:
+
+$$
+\ket{1,0}=\frac{\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow}}{\sqrt2}
+$$
+
+**Step 4: one more rung.** Repeat for $\ket{1,0}$: the left side gives
+$\hbar\sqrt2\ket{1,-1}$; acting on the expression above,
+$\ket{\uparrow\downarrow}\to\hbar\ket{\downarrow\downarrow}$ (only particle 1 can be lowered),
+$\ket{\downarrow\uparrow}\to\hbar\ket{\downarrow\downarrow}$, totalling
+$\frac{2\hbar}{\sqrt2}\ket{\downarrow\downarrow}=\hbar\sqrt2\ket{\downarrow\downarrow}$:
+
+$$
+\ket{1,-1}=\ket{\downarrow\downarrow}
+$$
+
+Bottom reached. The three members of the $S=1$ family are all present — the **triplet**.
+
+**Step 5: recover the missing dimension.** Three of the four dimensions are spent; the remaining one
+must lie in the $M=0$ plane, orthogonal to $\ket{1,0}$. There is only one orthogonal combination
+(up to a phase convention):
+
+$$
+\ket{0,0}=\frac{\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}}{\sqrt2}
+$$
+
+Check that it really has $S=0$: $\hat S_-\ket{0,0}
+=\frac{\hbar\ket{\downarrow\downarrow}-\hbar\ket{\downarrow\downarrow}}{\sqrt2}=0$,
+and likewise $\hat S_+$ gives zero — it can climb neither up nor down, so it can only be a lone $S=0$.
+This is the **singlet**.
+
+**Summary**: the four product states regroup as "$3+1$":
+
+$$
+\underbrace{\ket{1,1},\ \ket{1,0},\ \ket{1,-1}}_{\text{triplet }S=1}
+\qquad
+\underbrace{\ket{0,0}}_{\text{singlet }S=0}
+$$
+
+Written $\tfrac12\otimes\tfrac12=1\oplus0$. Dimension check: $2\times2=3+1$. ✓
+
+</Derivation>
+
+The expansion coefficients in that derivation — $1$, $\tfrac1{\sqrt2}$, $-\tfrac1{\sqrt2}$ — are the entire
+true identity of the CG coefficients $\braket{m_1\,m_2}{S\,M}$:
+"the amplitude of product state $\ket{m_1 m_2}$ inside total state $\ket{S,M}$".
+Example of use: the system is in $\ket{1,0}$ and you measure particle 1's $S_{1z}$;
+the probability of "up" is the squared modulus of the amplitude $\tfrac1{\sqrt2}$, i.e. $50\%$.
+The page-long CG tables in textbook appendices are nothing but steps 2 through 5 repeated for
+every $(j_1,j_2)$ — the method is identical each time: pin the top, climb with the lowering operator,
+find the new family in the orthogonal complement.
+
+<DualView>
+<div slot="left">
+
+**Intuition: why "three symmetric, one antisymmetric" of all things.**
+
+Swap the two particles: all three triplet members are unchanged (symmetric), while the singlet flips sign
+(antisymmetric). That symmetry rides along with total spin by no coincidence: $\hat S^2$ is invariant
+under exchange, so its eigenstates must have definite exchange symmetry.
+
+A crude but useful picture: in the triplet the two spins "cooperate, aligned";
+the $M=0$ member $\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow}$
+is "aligned but lying sideways" — the total length is still full ($S=1$), just not along z.
+The singlet is two spins "in total opposition", cancelling cleanly:
+not only is $M=0$, but the total spin measures zero along every direction.
+
+This "$3+1$" grouping takes centre stage in chapter 8:
+the Pauli principle demands an antisymmetric total electron wavefunction, so the spin symmetry
+dictates the spatial symmetry in turn — the starting point of covalent bonds and magnetism.
+
+</div>
+<div slot="right">
+
+**Formula: the rotational invariance of the singlet.**
+
+$S=0$ means the singlet's total spin component vanishes along **every** direction; in other words,
+it does not budge under rotations. Verify directly: rewrite in the x basis
+$\ket{\pm x}=\frac{\ket{\uparrow}\pm\ket{\downarrow}}{\sqrt2}$, and expansion gives
+
+$$
+\frac{\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}}{\sqrt2}
+=-\,\frac{\ket{+x\,{-}x}-\ket{-x\,{+}x}}{\sqrt2}
+$$
+
+Change to the x basis and the form is untouched (up to an overall phase).
+**Whichever axis you measure along, the two particles' results are strictly opposite.**
+
+This state is also **entangled**: it cannot be written as "state of particle 1 $\otimes$ state of particle 2"
+(if it could, the expansion would have a single term or factorable coefficients, contradicting the formula above).
+The EPR paradox and the Bell experiments use exactly this singlet — see chapter 9.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The most common mistake: |↑↓⟩ is not an eigenstate of total spin">
+"One up and one down, so the total spin is zero" — wrong.
+$\ket{\uparrow\downarrow}$ does have $M=0$, but it is an equal-amplitude superposition of both families:
+
+$$
+\ket{\uparrow\downarrow}=\frac{\ket{1,0}+\ket{0,0}}{\sqrt2}
+$$
+
+Measure total spin $S^2$ on it and you get $2\hbar^2$ ($S=1$) half the time and 0 the other half.
+"z components cancelling" and "vectors cancelling" are different things —
+$\ket{1,0}$ is a living example of cancelled z components with an uncancelled total length.
 </Callout>
 
-## Planned contents
+## The general rule and dimension counting
 
-- Two bases: |j1 j2 m1 m2⟩ and |J M⟩
-- Computing Clebsch–Gordan coefficients
-- Singlet and triplet
+For arbitrary $j_1,j_2$ the method is exactly as above, and the conclusion just as clean.
+The allowed values of the total angular momentum $J$ are
+
+$$
+J=|j_1-j_2|,\ |j_1-j_2|+1,\ \dots,\ j_1+j_2\qquad(\text{each }J\text{ appearing once})
+$$
+
+— from "antiparallel" to "parallel" in steps of 1. The classical "length continuously adjustable
+between difference and sum" becomes "between difference and sum, adjustable in discrete integer steps".
+Each $J$ family has $2J+1$ members, and the total dimension must balance:
+
+$$
+(2j_1+1)(2j_2+1)=\sum_{J=|j_1-j_2|}^{j_1+j_2}(2J+1)
+$$
+
+A quick self-check tool. One example we will need immediately: an electron in a hydrogen p orbital,
+$l=1$ coupled to spin $s=\tfrac12$:
+
+$$
+1\otimes\tfrac12=\tfrac32\oplus\tfrac12,\qquad
+3\times2=4+2\ \checkmark
+$$
+
+The six states of a p electron regroup into four with $j=\tfrac32$ and two with $j=\tfrac12$.
+Remember this "$4+2$" — next section it becomes two real lines in a spectrum.
+
+<Callout type="insight" title="CG coefficients are the price list for changing the question">
+This whole section compresses into one sentence: **the product basis and the total angular momentum basis
+are two coordinate systems for the same four-dimensional room, and the CG coefficients are the rotation matrix
+between them.**
+
+Which basis you want depends on which one the Hamiltonian favours. When the two spins ignore each other
+(say, each sitting in its own magnetic field), the product basis is the eigenbasis — use it.
+When the two spins couple through $\hat{\vec S}_1\cdot\hat{\vec S}_2$
+(hydrogen's hyperfine structure, next section's spin–orbit coupling),
+$\hat S^2$ enters the Hamiltonian and the total basis is the eigenbasis.
+The singlet–triplet splitting of hydrogen's ground state is about $5.9\ \mu\text{eV}$,
+corresponding to a wavelength of 21 cm — radio astronomy maps the spiral-arm structure of the Milky Way
+using exactly this "visible only after the change of basis" line.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Total angular momentum and two bases', latex: '\\hat{\\vec S}=\\hat{\\vec S}_1+\\hat{\\vec S}_2,\\qquad \\braket{m_1 m_2}{S\\,M}=\\text{CG coefficients}', note: 'Product basis answers "which way each"; total basis answers "how much altogether" — the two are incompatible' },
+    { name: 'Triplet', latex: '\\ket{1,\\pm1}=\\ket{\\uparrow\\uparrow},\\ket{\\downarrow\\downarrow},\\quad \\ket{1,0}=\\tfrac{1}{\\sqrt2}(\\ket{\\uparrow\\downarrow}+\\ket{\\downarrow\\uparrow})', note: 'Exchange symmetric; S = 1' },
+    { name: 'Singlet', latex: '\\ket{0,0}=\\tfrac{1}{\\sqrt2}(\\ket{\\uparrow\\downarrow}-\\ket{\\downarrow\\uparrow})', note: 'Exchange antisymmetric, rotationally invariant, entangled; opposite outcomes along every direction' },
+    { name: 'Coupling rule', latex: 'J=|j_1-j_2|,\\dots,j_1+j_2;\\qquad (2j_1{+}1)(2j_2{+}1)=\\textstyle\\sum_J(2J{+}1)', note: 'Dimension-count self-check; e.g. 1⊗½=3/2⊕½, 6=4+2' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am6-1',
+      prompt: 'Why can "definite total length S" and "definite S_{1z} of particle 1" generally not be had together?',
+      options: [
+        'Because Ŝ² does not commute with Ŝ_{1z} — Ŝ² contains terms like Ŝ₁ₓŜ₂ₓ that flip individual spins',
+        'Because measurement always disturbs the system',
+        'Because the two particles are too close together',
+        'They actually can be had together; it is just inconvenient to compute',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is how non-commutativity manifests in measurement, not the reason itself.',
+        3: 'Measure S_{1z} in the singlet |0,0⟩ and you get ±ħ/2 with equal probability — they genuinely cannot both be sharp.',
+      },
+      explain: '[Ŝ², Ŝ_{1z}] ≠ 0 (the cross term 2Ŝ₁·Ŝ₂ fails to commute with Ŝ_{1z}). By section 3.6: no commuting, no common eigenbasis. That is the root reason the product basis and the total basis must be two different bases.',
+    },
+    {
+      id: 'am6-2',
+      prompt: 'Which statements about the singlet |0,0⟩ = (|↑↓⟩ − |↓↑⟩)/√2 are correct? (Select all that apply.)',
+      options: [
+        'Measured along any direction, the two particles\' spin components are strictly opposite',
+        'It changes sign under exchange of the two particles',
+        'It can be written as a product of two single-particle states',
+        'It is an entangled state',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'If it could be written as a product it would not be entangled; the coefficients (0, 1/√2, −1/√2, 0) cannot factor as (a₁b₁, a₁b₂, a₂b₁, a₂b₂).',
+      },
+      explain: 'S = 0 means rotational invariance: change to any basis and the form is unchanged (at most an overall phase), so the anti-correlation holds along every axis. Exactly why the EPR–Bell experiments cast it in the leading role.',
+    },
+    {
+      id: 'am6-3',
+      prompt: 'The system is in |↑↓⟩. Measuring total spin S², the possible outcomes and probabilities are:',
+      options: [
+        '2ħ² (probability 1/2) or 0 (probability 1/2)',
+        'Certainly 0, because up and down cancel',
+        'Certainly 2ħ²',
+        'ħ² (probability 1)',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The classic mistake: z components summing to zero is not the same as the vector sum being zero. |↑↓⟩ is not an eigenstate of S².',
+        3: 'S(S+1)ħ² can only be 2ħ² or 0; ħ² is not an eigenvalue.',
+      },
+      explain: '|↑↓⟩ = (|1,0⟩ + |0,0⟩)/√2, two components of equal amplitude, 50% each. The post-measurement state collapses to the triplet or the singlet according to the outcome — read the CG table backwards and it becomes the probability table for questions like this.',
+    },
+    {
+      id: 'am6-4',
+      type: 'numeric',
+      prompt: 'Couple j₁ = 2 with j₂ = 1. How many allowed values of J are there? (Count using |j₁−j₂| ≤ J ≤ j₁+j₂.)',
+      answer: 3,
+      tolerance: 0,
+      unit: 'values',
+      explain: 'J = 1, 2, 3 — three values. Dimension check: (2×2+1)(2×1+1) = 15 = (2·1+1)+(2·2+1)+(2·3+1) = 3+5+7. ✓ The "difference to sum in steps of 1" rule works for any two angular momenta.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We can now add $\hat{\vec L}$ and $\hat{\vec S}$ into a total angular momentum $\hat{\vec J}$,
+and we know a p electron's six states regroup into a $j=\tfrac32$ family and a $j=\tfrac12$ family.
+
+But so far this is only a mathematical regrouping — the two families still have exactly the same energy.
+The next section divides the estate between them: as the electron moves around the nucleus,
+its own magnetic moment feels an internally generated magnetic field, and the coupling term
+$\hat{\vec L}\cdot\hat{\vec S}$ pushes the energies of different-$j$ states apart.
+The two D lines in a sodium lamp's yellow glow, 0.6 nm apart, are exactly this inheritance being split.

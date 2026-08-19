@@ -1,17 +1,247 @@
 ---
-title: 'The Dirac equation'
-summary: 'Matrices invented to make the equation first order in time.'
+title: The Dirac equation
 section: '12.3'
 order: 3
-status: stub
+summary: 'Take the square root of E²=p²c²+m²c⁴: what numbers cannot do, matrices can. The instant the equation is written down, spin 1/2 walks in uninvited — not an extra postulate, but the price of making relativity and quantum mechanics compatible.'
+status: done
+prereqs:
+  - 12-relativistic/02-klein-gordon
+  - 05-angular-momentum/03-spin-half
+sims: []
+objectives:
+  - 'State the goal of Dirac''s "linearisation": first order in both time and space, squaring back to the relativistic dispersion relation'
+  - Derive the anticommutation algebra the α and β matrices must satisfy, and explain why the minimum size is 4×4
+  - Write the 2×2 block form of α and β using Pauli matrices, and the covariant γ-matrix form
+  - Show that orbital angular momentum is not conserved and only becomes so with spin ħΣ/2 added — the moment spin "emerges"
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section's autopsy left exactly one way out: for positive-definite probability, the equation must be first order in time; for relativistic covariance, it must then be first order in space too. But in the dispersion relation $E^2=p^2c^2+m^2c^4$, both $E$ and $p$ appear squared — a first-order equation amounts to **taking the square root** of this sum of squares. In 1928, the 26-year-old Dirac decided to take the root by brute force.
+
+## Taking the square root: an algebra problem
+
+First state the goal precisely. We want an equation of the form
+
+$$
+\ii\hbar\frac{\partial\psi}{\partial t}=\hat H\psi,\qquad
+\hat H=c\,\vec\alpha\cdot\hat{\vec p}+\beta\,mc^2
+=c\sum_{k=1}^3\alpha_k\hat p_k+\beta\,mc^2
+$$
+
+First order in time (the left side copied from Schrödinger), first order in space ($\hat p=-\ii\hbar\nabla$ appears only to the first power). $\alpha_1,\alpha_2,\alpha_3,\beta$ are four undetermined "coefficients" — do not presume yet that they are numbers. There is only one constraint, but it is iron: $\hat H$ squared must return the relativistic relation, $\hat H^2=c^2\hat p^2+m^2c^4$, or the solutions will not obey the correct energy-momentum relation.
+
+<Derivation title="Square once, and the whole algebra is forced out" level="基础" minutes={8} open={true}>
+
+**Step 1: expand $\hat H^2$ honestly.** Keep the order of $\alpha,\beta$ intact (we do not yet know whether they commute):
+
+$$
+\hat H^2=c^2\sum_{j,k}\alpha_j\alpha_k\,\hat p_j\hat p_k
++mc^3\sum_k(\alpha_k\beta+\beta\alpha_k)\,\hat p_k
++\beta^2m^2c^4
+$$
+
+In the first term $\hat p_j\hat p_k=\hat p_k\hat p_j$ (momentum components commute with each other), so only the symmetric combination acts, and it can be written $\frac12(\alpha_j\alpha_k+\alpha_k\alpha_j)\hat p_j\hat p_k$.
+
+**Step 2: compare with the target term by term.** Demanding $\hat H^2=c^2(\hat p_1^2+\hat p_2^2+\hat p_3^2)+m^2c^4$:
+
+- The cross terms in $\hat p_j\hat p_k$ ($j\neq k$) must vanish, and the squared terms must have coefficient 1:
+
+$$
+\alpha_j\alpha_k+\alpha_k\alpha_j=2\delta_{jk}
+$$
+
+- The terms linear in $\hat p_k$ must vanish, and the constant term must have coefficient 1:
+
+$$
+\alpha_k\beta+\beta\alpha_k=0,\qquad \beta^2=1
+$$
+
+**Step 3: read off the conclusion — they cannot be numbers.** The condition $\alpha_1\alpha_2=-\alpha_2\alpha_1$ is called **anticommutation**: swapping the order flips the sign. Two non-zero ordinary numbers always commute under multiplication and can never anticommute. Dirac's flash of insight: **let them be matrices** — matrix multiplication does not commute anyway — and $\psi$ correspondingly becomes a multi-component column vector.
+
+**Step 4: how big must the matrices be?** Three quick reconnaissance results:
+
+1. **Candidates lie ready to hand**: the Pauli matrices $\sigma_1,\sigma_2,\sigma_3$ ([section 5.3](/en/ch/05-angular-momentum/03-spin-half/)) satisfy exactly $\sigma_j\sigma_k+\sigma_k\sigma_j=2\delta_{jk}$ — but there are only **three** of them, and we need **four** mutually anticommuting matrices. No fourth can be scraped together in 2×2 (any 2×2 matrix expands in $1,\sigma_1,\sigma_2,\sigma_3$, and the identity commutes with everything, so no anticommuting fourth member exists).
+2. **Zero trace**: from $\alpha_k=-\beta\alpha_k\beta$ (the anticommutation relation rewritten using $\beta^2=1$), taking the trace gives $\mathrm{tr}\,\alpha_k=-\mathrm{tr}\,\alpha_k=0$; likewise $\mathrm{tr}\,\beta=0$.
+3. **Eigenvalues ±1**: $\alpha_k^2=\beta^2=1$ means the eigenvalues can only be $\pm1$; zero trace then demands equal numbers of $+1$ and $-1$ — the dimension must be **even**.
+
+Two dimensions insufficient, odd dimensions out — the next candidate is **4×4**. Four dimensions indeed suffice, and the standard choice (the Dirac representation) is written in 2×2 blocks:
+
+$$
+\alpha_k=\begin{pmatrix}0&\sigma_k\\ \sigma_k&0\end{pmatrix},\qquad
+\beta=\begin{pmatrix}I&0\\ 0&-I\end{pmatrix}
+$$
+
+(Verify the three sets of relations using $\sigma_j\sigma_k+\sigma_k\sigma_j=2\delta_{jk}$ — a two-minute exercise.)
+
+</Derivation>
+
+So $\psi$ is a **four-component** column vector, called a Dirac **spinor** — and the "four" is no accident: we shall see shortly that it = two spin components × two energy branches. Writing the momentum operator back as a derivative gives the **Dirac equation**:
+
+$$
+\ii\hbar\frac{\partial\psi}{\partial t}
+=\bigl(-\ii\hbar c\,\vec\alpha\cdot\nabla+\beta mc^2\bigr)\psi
+$$
+
+It immediately makes good on its promise: being first order in time, one can define $\rho=\psi^\dagger\psi=\sum_{a=1}^4|\psi_a|^2\geq0$ — a **positive-definite probability density**, paired with the current $\vec j=c\,\psi^\dagger\vec\alpha\,\psi$ satisfying the continuity equation. The KG knot is untied.
+
+<DualView>
+<div slot="left">
+
+**The covariant form.** Multiply the equation through by $\beta$, reorganise the time and space terms, and define $\gamma^0=\beta$, $\gamma^k=\beta\alpha_k$; the equation becomes one line:
+
+$$
+\ii\hbar\,\gamma^\mu\partial_\mu\psi=mc\,\psi
+$$
+
+Time and space derivatives stand side by side on completely equal footing — the first genuine fulfilment of the "spacetime equality" demanded at the start of this chapter. The γ matrices in block form:
+
+$$
+\gamma^0=\begin{pmatrix}I&0\\0&-I\end{pmatrix},\qquad
+\gamma^k=\begin{pmatrix}0&\sigma_k\\-\sigma_k&0\end{pmatrix}
+$$
+
+</div>
+<div slot="right">
+
+**The whole algebra condensed into one line.** The three sets of anticommutation relations merge into
+
+$$
+\gamma^\mu\gamma^\nu+\gamma^\nu\gamma^\mu=2\eta^{\mu\nu}
+$$
+
+where $\eta^{\mu\nu}=\mathrm{diag}(1,-1,-1,-1)$ is the Minkowski metric: the γ matrices are "the square root of the spacetime metric", and the Dirac equation is a square root taken of spacetime geometry itself. (This structure is called a Clifford algebra, invented by mathematicians half a century before Dirac — it waited in the storeroom for its physics.)
+
+</div>
+</DualView>
+
+## The climax: spin emerges on its own
+
+So far the $\sigma_k$ have been mere building bricks — nowhere have we **assumed** that the electron has spin. Now run a routine check: is the angular momentum of a free particle conserved?
+
+<Derivation title="Orbital angular momentum is not conserved — unless spin is added" level="进阶" minutes={8}>
+
+**Step 1: check the orbital angular momentum.** Take $\hat L_z=\hat x\hat p_y-\hat y\hat p_x$ and commute it with $\hat H=c\vec\alpha\cdot\hat{\vec p}+\beta mc^2$ (the $\beta mc^2$ term involves neither position nor momentum):
+
+$$
+[\hat L_z,\hat H]=c\,\alpha_j[\hat x\hat p_y-\hat y\hat p_x,\hat p_j]
+=c\bigl(\alpha_x[\hat x,\hat p_x]\hat p_y-\alpha_y[\hat y,\hat p_y]\hat p_x\bigr)
+=\ii\hbar c\,(\alpha_x\hat p_y-\alpha_y\hat p_x)
+$$
+
+**Not zero.** In Schrödinger theory the free particle's $\hat L_z$ is ironclad conserved; in Dirac theory it is not — angular momentum of an isolated system is leaking. Where to?
+
+**Step 2: recover the missing piece.** Define, using block Pauli matrices,
+
+$$
+\Sigma_z=\begin{pmatrix}\sigma_z&0\\0&\sigma_z\end{pmatrix}
+$$
+
+Using $\sigma_x\sigma_y=\ii\sigma_z$ and its cousins, compute block by block (exercise: only 2×2 block multiplication is needed):
+
+$$
+[\Sigma_z,\hat H]=c\,[\Sigma_z,\vec\alpha\cdot\hat{\vec p}\,]
+=-2\ii c\,(\alpha_x\hat p_y-\alpha_y\hat p_x)
+$$
+
+Differing from Step 1's result only by a factor $-2/\hbar$.
+
+**Step 3: combine.** Define $\hat J_z=\hat L_z+\frac{\hbar}{2}\Sigma_z$; then
+
+$$
+[\hat J_z,\hat H]=\ii\hbar c(\alpha_x\hat p_y-\alpha_y\hat p_x)
++\frac{\hbar}{2}\cdot(-2\ii c)(\alpha_x\hat p_y-\alpha_y\hat p_x)=0
+$$
+
+**What is conserved is $\hat{\vec J}=\hat{\vec L}+\frac\hbar2\vec\Sigma$.** The added piece $\frac\hbar2\vec\Sigma$ is an intrinsic angular momentum: each component has eigenvalues $\pm\hbar/2$, and the sum of squares is $\frac34\hbar^2=s(s+1)\hbar^2$ with $s=\frac12$. This is precisely the spin 1/2 that chapter 5 **rammed** into the theory at the demand of the Stern-Gerlach experiment — and here it walks out of the equation's algebra by itself.
+
+</Derivation>
+
+<Callout type="insight" title="The ancestry of spin, hereby established">
+Recall chapter 5: spin was forced into the theory with the experiments holding its head down — the twin spots of Stern-Gerlach, the anomalous Zeeman effect — driving Pauli to add two components to the wavefunction with no explanation whatsoever: "that's just how it is."
+
+The Dirac equation supplies the explanation: **demand "relativistic covariance + first order in time + positive-definite probability", and the minimal algebraic structure that solves it automatically carries an intrinsic angular momentum of ħ/2.** Spin is not a spinning little ball, not an extra postulate, but the inevitable product of the compatibility conditions between relativity and quantum mechanics. A mathematical structure invented purely to "take a square root" handed over the most baffling experimental fact of the preceding decade — one of theoretical physics' rare shining moments. (An honest footnote: a similar linearisation of the Schrödinger equation also yields spin, so strictly speaking it is not "exclusively relativistic"; but its first appearance as a **consequence** is here. Section 12.5 has an even harder gift: $g=2$.)
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Don't celebrate yet: the negative-energy solutions remain">
+Insert plane waves into the Dirac equation and each momentum still yields $E=\pm\sqrt{p^2c^2+m^2c^4}$ — the four components are exactly the four combinations "spin up/down × positive/negative energy". Taking the square root disposed of negative probability, but not of negative energy. And now the problem is more dangerous: since levels lower than $+mc^2$ exist (all the way down to $-\infty$), why doesn't the electron in an atom radiate photons and tumble down forever? By what right does a hydrogen atom survive longer than a nanosecond? Dirac was cornered by his own equation — next section, watch him turn the tables.
+</Callout>
 
-- Dirac's line of construction
-- Gamma matrices and spinors
-- The non-relativistic limit returning the Pauli equation
+<KeyFormulas
+  items={[
+    { name: 'Dirac equation (Hamiltonian form)', latex: '\\ii\\hbar\\,\\partial_t\\psi=\\bigl(c\\,\\vec\\alpha\\cdot\\hat{\\vec p}+\\beta mc^2\\bigr)\\psi', note: 'ψ is a four-component spinor; ρ=ψ†ψ≥0 is positive definite' },
+    { name: 'Anticommutation algebra', latex: '\\alpha_j\\alpha_k+\\alpha_k\\alpha_j=2\\delta_{jk},\\quad \\alpha_k\\beta+\\beta\\alpha_k=0,\\quad \\beta^2=1', note: 'Uniquely forced by H²=c²p²+m²c⁴; numbers fail, minimum 4×4' },
+    { name: 'Block representation', latex: '\\alpha_k=\\begin{pmatrix}0&\\sigma_k\\\\ \\sigma_k&0\\end{pmatrix},\\quad \\beta=\\begin{pmatrix}I&0\\\\ 0&-I\\end{pmatrix}', note: 'Pauli matrices as bricks; covariant form iħγ^μ∂_μψ=mcψ' },
+    { name: 'Conserved angular momentum', latex: '\\hat{\\vec J}=\\hat{\\vec L}+\\frac{\\hbar}{2}\\vec\\Sigma', note: 'L alone is not conserved; spin 1/2 appears automatically to complete the conservation law' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel3-1',
+      prompt: 'Dirac demands H=cα·p+βmc² satisfy H²=c²p²+m²c⁴, which forces α and β to:',
+      options: [
+        'Pairwise anticommute and square to 1 — hence they cannot be ordinary numbers and must be matrices',
+        'All equal ±1',
+        'Be arbitrary complex numbers',
+        'Be mutually commuting Hermitian operators',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'If α and β were ±1, cross terms like 2α_jα_k p_jp_k would not vanish, and H² would contain spurious p_xp_y-type terms.',
+        3: 'Anticommutation (αβ=−βα) is exactly what is needed; a commuting set can never eliminate the cross terms.',
+      },
+      explain: 'Expand H² and compare term by term: kill the cross terms → α_jα_k+α_kα_j=2δ_{jk}; kill the linear-in-p terms → α_kβ+βα_k=0; the constant term → β²=1. Non-zero numbers always commute, so the answer must be sought among matrices.',
+    },
+    {
+      id: 'rel3-2',
+      prompt: 'Why are 2×2 matrices not enough, and why is the minimum 4×4? (Select all that apply.)',
+      options: [
+        'Four mutually anticommuting matrices are needed, but 2×2 admits at most three (the Pauli matrices)',
+        'The anticommutation relations plus β²=1 force each matrix to be traceless with eigenvalues ±1 in equal numbers, so the dimension must be even',
+        'Because spacetime is four-dimensional, the matrix dimension must equal the spacetime dimension',
+        'Odd dimensions such as 3×3 are excluded by "zero trace + eigenvalues ±1"',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'A coincidence, nothing more: 4 = 2 (spin) × 2 (energy branches). In six spacetime dimensions the γ matrices would need to be 8×8 — the two "fours" have different origins.',
+      },
+      explain: 'Any 2×2 matrix is a combination of 1 and the three σ, so no fourth member anticommuting with all three σ exists; tr α = tr(−βαβ) = −tr α = 0 plus eigenvalues ±1 forces an even dimension. The next even number, 4, succeeds.',
+    },
+    {
+      id: 'rel3-3',
+      prompt: 'The precise meaning of "spin emerges automatically from the Dirac equation" is:',
+      options: [
+        'For a free Dirac particle the orbital angular momentum L is not conserved; only J=L+ħΣ/2 is — and the completing term is spin 1/2',
+        'The Dirac equation proves the electron is a spinning little ball',
+        'The four components of the equation correspond directly to spin quantum numbers s=0,1/2,1,3/2',
+        'Pauli matrices appear in the equation, therefore there is spin',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The "spinning ball" picture was ruled out long ago (its equator would exceed the speed of light, see section 5.3); spin is an intrinsic angular momentum with no classical counterpart.',
+        3: 'The four components = two spin orientations × two energy branches, all belonging to a single s=1/2 particle.',
+      },
+      explain: '[L_z,H]=iħc(α_xp_y−α_yp_x)≠0, while [ħΣ_z/2,H] contributes exactly the opposite term. The conservation law demands the electron carry intrinsic angular momentum ħ/2 — at no step was spin "put in"; it is a consequence of the algebraic structure.',
+    },
+    {
+      id: 'rel3-4',
+      prompt: 'The Dirac equation solved the KG negative-probability problem, but what it did not solve is:',
+      options: [
+        'Negative-energy solutions still exist, and the unbounded-below spectrum threatens atomic stability',
+        'The equation is still not Lorentz covariant',
+        'The probability density can still be negative',
+        'The equation cannot describe an electron in an electromagnetic field',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'In iħγ^μ∂_μψ=mcψ the time and space derivatives stand fully equal — covariance is exactly its success.',
+        3: 'ρ=ψ†ψ=Σ|ψ_a|² is a sum of four squared moduli, strictly non-negative — the direct payoff of the first-order-in-time structure.',
+      },
+      explain: 'Plane waves still give E=±√(p²c²+m²c⁴): positive-definite probability is secured, negative energy is not, and now the spectrum runs down to −∞ — why doesn’t the electron fall forever? Section 12.4’s answer will predict a new particle.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The Dirac equation won the probability but took on a heavier debt: the spectrum has no floor. Every electron should, by rights, radiate its way down toward $E=-\infty$, and the universe should contain no stable atoms. Dirac's escape was outrageous — redefine the "vacuum" as a **sea filled with negative-energy electrons**. This seemingly absurd picture will predict the first antimatter in human history.

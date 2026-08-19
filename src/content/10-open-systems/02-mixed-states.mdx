@@ -2,24 +2,272 @@
 title: 混合态与 Bloch 球收缩
 section: '10.2'
 order: 2
-summary: 混合态在球内部，纯态在球面上。
-status: stub
-sims: ['density-matrix']
+summary: 量子比特的一切状态都住在一个单位球里：纯态在球面，混合态在内部，球心是「完全不知道」。幺正演化是旋转，环境的破坏是收缩。
+status: done
+prereqs:
+  - 10-open-systems/01-why-density-matrix
+  - 09-quantum-information/01-qubit-bloch-sphere
+objectives:
+  - 把任意量子比特的 ρ 写成 Bloch 矢量形式，并从矩阵反解出 Bloch 矢量
+  - 用 Bloch 矢量长度计算纯度，解释球面、内部、球心分别对应什么态
+  - 写出沿任意方向测量的概率公式 P = (1 + r·n)/2
+  - 描述幺正演化与退相干在 Bloch 球上的几何图像：旋转 vs 收缩
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节的结论是：实验室里的量子比特要用密度矩阵描述，而它「变坏」的过程
+就是纯度下降的过程。但 $2\times2$ 复矩阵毕竟不直观——四个复数、
+三条约束，很难一眼看出一个态「混到什么程度」。
+
+好在量子比特享有一个奢侈品：它的**全部**状态空间可以画在三维空间里。
+
+## 现象开门：三个数就够了
+
+[9.1 节](/ch/09-quantum-information/01-qubit-bloch-sphere/)已经把**纯态**画上了 Bloch 球面：
+$\ket{\psi}=\cos\frac\theta2\ket{0}+\ee^{\ii\phi}\sin\frac\theta2\ket{1}$ 对应球面上方向 $(\theta,\phi)$ 的单位矢量。
+但球面只是一层皮。混合态住在哪里？
+
+数一数自由度。一个 $2\times2$ 矩阵有 4 个复数、8 个实参数；
+厄米性砍掉 4 个，$\operatorname{Tr}\hat\rho=1$ 再砍 1 个，剩 **3 个实参数**。
+三个实数正好是一个三维矢量——这不是巧合，是下面这个展开：
+
+<Derivation title="从 2×2 矩阵到 Bloch 矢量" level="基础" minutes={6}>
+
+**第一步：选一组基。** 泡利矩阵加单位阵 $\{\hat 1,\hat\sigma_x,\hat\sigma_y,\hat\sigma_z\}$
+构成 $2\times2$ 厄米矩阵的完备基（4 个线性无关的厄米矩阵，正好张满）。
+任何厄米的 $\hat\rho$ 都能展开为
+
+$$
+\hat\rho=a_0\hat 1+a_x\hat\sigma_x+a_y\hat\sigma_y+a_z\hat\sigma_z,
+\qquad a_\mu\in\mathbb{R}
+$$
+
+**第二步：用迹定系数。** 泡利矩阵无迹且 $\operatorname{Tr}(\hat\sigma_i\hat\sigma_j)=2\delta_{ij}$，所以
+
+$$
+\operatorname{Tr}\hat\rho=2a_0=1\;\Rightarrow\;a_0=\tfrac12,
+\qquad
+a_i=\tfrac12\operatorname{Tr}(\hat\rho\,\hat\sigma_i)=\tfrac12\langle\sigma_i\rangle
+$$
+
+第二个等号用了上一节的账本公式 $\langle A\rangle=\operatorname{Tr}(\hat\rho\hat A)$。
+定义 **Bloch 矢量** $\vec r\equiv(\langle\sigma_x\rangle,\langle\sigma_y\rangle,\langle\sigma_z\rangle)$，则
+
+$$
+\hat\rho=\frac{\hat 1+\vec r\cdot\hat{\vec\sigma}}{2}
+=\frac12\begin{pmatrix}1+r_z&r_x-\ii r_y\\ r_x+\ii r_y&1-r_z\end{pmatrix}
+$$
+
+**Bloch 矢量就是三个自旋分量的期望值**——它不是抽象参数，每个分量都直接可测。
+
+**第三步：半正定给出球。** $\hat\rho$ 的本征值可以直接算：
+$\hat\rho-\frac12\hat 1=\frac12\vec r\cdot\hat{\vec\sigma}$，而 $(\vec r\cdot\hat{\vec\sigma})^2=r^2\hat 1$
+（泡利矩阵的标志性代数），所以 $\vec r\cdot\hat{\vec\sigma}$ 的本征值是 $\pm r$，$\hat\rho$ 的本征值是
+
+$$
+\lambda_\pm=\frac{1\pm r}{2},\qquad r\equiv|\vec r|
+$$
+
+半正定要求 $\lambda_-\ge0$，即
+
+$$
+r\le1
+$$
+
+**量子比特的全部合法状态 = 单位实心球**。球面（$r=1$）上 $\lambda_-=0$，
+只剩一个本征态——纯态；内部（$r<1$）两个本征值都非零——混合态。
+
+**第四步：纯度。** 利用 $\operatorname{Tr}(\hat\rho^2)=\lambda_+^2+\lambda_-^2$：
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac{(1+r)^2+(1-r)^2}{4}=\frac{1+r^2}{2}
+$$
+
+$r=1$ 给出纯度 1；$r=0$ 给出 $\tfrac12$——正是 3.10 节的最大混合态 $\frac12\hat 1$，它住在**球心**。
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**一张态的地图**
+
+- **球面**：纯态。你对它了解到量子力学允许的极限。
+- **内部**：混合态。离球面越远，混得越厉害。
+- **球心**：最大混合态 $\frac12\hat 1$。任何方向测都是 50/50，一枚彻底的硬币。
+
+矢量的**方向**告诉你「往哪个方向测最有把握」，
+矢量的**长度**告诉你「这份把握有多大」。
+$r$ 就是把量子态压缩成一个数的「健康指标」。
+
+</div>
+<div slot="right">
+
+**对应的公式**
+
+$$
+\hat\rho=\frac{\hat 1+\vec r\cdot\hat{\vec\sigma}}{2},\qquad 0\le r\le1
+$$
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac{1+r^2}{2}
+$$
+
+沿单位方向 $\vec n$ 测自旋，得 $+1$ 的概率：
+
+$$
+P(+\vec n)=\operatorname{Tr}\!\Big(\hat\rho\,\frac{\hat 1+\vec n\cdot\hat{\vec\sigma}}{2}\Big)
+=\frac{1+\vec r\cdot\vec n}{2}
+$$
+
+（第二步用了 $\operatorname{Tr}(\sigma_i\sigma_j)=2\delta_{ij}$。）
+测量结果只依赖 $\vec r$ 在 $\vec n$ 上的**投影**。
+
+</div>
+</DualView>
+
+<Callout type="insight" title="上一节的例子，现在有了画面">
+拿 10.1 节那两个「沿 z 测量分不出来」的态各算一次 Bloch 矢量：
+
+- 叠加态 $\sqrt{0.7}\ket{\uparrow}+\sqrt{0.3}\ket{\downarrow}$：
+  $\vec r=(2\sqrt{0.21},\,0,\,0.4)$，长度 $r=\sqrt{0.84+0.16}=1$——球面上，只是不在北极。
+- 系综「70% 上、30% 下」：$\vec r=(0,0,0.4)$，长度 $0.4$——在 $z$ 轴上，**深入球体内部**。
+
+两者的 $z$ 分量相同（所以沿 $z$ 测量无法区分），但一个在球面、一个在轴上。
+「相干项被抹掉」在地图上就是**把矢量垂直压到 $z$ 轴上**——横向分量没了，长度从 1 缩到 0.4。
+
+这提前剧透了本章的几何主线：**丢相干 = Bloch 矢量变短**。
 </Callout>
 
-## 内容规划
+## 旋转与收缩：两类演化的分水岭
 
-- Bloch 矢量长度与纯度
-- 最大混合态
-- 退相干如何缩短 Bloch 矢量
+现在看动力学。态在球里怎么动？
 
-## 计划中的交互模拟
+<Derivation title="幺正演化 = 刚性旋转" level="进阶" minutes={5}>
 
-- `density-matrix`
+幺正演化 $\hat\rho\to\hat U\hat\rho\hat U^\dagger$ 作用在 Bloch 矢量上是什么？
+以绕 $z$ 轴的旋转 $\hat U=\ee^{-\ii\phi\hat\sigma_z/2}$ 为例。利用泡利代数
+$\hat U^\dagger\hat\sigma_x\hat U=\cos\phi\,\hat\sigma_x-\sin\phi\,\hat\sigma_y$（可以逐项展开验证），得
 
-模拟组件写好后在 `src/components/mdx/Sim.astro` 的 REGISTRY 里登记，
-正文里用 `<Sim name="density-matrix" />` 嵌入即可。
+$$
+r_x\to r_x\cos\phi+r_y\sin\phi,\quad
+r_y\to -r_x\sin\phi+r_y\cos\phi,\quad
+r_z\to r_z
+$$
+
+正是绕 $z$ 轴转角 $\phi$ 的三维旋转。一般结论：任何 $2\times2$ 幺正变换
+（除掉不可观测的整体相位）对应 Bloch 球的一个**刚性旋转**，转轴和转角由
+$\hat U=\ee^{-\ii\theta\,\vec n\cdot\hat{\vec\sigma}/2}$ 里的 $\vec n$ 和 $\theta$ 给出。
+
+旋转保持长度：$r$ 不变，纯度 $\frac{1+r^2}{2}$ 不变。
+**这就是 3.10 节「幺正演化保纯度」的几何版本**——孤立体系的态只会在球里转圈，
+永远到不了球心。
+
+推论立刻跟上：既然实验室里的量子比特**确实**从球面滑向了球内，
+它经历的就一定不是幺正演化。能把矢量变短的映射长什么样？这正是下一节的主角。
+
+</Derivation>
+
+先给一个具体的预告。设环境的作用是「以概率 $p$ 把态彻底打乱成 $\frac12\hat 1$，
+以概率 $1-p$ 什么都不做」：
+
+$$
+\hat\rho\to(1-p)\,\hat\rho+p\,\frac{\hat 1}{2}
+\qquad\Longleftrightarrow\qquad
+\vec r\to(1-p)\,\vec r
+$$
+
+Bloch 球整体**均匀缩小**成半径 $1-p$ 的球——这叫退极化信道。
+还有的环境只压扁横向分量（丢相位不丢能量），有的把整个球往北极搬（原子自发辐射，
+往基态掉）。下一节会把这三种「变形」都算出来；
+在地图上，它们分别是均匀收缩、压成橄榄、和「拉向一个点」。
+
+<Callout type="warning" title="高维没有这么好的地图">
+Bloch 实心球是量子比特（$d=2$）的特权。$d\ge3$ 时同样可以把 $\hat\rho$ 展开成广义
+Gell-Mann 矩阵的系数矢量，但合法态集合**不再是**漂亮的实心球——它是一个更复杂的凸体：
+「矢量长度不超过某个值」不再等价于半正定。
+定性的直觉（纯态在边界、混合态在内部、幺正演化保持「离心距离」）仍然成立，
+但几何细节别照搬。本章用量子比特讲清机制，结论的算符形式（Kraus、Lindblad）对任何维数成立。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Bloch 表示', latex: '\\hat\\rho=\\frac{\\hat 1+\\vec r\\cdot\\hat{\\vec\\sigma}}{2},\\qquad r_i=\\langle\\sigma_i\\rangle', note: 'Bloch 矢量 = 三个自旋期望值，逐分量可测' },
+    { name: '本征值与合法域', latex: '\\lambda_\\pm=\\frac{1\\pm r}{2},\\qquad r\\le1', note: '半正定 ⇔ 矢量不出单位球；r = 1 纯态，r < 1 混合态' },
+    { name: '纯度', latex: '\\operatorname{Tr}(\\hat\\rho^2)=\\frac{1+r^2}{2}', note: '球面 1，球心 1/2（最大混合态）' },
+    { name: '任意方向测量', latex: 'P(+\\vec n)=\\frac{1+\\vec r\\cdot\\vec n}{2}', note: '只依赖 Bloch 矢量在测量方向上的投影' },
+    { name: '两类演化', latex: '\\hat U\\hat\\rho\\hat U^\\dagger\\ \\Leftrightarrow\\ \\text{旋转};\\qquad \\vec r\\to(1-p)\\vec r\\ \\Leftrightarrow\\ \\text{收缩}', note: '幺正保长度；开放体系演化使矢量变短' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bloch-mix-1',
+      prompt: '一个量子比特的 Bloch 矢量长度 r = 0，这个态是：',
+      options: [
+        '最大混合态 ½·1，任何方向测量都得到 50/50',
+        '纯态 |0⟩',
+        '不合法的态',
+        '沿 z 测得 |0⟩ 概率为 1 的态',
+      ],
+      answer: 0,
+      distractors: {
+        1: '|0⟩ 在北极，r = 1。',
+        2: 'r = 0 满足 r ≤ 1，完全合法——它是「混得最彻底」的态。',
+        3: 'P(+z) = (1 + r_z)/2 = 1/2，不是 1。',
+      },
+      explain: 'r = 0 时 ρ = ½·1，对任何 n 都有 P(+n) = 1/2。它是球心，离一切纯态一样远——「完全不知道」的几何化身。',
+    },
+    {
+      id: 'bloch-mix-2',
+      type: 'numeric',
+      prompt: 'Bloch 矢量长度 r = 0.6 的量子比特，纯度 Tr(ρ²) 是多少？',
+      answer: 0.68,
+      tolerance: 0.005,
+      unit: '',
+      explain: 'Tr(ρ²) = (1 + r²)/2 = (1 + 0.36)/2 = 0.68。也可以从本征值验证：λ± = (1±0.6)/2 = 0.8 和 0.2，0.8² + 0.2² = 0.68。',
+    },
+    {
+      id: 'bloch-mix-3',
+      prompt: '关于幺正演化在 Bloch 球上的作用，正确的是：（多选）',
+      options: [
+        '对应绕某个轴的刚性旋转',
+        'Bloch 矢量长度不变，纯度不变',
+        '孤立量子比特的态永远到不了球心',
+        '合适的幺正操作可以把混合态变回纯态',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: '旋转不改变长度：r < 1 的态转到哪里都还是 r < 1。想提高纯度必须走非幺正的路（比如测量后选，或让它与冷环境接触重新初始化）。',
+      },
+      explain: '任何单比特幺正操作 = 绕 n 轴转 θ 角（整体相位除外）。旋转保长度，所以纯度是幺正演化的不变量——这就是「实验室量子比特变混的过程一定不幺正」的几何论证。',
+    },
+    {
+      id: 'bloch-mix-4',
+      prompt: '态 √0.7|↑⟩ + √0.3|↓⟩ 与系综「70% |↑⟩、30% |↓⟩」在 Bloch 球上的位置分别是：',
+      options: [
+        '前者在球面上（r = 1），后者在 z 轴上 r = 0.4 处',
+        '两者都在球面上，只是方向不同',
+        '前者在北极，后者在南极',
+        '两者位置相同，因为沿 z 测量结果相同',
+      ],
+      answer: 0,
+      distractors: {
+        1: '混合态的 r = √(0² + 0² + 0.4²) = 0.4 < 1，不在球面上。',
+        2: '两者的 z 分量都是 0.4，都不在极点。',
+        3: '沿 z 结果相同只说明 z 分量相同；x、y 分量（相干项）不同，位置就不同。',
+      },
+      explain: '叠加态 r = (2√0.21, 0, 0.4)，长度恰为 1；系综态 r = (0, 0, 0.4)。把前者「垂直压到 z 轴」正是抹掉相干项的几何图像——下一节和 10.5 节会看到环境就是这么干的。',
+    },
+  ]}
+/>
+
+## 接下来
+
+地图画好了：幺正演化在球里转圈，而真实的量子比特会向内掉。
+是什么样的数学对象能把球面上的态送进球体内部，又不违反「密度矩阵必须厄米、
+迹一、半正定」这三条铁律？
+
+答案叫量子信道。下一节从「系统和环境一起幺正演化、然后只看系统」出发，
+把最一般的合法演化——CPTP 映射——一步步构造出来。

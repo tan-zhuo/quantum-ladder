@@ -2,17 +2,237 @@
 title: 常用特殊函数
 section: 'A.3'
 order: 3
-summary: Hermite、Legendre、Laguerre、球谐函数。
-status: stub
+summary: Hermite、Legendre 与球谐、Laguerre、球 Bessel 四族函数的定义、递推、低阶显式表达与出场章节——按「查表」标准整理。
+status: done
+prereqs:
+  - 幂级数与常微分方程的基本概念
+objectives:
+  - 知道每族特殊函数解决的是哪个物理问题、在哪一章登场
+  - 会用递推关系从低阶生成高阶
+  - 能查表写出前几个显式表达式并核对归一化
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+「特殊函数」这个名字听起来吓人，其实它们只是**几个常见微分方程的解，
+被前人算好、编号、列成了表**。薛定谔方程在几种规则势场里分离变量后，
+剩下的常微分方程翻来覆去就那么几个——每个都对应一族特殊函数。
+本节按族整理：解什么方程、怎么定义、递推关系、前几个长什么样、正文哪一章用。
+
+先给一张总索引：
+
+| 函数族 | 物理场景 | 出场章节 |
+| --- | --- | --- |
+| Hermite $H_n$ | 谐振子本征态 | [2.9](/ch/02-wavefunction/09-harmonic-oscillator/) |
+| Legendre $P_\ell$ 与球谐 $Y_\ell^m$ | 角动量、任何中心力场的角向部分 | [5.1](/ch/05-angular-momentum/01-orbital-angular-momentum/)、[5.2](/ch/05-angular-momentum/02-spherical-harmonics/) |
+| Laguerre $L_n^k$ | 氢原子径向波函数 | [6.3](/ch/06-hydrogen/03-hydrogen-solution/) |
+| 球 Bessel $j_\ell,n_\ell$ | 自由粒子的径向解、三维散射 | [6.1](/ch/06-hydrogen/01-central-force/)、[6.2](/ch/06-hydrogen/02-radial-equation/) |
+
+## Hermite 多项式
+
+**解决的问题**：谐振子的定态方程。代入无量纲变量 $\xi=\sqrt{m\omega/\hbar}\,x$
+并剥离高斯衰减因子 $\psi=h(\xi)\,\ee^{-\xi^2/2}$ 后，$h$ 满足 **Hermite 方程**
+
+$$
+h''-2\xi h'+2n h=0
+$$
+
+只有 $n$ 取非负整数时解才是多项式（否则级数不截断、$\psi$ 发散）——
+这正是谐振子能级 $E_n=(n+\tfrac12)\hbar\omega$ 量子化的来源。
+
+**定义**（Rodrigues 公式，一条式子生成全家）：
+
+$$
+H_n(\xi)=(-1)^n\,\ee^{\xi^2}\frac{\dd^n}{\dd\xi^n}\ee^{-\xi^2}
+$$
+
+**递推与求导**（数值和手算都靠这两条，不用背显式表达式）：
+
+$$
+H_{n+1}=2\xi H_n-2nH_{n-1},\qquad H_n'=2nH_{n-1}
+$$
+
+**前几个**：
+
+| $n$ | $H_n(\xi)$ |
+| --- | --- |
+| 0 | $1$ |
+| 1 | $2\xi$ |
+| 2 | $4\xi^2-2$ |
+| 3 | $8\xi^3-12\xi$ |
+| 4 | $16\xi^4-48\xi^2+12$ |
+
+**正交性**（权函数是高斯）：
+
+$$
+\int_{-\infty}^{\infty}H_m H_n\,\ee^{-\xi^2}\dd\xi=2^n n!\sqrt{\pi}\,\delta_{mn}
+$$
+
+由此得到归一化的谐振子本征态
+$\psi_n(x)=\left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{\sqrt{2^n n!}}H_n(\xi)\,\ee^{-\xi^2/2}$。
+$H_n$ 是 $n$ 次多项式、宇称为 $(-1)^n$、有 $n$ 个实零点——
+对应 $\psi_n$ 有 $n$ 个节点。
+
+## Legendre 多项式与球谐函数
+
+**解决的问题**：任何中心力场 $V(r)$ 中分离变量后的**角向方程**——
+它与 $V$ 无关，所以角向解是通用的。$\theta$ 方向的方程（令 $u=\cos\theta$）是 **Legendre 方程**
+
+$$
+\frac{\dd}{\dd u}\!\left[(1-u^2)\frac{\dd P}{\dd u}\right]+\ell(\ell+1)P=0
+$$
+
+在两极 $u=\pm1$ 处解要保持有限，逼出 $\ell=0,1,2,\dots$——角动量量子化的来源。
+
+**定义与递推**：
+
+$$
+P_\ell(u)=\frac{1}{2^\ell \ell!}\frac{\dd^\ell}{\dd u^\ell}(u^2-1)^\ell,
+\qquad
+(\ell+1)P_{\ell+1}=(2\ell+1)\,u\,P_\ell-\ell P_{\ell-1}
+$$
+
+**前几个**：$P_0=1$，$P_1=u$，$P_2=\tfrac12(3u^2-1)$，$P_3=\tfrac12(5u^3-3u)$。
+
+带上 $m$ 的**连带 Legendre 函数** $P_\ell^m(u)=(1-u^2)^{|m|/2}\,\dd^{|m|}P_\ell/\dd u^{|m|}$，
+再配上 $\varphi$ 方向的 $\ee^{\ii m\varphi}$ 和归一化系数，就是**球谐函数**——
+角动量算符 $\hat L^2,\hat L_z$ 的公共本征函数：
+
+$$
+\hat L^2Y_\ell^m=\ell(\ell+1)\hbar^2\,Y_\ell^m,
+\qquad
+\hat L_zY_\ell^m=m\hbar\,Y_\ell^m,
+\qquad m=-\ell,\dots,\ell
+$$
+
+**最常用的几个**（正文 [5.2 节](/ch/05-angular-momentum/02-spherical-harmonics/)有三维图像）：
+
+| $Y_\ell^m$ | 表达式 |
+| --- | --- |
+| $Y_0^0$ | $\sqrt{1/4\pi}$ |
+| $Y_1^0$ | $\sqrt{3/4\pi}\,\cos\theta$ |
+| $Y_1^{\pm1}$ | $\mp\sqrt{3/8\pi}\,\sin\theta\,\ee^{\pm \ii\varphi}$ |
+| $Y_2^0$ | $\sqrt{5/16\pi}\,(3\cos^2\theta-1)$ |
+
+**正交归一**（在整个球面上积分）：
+
+$$
+\int_0^{2\pi}\!\!\int_0^{\pi}Y_{\ell'}^{m'*}\,Y_\ell^m\,\sin\theta\,\dd\theta\,\dd\varphi=\delta_{\ell\ell'}\delta_{mm'}
+$$
+
+化学里的 $p_x,p_y,p_z$ 轨道就是 $Y_1^{\pm1},Y_1^0$ 的实线性组合。
+
+## Laguerre 多项式
+
+**解决的问题**：氢原子径向方程。剥离长程衰减 $\ee^{-r/na}$ 与短程行为 $r^\ell$ 之后，
+剩下的多项式部分满足**连带 Laguerre 方程**。级数截断条件给出主量子数 $n$，
+这就是氢原子能级 $E_n=-13.6\,\text{eV}/n^2$ 的来源
+（完整推导见 [6.3 节](/ch/06-hydrogen/03-hydrogen-solution/)）。
+
+**定义**（Rodrigues 公式；$L_q^k$ 是 $q$ 次多项式）：
+
+$$
+L_q(x)=\frac{\ee^{x}}{q!}\frac{\dd^q}{\dd x^q}\!\left(x^q\ee^{-x}\right),
+\qquad
+L_q^{k}(x)=(-1)^k\frac{\dd^k}{\dd x^k}L_{q+k}(x)
+$$
+
+**前几个**：$L_0=1$，$L_1=1-x$，$L_2=1-2x+\tfrac{x^2}{2}$；
+$L_0^1=1$，$L_1^1=2-x$。
+
+<Callout type="warning" title="两种归一化约定并存">
+Laguerre 多项式有「数学约定」（上式，带 $1/q!$，Griffiths 使用）与「老物理约定」
+（整体多乘 $(q+k)!$，一些老教材使用）。两者只差常数，但氢原子波函数的归一化系数
+会跟着变。对照两本书时先核对 $L_1^1$：数学约定给 $2-x$，老约定给 $4-2x$（差一个倍数）。
+scipy 的 `genlaguerre` 用数学约定。
 </Callout>
 
-## 内容规划
+氢原子径向波函数的组装方式（$a$ 为 Bohr 半径）：
 
-- 定义与递推关系
-- 正交性
-- 常用低阶显式表达
+$$
+R_{n\ell}(r)\;\propto\;\left(\frac{2r}{na}\right)^{\ell}
+L_{n-\ell-1}^{2\ell+1}\!\left(\frac{2r}{na}\right)\ee^{-r/na}
+$$
 
+多项式部分有 $n-\ell-1$ 个零点，正是径向节点数。
+
+## 球 Bessel 函数
+
+**解决的问题**：势能为零（或常数）区域的径向方程。令 $u=rR$ 之后径向方程变成
+$R''+\frac{2}{r}R'+\left[k^2-\frac{\ell(\ell+1)}{r^2}\right]R=0$，
+解是**球 Bessel 函数** $j_\ell(kr)$（原点处规则）与**球 Neumann 函数** $n_\ell(kr)$（原点处发散）。
+
+**低阶显式表达式**（都是三角函数除以幂次，可以手算）：
+
+| $\ell$ | $j_\ell(x)$ | $n_\ell(x)$ |
+| --- | --- | --- |
+| 0 | $\dfrac{\sin x}{x}$ | $-\dfrac{\cos x}{x}$ |
+| 1 | $\dfrac{\sin x}{x^2}-\dfrac{\cos x}{x}$ | $-\dfrac{\cos x}{x^2}-\dfrac{\sin x}{x}$ |
+
+**递推**（$f_\ell$ 代表 $j_\ell$ 或 $n_\ell$，同一条递推）：
+
+$$
+f_{\ell+1}(x)=\frac{2\ell+1}{x}f_\ell(x)-f_{\ell-1}(x)
+$$
+
+**两端行为**（判断解的取舍全靠这两条）：
+
+$$
+j_\ell(x)\xrightarrow{x\to0}\frac{x^\ell}{(2\ell+1)!!},\qquad
+j_\ell(x)\xrightarrow{x\to\infty}\frac{\sin(x-\ell\pi/2)}{x}
+$$
+
+$n_\ell$ 在原点发散如 $x^{-\ell-1}$，所以**包含原点的区域只能用 $j_\ell$**；
+远处的正弦振荡（相位平移 $\ell\pi/2$）是三维散射分波法里「相移」概念的参照零点。
+
+<KeyFormulas
+  items={[
+    { name: 'Hermite 递推', latex: 'H_{n+1}=2\\xi H_n-2nH_{n-1},\\qquad H_0=1,\\ H_1=2\\xi', note: '谐振子；ψₙ 有 n 个节点，宇称 (−1)ⁿ' },
+    { name: 'Legendre 递推', latex: '(\\ell+1)P_{\\ell+1}=(2\\ell+1)uP_\\ell-\\ell P_{\\ell-1}', note: '中心力场角向方程；两极有限 ⇒ ℓ 取整数' },
+    { name: '球谐本征方程', latex: '\\hat L^2Y_\\ell^m=\\ell(\\ell+1)\\hbar^2Y_\\ell^m,\\quad \\hat L_zY_\\ell^m=m\\hbar Y_\\ell^m', note: '所有中心势共用的角向解' },
+    { name: '氢原子径向解', latex: 'R_{n\\ell}\\propto(2r/na)^{\\ell}\\,L_{n-\\ell-1}^{2\\ell+1}(2r/na)\\,\\ee^{-r/na}', note: '径向节点数 = n − ℓ − 1' },
+    { name: '球 Bessel 渐近', latex: 'j_\\ell\\xrightarrow{x\\to0}\\frac{x^\\ell}{(2\\ell+1)!!},\\qquad j_\\ell\\xrightarrow{x\\to\\infty}\\frac{\\sin(x-\\ell\\pi/2)}{x}', note: '含原点区域舍弃 nℓ；远端相位是分波相移的零点' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apa3-1',
+      prompt: '谐振子第 3 激发态的波函数 ψ₃ 有几个节点？宇称是？',
+      options: ['3 个节点，奇宇称', '3 个节点，偶宇称', '2 个节点，奇宇称', '4 个节点，偶宇称'],
+      answer: 0,
+      distractors: {
+        1: 'H₃ = 8ξ³ − 12ξ 只含奇次幂，是奇函数。',
+        2: 'n 次 Hermite 多项式有 n 个实零点，ψₙ 节点数等于 n。',
+      },
+      explain: 'ψₙ 的节点数等于 n（注意与无限深势阱的 n−1 差一个：那里 n 从 1 数起）。宇称为 (−1)ⁿ，n = 3 为奇。',
+    },
+    {
+      id: 'apa3-2',
+      prompt: '为什么包含 r = 0 的区域里，径向解必须取 jℓ 而不能混入 nℓ？',
+      options: [
+        'nℓ 在原点发散，波函数将不可归一化或不满足方程',
+        'nℓ 不是径向方程的解',
+        'jℓ 的能量更低',
+        '这是一个人为约定，取哪个都行',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'nℓ 是同一个方程的另一个线性无关解，只是在原点行为坏。',
+        3: '不含原点的区域（如球壳、散射外区）确实要保留两者的组合——这不是约定而是边界条件。',
+      },
+      explain: 'nℓ ~ x^{−ℓ−1} 在原点发散。物理边界条件（波函数有限）挑选了 jℓ；散射问题的外部区域不含原点，才允许 jℓ 与 nℓ 的组合，其混合比正是相移的信息。',
+    },
+    {
+      id: 'apa3-3',
+      prompt: '氢原子 3p 态（n = 3, ℓ = 1）的径向波函数有几个径向节点？',
+      options: ['1 个', '2 个', '3 个', '0 个'],
+      answer: 0,
+      distractors: {
+        1: '2 = n − ℓ − 1 要求 ℓ = 0，那是 3s 态。',
+        3: '节点数为零的是 ℓ = n − 1 的「圆轨道」态，如 2p、3d。',
+      },
+      explain: '径向节点数 = n − ℓ − 1 = 3 − 1 − 1 = 1，来自 Laguerre 多项式 L_{n−ℓ−1}^{2ℓ+1} 的零点个数。加上角向节面 ℓ 个，总节面数为 n − 1。',
+    },
+  ]}
+/>

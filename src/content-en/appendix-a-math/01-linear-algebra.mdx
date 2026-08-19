@@ -1,17 +1,216 @@
 ---
-title: 'Linear algebra reference'
-summary: 'Vector spaces, inner products, eigenvalues, diagonalisation.'
+title: Linear algebra reference
 section: 'A.1'
 order: 1
-status: stub
+summary: 'Vector spaces, inner products, eigenvalues, diagonalisation and tensor products — all in quantum mechanics'' own notation, so you can look things up and head straight back to the main text.'
+status: done
+prereqs:
+  - High-school vectors and complex arithmetic
+objectives:
+  - Translate "states are vectors, observables are Hermitian operators" into concrete matrix computations
+  - Find the eigenvalues and eigenvectors of a 2×2 Hermitian matrix and carry out the diagonalisation
+  - Compute the tensor product of two small systems and read the subscripts of a many-body state
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+This section is a **reference table doubling as a remedial station**. If a word like "eigenvalue", "unitary" or "tensor product" stops you in the main text, come here, find the matching subsection, read the minimum necessary explanation plus one worked example, and go back to reading. All notation follows the quantum-mechanical conventions ($\ket{\psi}$ rather than a column vector $\vec v$), so any result you look up can be carried back into the main text verbatim.
+
+**Where the main text needs this:**
+the whole of [Chapter 3](/en/ch/03-formalism/01-from-wavefunction-to-vector/) is built on this language;
+[5.3 Spin 1/2](/en/ch/05-angular-momentum/03-spin-half/) and
+[9.1 Qubits](/en/ch/09-quantum-information/01-qubit-bloch-sphere/) are the home turf of 2×2 matrices;
+[8.1 Identical particles](/en/ch/08-identical-particles/01-identity-principle/) and
+[9.3 Entanglement](/en/ch/09-quantum-information/03-entanglement-measures/) cannot do without tensor products.
+
+## Vector spaces and inner products
+
+A **vector space** is, plainly put, "a set plus two rules": the elements of the set (here called state vectors $\ket{\psi}$) can be added together and multiplied by complex numbers, and the result stays inside the set. The superposition principle of quantum mechanics — a superposition of two allowed states is still an allowed state — is at bottom the statement that "states form a vector space".
+
+An **inner product** is a rule assigning a complex number $\braket{\phi}{\psi}$ to every pair of vectors; it measures how much two states "resemble" each other. Three properties are required:
+
+| Property | Formula | In plain words |
+| --- | --- | --- |
+| Conjugate symmetry | $\braket{\phi}{\psi}=\braket{\psi}{\phi}^*$ | Swapping the order means taking the complex conjugate |
+| Linear in the right slot | $\braket{\phi}{a\psi_1+b\psi_2}=a\braket{\phi}{\psi_1}+b\braket{\phi}{\psi_2}$ | Linear in the second argument |
+| Positive definite | $\braket{\psi}{\psi}\ge 0$, with equality only for $\ket{\psi}=0$ | The inner product of a state with itself is its "length squared" |
+
+Mind the second row: the physics convention is **linear on the right, conjugate-linear on the left** ($\bra{a\phi}=a^*\bra{\phi}$) — the opposite of most mathematics textbooks.
+
+Two consequences you will use constantly:
+
+$$
+\text{Cauchy–Schwarz:}\quad |\braket{\phi}{\psi}|^2\le\braket{\phi}{\phi}\braket{\psi}{\psi}
+$$
+
+This inequality is the [mathematical backbone of the uncertainty principle](/en/ch/03-formalism/06-commutators/). The normalisation condition $\braket{\psi}{\psi}=1$ corresponds to total probability 1.
+
+**Orthonormal basis**: a set $\{\ket{e_i}\}$ satisfying $\braket{e_i}{e_j}=\delta_{ij}$. Any state can be expanded as $\ket{\psi}=\sum_i c_i\ket{e_i}$, with coefficients read off directly from inner products: $c_i=\braket{e_i}{\psi}$. Abstracted into a single identity, this is the **completeness relation**
+
+$$
+\sum_i \ket{e_i}\bra{e_i}=\hat{\mathbb{1}}
+$$
+
+— "inserting a complete basis anywhere changes nothing", the single most frequently used move in Chapter 3.
+
+## The eigenvalue problem
+
+A matrix $\hat A$ acting on a generic vector both rotates and stretches it. But every matrix has some "special directions": acting along them produces pure stretching, no change of direction. These directions are the **eigenvectors**, and the stretch factors are the **eigenvalues**:
+
+$$
+\hat A\ket{a}=a\ket{a}
+$$
+
+Finding them takes two steps:
+
+1. **Eigenvalues**: solve the characteristic equation $\det(\hat A-a\hat{\mathbb{1}})=0$. An $n$-dimensional matrix gives a degree-$n$ polynomial with $n$ roots.
+2. **Eigenvectors**: substitute each $a$ back into $(\hat A-a\hat{\mathbb{1}})\ket{a}=0$ and solve the linear system.
+
+For 2×2 matrices there is a handy shortcut: the eigenvalues sum to the trace (sum of diagonal entries), and their product equals the determinant:
+
+$$
+a_+ + a_- = \operatorname{tr}\hat A,\qquad a_+ a_- = \det\hat A
+$$
+
+<Derivation title="Worked example: eigenvalues and eigenvectors of σ_x" level="基础" minutes={5} open={true}>
+
+The Pauli matrix $\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix}$ plays the lead role in [spin measurement](/en/ch/05-angular-momentum/04-stern-gerlach/).
+
+**Eigenvalues**: $\operatorname{tr}\sigma_x=0$, $\det\sigma_x=-1$, so $a_++a_-=0$ and $a_+a_-=-1$, giving $a_\pm=\pm1$ at once. (Or grind through $\det\begin{pmatrix}-a&1\\1&-a\end{pmatrix}=a^2-1=0$ the honest way.)
+
+**Eigenvectors**: for $a=+1$ the equation $\begin{pmatrix}-1&1\\1&-1\end{pmatrix}\begin{pmatrix}\alpha\\\beta\end{pmatrix}=0$ gives $\alpha=\beta$, and after normalisation
+
+$$
+\ket{+_x}=\frac{1}{\sqrt2}\begin{pmatrix}1\\1\end{pmatrix}
+=\frac{\ket{0}+\ket{1}}{\sqrt2}
+$$
+
+Likewise $a=-1$ gives $\ket{-_x}=(\ket{0}-\ket{1})/\sqrt2$. Check orthogonality: $\braket{+_x}{-_x}=\frac12(1-1)=0$. ✓
+
+This is exactly the result that keeps reappearing in the main text: measuring spin along $x$, the eigenstates are equal-weight superpositions of $\ket{0}$ and $\ket{1}$.
+
+</Derivation>
+
+## Hermitian and unitary matrices
+
+First define the **Hermitian conjugate** (symbol $\dagger$, read "dagger"): transpose the matrix, then complex-conjugate every entry, $(\hat A^\dagger)_{ij}=\hat A_{ji}^*$. It satisfies $(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger$ — the order reverses.
+
+| Type | Definition | Physical role | Key properties |
+| --- | --- | --- | --- |
+| Hermitian | $\hat A^\dagger=\hat A$ | Observables | All eigenvalues real; eigenvectors of distinct eigenvalues mutually orthogonal |
+| Unitary | $\hat U^\dagger\hat U=\hat{\mathbb{1}}$ | Time evolution, change of basis, quantum gates | Preserves inner products $\braket{U\phi}{U\psi}=\braket{\phi}{\psi}$; eigenvalues are unit-modulus complex numbers $\ee^{\ii\theta}$ |
+| Projector | $\hat P^2=\hat P=\hat P^\dagger$ | Measurement | Eigenvalues are only 0 and 1 |
+
+The first two are linked by the exponential map: if $\hat H$ is Hermitian, then $\ee^{-\ii\hat H t/\hbar}$ is unitary — which is why the [solution of the Schrödinger equation](/en/ch/03-formalism/09-time-evolution-pictures/) automatically conserves probability.
+
+Two core theorems about Hermitian matrices (proofs in [section 3.5](/en/ch/03-formalism/05-hermitian-operators/)):
+
+1. **Eigenvalues must be real** — so measurement outcomes are real numbers.
+2. **Spectral theorem**: a Hermitian matrix always admits an orthonormal set of eigenvectors forming a complete basis.
+
+## Diagonalisation and spectral decomposition
+
+**Diagonalising** a matrix means switching to the basis made of its eigenvectors — in that basis the matrix becomes diagonal and all its information sits in plain view. Concretely: stack the normalised eigenvectors as the columns of a matrix $U$ (for a Hermitian matrix, $U$ is automatically unitary); then
+
+$$
+U^\dagger \hat A\, U=\operatorname{diag}(a_1,a_2,\dots)
+$$
+
+An equivalent way to write it is the **spectral decomposition** — splitting the matrix into a sum of "eigenvalue × corresponding projector":
+
+$$
+\hat A=\sum_i a_i\ket{a_i}\bra{a_i}
+$$
+
+Its greatest use is defining **functions of a matrix**: just apply the function eigenvalue by eigenvalue,
+
+$$
+f(\hat A)=\sum_i f(a_i)\ket{a_i}\bra{a_i}
+$$
+
+For instance $\ee^{-\ii\hat H t/\hbar}=\sum_n \ee^{-\ii E_n t/\hbar}\ket{E_n}\bra{E_n}$ — that single line is the entire mathematical content of the standard routine "expand in energy eigenstates, then attach a phase to each term".
+
+<Callout type="warning" title="When can two matrices not be diagonalised simultaneously?">
+Two Hermitian matrices can be diagonalised by the **same basis** if and only if they commute ($[\hat A,\hat B]=0$). Non-commuting matrices (such as $\sigma_x$ and $\sigma_z$) have no shared eigenbasis — which is precisely the algebraic root of the [uncertainty principle](/en/ch/03-formalism/06-commutators/): no state exists that is an eigenstate of both.
 </Callout>
 
-## Planned contents
+## Tensor products
 
-- The matrix eigenvalue problem
-- Unitary and Hermitian matrices
-- Tensor products
+When two systems A and B combine into one larger system, the big system's state space is not a "concatenation" but a **tensor product** $\mathcal{H}_A\otimes\mathcal{H}_B$: the dimensions multiply ($2\times2=4$), and the basis consists of all pairings $\ket{i}_A\otimes\ket{j}_B$ (often abbreviated $\ket{ij}$).
+
+The tensor (Kronecker) product of matrices expands as "each entry of the left matrix times the whole right matrix":
+
+$$
+\hat A\otimes \hat B=\begin{pmatrix}A_{11}\hat B & A_{12}\hat B\\ A_{21}\hat B & A_{22}\hat B\end{pmatrix}
+$$
+
+The operating rule in one phrase: **each factor minds its own system** —
+$(\hat A\otimes\hat B)(\ket{\phi}\otimes\ket{\chi})=(\hat A\ket{\phi})\otimes(\hat B\ket{\chi})$.
+"Act on system A only" is written $\hat A\otimes\hat{\mathbb{1}}$.
+
+<Derivation title="Worked example: write down a Bell state and show it cannot factorise" level="进阶" minutes={4}>
+
+In the two-qubit basis $\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, take
+
+$$
+\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}
+=\frac{1}{\sqrt2}\begin{pmatrix}1\\0\\0\\1\end{pmatrix}
+$$
+
+Suppose it could be written as a product state $(\alpha\ket0+\beta\ket1)\otimes(\gamma\ket0+\delta\ket1)$; expanding gives the four components $(\alpha\gamma,\alpha\delta,\beta\gamma,\beta\delta)$. We need the middle two to vanish and the outer two not to: $\alpha\delta=0$ forces $\alpha=0$ or $\delta=0$, yet $\alpha\gamma\neq0$ demands $\alpha\neq0$ and $\beta\delta\neq0$ demands $\delta\neq0$ — contradiction.
+
+So $\ket{\Phi^+}$ is **not** a product of any two single-particle states: that is the definition of an entangled state, discussed in detail in [section 9.3](/en/ch/09-quantum-information/03-entanglement-measures/).
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'Completeness relation', latex: '\\sum_i \\ket{e_i}\\bra{e_i}=\\hat{\\mathbb{1}}', note: 'License to "insert a complete basis" — Chapter 3\'s all-purpose tool' },
+    { name: 'Eigenvalue problem', latex: '\\hat A\\ket{a}=a\\ket{a},\\quad \\det(\\hat A-a\\hat{\\mathbb{1}})=0', note: '2×2 shortcut: eigenvalues sum to the trace, multiply to the determinant' },
+    { name: 'Spectral decomposition', latex: '\\hat A=\\sum_i a_i\\ket{a_i}\\bra{a_i},\\quad f(\\hat A)=\\sum_i f(a_i)\\ket{a_i}\\bra{a_i}', note: 'How matrix functions are defined; the time-evolution operator comes from here' },
+    { name: 'Hermitian and unitary', latex: '\\hat A^\\dagger=\\hat A\\ \\Rightarrow\\ a_i\\in\\mathbb{R};\\qquad \\hat U^\\dagger\\hat U=\\hat{\\mathbb{1}}', note: 'Observables / evolution and change of basis; e^{-iHt/ħ} ties the two together' },
+    { name: 'Tensor product', latex: '(\\hat A\\otimes\\hat B)(\\ket{\\phi}\\otimes\\ket{\\chi})=\\hat A\\ket{\\phi}\\otimes\\hat B\\ket{\\chi}', note: 'Dimensions multiply; states that cannot be factorised are called entangled' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apa1-1',
+      prompt: 'What are the two eigenvalues of the matrix A = [[3, 1], [1, 3]]?',
+      options: ['4 and 2', '3 and 3', '4 and −2', '2 and −2'],
+      answer: 0,
+      distractors: {
+        1: 'The diagonal entries themselves are generally not the eigenvalues — that only works when the matrix is already diagonal.',
+        2: 'Check the product: the eigenvalues should multiply to det A = 9 − 1 = 8, whereas 4×(−2) = −8.',
+      },
+      explain: 'Trace = 6, determinant = 8; solving a² − 6a + 8 = 0 gives a = 4, 2. The corresponding eigenvectors are (1,1)/√2 and (1,−1)/√2.',
+    },
+    {
+      id: 'apa1-2',
+      prompt: 'Which of the following is NOT true of a unitary matrix U?',
+      options: [
+        'The eigenvalues of U are all real',
+        'U preserves the inner product of any two vectors',
+        'The columns of U form an orthonormal basis',
+        'U can be written as exp(iH) for some Hermitian matrix H',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is a direct consequence of U†U = 1 — it is the physical meaning of unitarity.',
+        3: 'That is the exponential map between Hermitian and unitary, which does hold.',
+      },
+      explain: 'The eigenvalues of a unitary matrix are unit-modulus complex numbers e^{iθ}, generally not real. All-real eigenvalues are the hallmark of Hermitian matrices.',
+    },
+    {
+      id: 'apa1-3',
+      prompt: 'A system of three spin-1/2 particles has a state space of what dimension?',
+      options: ['8', '6', '9', '3'],
+      answer: 0,
+      distractors: {
+        1: 'Dimensions multiply (tensor product), they do not add (direct sum): 2+2+2 = 6 is the wrong intuition.',
+        2: '9 = 3² confuses "three two-dimensional systems" with "two three-dimensional systems".',
+      },
+      explain: 'Tensor-product dimensions multiply: 2×2×2 = 8. This exponential growth (N spins → 2^N dimensions) is exactly why many-body quantum problems are hard to compute — and why quantum computing holds promise; see Appendix C.3.',
+    },
+  ]}
+/>

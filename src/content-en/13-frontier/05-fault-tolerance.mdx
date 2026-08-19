@@ -1,17 +1,156 @@
 ---
-title: 'Fault tolerance and progress on the surface code'
-summary: 'What happened between 2023 and 2026.'
+title: Fault tolerance and surface-code progress
 section: '13.5'
 order: 5
-status: stub
+summary: 'One error on a physical qubit is a disaster, yet a thousand physical qubits banding together can suppress errors exponentially — why the threshold theorem is the fundamental reason quantum computing can work at all, and where the experiments of 2023–2026 have taken it.'
+status: done
+prereqs:
+  - 09-quantum-information/10-error-correction
+  - 10-open-systems/05-decoherence
+objectives:
+  - State the precise content of the threshold theorem — what it promises, and under what assumptions
+  - Use the surface-code scaling relations to estimate how many physical qubits one good logical qubit costs
+  - Describe the significance of the "bigger is better" experimental milestones since 2023, and the gaps that remain
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Start with the coldest piece of arithmetic in the entire field.
+
+The best superconducting or trapped-ion qubits today have a two-qubit gate error rate of about $10^{-3}$ — one in a thousand, an astonishing achievement for analog electronics. But one practically valuable quantum computation (say, factoring a 2048-bit integer with Shor's algorithm from [section 9.9](/en/ch/09-quantum-information/09-shor/)) needs roughly $10^{10}$ gate operations. An error rate of $10^{-3}$ means one mistake every thousand steps on average; by step $10^{10}$ the output is pure noise. For the whole computation to succeed with decent probability, the per-step error rate must be pushed below $10^{-12}$.
+
+**From $10^{-3}$ to $10^{-12}$ is nine orders of magnitude.** Grind it out with better fabrication? Over more than twenty years, physical error rates have improved at a fraction of an order of magnitude every few years — expecting hardware alone to leap the gap is unrealistic. Besides, [section 10.5](/en/ch/10-open-systems/05-decoherence/) already told us that decoherence is the universal fate of open systems: it can be postponed, never cancelled.
+
+The reason the field of quantum computing is still alive hangs entirely on one theorem.
+
+## The threshold theorem: cross a line, not reach perfection
+
+[Section 9.10](/en/ch/09-quantum-information/10-error-correction/) gave the core idea of error correction: encode one logical qubit redundantly into many physical qubits, measure **stabilisers** (collective observables that reveal only "where the error is", never "what the state is"), then undo the damage. But it left a loose end: the correction circuitry is itself error-prone physical circuitry — correcting errors with faulty components, won't you make things worse the more you correct?
+
+The **threshold theorem** (proved around 1996 by several groups) answers:
+
+> As long as the error rate $p$ of each physical operation is below some threshold $p_{\text{th}}$, an encoding of reasonable (polynomially growing) size can push the logical error rate **arbitrarily low** — and the suppression is **exponential**.
+
+Read it carefully, in three layers:
+
+- **It is a watershed, not a gradient.** For $p>p_{\text{th}}$, adding qubits for correction amplifies errors (the correction circuitry introduces more errors than it removes); for $p<p_{\text{th}}$, the very same operations make errors vanish exponentially. One line apart, worlds apart.
+- **It converts a physics problem into an engineering problem.** No need for perfect qubits — those don't exist; only "good enough" qubits in sufficient quantity. Nine orders of magnitude get filled in with redundancy.
+- **It has assumptions.** Errors must be approximately local and not strongly correlated (a cosmic-ray strike flipping a whole patch of chip at once is outside the protection, and a genuine present-day headache), and there must be an endless supply of freshly initialised qubits to carry the entropy away.
+
+## The surface code: error correction laid out on a plane
+
+Among the many coding schemes, the **surface code** is the workhorse of the superconducting road: physical qubits arranged on a 2D square grid, data qubits alternating with measurement qubits, with each stabiliser involving only its 4 nearest neighbours — a perfect match for the on-chip reality of "nearest-neighbour coupling only". Its threshold is about $1\%$, the most forgiving of all practical schemes.
+
+The size of the code is described by the **code distance** $d$ (intuitively: it takes $d$ consecutive qubit errors to corrupt the logical information undetected). Two scaling relations star in this section:
+
+$$
+N_{\text{phys}}\approx2d^2,
+\qquad
+p_L\approx A\left(\frac{p}{p_{\text{th}}}\right)^{(d+1)/2}
+$$
+
+The first: the physical qubit count grows as the square of the distance. The second: **the logical error rate falls exponentially with the distance** — provided the ratio in the brackets is below 1.
+
+<Derivation title="Order of magnitude: the price of one good logical qubit" level="基础" minutes={7} open={true}>
+
+**Target**: logical error rate $p_L\sim10^{-12}$ (enough to support a $10^{10}$-step computation).
+**Assumption**: physical error rate down to $p=10^{-3}$, i.e. $p/p_{\text{th}}=1/10$ (taking the threshold as $1\%$).
+
+**Step 1: fix the code distance.** Every increase of the distance by 2 multiplies the logical error rate by $p/p_{\text{th}}=0.1$ — one order of magnitude gone. To get from $O(1)$ down to $10^{-12}$ requires
+
+$$
+\left(\frac{1}{10}\right)^{(d+1)/2}\sim10^{-12}
+\;\Longrightarrow\;
+\frac{d+1}{2}\approx12
+\;\Longrightarrow\;
+d\approx23
+$$
+
+**Step 2: fix the physical qubit count.**
+
+$$
+N_{\text{phys}}\approx2d^2=2\times23^2\approx1100
+$$
+
+**Conclusion**: under these assumptions, **about a thousand physical qubits buy one high-fidelity logical qubit**. A machine with a thousand logical qubits (the scale needed to run meaningful chemistry simulations or break RSA) needs about $10^6$ physical qubits — while the largest chips of 2026 sit at the $10^3$ level. That is where the "three orders of magnitude" on the roadmaps comes from.
+
+**Sensitivity check**: drop the physical error rate another factor of 10 ($p/p_{\text{th}}=1/100$) and each 2 of distance now kills **two** orders of magnitude: $d\approx11$ suffices, $N_{\text{phys}}\approx250$ — more than a fourfold saving. **Every improvement in the physical qubits lowers the global cost superlinearly**, which is why the "polish the physical qubits first" and "scale up first" roadmaps are not actually in conflict.
+
+</Derivation>
+
+<Callout type="insight" title="The threshold theorem is quantum computing's licence to exist">
+Classical computers once faced the same scepticism: vacuum tubes burned out daily — how could a reliable machine ever be built? Von Neumann proved the classical fault-tolerance theorem in 1952 — and then the transistor made it superfluous, because the physical devices simply got good to the level of 10⁻¹⁷.
+
+Qubits will almost certainly never get such a free lunch: the no-cloning theorem ([section 9.5](/en/ch/09-quantum-information/05-teleportation/)) closes off "just keep a few backup copies", and decoherence caps the lifetime of a bare qubit. **Error correction is not an optional optimisation of quantum computing; it is its mode of existence** — and the threshold theorem guarantees exactly this: the road is open in principle. Everything else is (heroically hard) engineering.
 </Callout>
 
-## Planned contents
+## 2023–2026: "the more you correct, the better" goes from theorem to data
 
-- Encoding and decoding the surface code
-- Logical-qubit experimental milestones
-- The remaining gap between error rates and the threshold
+The threshold theorem makes one prediction an experiment can rule on: **below threshold, a bigger code means fewer errors**. Over the past few years, that judgment point has been crossed, step by step:
+
+- **2023, Google**: the first surface-code demonstration where a $d=5$ logical qubit had a slightly lower error rate than $d=3$ — for the first time, enlarging the code did not make things worse. The margin was slim (a few percent), but the direction was right.
+- **2024, Google's "Willow" chip**: $d=3\to5\to7$, with each step in distance roughly halving the logical error rate ($\Lambda\approx2.1$), and the logical qubit's lifetime **exceeding that of the best physical qubit on the chip for the first time** — "the collective beats its best individual member", the first head-on vindication of error correction's reason for existing.
+- **Other platforms in the same period**: neutral-atom arrays (Harvard/QuEra, 2023) ran error-corrected circuits on 48 logical qubits; trapped ions and cat qubits have each demonstrated logical-level operations too.
+
+The gaps not yet crossed deserve equal clarity:
+
+- **Exponential suppression has to stay exponential**: $\Lambda\approx2$ means reaching $10^{-12}$ still requires pushing distances into the dozens, with no new error floor (leakage out of the computational levels, cosmic-ray correlated errors) allowed to emerge;
+- **Logical gates are still expensive**: surviving is not computing. A full universal gate set on the surface code needs auxiliary machinery such as "magic-state distillation", potentially multiplying the overhead severalfold;
+- **Speed and wiring**: each stabiliser round takes about 1 μs, and the classical decoder must keep up in real time; the cryogenic wiring, yield, and power budget of a million-qubit machine are engineering without precedent.
+
+<KeyFormulas
+  items={[
+    { name: 'Threshold theorem', latex: 'p<p_{\\text{th}}\\ \\Longrightarrow\\ p_L\\ \\text{exponentially suppressible (polynomial overhead)}', note: 'A watershed: above the line, bigger codes make it worse; below, better' },
+    { name: 'Surface-code overhead', latex: 'N_{\\text{phys}}\\approx2d^2', note: 'd = 23 means about 1100 physical qubits per logical qubit' },
+    { name: 'Logical error scaling', latex: 'p_L\\approx A\\Big(\\frac{p}{p_{\\text{th}}}\\Big)^{(d+1)/2}', note: 'At p/p_th = 0.1, each +2 of distance kills one order of magnitude; experiments give Λ≈2.1 (2024)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ft-1',
+      prompt: 'The precise content of the threshold theorem is:',
+      options: [
+        'When the physical error rate is below threshold, a polynomial-sized encoding can suppress the logical error rate exponentially, to arbitrarily small values',
+        'Quantum computers have an error-rate floor that can never be crossed',
+        'With enough qubits, fault tolerance is achievable at any error rate',
+        'Once below threshold, the computation stops making errors altogether',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Backwards — above threshold, adding qubits for correction makes things worse: the correction circuitry introduces more errors than it removes.',
+        3: 'Errors keep happening forever; what gets exponentially suppressed is the probability of an uncorrected logical error, not the physical errors themselves.',
+      },
+      explain: 'The threshold is a watershed: for p < p_th redundancy is your friend (exponential suppression), for p > p_th it is your enemy. It swaps the impossible task of "build a perfect qubit" for the engineering task of "cross a line".',
+    },
+    {
+      id: 'ft-2',
+      type: 'numeric',
+      prompt: 'At surface-code distance d = 23, roughly how many physical qubits does one logical qubit need, using N ≈ 2d²?',
+      answer: 1058,
+      tolerance: 80,
+      unit: 'qubits',
+      explain: '2 × 23² = 1058. Combined with p_L ~ 0.1^((d+1)/2) = 10⁻¹² at p/p_th = 0.1, this is the origin of "a thousand qubits buy one good logical qubit"; a thousand-logical-qubit machine corresponds to about a million physical qubits.',
+    },
+    {
+      id: 'ft-3',
+      prompt: 'The 2024 Google Willow experiment is regarded as a milestone. The key observations were: (Select all that apply.)',
+      options: [
+        'From distance 3 to 5 to 7, the logical error rate roughly halved at each step — the exponential "bigger is better" trend held',
+        'The logical qubit outlived the best physical qubit on the chip',
+        'It performed Shor factoring of a 2048-bit integer',
+        'It proved that the error-correction overhead can be eliminated entirely',
+      ],
+      answer: [0, 1],
+      distractors: {
+        2: 'Practical-scale Shor still needs a fault-tolerant machine of around a million physical qubits — about three orders of magnitude away.',
+        3: 'The overhead remains enormous (~10³ physical qubits per logical qubit); the milestone is confirming that this overhead really does buy exponential returns.',
+      },
+      explain: 'Together the two observations verify the threshold theorem\'s core prediction: the system is running below threshold, redundancy yields exponential gains, and the encoded whole beats its best individual part. Remaining gaps: deeper suppression, logical-gate (magic-state) overhead, real-time decoding and engineering at scale.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Error correction is, at bottom, a war against entropy: measure relentlessly, and relentlessly dump the entropy carried by the errors into the environment. "Information" and "entropy" are no longer figures of speech here — the next section puts that relationship on the table: **what do the laws of thermodynamics look like at the quantum scale, at the scale of a single bit?**

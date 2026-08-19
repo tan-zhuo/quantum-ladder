@@ -2,23 +2,240 @@
 title: 密集编码
 section: '9.6'
 order: 6
-summary: 一个量子比特传两个经典比特。
-status: stub
-sims: ['quantum-circuit']
+summary: 提前共享一对 Bell 态，寄一个 qubit 就能捎上两个经典比特：四个 Pauli 门把一对纠缠调到四个正交的 Bell 态上，与隐形传态互为镜像。
+status: done
+prereqs:
+  - 09-quantum-information/05-teleportation
+  - 09-quantum-information/02-quantum-gates
+objectives:
+  - 完整推演密集编码协议：四种编码操作、四个 Bell 态、解码线路，全程手算
+  - 解释「只动自己这一半，就能到达全部四个 Bell 态」为什么可行
+  - 说明 2 比特是上限：没有预共享纠缠时 1 个 qubit 至多带 1 比特（Holevo）
+  - 把密集编码与隐形传态的资源等式并排写出，看出对偶关系
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节结尾我们把隐形传态的交易单倒过来念：
+预共享 1 个 ebit，再**寄出 1 个 qubit**，能兑换几个经典比特？
+9.1 节的 Holevo 论证说一个 qubit 至多读出 1 比特，
+这一节却要合法地读出 2 比特。看纠缠怎么把邮费砍半。
+
+## 具体问题：一次只能寄一个粒子，想说四句话
+
+Alice 要给 Bob 发一条两比特消息——00、01、10、11 四选一
+（比如「买入 / 卖出 / 持有 / 清仓」）。但信道昂贵，本月额度只剩**一个 qubit**。
+
+## 没有纠缠时，一个 qubit 只值一比特
+
+先看朴素方案的天花板。Alice 把消息编进单个 qubit 的态里寄出，
+Bob 收到后测量。9.1 节讲过：一次测量只有两个出口，
+且不同的非正交态无法被可靠区分。要可靠传 2 比特，
+Bob 得把四个态**无歧义地**分开，这需要四个两两正交的态——
+可单个 qubit 的 Hilbert 空间只有二维，至多塞下 2 个正交态。
+死路。（这正是 Holevo 定理的特例：无辅助资源时，$n$ 个 qubit ≤ $n$ 个经典比特。）
+
+出路在于：**Bob 手里可以提前有点东西**。只要两人事先分好一对 Bell 态，
+Alice 手里那一半的「操作余地」就翻倍了。
+
+## 协议全程手算
+
+事先：两人共享 $\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}$，
+粒子 A 在 Alice 处，粒子 B 在 Bob 处。
+
+```text
+            编码（Alice 本地）      寄出 A          解码（Bob 本地）
+ A ────────[ I / X / Z / ZX ]────────────────●──[H]──[测量]→ m₁
+   ╲                                         │
+    Φ⁺                                       │
+   ╱                                         │
+ B ──────────────────────────────────────────⊕──────[测量]→ m₂
+```
+
+<Derivation title="四个 Pauli 门调出四个 Bell 态" level="基础" minutes={7} open={true}>
+
+**第 1 步：编码。** Alice 按要发的消息对**自己那一半**施加一个门：
+
+- 消息 00：什么都不做（$I$）。态不变：
+
+$$
+(I\otimes I)\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}=\ket{\Phi^+}
+$$
+
+- 消息 01：施加 $X$（翻转 A）。逐项作用在第一位上：
+
+$$
+(X\otimes I)\,\frac{\ket{00}+\ket{11}}{\sqrt2}
+=\frac{\ket{10}+\ket{01}}{\sqrt2}=\ket{\Psi^+}
+$$
+
+- 消息 10：施加 $Z$（给 A 的 $\ket{1}$ 添负号）：
+
+$$
+(Z\otimes I)\,\frac{\ket{00}+\ket{11}}{\sqrt2}
+=\frac{\ket{00}-\ket{11}}{\sqrt2}=\ket{\Phi^-}
+$$
+
+- 消息 11：先 $X$ 后 $Z$：
+
+$$
+(ZX\otimes I)\ket{\Phi^+}
+=(Z\otimes I)\,\frac{\ket{10}+\ket{01}}{\sqrt2}
+=\frac{\ket{01}-\ket{10}}{\sqrt2}=\ket{\Psi^-}
+$$
+
+四条消息 $\mapsto$ 四个 Bell 态，而 Bell 态**两两正交**——
+可靠区分所需的正交性凑齐了，只是它长在两比特空间里。
+
+**第 2 步：寄出。** Alice 把粒子 A 寄给 Bob。现在两个粒子都在 Bob 手里。
+
+**第 3 步：解码 = Bell 测量。** 用 9.5 节末尾的线路反着读：
+CNOT（A 控 B）再对 A 打 $H$，把四个 Bell 态映回四个计算基态。
+逐一验证（以 $\ket{\Psi^-}$ 为例，其余同法）：
+
+$$
+\ket{\Psi^-}\xrightarrow{\ \mathrm{CNOT}\ }
+\frac{\ket{01}-\ket{11}}{\sqrt2}
+=\frac{\ket{0}-\ket{1}}{\sqrt2}\otimes\ket{1}
+\xrightarrow{\ H\otimes I\ }\ket{1}\otimes\ket{1}=\ket{11}
+$$
+
+四种情形的完整对照：
+
+| 消息 | Alice 的门 | 信道里的态 | 测量读数 $m_1m_2$ |
+| --- | --- | --- | --- |
+| 00 | $I$ | $\ket{\Phi^+}$ | 00 |
+| 01 | $X$ | $\ket{\Psi^+}$ | 01 |
+| 10 | $Z$ | $\ket{\Phi^-}$ | 10 |
+| 11 | $ZX$ | $\ket{\Psi^-}$ | 11 |
+
+Bob 确定性地读出两比特。**没有概率、没有猜测**——因为四个候选态正交。
+
+</Derivation>
+
+<Callout type="insight" title="为什么「只动一半」就够了">
+直觉上很反常：Alice 碰都没碰粒子 B，却把**整体**在四个正交态之间任意切换。
+奥秘是 9.3 节的老朋友：最大纠缠态的信息全部存在**关联**里，
+而不在任何一半上。$X$ 改写「两粒子是同还是反」（$\Phi$ 类对 $\Psi$ 类），
+$Z$ 改写「相对相位是正还是负」（上标 $+$ 对 $-$）——
+两个开关都是关联的属性，从任何一端都拧得动。
+局部视角则完全无感：四种编码下粒子 A 的约化态都是 $I/2$，
+窃听者截获了 A 也只能看到白噪声。密集编码天然自带保密性：
+没有 B 那一半，2 比特一个都取不出来。
 </Callout>
 
-## 内容规划
+<DualView>
+<div slot="left">
 
-- 协议步骤
-- 与隐形传态的对偶关系
+**与隐形传态互为镜像。** 两个协议消耗同一种燃料（1 个 ebit），
+方向恰好相反：
 
-## 计划中的交互模拟
+- 隐形传态：花 2 个经典比特，**运 1 个 qubit**；
+- 密集编码：花 1 个 qubit，**运 2 个经典比特**。
 
-- `quantum-circuit`
+一个用经典信道扛量子货，一个用量子信道扛经典货。
+这对镜像说明 qubit 与 cbit 之间没有固定汇率——
+汇率由手头的纠缠储备决定。
+「纠缠是一种可消耗的通信资源」这个观念，
+正是从这两个 1992/1993 年的协议开始确立的。
 
-模拟组件写好后在 `src/components/mdx/Sim.astro` 的 REGISTRY 里登记，
-正文里用 `<Sim name="quantum-circuit" />` 嵌入即可。
+</div>
+<div slot="right">
+
+资源等式并排（箭头左边是消耗，右边是产出）：
+
+$$
+1\ \text{ebit}+2\ \text{cbit}\ \longrightarrow\ 1\ \text{qubit}
+$$
+
+$$
+1\ \text{ebit}+1\ \text{qubit}\ \longrightarrow\ 2\ \text{cbit}
+$$
+
+两式都不能反推出「白送」：把第二式代入第一式，
+左右各消掉一轮，得 $2\,\text{ebit} + \text{往返信道} \to$ 原样——
+纠缠只会越用越少，从不凭空增值（LOCC 不增纠缠，9.3 节）。
+
+</div>
+</DualView>
+
+<Callout type="warning" title="上限就是 2，别脑补出「密集平方」">
+能不能再接再厉，用更多纠缠让一个 qubit 扛 3 比特、4 比特？不能。
+带预共享纠缠时 Holevo 上限翻倍到每 qubit **2** 比特，密集编码已顶格。
+数一数自由度就明白：Bob 最终手握的是**两个** qubit 的四维空间，
+至多容纳 4 个正交态——2 比特封顶。Alice 只寄一个粒子却用满了四维空间，
+靠的是 Bob 那半早就到位；她寄出的粒子是「钥匙的后半段」，不是整个保险箱。
+1992 年 Bennett 与 Wiesner 提出协议，1996 年 Innsbruck 用纠缠光子做出实验
+（当时 Bell 测量只能分辨三类，实测容量约 1.58 比特，后来的实验逼近 2）。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '编码', latex: '(\\sigma\\otimes I)\\ket{\\Phi^+},\\quad \\sigma\\in\\{I,X,Z,ZX\\}', note: '四个 Pauli 操作 ↦ 四个两两正交的 Bell 态' },
+    { name: '解码', latex: '(H\\otimes I)\\,\\mathrm{CNOT}:\\ \\ket{B_{m_1m_2}}\\mapsto\\ket{m_1m_2}', note: 'Bell 测量线路，确定性读出' },
+    { name: '资源等式', latex: '1\\ \\text{ebit}+1\\ \\text{qubit}\\to 2\\ \\text{cbit}', note: '与隐形传态 1 ebit + 2 cbit → 1 qubit 对偶' },
+    { name: 'Holevo 上限', latex: '\\chi\\le n\\ \\text{bit}\\ (\\text{无纠缠}),\\quad 2n\\ \\text{bit}\\ (\\text{预共享纠缠})', note: '密集编码恰好顶格，不存在「更密集」编码' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'sd-1',
+      prompt: 'Alice 想发消息 10，她应对自己的粒子施加哪个门？',
+      options: ['Z', 'X', 'I', 'ZX'],
+      answer: 0,
+      distractors: {
+        1: 'X 把 ∣Φ⁺⟩ 变成 ∣Ψ⁺⟩，按约定的码表对应消息 01。',
+        3: 'ZX 给出 ∣Ψ⁻⟩，对应消息 11。',
+      },
+      explain: '(Z⊗I)∣Φ⁺⟩ = (∣00⟩ − ∣11⟩)/√2 = ∣Φ⁻⟩，Bob 的 Bell 测量读出 10。码表：I→00，X→01，Z→10，ZX→11（约定本身可任选，两人一致即可）。',
+    },
+    {
+      id: 'sd-2',
+      prompt: '窃听者 Eve 在途中截获了 Alice 寄出的粒子 A（但拿不到 B）。她能读出多少消息？',
+      options: [
+        '什么都读不出：四种编码下 A 的约化态都是 I/2',
+        '能读出第一个比特',
+        '能读出全部两个比特',
+        '有 50% 概率读出全部消息',
+      ],
+      answer: 0,
+      distractors: {
+        1: '两个编码开关（同/反、正/负相位）都是关联属性，单看 A 一个也测不到。',
+      },
+      explain: '对四种 Bell 态求偏迹，ρ_A 全都等于 I/2——与 9.3 节 Bell 态「局部是白噪声」的计算相同。消息存在关联里，缺了 B 那一半，信息量严格为零。',
+    },
+    {
+      id: 'sd-3',
+      type: 'numeric',
+      prompt: '两人共享 3 对 Bell 态，Alice 共寄出 3 个 qubit。用密集编码最多能可靠传送多少个经典比特？',
+      answer: 6,
+      tolerance: 0,
+      unit: 'bit',
+      explain: '每对 Bell 态 + 每个寄出的 qubit 传 2 比特，3 × 2 = 6。注意两种资源都按次消耗：少一对纠缠或少寄一个粒子，都要按无纠缠信道的 1 qubit = 1 比特计价。',
+    },
+    {
+      id: 'sd-4',
+      prompt: '关于密集编码与隐形传态的关系，正确的是？（多选）',
+      options: [
+        '两者消耗同样的纠缠资源（每轮 1 个 ebit）',
+        '密集编码用量子信道传经典信息，隐形传态用经典信道传量子信息',
+        '把两个协议级联，可以无中生有地净赚纠缠',
+        '两个协议里 Bell 测量都是关键步骤',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: '级联一轮恰好收支相抵还搭进信道使用费；LOCC 之下纠缠只减不增（9.3 节），没有永动机。',
+      },
+      explain: '对偶结构：1 ebit + 2 cbit → 1 qubit（隐形传态）与 1 ebit + 1 qubit → 2 cbit（密集编码）。隐形传态中 Bell 测量在发送方 Alice 处，密集编码中在接收方 Bob 处——镜像得很彻底。',
+    },
+  ]}
+/>
+
+## 接下来
+
+到目前为止，纠缠帮我们**搬运**信息：传态、捎话。
+下一个问题更有野心：量子力学能不能帮我们**计算**得更快？
+1992 年的 Deutsch–Jozsa 算法给出第一个干净的「能」——
+一个经典要问指数多次的问题，量子问一次就够。
+下一节看叠加与干涉如何变成算力。

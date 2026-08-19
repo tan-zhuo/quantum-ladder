@@ -1,17 +1,320 @@
 ---
-title: 'Scattering states and phase shifts'
-summary: 'Continuous spectra are handled quite differently from bound states.'
+title: Scattering states and phase shifts
 section: '4.2'
 order: 2
-status: stub
+summary: 'Everything a potential does to an incident wave condenses, in the end, into one angle: how far it pulled the waveform in, or pushed it out.'
+status: done
+prereqs:
+  - 02-wavefunction/11-tunneling
+  - 04-1d-problems/01-symmetry-parity
+objectives:
+  - Distinguish bound states from scattering states, and explain why the continuum demands a different normalisation and a different question
+  - Read the phase shift δ off the asymptotic waveform, and interpret its sign (attraction pulls in, repulsion pushes out)
+  - Derive δ(k) in full for the square well, and use parity channels to write the transmission as T = cos²(δₑ − δₒ)
+  - Describe how δ behaves at a resonance, and its connection to the Ramsauer–Townsend effect and time delay
+sims: ['wave-packet-scattering']
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section, parity marshalled the bound states into a tidy even-odd-alternating queue. But think back to the scattering experiments of [section 2.11](/en/ch/02-wavefunction/11-tunneling/): a wave packet hits a barrier, part bounces back, part gets through, we computed the transmission $T$ and reflection $R$, and the story seemed complete.
+
+Was it? Consider a loose end left hanging there — the **Ramsauer–Townsend effect**: slow electrons passing through xenon atoms find, at certain energies, $T=1$; the gas turns nearly transparent to them. $T=1$ means "everything got through". Does that mean at this energy the potential did **nothing at all** to the electron?
+
+Not so cheap. The wave got through, yes, but it came out with its waveform **bodily displaced** — the crests are not where they would have been had there been no potential. Transmission is completely blind to this: $T$ compares only the moduli of amplitudes and throws all the phase information away. To see this invisible hand of the potential, we need a new quantity. It is called the **phase shift**.
+
+## First, tell the two kinds of state apart
+
+The energy eigenstates of a one-dimensional potential problem fall naturally into two classes, handled in entirely different ways:
+
+- **Bound states**: energy below the potential's value at infinity. The wavefunction decays exponentially at both ends, can be normalised, and the energies take **discrete** values — the wells of chapter 2 and last section's parity classification are all about these.
+- **Scattering states**: energy above the potential at infinity. The wavefunction oscillates as a plane wave far away, **does not decay and cannot be normalised**, and every $E$ is allowed — the spectrum is **continuous**.
+
+<Callout type="warning" title="Scattering states are non-normalisable, but not pathological">
+$\int|\ee^{\ii kx}|^2\dd x=\infty$: a single scattering state genuinely does not represent a real particle. The way out was already paved in [section 3.3](/en/ch/03-formalism/03-hilbert-space/): treat them as generalised basis vectors, normalised to a delta function; a real particle is always a superposition of them — a **wave packet**. What flies across the simulation below is exactly a wave packet.
+
+Happily, a packet sharp enough in energy behaves as the single-$k$ solution dictates, so solving the plane-wave problem remains the fastest route to the physics.
 </Callout>
 
-## Planned contents
+The question changes accordingly. For bound states we asked "which energies are allowed". A scattering state can have any energy, so we ask instead: **a wave of given energy goes in — what has changed when it comes out?**
 
-- Distinguishing bound states from scattering states
-- The phase shift δ: definition and meaning
-- Resonant scattering
+The full content of the answer is surprisingly small.
+
+## The cleanest stage: the half-axis problem
+
+First reduce the problem until only one number is left. Imagine the particle confined to the half-axis $x>0$ (an impenetrable wall at $x=0$), with a square well of width $a$ and depth $V_0$ against the wall:
+
+$$
+V(x)=\begin{cases}-V_0,&0<x<a\\0,&x>a\end{cases}
+$$
+
+This "wall plus short-range potential" stage looks special, but it is precisely the core geometry of three-dimensional scattering from [chapter 5](/en/ch/05-angular-momentum/) onward — the radial equation of a 3D problem lives on a half-axis, with the origin playing the wall. Learn it now, reuse it wholesale later.
+
+**With no potential**, the solution at energy $E=\hbar^2k^2/2m$ must vanish at the wall:
+
+$$
+\psi_{\text{free}}(x)\propto\sin(kx)
+$$
+
+**With the potential**, the potential acts only for $x<a$; beyond that stretch the equation is identical to the free case and the solution is still a sine wave — but there is no longer any reason for it to happen to "line up" at $x=0$. Its most general form is
+
+$$
+\psi(x)\propto\sin(kx+\delta),\qquad x>a
+$$
+
+This angle $\delta$ is the **phase shift**: the presence of the potential has translated the outside waveform bodily by a distance $\delta/k$. The potential did not change the wavelength (energy is conserved; the wave comes out with the same $k$), and in steady state it did not change the amplitude either. **The only thing it can do is slide the waveform** — everything a short-range potential does to a wave of given energy is condensed into this one number.
+
+<DualView>
+<div slot="left">
+
+**The sign talks.** In an attractive potential (a well) the wavenumber is larger and the wavelength shorter; the wave "runs a few extra laps" inside the well and emerges with its phase advanced: the waveform is **pulled toward** the potential, $\delta>0$.
+
+In a repulsive potential (a barrier) the wave amplitude is suppressed, and the waveform is **pushed away** from it, $\delta<0$. A hard repulsive core is the extreme case: an impenetrable hard sphere of radius $b$ shoves the whole wave out by $b$, giving $\delta=-kb$.
+
+In one sentence: **watch whether the waveform got pulled in or pushed out, and by how much, and you have read off the potential's character and strength.**
+
+</div>
+<div slot="right">
+
+Split $\sin(kx+\delta)$ into incoming and outgoing travelling waves:
+
+$$
+\sin(kx+\delta)=\frac{1}{2\ii}\left[\ee^{\ii(kx+\delta)}-\ee^{-\ii(kx+\delta)}\right]
+$$
+
+Factoring out the common phase, the ratio of the outgoing wave $\ee^{\ii kx}$ to the incoming wave $\ee^{-\ii kx}$ is
+
+$$
+S(k)=\ee^{2\ii\delta(k)}
+$$
+
+This is the simplest **scattering matrix** (S-matrix). $|S|=1$ holds automatically — the wall swallows no particles, what goes in comes out, and conservation of probability current pins $S$ to the unit circle, leaving only the rotation angle $2\delta$ free to vary.
+
+</div>
+</DualView>
+
+## The full derivation: δ(k) for the square well
+
+<Derivation title="Derivation: phase shift of the half-axis square well" level="进阶" minutes={10} open={true}>
+
+**Step 1: write the solutions in the two regions.**
+
+Inside the well ($0<x<a$) the kinetic energy is larger, with wavenumber
+
+$$
+k'=\frac{\sqrt{2m(E+V_0)}}{\hbar}>k=\frac{\sqrt{2mE}}{\hbar}
+$$
+
+The solution must vanish at the wall, so inside it can only be
+
+$$
+\psi_{\text{in}}(x)=A\sin(k'x)
+$$
+
+Outside, by definition, we write
+
+$$
+\psi_{\text{out}}(x)=B\sin(kx+\delta)
+$$
+
+**Step 2: join them at $x=a$.** $V$ is finite, so both $\psi$ and $\psi'$ are continuous:
+
+$$
+A\sin(k'a)=B\sin(ka+\delta)
+$$
+
+$$
+Ak'\cos(k'a)=Bk\cos(ka+\delta)
+$$
+
+**Step 3: divide the two equations to eliminate the amplitudes.** We do not care about $A,B$ (continuum normalisation is a separate story) — only about the shape. Dividing gives
+
+$$
+k'\cot(k'a)=k\cot(ka+\delta)
+$$
+
+The left side is all known quantities — this is "the potential passing its information outward through the logarithmic derivative": the outside waveform is required to connect at $x=a$ with a prescribed slope-to-value ratio.
+
+**Step 4: solve for δ.** Invert the relation into a tangent:
+
+$$
+\tan(ka+\delta)=\frac{k}{k'}\tan(k'a)
+$$
+
+$$
+\boxed{\ \delta(k)=-ka+\arctan\!\left[\frac{k}{k'}\tan(k'a)\right]\ }
+$$
+
+**Check 1: no potential.** With $V_0=0$ we have $k'=k$, the bracket becomes $\tan(ka)$, and $\delta=-ka+ka=0$. No potential, no phase shift. Correct.
+
+**Check 2: shallow well, low energy.** For small $V_0$, $k'\approx k$; expanding to first order gives $\delta>0$ and proportional to $V_0$: an attractive potential gives a positive phase shift, and the stronger the potential the harder it pulls. Matches intuition.
+
+**Plug in real numbers** (an electron, $\hbar c=197.3$ eV·nm, $mc^2=511$ keV): take $V_0=1.0$ eV, $a=0.2$ nm, $E=0.5$ eV.
+
+$$
+k=\frac{\sqrt{2\times511000\times0.5}}{197.3}=3.62\ \text{nm}^{-1},\qquad
+k'=\frac{\sqrt{2\times511000\times1.5}}{197.3}=6.28\ \text{nm}^{-1}
+$$
+
+$ka=0.725$, $k'a=1.255$, $\tan(k'a)=3.06$, so
+
+$$
+\delta=-0.725+\arctan(0.577\times3.06)=-0.725+1.056=0.331\ \text{rad}\approx19°
+$$
+
+A positive shift — the well pulls the waveform in by about $\delta/k\approx0.09$ nm, roughly half the well width.
+
+</Derivation>
+
+<Callout type="warning" title="Keep an eye on the arctan branch">
+The period of $\tan$ is $\pi$, so the $\arctan$ above can only hand back a principal value in $(-\pi/2,\pi/2)$ at a time, and $\delta$ is born with a "mod $\pi$" ambiguity. The standard convention is to define $\delta(k)$ as a **continuous function** of $k$: start from the high-energy end with $\delta(\infty)=0$ and track downward in energy, adding $\pi$ to the $\arctan$ by hand each time $k'a$ crosses an odd multiple of $\pi/2$. In the example above, $k'a=1.255$ has not yet reached $\pi/2\approx1.571$, so the principal value happens to be right.
+
+The $\delta(0)$ pinned down this way carries a beautiful bonus — see Levinson's theorem below.
+</Callout>
+
+## Parity returns the favour: scattering on the full line
+
+The half-axis problem has only reflection, no transmission. Back on the full line with a symmetric potential (the square barriers and wells of section 2.11), waves can come in from the left or from the right, and the problem looks twice as complicated. Here last section's parity makes good on its promise: **it splits the scattering into two channels that never disturb each other.**
+
+<Derivation title="Derivation: transmission T = cos²(δₑ − δₒ)" level="进阶" minutes={9}>
+
+**Step 1: change basis.** In a symmetric potential $[\hat H,\hat P]=0$; the continuum is degenerate, but the two states at each energy can always be combined into one even and one odd (exactly what the warning box in section 4.1 said). Outside the range of the potential, the even and odd solutions are
+
+$$
+\psi_{\ee}(x)\propto\cos(k|x|+\delta_{\ee}),\qquad
+\psi_{\text{o}}(x)\propto\operatorname{sgn}(x)\sin(k|x|+\delta_{\text{o}})
+$$
+
+Each channel is a half-axis problem of its own: the odd channel vanishes at the origin (the $\sin$ type — precisely the derivation above, with condition $\psi(0)=0$); the even channel is flat there (the $\cos$ type, condition $\psi'(0)=0$). Each carries its own phase shift, $\delta_{\ee}$ and $\delta_{\text{o}}$, and neither meddles with the other.
+
+**Step 2: decompose "incident from the left" into the two channels.** A plane wave coming from the left is half even, half odd:
+
+$$
+\ee^{\ii kx}=\cos kx+\ii\sin kx
+$$
+
+**Step 3: each channel does exactly one thing.** Within a channel, scattering just means "multiply the outgoing part by $\ee^{2\ii\delta}$". Split the $\cos$ and $\sin$ into incoming and outgoing travelling waves, attach each outgoing term its own $\ee^{2\ii\delta}$, then recombine the channels: collect the coefficient of $\ee^{\ii kx}$ in the region $x>a$ (transmission) and of $\ee^{-\ii kx}$ in $x<-a$ (reflection), giving
+
+$$
+t=\frac{\ee^{2\ii\delta_{\ee}}+\ee^{2\ii\delta_{\text{o}}}}{2},\qquad
+r=\frac{\ee^{2\ii\delta_{\ee}}-\ee^{2\ii\delta_{\text{o}}}}{2}
+$$
+
+**Step 4: read the result.** After factoring out the common phase, the moduli depend only on the difference of the shifts:
+
+$$
+T=|t|^2=\cos^2(\delta_{\ee}-\delta_{\text{o}}),\qquad
+R=|r|^2=\sin^2(\delta_{\ee}-\delta_{\text{o}})
+$$
+
+$T+R=1$ holds **automatically** — no need for the closing algebraic miracle of section 2.11; current conservation is now guaranteed by the structure.
+
+**Numerical check**: a symmetric square well of width $2a=0.4$ nm and depth 1.0 eV, at $E=0.5$ eV. The even-channel formula follows by the same route (swap the $\tan$ for the form matching that channel's condition): $\delta_{\ee}=0.660$, $\delta_{\text{o}}=0.331$, hence $T=\cos^2(0.329)=0.896$. The transmission formula of section 2.11, $T=[1+V_0^2\sin^2(2k'a)/4E(E+V_0)]^{-1}$, gives $0.896$ — identical to the last digit.
+
+</Derivation>
+
+Two numbers, $(\delta_{\ee},\delta_{\text{o}})$, hold $T$, $R$, and all the phase information they leave out — the **whole** of the scattering. $T=1$ is no longer mysterious: it only requires $\delta_{\ee}-\delta_{\text{o}}$ to be an integer multiple of $\pi$, while each channel separately may have moved the wave a long way. The "transparent" xenon atoms of the Ramsauer–Townsend effect in fact stamp a substantial phase shift onto the electron wave — in cold-atom experiments such shifts have been measured directly.
+
+## Resonance: the sharp turn in δ
+
+Plot $\delta(E)$ as a curve, and over most stretches it varies gently. But near certain energies it **surges by about $\pi$** within a very narrow window — this is a **resonance**. The standard local shape (the Breit–Wigner form) is
+
+$$
+\tan\delta=\frac{\Gamma/2}{E_R-E}
+$$
+
+As $E$ sweeps through the resonance energy $E_R$, $\delta$ passes through $\pi/2$ (mod $\pi$), with a width set by $\Gamma$.
+
+<Callout type="insight" title="A resonance = a state that almost made it to bound">
+Why does δ suddenly surge? Because the potential can almost hide a bound state — a "quasi-bound state": the particle gets in, is trapped for a while, and rattles around before leaking out. During the rattling the wave winds up nearly a full half-turn of extra phase inside the potential, so δ jumps by π.
+
+"How long it rattles" can be quantified: the **Wigner time delay** τ = 2ħ dδ/dE. The steeper δ becomes, the longer the particle lingers; at the peak of a resonance τ ≈ 2ħ/Γ — the narrower the line, the longer the lifetime. This is the scattering version of the alpha-decay picture from section 2.11: an alpha particle is a particle stuck in an extremely narrow resonance, with Γ so small the lifetime can reach tens of billions of years.
+
+And there is a theorem that stitches bound states and scattering together for good — **Levinson's theorem**: with the continuity convention, the zero-energy phase shift satisfies δ(0) = n_b π, where n_b is the number of bound states in that channel. In other words, **count how many turns the scattering waveform has been pulled in at infinity, and you have counted the bound states hiding in the potential**. Last section and this one were two halves of a single story all along.
+</Callout>
+
+Now watch all of this with your own eyes. In the simulation below, set $V_0$ negative (a well) and switch to the transmission curve: the spikes where $T$ returns to 1 are the moments $\delta_{\ee}-\delta_{\text{o}}$ crosses $\pi$. Then watch the transmitted wave packet near a resonance energy emerge **later** than off resonance — that is the Wigner delay:
+
+<Sim name="wave-packet-scattering" />
+
+<Callout type="check" title="Three experiments worth running by hand">
+1. **Find a resonance**: set $V_0$ negative, sweep the energy, and note the position and width of the $T=1$ spikes.
+2. **See the delay**: launch packets at a resonance and far from one, and compare when the transmitted packet emerges.
+3. **Verify the sign of the shift**: run once with a shallow well and once with a low barrier — the centre of the transmitted packet slightly leads or lags a freely propagating reference. That is the direct image of positive versus negative phase shifts.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Definition of the phase shift', latex: '\\psi(x)\\propto\\sin(kx+\\delta),\\quad x>a', note: 'Everything a short-range potential does to a wave of given energy; δ>0 pulls in (attraction), δ<0 pushes out (repulsion)' },
+    { name: 'Square-well phase shift', latex: '\\delta(k)=-ka+\\arctan\\left[\\frac{k}{k\'}\\tan(k\'a)\\right],\\quad k\'=\\frac{\\sqrt{2m(E+V_0)}}{\\hbar}', note: 'Mind the arctan branch; continue continuously from δ(∞)=0' },
+    { name: 'Parity-channel transmission', latex: 'T=\\cos^2(\\delta_{\\ee}-\\delta_{o}),\\qquad R=\\sin^2(\\delta_{\\ee}-\\delta_{o})', note: 'T+R=1 is guaranteed by the structure; T=1 ⟺ the channel shifts differ by an integer multiple of π' },
+    { name: 'Resonance and time delay', latex: '\\tan\\delta=\\frac{\\Gamma/2}{E_R-E},\\qquad \\tau=2\\hbar\\frac{\\dd\\delta}{\\dd E}', note: 'A surge of π in δ marks a quasi-bound state; narrower Γ, longer lifetime' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ph-1',
+      prompt: 'Why does the phase shift "hold everything a short-range potential does to a scattering wave of given energy"?',
+      options: [
+        'Because the potential cannot change the distant wavelength or the steady-state amplitude, so the only thing left to move is the overall position of the waveform',
+        'Because the phase shift determines the particle\'s energy',
+        'Because the wavefunction can always be chosen real',
+        'Because the phase shift is just the transmission written another way',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Cause and effect reversed: the energy (k) is the given input, and δ(k) is the potential\'s response at each k.',
+        2: 'Real solutions are a feature of the half-axis problem, but that is a symptom of "the action condenses to one real angle", not its cause.',
+        3: 'The phase shift carries more information than the transmission: T contains only |t| and drops the phase; from δₑ and δₒ, by contrast, T can be computed.',
+      },
+      explain: 'Energy conservation nails down the distant wavelength, and probability-current conservation nails down the steady-state amplitude (the S-matrix lives on the unit circle). The one freedom the potential has left is to translate the waveform by δ/k. So the family of angles δ(k) is the short-range potential\'s complete "scattering ID card".',
+    },
+    {
+      id: 'ph-2',
+      prompt: 'In a symmetric potential, T = cos²(δₑ − δₒ). The correct reading of T = 1 (perfect transmission) is:',
+      options: [
+        'The two parity channels\' phase shifts differ by an integer multiple of π; the potential may still be acting on the wave substantially',
+        'Both phase shifts must be zero, so the potential might as well not exist',
+        'This only happens when the potential is zero',
+        'The reflected wave adds in phase with the incident wave',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Cases like δₑ = δₒ = 0.7π give T = 1 too, yet the waveform has been dragged a long way.',
+        2: 'The Ramsauer–Townsend effect is precisely an instance of T = 1 with a potential present.',
+        3: 'At T = 1 the reflection amplitude r = 0, so there is nothing to add to the incident wave; the mechanism is that the two channels\' reflection contributions cancel.',
+      },
+      explain: 'r = (e^{2iδₑ} − e^{2iδₒ})/2, and whenever δₑ − δₒ = nπ the two terms cancel, however large each may be. Xenon atoms are "transparent" to electrons of particular energies, but the electron wave walks away carrying a very real phase shift.',
+    },
+    {
+      id: 'ph-3',
+      prompt: 'The phase-shift curve δ(E) surges by about π over a very narrow interval near some energy. This tells us: (select all that apply)',
+      options: [
+        'A quasi-bound state (resonance) exists near that energy',
+        'The dwell time τ = 2ħ dδ/dE in the potential region becomes markedly longer there',
+        'The narrower the surge interval, the longer the quasi-bound state lives',
+        'The transmission must be zero at that energy',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'At resonance the transmission is typically a peak (T = 1 for a double barrier, for instance), not zero; the actual value of T depends on the difference of the two channel shifts.',
+      },
+      explain: 'A surge of π in δ is the signature of a Breit–Wigner resonance: the potential hides a state that "almost got bound", and the particle loiters inside for τ ≈ 2ħ/Γ before leaving. Γ is the energy width of the surge — the smaller it is, the longer the lifetime. Alpha decay is the extreme case.',
+    },
+    {
+      id: 'ph-4',
+      type: 'numeric',
+      prompt: 'An electron is incident on a square well against the wall of the half-axis: depth V₀ = 1.0 eV, width a = 0.2 nm, incident energy E = 0.5 eV. Compute the phase shift from δ = −ka + arctan[(k/k′)tan(k′a)], in degrees. (ħc = 197.3 eV·nm, mc² = 511000 eV)',
+      answer: 19,
+      tolerance: 2,
+      unit: '°',
+      explain: 'k = √(2×511000×0.5)/197.3 ≈ 3.62 nm⁻¹, k′ = √(2×511000×1.5)/197.3 ≈ 6.28 nm⁻¹; ka ≈ 0.725, k′a ≈ 1.255. δ = −0.725 + arctan(0.577×3.06) ≈ 0.331 rad ≈ 19°. Positive shift: the attractive well pulls the waveform in by about 0.09 nm.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Phase shifts and transmission — we can now compute both, as long as the potential is **one** square well or barrier. Real potentials are rarely so obliging: a resonant-tunneling diode is a three-layer barrier-well-barrier stack, and semiconductor superlattices run to hundreds of layers. With the method of section 2.11, every added layer means four more matching equations — a hundred layers means solving several hundred simultaneously. Doing that by hand is suicide.
+
+The next section brings in an assembly-line tool: package each slab of potential as a $2\times2$ matrix, and the whole multilayer structure becomes a **product of matrices**. The razor-sharp resonance in the double barrier — that $T$ rocketing from 0.04 to 1 — will be its first trophy.

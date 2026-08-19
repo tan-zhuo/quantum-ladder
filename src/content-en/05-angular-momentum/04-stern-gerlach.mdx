@@ -1,24 +1,305 @@
 ---
-title: 'The Stern–Gerlach experiment in depth'
-summary: 'One experiment that settles measurement, projection and non-commutation.'
+title: The Stern–Gerlach experiment, in depth
 section: '5.4'
 order: 4
-status: stub
-sims: ['stern-gerlach']
+summary: 'A beam of silver atoms crosses an inhomogeneous magnetic field and splits in two. Chain three of these devices together and every quirk of quantum measurement steps into the open.'
+status: done
+prereqs:
+  - 05-angular-momentum/03-spin-half
+  - 03-formalism/08-measurement
+objectives:
+  - Explain why an inhomogeneous magnetic field acts as an S_z meter, and what the "two traces" mean
+  - Work through the output ratios of the three cascaded SG configurations step by step
+  - Show how "measuring x erases the memory of z" embodies non-commutativity and the projection postulate
+  - Use the recombination experiment to explain why naive "label-carrying" hidden-variable models collapse
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section handed spin a crisp set of mathematics: measure along any direction and there are
+only two answers, $\pm\tfrac\hbar2$. That sounds far too tidy to be how the real world behaves.
+This section turns to experiment — the best case in the history of quantum mechanics of
+"one apparatus teaching an entire course".
+
+## 1922: a beam of silver atoms and two traces
+
+Here is what Otto Stern and Walther Gerlach did in Frankfurt:
+heat silver in an oven until it evaporates, let the silver atoms stream through a slit to form a beam,
+fly it past a magnet with a knife-edge pole above and a flat pole below (the key point: the field is
+**inhomogeneous**, stronger near the sharp pole), and let the atoms land on a glass plate to be developed.
+
+Why inhomogeneous? The energy of a magnetic moment $\vec\mu$ in a field is $U=-\vec\mu\cdot\vec B$.
+A uniform field only twists the moment (a torque) and exerts no net force; only a non-uniform field pulls:
+
+$$
+F_z=-\frac{\partial U}{\partial z}=\mu_z\frac{\partial B_z}{\partial z}
+$$
+
+The direction of the force is set by the **sign** of $\mu_z$, its size by the value of $\mu_z$.
+So the landing position on the glass plate is a readout of $\mu_z$ —
+and a silver atom's magnetic moment is proportional to the spin of its lone valence electron
+(of silver's 47 electrons, 46 pair off and cancel; the remaining one happens to sit in an $l=0$ orbital,
+so orbital angular momentum can neither help nor interfere —
+silver is nature's gift of a pure spin sample). Hence: **this apparatus is an $\hat S_z$ meter**,
+with the landing spot as its needle.
+
+Now compare two predictions:
+
+- **Classical prediction**: atoms leave the oven with randomly oriented moments, $\mu_z$ distributed
+  continuously from $-\mu$ to $+\mu$, so the glass plate should show one continuous vertical **smear**.
+- **Actual result**: no smear. The silver atoms split neatly into **two clusters**, with empty space between.
+
+Two clusters — no more, no fewer. Compare with the previous section: $2s+1=2$ gives $s=\tfrac12$,
+each atom's $S_z$ can only be $+\tfrac\hbar2$ or $-\tfrac\hbar2$, with nothing in between.
+Orientation in space is quantised — which is why the phenomenon was christened "space quantisation".
+
+<Callout type="note" title="A historical joke">
+Stern and Gerlach knew nothing of spin at the time (the concept arrived only in 1925).
+They believed they were confirming the Bohr model's quantisation of orbital angular momentum,
+saw two beams, and declared success. By today's understanding, the silver valence electron has $l=0$ —
+its orbital angular momentum is exactly zero. They had "successfully confirmed" a wrong theory,
+while actually measuring a quantity that would not be invented for another three years.
+The experiment was right, the interpretation was wrong — and the experiment outlived the interpretation.
 </Callout>
 
-## Planned contents
+## Chaining the devices: three configurations
 
-- The original experiment and its result
-- Three configurations of cascaded SG analysers
-- Why this rules out spin as a hidden variable
+A single device is merely evidence of quantisation. The genuine textbook-grade shock comes from **cascading**:
+feed one output beam of an SG device into the next. Notation: SGz is a device with its field along z,
+SGx along x; each has two exits, labelled $+$ and $-$.
 
-## Planned simulations
+<Derivation title="The three cascaded configurations, computed one by one" level="基础" minutes={10} open={true}>
 
-- `stern-gerlach`
+Only three tools are needed: the $\hat S_z$ basis $\ket{\uparrow},\ket{\downarrow}$; the $\hat S_x$ eigenstates
+solved in the previous section,
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="stern-gerlach" />`.
+$$
+\ket{+x}=\frac{\ket{\uparrow}+\ket{\downarrow}}{\sqrt2},\qquad
+\ket{-x}=\frac{\ket{\uparrow}-\ket{\downarrow}}{\sqrt2}
+$$
+
+(set $\theta=\tfrac\pi2$ and $\phi=0$ or $\pi$ in the arbitrary-direction formula);
+and the projection postulate of [section 3.8](/en/ch/03-formalism/08-measurement/):
+probabilities are squared amplitudes, and the post-measurement state is the corresponding eigenstate.
+
+**Configuration 1: SGz → SGz. A consistency check on the instrument.**
+
+Atoms from the oven enter the first SGz and split randomly into two beams; keep only the $+$ exit
+(the state is projected to $\ket{\uparrow}$) and feed it into a second SGz. Probabilities:
+
+$$
+P(+)=|\braket{\uparrow}{\uparrow}|^2=1,\qquad
+P(-)=|\braket{\downarrow}{\uparrow}|^2=0
+$$
+
+**Output: $100\%$ from the $+$ exit.** Repeating a measurement of the same observable repeats the result —
+the "repeatability" clause of the projection postulate. The instrument is self-consistent, not a random-number generator.
+
+**Configuration 2: SGz → SGx. Ask the question along a different axis.**
+
+Take the same $\ket{\uparrow}$ beam and send it into SGx. Rewrite it in the $\hat S_x$ basis:
+
+$$
+\ket{\uparrow}=\frac{\ket{+x}+\ket{-x}}{\sqrt2}
+$$
+
+(add the two defining equations of $\ket{\pm x}$ to verify). Then
+
+$$
+P(+x)=\left|\braket{+x}{\uparrow}\right|^2=\left|\tfrac1{\sqrt2}\right|^2=\frac12,
+\qquad P(-x)=\frac12
+$$
+
+**Output: $50\%:50\%$, completely random atom by atom.** A state with definite $S_z$
+has **no answer** to the question "what is $S_x$" — only probabilities —
+because $[\hat S_z,\hat S_x]\ne0$: the two share no common eigenstates.
+
+**Configuration 3: SGz → SGx → SGz. The knockout punch.**
+
+Continue from configuration 2, keeping only the $+$ exit of SGx — this beam's state **has been projected to** $\ket{+x}$.
+Now send it into a third device, SGz. The naive expectation: these atoms were already "certified" back at
+the first device as $S_z=+\tfrac\hbar2$; in between we merely measured an unrelated $S_x$, so surely
+$100\%$ should exit through $+$.
+
+Compute it. The current state is $\ket{+x}=(\ket{\uparrow}+\ket{\downarrow})/\sqrt2$:
+
+$$
+P(+)=\left|\braket{\uparrow}{+x}\right|^2=\frac12,\qquad
+P(-)=\left|\braket{\downarrow}{+x}\right|^2=\frac12
+$$
+
+**Output: $50\%:50\%$. Half the atoms have $S_z=-\tfrac\hbar2$** —
+even though every atom in this beam was once confirmed by the first device to have $S_z=+\tfrac\hbar2$,
+and nothing touched their z direction along the way.
+
+Tallying the survival fractions across all three stages: oven → SGz keep $+$ ($\tfrac12$) → SGx keep $+$ ($\tfrac12$) →
+SGz exit $-$ ($\tfrac12$): in the end $\tfrac18$ of the atoms complete this "impossible" journey.
+
+</Derivation>
+
+Configuration 3 is non-commutativity made flesh: **the very act of measuring $S_x$ erases the memory of $S_z$.**
+After projection onto $\ket{+x}$, not one bit of "used to be $\ket{\uparrow}$" survives in the state —
+$\ket{+x}$ is $\ket{+x}$, regardless of which beam it was projected from.
+The definiteness of $S_z$ and $S_x$ works like a seesaw: press one end down and the other must rise.
+
+## "Maybe the atoms just carry labels?" — the rout of naive hidden variables
+
+Faced with configuration 3, a natural line of resistance is: perhaps the randomness is merely our ignorance.
+Imagine each atom leaves the factory with a label listing its answer to every possible direction,
+say "if asked z answer $+$, if asked x answer $-$". Measurement merely **reads** the label,
+and the 50:50 of configuration 3 just reflects the statistics of the labels. No "measurement changes the state" required.
+
+This model can explain the two clusters of a single measurement, and can even fake the 50:50 of configuration 2.
+But there is one upgraded experiment it cannot survive.
+
+<DualView>
+<div slot="left">
+
+**The recombination experiment (look at neither path).**
+
+Modify the SGx: block **neither** the $+x$ nor the $-x$ beam,
+and use a reversed field to fold the two beams losslessly back into one, with no detector anywhere along the way —
+the device splits the beam but never "looks" at the outcome. Then send the result into SGz.
+
+The label model's prediction is unambiguous: each atom took one path or the other,
+and whichever it took has no bearing on the label's "answer for z";
+moreover every incoming atom was filtered by the first device as $z:+$.
+So the output **should be $100\%$ up**… wait — in the label model, measuring x does not
+rewrite labels either, so configuration 3 should also give 100%?
+The label theorist patches it: "passing through the SGx field randomly rewrites the z label".
+Fine — but in the recombination experiment the atoms traverse those same fields,
+so the patched model predicts 50:50 after recombination too.
+
+**Quantum mechanics predicts: $100\%$ up.**
+
+</div>
+<div slot="right">
+
+**The quantum calculation: splitting a beam is not measuring it.**
+
+No detector, no projection. The whole process is unitary evolution, and the **amplitudes** of both paths survive:
+
+$$
+\ket{\uparrow}
+=\frac1{\sqrt2}\ket{+x}+\frac1{\sqrt2}\ket{-x}
+\ \xrightarrow{\ \text{split, then recombine}\ }\
+\frac1{\sqrt2}\ket{+x}+\frac1{\sqrt2}\ket{-x}=\ket{\uparrow}
+$$
+
+The two paths superpose coherently; on recombination they interfere back into the original state, and $P(+)=1$.
+
+Only when you place a detector on one of the paths (even without reading it out)
+does the superposition collapse into either/or at the moment of entanglement with the environment,
+and the output falls back to 50:50.
+
+Experiment sides with quantum mechanics. What destroys the z memory is not the physical disturbance of the field,
+but the fact that **path information gets recorded**.
+
+</div>
+</DualView>
+
+Models of this kind — the atom carrying a pre-written answer sheet for every question, i.e.
+**non-contextual hidden variables** — are already limping badly here; chapter 9's Bell inequalities
+will give them, together with all their local cousins, a formal burial.
+For now, the experimental fact is enough: the values of non-commuting observables
+**do not pre-exist, waiting to be read off**.
+
+<Callout type="insight" title="The SG apparatus: the measurement postulate cast in iron">
+Chapter 3's measurement postulate is abstract: spectrum, projection, Born rule, post-measurement state.
+The SG apparatus makes each clause a physical object —
+
+- **Spectrum**: the number of clusters on the glass plate = the number of eigenvalues (two clusters, $\pm\hbar/2$).
+- **Born rule**: the ratio of atom counts in the clusters = the ratio of squared amplitudes.
+- **Projection**: a beam leaving a given exit is in the corresponding eigenstate — blocking the other exits is one act of "measure and select".
+- **Repeatability**: chain two along the same axis and the second reproduces the first, 100%.
+
+Whenever the measurement postulate feels murky, translate the question into a string of SG devices
+and the answer tends to surface by itself. This trick — the SG apparatus as a thinking tool —
+is the shared opening move of both Feynman's and Sakurai's classic textbooks.
+</Callout>
+
+<Callout type="warning" title="Two common misreadings">
+**"The magnet smashes each atom into two halves."** No. Every atom lands whole, in the upper cluster or the lower one;
+no atom was ever "half up, half down". What splits is the beam's destination, not the atom.
+
+**"Measurement disturbs the spin, so the result changes."** Half right, entirely wrong. The memory loss of
+configuration 3 cannot be blamed on mechanical disturbance by the field — in the recombination experiment
+the fields and paths are identical, and as long as no record is kept of which path was taken,
+the z memory survives intact. What erases the memory is the acquisition of information, not a collision-style kick.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'The SG force', latex: 'F_z=\\mu_z\\,\\frac{\\partial B_z}{\\partial z}', note: 'The gradient translates the value of μ_z into a deflection — the landing spot is the readout' },
+    { name: 'Basis change', latex: '\\ket{\\pm x}=\\tfrac{1}{\\sqrt2}\\big(\\ket{\\uparrow}\\pm\\ket{\\downarrow}\\big)', note: 'The complete toolkit for every cascade calculation' },
+    { name: 'Cascade probability', latex: 'P=\\lvert\\braket{\\text{exit}}{\\text{incident}}\\rvert^2', note: 'z+ → x: 50/50; z+ → x+ → z: 50/50 — the z memory is erased' },
+    { name: 'Recombination identity', latex: '\\tfrac1{\\sqrt2}\\ket{+x}+\\tfrac1{\\sqrt2}\\ket{-x}=\\ket{\\uparrow}', note: 'With no path record the amplitudes fold back coherently: 100% recovery of the original state' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am4-1',
+      prompt: 'Why must the SG experiment use an inhomogeneous magnetic field?',
+      options: [
+        'A uniform field gives the moment a torque but no net force; only an inhomogeneous field pulls atoms with different μ_z to different positions',
+        'A uniform field would accelerate the atoms too much',
+        'Only an inhomogeneous field can quantise the magnetic moment',
+        'A uniform field would erase the spin',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Quantisation is a property of the atom itself; the apparatus only makes it visible. Swap in a uniform field and the quantisation is still there — you just cannot see it.',
+      },
+      explain: 'U = −μ·B, F_z = μ_z ∂B_z/∂z. No gradient, no force: every atom flies straight and the plate shows a single spot. The gradient translates "the value of μ_z" into "the landing position" — that is what makes it a measuring instrument.',
+    },
+    {
+      id: 'am4-2',
+      prompt: 'In configuration 3 (SGz keep + → SGx keep + → SGz), the third device finds half the atoms with S_z down. The reason is:',
+      options: [
+        'Measuring S_x projects the state onto |+x⟩, which retains no information whatsoever about "once had S_z up"',
+        'Collisional disturbance by the SGx field changed S_z',
+        'The first device gets it wrong half the time',
+        'The atoms depolarise naturally in flight',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The recombination experiment vetoes the "mechanical disturbance" explanation: the atoms traverse the same SGx field, and with no path record the z memory is intact.',
+        2: 'Configuration 1 proves the instrument is 100% repeatable.',
+      },
+      explain: '[S_z, S_x] ≠ 0: the two share no common eigenstates. After projection onto |+x⟩ = (|↑⟩+|↓⟩)/√2, the state is once again a 50/50 superposition with respect to S_z. Definiteness is a seesaw: fix x and you must surrender z.',
+    },
+    {
+      id: 'am4-3',
+      prompt: 'The recombination experiment (SGx splits the beam, then merges it with no measurement) outputs 100% |↑⟩. This shows: (Select all that apply.)',
+      options: [
+        'Splitting a beam is not in itself a measurement; with no path information recorded there is no projection',
+        'The amplitudes of the two paths superpose coherently and interfere back into the original state',
+        'The naive hidden-variable model of "each atom carries an answer sheet for every direction" contradicts experiment',
+        'The magnetic field has no effect on the spin at all',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The field certainly acts (it separates the two beams); the point is that its action is unitary and reversible — unlike a projection.',
+      },
+      explain: 'However you patch the label model, something breaks: forbid the field from rewriting labels and configuration 3 is unexplained; allow it and the recombination experiment is unexplained. Quantum mechanics unifies both with one formula: with a record, projection; without one, unitary evolution and coherent recombination.',
+    },
+    {
+      id: 'am4-4',
+      type: 'numeric',
+      prompt: 'A beam of S_z = +ħ/2 atoms passes first through SGx (keeping the +x exit), then through SGz. What fraction of the incident beam finally exits through the "−" port of SGz?',
+      answer: 0.25,
+      tolerance: 0.01,
+      unit: '',
+      explain: 'Two independent projections: P(+x|↑) = 1/2, then P(↓|+x) = 1/2, giving 1/2 × 1/2 = 0.25. Note the incident beam consisted entirely of spin-up atoms — that 25% of "down" was manufactured wholesale by the intermediate x measurement.',
+    },
+  ]}
+/>
+
+## What comes next
+
+So far, the SG apparatus has only answered "which way does the spin point at this instant".
+But **between** two measurements, what is the spin doing?
+
+Put the atom in a uniform magnetic field (no gradient needed this time — we are not measuring, only evolving),
+and the spin's expectation value circles the field like a gyroscope. This rotation can be calculated, can be measured,
+and is the entire working principle of nuclear magnetic resonance and hospital MRI — the subject of the next section.

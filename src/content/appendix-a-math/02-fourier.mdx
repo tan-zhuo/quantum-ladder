@@ -2,17 +2,229 @@
 title: 傅里叶分析速查
 section: 'A.2'
 order: 2
-summary: 位置表象与动量表象的桥梁。
-status: stub
+summary: 变换约定（含动量空间的 ħ 版本）、常用变换对表、Parseval 与卷积定理、δ 函数、高斯积分——位置与动量表象之间的全部桥梁。
+status: done
+prereqs:
+  - 微积分（会算定积分与分部积分）
+objectives:
+  - 分清数学约定与量子力学 ħ 约定的傅里叶变换，并能互相换算
+  - 会查并使用常用变换对（高斯、方波、平面波、δ 函数）
+  - 能用 Parseval 定理说明「位置归一 ⇔ 动量归一」
+  - 会算带平方项的高斯积分（含配方法）
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+傅里叶变换的物理内容一句话：**把一个函数拆成不同频率的波的叠加**。
+在量子力学里，「频率」就是动量（$p=\hbar k$），
+所以傅里叶变换就是**位置表象与动量表象之间的换基公式**。
+
+**正文哪里会用到：**
+[2.10 自由粒子](/ch/02-wavefunction/10-free-particle/)用它构造波包；
+[3.3 Hilbert 空间](/ch/03-formalism/03-hilbert-space/)把它解释为连续基的展开；
+[7.6 Fermi 黄金规则](/ch/07-approximation/06-fermi-golden-rule/)与
+[11 章路径积分](/ch/11-path-integral/02-propagator/)大量使用高斯积分；
+附录 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)靠 FFT 在两个表象间来回切换。
+
+## 变换约定
+
+同一个「傅里叶变换」在不同书里差一个常数或指数符号，先把本书的约定钉死。
+
+**数学约定**（对称版，$k$ 是波数）：
+
+$$
+\tilde f(k)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} f(x)\,\ee^{-\ii kx}\,\dd x,
+\qquad
+f(x)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \tilde f(k)\,\ee^{\ii kx}\,\dd k
+$$
+
+**量子力学约定**（$p=\hbar k$，动量波函数记 $\phi(p)$）：
+
+$$
+\phi(p)=\frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^{\infty}\psi(x)\,\ee^{-\ii px/\hbar}\,\dd x,
+\qquad
+\psi(x)=\frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^{\infty}\phi(p)\,\ee^{\ii px/\hbar}\,\dd p
+$$
+
+前置因子 $1/\sqrt{2\pi\hbar}$ 的作用是让两边同时归一（见下面的 Parseval）。
+用 Dirac 记号看，这不过是插入一组完备的动量本征态：
+$\phi(p)=\braket{p}{\psi}$，而 $\braket{x}{p}=\ee^{\ii px/\hbar}/\sqrt{2\pi\hbar}$。
+
+<Callout type="warning" title="查别的书时的三个坑">
+1. 符号约定：有的书正变换用 $\ee^{+\ii kx}$。物理里几乎统一用上面的写法，
+   好处是平面波 $\ee^{\ii(kx-\omega t)}$ 向 $+x$ 传播。
+2. 常数分配：工程书常把 $2\pi$ 全塞给逆变换（正变换无因子）。
+   换约定时变换对表里的常数会跟着变，抄结论前先对约定。
+3. 频率变量：信号处理用 $\nu$（单位 Hz），指数是 $\ee^{-2\pi\ii\nu t}$，没有任何前置常数。
 </Callout>
 
-## 内容规划
+## δ 函数
 
-- 傅里叶变换约定
-- Parseval 定理
-- δ 函数
+**Dirac δ 函数**不是普通函数，而是一个「取值器」：它在积分里出现时，
+把被积函数在尖峰位置的值取出来：
 
+$$
+\int_{-\infty}^{\infty} f(x)\,\delta(x-x_0)\,\dd x=f(x_0)
+$$
+
+可以把它想象成一个宽度趋于零、面积始终为 1 的极限尖峰。最重要的表示是**平面波叠加**：
+
+$$
+\delta(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\ee^{\ii kx}\,\dd k
+$$
+
+——所有波数的平面波等权叠加，处处相消，只在 $x=0$ 处同相堆积。
+这个式子正是连续基正交归一 $\braket{x}{x'}=\delta(x-x')$、
+$\braket{p}{p'}=\delta(p-p')$ 的来源。
+
+常用性质：
+
+| 性质 | 公式 |
+| --- | --- |
+| 缩放 | $\delta(ax)=\delta(x)/\lvert a\rvert$ |
+| 复合函数 | $\delta(g(x))=\sum_i \delta(x-x_i)/\lvert g'(x_i)\rvert$，$x_i$ 为 $g$ 的单根 |
+| 导数 | $\int f(x)\,\delta'(x-x_0)\,\dd x=-f'(x_0)$ |
+| 阶跃函数 | $\dd\Theta/\dd x=\delta(x)$ |
+
+## 常用变换对表
+
+按数学约定（对称版）列出。换成 ħ 约定时把 $k\to p/\hbar$、结果再乘 $1/\sqrt{\hbar}$ 即可。
+
+| $f(x)$ | $\tilde f(k)$ | 备注 |
+| --- | --- | --- |
+| $\ee^{-x^2/2\sigma^2}$ | $\sigma\,\ee^{-\sigma^2k^2/2}$ | 高斯变高斯；宽度互为倒数 $\sigma_x\sigma_k=1$ |
+| $\ee^{ik_0x}$ | $\sqrt{2\pi}\,\delta(k-k_0)$ | 平面波 = 单一动量 |
+| $\delta(x-x_0)$ | $\ee^{-\ii kx_0}/\sqrt{2\pi}$ | 位置本征态含所有动量 |
+| 方波（$\lvert x\rvert<a$ 内为 1） | $\sqrt{2/\pi}\,\dfrac{\sin ka}{k}$ | sinc 型；单缝衍射的数学原型 |
+| $\ee^{-a\lvert x\rvert}$ | $\sqrt{2/\pi}\,\dfrac{a}{a^2+k^2}$ | Lorentz 型；指数衰减 ⇔ 幂律尾巴 |
+| $f(x-x_0)$ | $\ee^{-\ii kx_0}\tilde f(k)$ | 平移 ⇔ 挂相位 |
+| $f'(x)$ | $\ii k\tilde f(k)$ | 求导 ⇔ 乘 $\ii k$；C.2 的算法基础 |
+
+第一行值得多看一眼：高斯波包越窄（$\sigma$ 小），动量分布越宽——
+这就是[不确定性原理](/ch/02-wavefunction/06-expectation-and-uncertainty/)在傅里叶层面的体现，
+且高斯恰好取到下限 $\sigma_x\sigma_p=\hbar/2$。
+
+## Parseval 定理与卷积定理
+
+**Parseval（Plancherel）定理**：变换前后「总量不变」，
+
+$$
+\int_{-\infty}^{\infty}\lvert f(x)\rvert^2\,\dd x=\int_{-\infty}^{\infty}\lvert\tilde f(k)\rvert^2\,\dd k
+$$
+
+物理翻译：$\psi(x)$ 归一化了，$\phi(p)$ 就自动归一化——
+在位置表象里总概率是 1，换到动量表象还是 1。这就是为什么
+$\lvert\phi(p)\rvert^2$ 可以直接解释为动量的概率密度。
+
+**卷积定理**：两个函数的卷积
+$(f*g)(x)=\int f(y)\,g(x-y)\,\dd y$（把 $g$ 平移到各处、按 $f$ 加权叠起来），
+变换后变成乘积：
+
+$$
+\widetilde{f*g}(k)=\sqrt{2\pi}\,\tilde f(k)\,\tilde g(k)
+$$
+
+用途：卷积难算、乘法好算，所以「变换—相乘—变回来」是标准套路。
+数值上这正是 FFT 卷积的原理，也是 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)
+每一步做的事。
+
+## 高斯积分
+
+量子力学里出现频率最高的积分家族。基本式（$\operatorname{Re}a>0$）：
+
+$$
+\int_{-\infty}^{\infty}\ee^{-ax^2}\,\dd x=\sqrt{\frac{\pi}{a}}
+$$
+
+<Derivation title="带线性项的高斯积分：配方法" level="基础" minutes={5} open={true}>
+
+目标：
+
+$$
+I=\int_{-\infty}^{\infty}\ee^{-ax^2+bx}\,\dd x
+$$
+
+**配方**。把指数写成完全平方：
+
+$$
+-ax^2+bx=-a\left(x-\frac{b}{2a}\right)^2+\frac{b^2}{4a}
+$$
+
+**平移积分变量** $u=x-b/2a$（积分限不变），常数因子提出去：
+
+$$
+I=\ee^{b^2/4a}\int_{-\infty}^{\infty}\ee^{-au^2}\,\dd u
+=\sqrt{\frac{\pi}{a}}\;\ee^{b^2/4a}
+$$
+
+这一个式子就够对付大部分场合：$b$ 可以是复数（比如 $b=\ii k$，
+这正是「高斯的傅里叶变换还是高斯」的来历），$a$ 也可以带虚部
+（路径积分里 $a\propto\ii$，即 Fresnel 积分，结果形式相同，理解为极限意义下收敛）。
+
+**带多项式的版本**用「对参数求导」生成：
+
+$$
+\int x^2\,\ee^{-ax^2}\dd x=-\frac{\partial}{\partial a}\int\ee^{-ax^2}\dd x
+=\frac{1}{2a}\sqrt{\frac{\pi}{a}}
+$$
+
+奇次幂 $\int x^{2n+1}\ee^{-ax^2}\dd x=0$（奇函数对称区间积分为零）。
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: '动量表象（ħ 约定）', latex: '\\phi(p)=\\frac{1}{\\sqrt{2\\pi\\hbar}}\\int\\psi(x)\\,\\ee^{-\\ii px/\\hbar}\\,\\dd x', note: '即 ⟨p|ψ⟩，插入动量完备基' },
+    { name: 'δ 函数的平面波表示', latex: '\\delta(x)=\\frac{1}{2\\pi}\\int_{-\\infty}^{\\infty}\\ee^{\\ii kx}\\,\\dd k', note: '连续基正交归一化的来源' },
+    { name: 'Parseval 定理', latex: '\\int|\\psi(x)|^2\\dd x=\\int|\\phi(p)|^2\\dd p', note: '位置归一 ⇔ 动量归一，|φ(p)|² 才有概率解释' },
+    { name: '卷积定理', latex: '\\widetilde{f*g}=\\sqrt{2\\pi}\\,\\tilde f\\,\\tilde g', note: '卷积难算就去傅里叶空间做乘法' },
+    { name: '高斯积分', latex: '\\int_{-\\infty}^{\\infty}\\ee^{-ax^2+bx}\\dd x=\\sqrt{\\frac{\\pi}{a}}\\,\\ee^{b^2/4a}', note: '配方 + 平移；b 可为复数，路径积分的基本砖块' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apa2-1',
+      prompt: '一个高斯波包在位置空间变得更窄，它的动量分布会怎样？',
+      options: [
+        '变宽——傅里叶宽度互为倒数',
+        '也变窄——两者同步',
+        '不变——归一化保证分布固定',
+        '取决于波包的中心动量',
+      ],
+      answer: 0,
+      distractors: {
+        1: '若两者能同时变窄，就能同时精确知道位置和动量，违反不确定性原理。',
+        3: '中心动量 k₀ 只平移动量分布的位置，不改变宽度。',
+      },
+      explain: '变换对 exp(−x²/2σ²) ↔ σ·exp(−σ²k²/2)：σ 减小时位置分布收窄、动量分布展宽，乘积 σ_x σ_p = ħ/2 恰为不确定性原理的下限。',
+    },
+    {
+      id: 'apa2-2',
+      prompt: 'Parseval 定理在量子力学里的直接物理意义是？',
+      options: [
+        '波函数在位置表象归一化，则在动量表象自动归一化',
+        '能量在傅里叶变换下守恒',
+        '位置与动量的不确定度乘积有下限',
+        '波包的群速度等于粒子速度',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Parseval 说的是模平方的积分（总概率），不是能量。',
+        2: '不确定性关系来自 Cauchy–Schwarz 不等式加对易子，是另一条定理。',
+      },
+      explain: '∫|ψ|²dx = ∫|φ|²dp：总概率与表象无关。正因为如此，|φ(p)|² 才能被解释成测量动量的概率密度。',
+    },
+    {
+      id: 'apa2-3',
+      prompt: '∫ f(x) δ(2x) dx 等于？',
+      options: ['f(0)/2', 'f(0)', '2f(0)', '0'],
+      answer: 0,
+      distractors: {
+        1: '忘了缩放因子：δ(ax) = δ(x)/|a|。',
+        2: '因子是除以 |a| 不是乘。',
+      },
+      explain: '换元 u = 2x 即得 δ(2x) = δ(x)/2，所以积分为 f(0)/2。一般地 δ(ax) = δ(x)/|a|——δ 函数按「面积为 1」定义，横向压缩必须纵向补偿。',
+    },
+  ]}
+/>

@@ -1,17 +1,211 @@
 ---
-title: 'The Pauli exclusion principle'
-summary: 'Not a repulsive force, but a symmetry requirement on the wavefunction.'
+title: The Pauli exclusion principle
 section: '8.3'
 order: 3
-status: stub
+summary: 'Two fermions cannot occupy the same quantum state. It is not a repulsive force but a direct corollary of antisymmetry — yet it is enough to draw the periodic table, give atoms their volume, and hold a white dwarf up against gravity.'
+status: done
+prereqs:
+  - 08-identical-particles/02-bosons-fermions
+  - 06-hydrogen/04-energy-levels
+objectives:
+  - Give the precise statement of the Pauli exclusion principle and derive it from antisymmetry
+  - Use "levels + exclusion" to explain the periodic structure of the periodic table and the 2n² rule
+  - Derive the Fermi energy of a free fermion gas and compute realistic values for metals
+  - Explain qualitatively how degeneracy pressure supports a white dwarf, and why there is a mass limit
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the end of the last section, the Slater determinant handed us a gift: two equal columns make the determinant vanish. Translated into physics —
+
+> **The Pauli exclusion principle**: two identical fermions cannot occupy the same single-particle quantum state.
+
+The derivation is one line. Put both electrons in the spin-orbital $\phi_a$; the antisymmetric combination gives
+
+$$
+\psi_A=\frac{1}{\sqrt2}\bigl[\phi_a(x_1)\phi_a(x_2)-\phi_a(x_1)\phi_a(x_2)\bigr]\equiv0
+$$
+
+This state **does not exist** — not "very high in energy", not "forbidden to transition into", but simply absent from the state space altogether. Strictly speaking, the deeper principle is the stronger one from last section: fermion wavefunctions must be antisymmetric; "exclusion" is merely its most famous corollary.
+
+The principle is short. The bill it pays is long. This section tours what it buys.
+
+## Exhibit one: why does the periodic table have periods?
+
+Start with a question chemistry teachers usually leave unanswered: **why don't all of an atom's electrons fall into the 1s orbital?**
+
+Chapter 6 solved the hydrogen atom: levels $E_n=-13.6\,\text{eV}/n^2$, with $1s$ lowest. The principle of minimum energy would seem to say that the ground state of a many-electron atom has every electron crammed into $1s$ — in which case lithium and uranium would both have a 1s "outer shell", chemical properties would drift monotonically, there would be no sudden inertness of the noble gases or sudden violence of the alkali metals, and the periodic table would have no periods at all.
+
+The exclusion principle rewrites the rules. Count how many electrons each shell can hold: the shell with principal quantum number $n$ has $n^2$ spatial orbitals ($\ell=0,\dots,n-1$, each with $2\ell+1$ values of $m$), and each spatial orbital takes spin up and spin down, giving a capacity of
+
+$$
+2n^2:\qquad n=1\to2,\quad n=2\to8,\quad n=3\to18,\quad n=4\to32
+$$
+
+Electrons can only **fill shell by shell**: hydrogen's single electron takes $1s$; helium's two fill up $n=1$; lithium's third electron is forced to move into $2s$ — so lithium's outermost electron sits alone and loosely bound, chemically eager, remarkably like hydrogen. Periodicity has arrived: **each time a shell fills, the next electron is forced to open a new one, and the chemistry starts its cycle again.**
+
+The lengths of the first few periods — 2, 8, 8, 18 — do not match $2n^2$ term by term (the third period is 8, not 18), and the reason was prepared in chapters 6 and 7: in a many-electron atom the inner electrons **screen** the nuclear charge, so the levels depend on $\ell$ as well as $n$ (and $4s$ fills before $3d$). But the big question, "why are there periods at all?", has a two-part answer: hydrogen-like level structure + Pauli exclusion.
+
+<Callout type="warning" title="Exclusion is not a force">
+A common misconception: "Pauli repulsion" is some new repulsive force between electrons. It is not. The Hamiltonian contains only the Coulomb interaction, with no extra term; the exclusion principle restricts the **allowed states**, not the forces. The "exchange repulsion" or "hard-sphere repulsion" of chemistry is how this state-space restriction **shows up** in the energy: try to press two closed-shell electron clouds together and the electrons are forced up into higher orbitals, the energy climbs steeply, and it "looks like" a strong repulsion. Hunt for the source of this force and you will find nothing — its source is a minus sign.
 </Callout>
 
-## Planned contents
+## Exhibit two: pouring a great many electrons into a box
 
-- A precise statement of the exclusion principle
-- Building up the periodic table
-- Degeneracy pressure in white dwarfs and neutron stars
+The periodic table is filling "inside one atom". Now the opposite extreme: a metal holds about $10^{23}$ free electrons per cubic centimetre — a colossal number of fermions poured into one big box. What do they do?
+
+A classical gas at $T\to0$ has every particle at rest with zero energy. Fermions cannot: each state seats only two (spin up and down), so latecomers must occupy ever higher levels — like filling a stadium, where once the front rows are taken you can only climb. The highest energy reached is the **Fermi energy** $E_F$.
+
+<Derivation title="The Fermi energy of a free electron gas" level="进阶" minutes={9}>
+
+**Step 1: count the states in the box.** In a cubic box of side $L$, the generalisation of the infinite well gives standing-wave solutions with quantised wavevectors $\vec{k}=\frac{\pi}{L}(n_x,n_y,n_z)$, the $n_i$ positive integers. Each triple $(n_x,n_y,n_z)$ is one spatial orbital, seating 2 electrons.
+
+**Step 2: the ground state = a filled sphere.** At $T=0$, fill from low energy up according to $E=\hbar^2k^2/2m$, stopping at some maximum wavenumber $k_F$ — an eighth of a sphere in $k$-space (all $n_i$ positive). The number of states:
+
+$$
+N=2\times\frac{1}{8}\times\frac{\frac{4}{3}\pi k_F^3}{(\pi/L)^3}
+=\frac{k_F^3}{3\pi^2}L^3
+$$
+
+(The denominator $(\pi/L)^3$ is the $k$-space volume per state; the factor 2 is spin.) Writing the electron number density as $n=N/L^3$ and solving,
+
+$$
+k_F=(3\pi^2 n)^{1/3}
+$$
+
+**Step 3: the Fermi energy.**
+
+$$
+E_F=\frac{\hbar^2k_F^2}{2m}=\frac{\hbar^2}{2m}(3\pi^2n)^{2/3}
+$$
+
+**Step 4: plug in real numbers (copper).** Copper contributes 1 free electron per atom, $n=8.5\times10^{28}\,\text{m}^{-3}$:
+
+$$
+k_F=(3\pi^2\times8.5\times10^{28})^{1/3}=1.36\times10^{10}\,\text{m}^{-1}
+$$
+
+$$
+E_F=\frac{(1.055\times10^{-34})^2\times(1.36\times10^{10})^2}{2\times9.11\times10^{-31}}
+\approx1.13\times10^{-18}\,\text{J}\approx7.0\,\text{eV}
+$$
+
+**Reading the number.** 7 eV corresponds to a "temperature" $T_F=E_F/k_B\approx8\times10^4$ K — nearly 300 times room temperature (0.025 eV). Even at absolute zero, the fastest electrons in a metal fly at about $1.6\times10^6$ m/s (0.5% of the speed of light). This speed is almost independent of temperature; it is squeezed out purely by Pauli exclusion. The classical intuition "cold = slow" fails in the world of fermions.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Intuition: degeneracy pressure.** Want to compress this box of electron gas? Shrink the box and the level spacing grows (recall the infinite well's $E\propto1/L^2$); every occupied level is lifted, and the total energy rises — compression costs work, so the gas is effectively **pushing back**, even at zero temperature. This "purely quantum incompressibility" is called **degeneracy pressure**.
+
+It is everywhere: metals are hard to compress, atoms have definite volumes, your hand pressed on the table does not sink in — microscopically it is always "the electrons have nowhere to go" doing the pushing.
+
+</div>
+<div slot="right">
+
+**Formula: the pressure.** Differentiate the ground-state energy with respect to volume to get the pressure. The mean kinetic energy of a filled Fermi sphere is $\frac{3}{5}E_F$, so the total energy is $U=\frac{3}{5}NE_F\propto V^{-2/3}$, hence
+
+$$
+P=-\frac{\partial U}{\partial V}=\frac{2}{5}nE_F=\frac{\hbar^2}{5m}(3\pi^2)^{2/3}n^{5/3}
+$$
+
+The key scalings: $P\propto n^{5/3}$, and $P\propto1/m$ — **the lighter the particle, the stronger the degeneracy pressure**. In copper this pressure is about $3.8\times10^{10}$ Pa, roughly 380,000 atmospheres, balanced by the Coulomb attraction.
+
+</div>
+</DualView>
+
+## Exhibit three: why doesn't a white dwarf collapse?
+
+A star spends its whole life in a tug of war: gravity pulls inward, thermal pressure pushes outward. When the fuel runs out the thermal pressure retreats, and gravity looks certain to win — the star should collapse without limit.
+
+Yet stars like the Sun end up as **white dwarfs**: a solar mass squeezed into an Earth-sized sphere, density about $10^9\,\text{kg/m}^3$ (a teaspoonful weighs some five tonnes), and no matter how far it cools it shrinks no further. What holds it up?
+
+That $P\propto n^{5/3}/m$ from above. Collapse sends the electron density soaring, degeneracy pressure climbs as $n^{5/3}$ — faster than gravity (whose effective scaling is $n^{4/3}$) — so balance is always reached at some radius. **A white dwarf is a star held up by the Pauli exclusion principle** — no burning needed, no temperature needed, only electrons with "nowhere to go".
+
+<Callout type="insight" title="The Chandrasekhar limit: even degeneracy pressure has a ceiling">
+The heavier the white dwarf, the harder its electrons are squeezed. As electron speeds approach the speed of light, the energy-momentum relation changes from $E\propto p^2$ to $E\propto p$, and the degeneracy-pressure scaling **softens** from $n^{5/3}$ to $n^{4/3}$ — exactly the same scaling as gravity, and the balance is no longer stable. The critical mass is the **Chandrasekhar limit**, about $1.4M_\odot$.
+
+Beyond it, electron degeneracy pressure concedes and the star collapses on: electrons are pressed into protons to make neutrons, and **neutron** degeneracy pressure takes over (a neutron star, density $\sim10^{17}\,\text{kg/m}^3$); when even neutron degeneracy pressure fails (above roughly $2$–$3M_\odot$), the result is a black hole. Type Ia supernovae are bright in so uniform a way that they serve as "standard candles" for surveying the universe precisely because every such explosion happens at the same mass — a law of quantum statistics, calibrating cosmology's ruler.
+</Callout>
+
+## The view on the boson side
+
+Glance across at the other family. Bosons face no exclusion, and as $T\to0$ they can drop **en masse** into the same lowest state — Bose–Einstein condensation (achieved in rubidium-87 in 1995, at 170 nK). Last section's $^4$He superfluid, and the $10^{16}$ photons sharing one mode in a laser cavity, are the same "legal bunching". One minus sign apart: fermions build the periodic table and white dwarfs; bosons light lasers and superfluids.
+
+<KeyFormulas
+  items={[
+    { name: 'Exclusion principle', latex: '\\phi_a=\\phi_b\\ \\Rightarrow\\ \\psi_A\\equiv0', note: 'At most one fermion per spin-orbital; a corollary of antisymmetry, not an independent law' },
+    { name: 'Shell capacity', latex: '2n^2', note: 'n = 1, 2, 3, 4 → 2, 8, 18, 32; the skeleton of the periodic table' },
+    { name: 'Fermi energy', latex: 'E_F=\\frac{\\hbar^2}{2m}(3\\pi^2 n)^{2/3}', note: 'About 7 eV in copper, corresponding to T_F ≈ 8×10⁴ K' },
+    { name: 'Degeneracy pressure', latex: 'P=\\frac{2}{5}nE_F\\propto \\frac{n^{5/3}}{m}', note: 'Non-zero even at zero temperature; supports metals and white dwarfs' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pauli-1',
+      prompt: '"Pauli repulsion" pushes two closed-shell electron clouds apart. Which statement about its nature is correct?',
+      options: [
+        'There is no corresponding new force term in the Hamiltonian; antisymmetry forces overlapping electrons into higher orbitals, so the energy climbs steeply as the distance shrinks',
+        'There is a short-range repulsion between electrons independent of the Coulomb force',
+        'It is a manifestation of the magnetic dipole interaction',
+        'It is the Coulomb repulsion enhanced at short range',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'No exact many-electron Hamiltonian contains such a term — it is not a force.',
+        2: 'The magnetic dipole interaction is several orders of magnitude smaller than the observed "repulsion" (section 8.4 gives the numbers).',
+        3: 'Coulomb repulsion is real, but the steep hard core between closed shells comes mainly from the state-space restriction: at a distance, the Coulomb interactions of neutral atoms nearly cancel.',
+      },
+      explain: 'The exclusion principle restricts the "allowed states"; it supplies no "force". Under forced compression the electrons must jump to higher levels, the total energy rises, and macroscopically this reads as strong incompressibility — the source is a minus sign, not a field.',
+    },
+    {
+      id: 'pauli-2',
+      prompt: 'If electrons were bosons, which consequences would you expect? (Select all that apply.)',
+      options: [
+        'The electrons of every atom would cluster near 1s, and the chemistry of the elements would lose its periodicity',
+        'The Fermi energy of metals would drop to essentially zero, and degeneracy pressure would vanish',
+        'White dwarfs would lose their support, changing the endpoint of stellar evolution',
+        'The hydrogen level formula En = −13.6 eV/n² would no longer hold',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'A single-particle problem is untouched by statistics: hydrogen has only one electron, and the level formula stands. Identity effects require at least two identical particles.',
+      },
+      explain: 'The exclusion principle acts only on systems where several identical fermions coexist. Remove it and shell-by-shell filling, the Fermi sea, and degeneracy pressure all vanish; but the one-particle Schrödinger equation does not change by a single word.',
+    },
+    {
+      id: 'pauli-3',
+      type: 'numeric',
+      prompt: 'Sodium contributes 1 free electron per atom, with electron density n = 2.65×10²⁸ m⁻³. Find the Fermi energy in eV. (ħ = 1.055×10⁻³⁴ J·s, m = 9.11×10⁻³¹ kg, 1 eV = 1.602×10⁻¹⁹ J)',
+      answer: 3.2,
+      tolerance: 0.3,
+      unit: 'eV',
+      explain: 'k_F = (3π²n)^{1/3} = (3×9.87×2.65×10²⁸)^{1/3} ≈ 9.2×10⁹ m⁻¹, and E_F = ħ²k_F²/2m ≈ 5.1×10⁻¹⁹ J ≈ 3.2 eV. The density is lower than copper, so the Fermi energy shrinks as n^{2/3}, but it is still over a hundred times the thermal energy at room temperature.',
+    },
+    {
+      id: 'pauli-4',
+      prompt: 'The physical reason white dwarfs have a mass limit (about 1.4 solar masses) is:',
+      options: [
+        'Once the electrons turn relativistic, the degeneracy-pressure scaling softens from n^{5/3} to n^{4/3}, exactly matching gravity, so stable equilibrium is lost',
+        'The Pauli exclusion principle breaks down at large masses',
+        'High temperature "melts" the degeneracy pressure',
+        'Neutron degeneracy pressure is stronger and takes over early',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The exclusion principle holds strictly under every known condition; it never "breaks down".',
+        2: 'Degeneracy pressure is almost independent of temperature — which is exactly why it can support a cold star.',
+        3: 'Neutron degeneracy pressure is indeed "stiffer", but that only matters after collapse past the limit; it is not the reason the limit exists.',
+      },
+      explain: 'Non-relativistic electrons with E ∝ p² give P ∝ n^{5/3}, which can outrun gravity; extreme-relativistic E ∝ p gives P ∝ n^{4/3}, dead even with gravity — and the equilibrium radius ceases to exist. That crossover is the Chandrasekhar limit.',
+    },
+  ]}
+/>
+
+## What comes next
+
+So far the role of antisymmetry has been to **forbid**: delete certain states. But it does one subtler thing as well — **it reprices the states that remain**.
+
+The Hamiltonian contains no spin, yet the helium atom's levels split into two ladders by total spin, nearly 1 eV apart; the spins in a lump of iron prefer to line up as if a powerful aligning force acted between them. The next section settles that account: the exchange interaction — a "force" that does not exist, and its very real energy.

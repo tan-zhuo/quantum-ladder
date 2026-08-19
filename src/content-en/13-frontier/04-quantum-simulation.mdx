@@ -1,17 +1,152 @@
 ---
-title: 'Quantum simulation'
-summary: 'Using a controllable quantum system to simulate an uncontrollable one.'
+title: Quantum simulation
 section: '13.4'
 order: 4
-status: stub
+summary: 'Feynman''s original argument: describing 300 spins takes more numbers than there are atoms in the universe — so let quantum systems simulate quantum systems.'
+status: done
+prereqs:
+  - 09-quantum-information/02-quantum-gates
+  - 08-identical-particles/05-second-quantization
+objectives:
+  - Reproduce Feynman's argument from the exponential growth of Hilbert-space dimension, and estimate the storage involved
+  - Distinguish analog from digital quantum simulation, with the strengths and weaknesses of each
+  - Explain why the Fermi–Hubbard model is quantum simulation's number-one target, and what the "verification problem" is
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+In 1981, at a conference on the physics of computation, Feynman asked a question that seemed odd at the time: **can a classical computer actually simulate physics?** His own answer became the birth certificate of quantum computing:
+
+> "Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical."
+
+Behind the famous line is not rhetoric but a hard barrier you can compute on the back of an envelope. You met its seed back in [section 3.3](/en/ch/03-formalism/03-hilbert-space/): the Hilbert space of a composite system is a **tensor product**, and dimensions multiply. This section pushes that textbook fact to its engineering consequences — and to the machines physicists have built to route around it.
+
+## The exponential wall: turning Feynman's argument into numbers
+
+<Derivation title="Order of magnitude: how much memory does one many-spin state take?" level="基础" minutes={7} open={true}>
+
+**Step 1: count dimensions.**
+
+One spin-1/2 needs 2 complex amplitudes. The state vector of $N$ spins lives in the tensor-product space, of dimension $2^N$, and needs $2^N$ complex amplitudes:
+
+$$
+\ket{\psi}=\sum_{s_1,\dots,s_N=\uparrow,\downarrow}c_{s_1\cdots s_N}\ket{s_1\cdots s_N}
+$$
+
+Note that this is not $2N$ but $2^N$ — every added spin **doubles the storage**.
+
+**Step 2: convert to memory.**
+
+Store each complex number in double precision: 16 bytes.
+
+- $N=30$: $2^{30}\times16\approx17\ \text{GB}$ — the limit of a laptop.
+- $N=50$: $2^{50}\times16\approx1.8\times10^{16}\ \text{bytes}=18\ \text{PB}$ — more than the total memory of the world's largest supercomputer.
+- $N=300$: $2^{300}\approx10^{90}$ — **more than the number of atoms in the observable universe** (about $10^{80}$). Even conscripting every atom in the universe as one storage cell, you could not store a single state vector of 300 spins.
+
+**Step 3: time evolution is worse.**
+
+Simulating the dynamics means exponentiating a $2^N$-dimensional matrix, or repeatedly multiplying it into a vector; even finding just the ground state, the cost of diagonalisation grows exponentially in $N$ all the same. And what is 300 spins, physically? A patch of square lattice barely 17×17 — a nanometre-scale speck.
+
+**Step 4: Feynman's reversal.**
+
+The way out of the deadlock hides inside the problem itself: if 50 spins are "hard to compute", yet a real chunk of material with $10^{23}$ spins "evolves itself" effortlessly at every instant — then **stop storing amplitudes in bits, and let one controllable quantum system stand in for another**. Let Hilbert space carry Hilbert space. That is quantum simulation.
+
+</Derivation>
+
+An important qualification: the exponential wall blocks **generic** quantum states. Many physically important states (low-entanglement states, one-dimensional ground states) admit efficient classical compressions (tensor networks, Monte Carlo, and more), and classical simulation methods are themselves an active frontier. Quantum simulation's real hunting ground is the corners where classical methods are known to fail — and here is the most famous one.
+
+## The number-one target: the Fermi–Hubbard model
+
+Take the Hubbard model of [section 13.2](/en/ch/13-frontier/02-cold-atoms/) and switch to fermions (the two spin states of the electron):
+
+$$
+H=-t\sum_{\langle ij\rangle,\sigma}\hat c_{i\sigma}^\dagger \hat c_{j\sigma}
++U\sum_i \hat n_{i\uparrow}\hat n_{i\downarrow}
+$$
+
+A minimal model with only two parameters, yet widely believed to conceal the mechanism of **high-temperature superconductivity in the cuprates** — a problem that has hung unresolved for nearly forty years. Why can't it be computed? Quantum Monte Carlo, the strongest class of classical methods, slams into the **sign problem** in fermionic systems: exchange antisymmetry ([section 8.2](/en/ch/08-identical-particles/02-bosons-fermions/)) makes the path weights alternate in sign, statistical averages become cancellations between huge numbers, and the error blows up exponentially with system size and inverse temperature. Precisely in the most interesting parameter regime (low temperature, doping, strong correlations), every classical tool fails at once.
+
+A quantum simulator does no expansions and samples no weights — it **is** the model: cold fermionic atoms in an optical lattice genuinely tunnel, genuinely repel. Quantum gas microscopes have already photographed the antiferromagnetic correlations this model predicts; cooling further towards a possible superconducting phase is what this field is fighting for right now.
+
+## Two roads: analog and digital
+
+**Analog quantum simulation**: build a dedicated device whose Hamiltonian matches the target, and let it evolve naturally. Optical lattices, Rydberg-atom arrays (movable optical tweezers arranging arbitrary geometries — programmable Ising models of several hundred atoms since 2021), and trapped-ion chains all belong here. Strengths: large scale (hundreds to thousands of particles), no error correction needed. Weakness: it can only simulate the class of Hamiltonians the device is "born with", and there is no systematic way to drive the errors down.
+
+**Digital quantum simulation**: assemble the evolution operator from the gates of a universal quantum computer ([section 9.2](/en/ch/09-quantum-information/02-quantum-gates/)). The core tool is the **Trotter decomposition**: the terms of $H=\sum_k H_k$ generally fail to commute ([section 3.6](/en/ch/03-formalism/06-commutators/)), but
+
+$$
+\ee^{-\ii Ht}=\lim_{n\to\infty}\left(\ee^{-\ii H_1 t/n}\,\ee^{-\ii H_2 t/n}\cdots\right)^n
+$$
+
+slices a long evolution into many small steps, each with an error controlled by the commutators $[H_j,H_k]$ and shrinking as the square of the step size. Strengths: any Hamiltonian can be programmed, and errors can be controlled and corrected. Weakness: the gate counts are enormous, and until error-corrected machines mature (next section) only shallow circuits can run.
+
+<Callout type="insight" title="A simulator need not be a computer">
+A quantum simulator does not need to be universal, does not need fault tolerance, does not even need to "compute" — it only has to beat classical capability on **the one problem you care about**, and be **trustworthy**, and it wins. That is why it is maturing a generation ahead of universal quantum computers: a wind tunnel never solves the Navier–Stokes equations, yet aircraft designers trust it. The quantum simulator is the wind tunnel of Hilbert space.
 </Callout>
 
-## Planned contents
+## The verification problem: how to trust a machine you cannot check
 
-- Feynman's original proposal
-- Simulators versus universal quantum computers
-- Current progress and the verification problem
+Here lies an awkwardness of principle: the simulator's whole point is to compute what classical methods cannot — so once the answer comes out, **what do you check it against?** Current practice is a chain of cross-evidence:
+
+- **Calibrate in the solvable corners**: at small sizes, weak coupling, and integrable limits, compare against exact diagonalisation ([Appendix C.3](/en/ch/appendix-c-numerics/03-exact-diagonalization-mc/)) and perturbation theory; once the device is calibrated, extrapolate into the unknown;
+- **Cross-check across platforms**: cold atoms, ion traps and superconducting chips have wildly different physical mechanisms and different sources of systematic error; consistent answers to the same model raise confidence enormously;
+- **Test universal laws**: conservation laws, thermalisation behaviour, fluctuation theorems — properties that "must be right" — serve as sentinels.
+
+This is not a scandal of expediency but the normal state of affairs — telescopes and accelerators are no different: for any instrument that explores the unknown, trust comes from calibration and cross-validation, never from recomputing everything.
+
+<KeyFormulas
+  items={[
+    { name: 'Curse of dimensionality', latex: '\\dim\\mathcal H=2^N\\quad(2^{50}\\times16\\ \\text{B}\\approx18\\ \\text{PB},\\ \\ 2^{300}\\approx10^{90})', note: 'Every added spin doubles storage; 300 spins exceed the atoms in the universe' },
+    { name: 'Fermi–Hubbard model', latex: 'H=-t\\sum_{\\langle ij\\rangle,\\sigma}\\hat c_{i\\sigma}^\\dagger\\hat c_{j\\sigma}+U\\sum_i\\hat n_{i\\uparrow}\\hat n_{i\\downarrow}', note: 'Suspected home of high-Tc superconductivity; classical Monte Carlo fails to the sign problem' },
+    { name: 'Trotter decomposition', latex: '\\ee^{-\\ii Ht}\\approx\\big(\\ee^{-\\ii H_1t/n}\\ee^{-\\ii H_2t/n}\\cdots\\big)^n', note: 'The basic brick of digital simulation; error controlled by the commutators [H_j, H_k]' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qsim-1',
+      type: 'numeric',
+      prompt: 'How many PB of memory does it take to store the full state vector of 50 spin-1/2 particles using double-precision complex numbers (16 bytes each)? (1 PB = 10¹⁵ bytes)',
+      answer: 18,
+      tolerance: 2,
+      unit: 'PB',
+      explain: '2⁵⁰ × 16 bytes ≈ 1.126×10¹⁵ × 16 ≈ 1.8×10¹⁶ bytes = 18 PB, more memory than any supercomputer in service. This is the numerical version of Feynman\'s argument.',
+    },
+    {
+      id: 'qsim-2',
+      prompt: 'The direct reason the Fermi–Hubbard model defeats the strongest classical Monte Carlo methods is:',
+      options: [
+        'Fermionic exchange antisymmetry gives the path weights alternating signs, turning statistical averages into exponentially severe cancellations (the sign problem)',
+        'The model has too many parameters to enumerate',
+        'The Hamiltonian is not Hermitian',
+        'Monte Carlo can only handle classical systems',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite — it has only two parameters, t and U; the difficulty is the strongly correlated quantum many-body physics itself.',
+        2: 'The Hamiltonian is perfectly Hermitian; what goes wrong is the sign of the sampling weights.',
+        3: 'Quantum Monte Carlo is very successful for bosons and unfrustrated spin systems — the failure is specific to Fermi statistics.',
+      },
+      explain: 'The sign problem: antisymmetrisation makes the integrand change sign violently, and the signal-to-noise ratio degrades exponentially with system size and inverse temperature. It is provably NP-hard in the worst case, so a general cure very likely does not exist — hence sending real fermions (cold atoms) onto the field in person.',
+    },
+    {
+      id: 'qsim-3',
+      prompt: 'Which of the following statements about analog and digital quantum simulation are correct? (Select all that apply.)',
+      options: [
+        'Analog simulators reach large scales without error correction, but can only realise the Hamiltonians the device natively supports',
+        'Digital simulation uses the Trotter decomposition to compile the evolution into gate sequences, and can in principle simulate any local Hamiltonian',
+        'The digital Trotter error comes from the mutual non-commutativity of the Hamiltonian terms',
+        'Analog results are inherently exact and need no verification whatsoever',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Quite the opposite — verification is the central difficulty of the analog approach: device errors cannot be systematically suppressed, and trust rests on calibration against solvable limits and cross-platform consistency.',
+      },
+      explain: 'The two roads are complementary: analog gets to classically inaccessible scales first, digital buys programmability and correctability at a heavy gate cost. The Trotter error per step goes as ~ (t/n)² [H_j, H_k], and can be beaten down with smaller steps or higher-order decompositions.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Digital quantum simulation presupposes that "gates can approach perfection without limit". But real gate error rates sit at the $10^{-3}$ level, while worthwhile algorithms routinely demand $10^{10}$ operations. Nine orders of magnitude stand in between — the next section is about how humanity intends to cross them: **fault-tolerant quantum computing**.

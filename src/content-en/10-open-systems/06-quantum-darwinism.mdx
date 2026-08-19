@@ -1,16 +1,137 @@
 ---
-title: 'A short introduction to quantum Darwinism'
-summary: 'How classical objectivity emerges from a quantum world.'
+title: A first look at quantum Darwinism
 section: '10.6'
 order: 6
-status: stub
+summary: 'You have never directly seen anything — what you see are record copies in the environment. Classical objectivity = one piece of information copied an astronomical number of times across the environment, and only pointer-state information can be copied that way.'
+status: done
+prereqs:
+  - 10-open-systems/05-decoherence
+objectives:
+  - Explain why the viewpoint "observation = intercepting fragments of the environment" changes how the objectivity question is posed
+  - Use the branching-structure state to show that pointer information can be redundantly broadcast while phase information cannot
+  - Explain why this does not violate the no-cloning theorem
+  - State the Darwinian picture "classicality = redundant records" and its testability
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section settled the accounts of decoherence: the environment photographs nonstop, and coherence outside the pointer states evaporates in an instant. But the final piece of the story is still off the board — **objectivity**.
+
+## The phenomenon first: you have never actually "seen" the dust grain
+
+Ten people stand around a dust grain on a table. Everyone sees it in the same position; the tenth person's looking does nothing to the first nine's conclusions; and nobody has "disturbed" the grain. Think this utterly ordinary scene through with chapter 3's measurement postulates and it is riddled with problems: measurement changes the state, so why do ten "measurements" not interfere with one another? An unknown quantum state cannot be copied, by [chapter 9](/en/ch/09-quantum-information/02-quantum-gates/)'s no-cloning theorem — so how can ten people each hold a consistent piece of information?
+
+The key that cracks the case is admitting a humble fact: **not one of those people ever touched the grain.** What each person intercepted is a small handful of photons scattered off the grain into their own pupils — the very environment particles that were "photographing" the system in the last section. Observers never measure the system itself; **observers only read the environment's records**.
+
+And so the objectivity question is re-posed: this photo album the environment keeps — why does every page say the same thing?
+
+## Branching structure: one piece of information, billions of copies
+
+Decoherence pushes the joint system-environment state towards a very special shape. Let the grain's pointer states be $\ket{x_1},\ket{x_2}$ (last section: selected by the interaction), and let the environment consist of $N$ sub-blocks (each handful of photons counts as one block). Scattering turns every block into a photograph:
+
+$$
+\ket{\Psi}=a\,\ket{x_1}\ket{e_1^{(1)}}\ket{e_1^{(2)}}\cdots\ket{e_1^{(N)}}
++b\,\ket{x_2}\ket{e_2^{(1)}}\ket{e_2^{(2)}}\cdots\ket{e_2^{(N)}}
+$$
+
+where $\braket{e_2^{(k)}}{e_1^{(k)}}\approx0$ (every block's photograph suffices to resolve the position). This is called **branching structure**: one and the same piece of information — "where the grain is" — is stored in the environment in $N$ independent copies. For a dust grain in air, every second adds molecular-collision records of order $10^{18}$; $N$ is astronomical.
+
+<Derivation title="What a fragment can read out, and what it cannot" level="进阶" minutes={8}>
+
+**Reading the position: any small fragment is enough.** Some observer intercepts only the $k$-th block of the environment. Trace out everything else (the system + the other blocks); the cross terms carry factors $\braket{x_2}{x_1}\braket{e_2^{(1)}}{e_1^{(1)}}\cdots\approx0$, leaving
+
+$$
+\hat\rho^{(k)}=|a|^2\ket{e_1^{(k)}}\bra{e_1^{(k)}}+|b|^2\ket{e_2^{(k)}}\bra{e_2^{(k)}}
+$$
+
+Since $\ket{e_1^{(k)}},\ket{e_2^{(k)}}$ are nearly orthogonal, a measurement distinguishing them reads out "which branch the grain favours" with probability 1 — and does so **without touching the grain or any other fragment**. Ten observers read ten different fragments and their conclusions agree automatically (they are all copies of the same branching structure), with no mutual disturbance. That is the mechanism of objectivity: **not ten people measuring the same system, but ten people reading ten printed copies of the same book.**
+
+**Reading the phase: no number of fragments suffices (short of all of them).** Where did the relative phase between $a$ and $b$ go? Try to find it on the system itself: trace out the whole environment, and $\hat\rho_S=|a|^2\ket{x_1}\bra{x_1}+|b|^2\ket{x_2}\bra{x_2}$ — the phase is not there. Try any combination of fragments: as long as **even one block is left out**, tracing over that one block kills every cross term — the phase is not there either. The phase is a **global** property, written into the joint correlations of all $N$ blocks with the system, and it can be retrieved only by collecting every last record and performing an interference measurement on the whole. With $N$ astronomical, that is impossible in any operational sense.
+
+**Squaring the books with no-cloning.** What got copied $10^{30}$ times is only **one classical bit** ("branch one or branch two") — not the quantum state itself: the amplitudes $a,b$ and the phase were never copied. The no-cloning theorem forbids copying unknown superpositions; it has never forbidden transcribing the labels of a set of orthogonal states many times over — a CNOT gate has always been able to do that (chapter 9). **The only information that can be massively copied is information in the pointer basis** — which explains, in reverse, why our entire world-picture is written in pointer quantities (position and functions of it).
+
+</Derivation>
+
+<Callout type="insight" title="Why 'Darwinism'">
+Shift your gaze to the states' "struggle for survival" and the metaphor holds up:
+
+- **Selection**: the environment's relentless interactions are a brutal sieve. Pointer states withstand the photography (they are not disturbed by it); every other superposition entangles with the environment at the first shot and is eliminated on the spot — that was last section's decoherence.
+- **Reproduction**: the surviving pointer states keep copying their "labels" into the environment; the more offspring (record copies), the better the odds of being read by some future observer — that is this section's redundant broadcasting.
+
+**Classicality is not the opposite of quantumness; it is the small part of quantum information that is best at propagating itself.** The world feels objective, definite, the same to everyone, because we can only ever read the most redundant information — the rest of the quantum information is not absent, it simply never reaches anyone's eyes. The quantitative version is the redundancy $R_\delta$ (the number of environment fragments that can independently supply the system's information): classical quantities have $R_\delta\gg1$, quantum coherent information has $R_\delta\approx1$ (a single copy, hidden in the whole).
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Keeping the outlook in proportion">
+Quantum Darwinism is the one "outlook"-flavoured section of this chapter, so the boundaries must be drawn clearly:
 
-- Redundant records
-- Selection of pointer states
+- **It is not a new theory**: the entire mechanism (entanglement, tracing out, branching structure) is a consequence of standard quantum mechanics — no new axioms, no new parameters. It is a systematic organisation of "how classicality emerges", due chiefly to Zurek and collaborators.
+- **It is testable**: branching structure and redundancy are measurable. In recent years, experiments on photonic systems and diamond colour centres have observed the predicted redundancy plateau in small-scale environments (a few to a dozen or so "environment qubits") — make the fragment slightly larger and the information about the system saturates, in accordance with the Darwinian picture.
+- **It does not close the measurement problem**: the "second half" flagged last section — why a single run has a unique outcome — remains open. Darwinism explains "why everyone's records agree", not "why it is this record rather than that one".
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Branching structure', latex: '\\ket{\\Psi}=a\\ket{x_1}\\ket{e_1^{(1)}}\\cdots\\ket{e_1^{(N)}}+b\\ket{x_2}\\ket{e_2^{(1)}}\\cdots\\ket{e_2^{(N)}}', note: 'The pointer label is stored in N independent copies across the environment' },
+    { name: 'Reduced state of one fragment', latex: '\\hat\\rho^{(k)}=|a|^2\\ket{e_1^{(k)}}\\bra{e_1^{(k)}}+|b|^2\\ket{e_2^{(k)}}\\bra{e_2^{(k)}}', note: 'Any fragment reads out the pointer information without disturbing the system or the other fragments' },
+    { name: 'Objectivity criterion', latex: 'R_\\delta\\gg1\\ \\text{(classical quantities)};\\qquad R_\\delta\\approx1\\ \\text{(quantum coherent information)}', note: 'Redundancy = number of environment fragments that independently supply the system’s information' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qd-1',
+      prompt: 'Quantum Darwinism explains "ten people see the same dust grain, agree, and disturb nothing" by:',
+      options: [
+        'Each person intercepts a different record copy in the environment — they read different copies of the same branching structure',
+        'The grain’s wavefunction is repeatedly collapsed to the same position by ten measurements',
+        'Macroscopic objects do not obey quantum mechanics, so measurement does not disturb them',
+        'The ten people just happened to tacitly perform the same kind of measurement',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Nobody measures the grain directly — each person only measures the photons that flew into their own eyes.',
+        2: 'The whole mechanism sits inside standard quantum mechanics; no macroscopic exception is needed.',
+        3: 'Even with different measurement methods, as long as what is read are near-orthogonal record states, the conclusions agree.',
+      },
+      explain: 'Observation = reading the environment’s records. The branching structure copies "which branch the grain favours" an astronomical number of times; ten people reading ten printed copies naturally agree without interfering — objectivity is a direct consequence of redundancy.',
+    },
+    {
+      id: 'qd-2',
+      prompt: 'Which statements about how information is distributed in a branching-structure state are correct? (Select all that apply.)',
+      options: [
+        'Any small environment fragment suffices to read out the pointer (which-branch) information',
+        'The relative phase is not on the system, nor on any combination of fragments, unless every record is collected',
+        'What is redundantly copied is the pointer label — one classical bit — not the quantum state itself',
+        'Collecting half the environment fragments is enough to read out the phase',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Leave out even a single fragment and tracing over it wipes every cross term — the phase is a global property, and one missing copy is one too many.',
+      },
+      explain: 'Pointer information is local and redundant (available to everyone); phase information is global and unique (in practice available to no one). That asymmetry is the content of "classical = highly redundant information", and the reason it coexists peacefully with no-cloning.',
+    },
+    {
+      id: 'qd-3',
+      prompt: 'Why does "copying the pointer label 10³⁰ times" not violate the no-cloning theorem?',
+      options: [
+        'The theorem forbids copying unknown superpositions; transcribing the labels of orthogonal states many times is allowed — a CNOT can do it',
+        'The no-cloning theorem only holds for photons',
+        'Because the macroscopic environment is not a quantum system',
+        'It actually is violated, which makes quantum Darwinism doubtful',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The theorem holds for every quantum system, regardless of the carrier.',
+        2: 'The environment is entirely quantum — the branching structure itself is one enormous entangled state.',
+        3: 'The amplitudes a, b and the phase were never copied; only the branch label was, and the theorem is untouched.',
+      },
+      explain: 'Cloning an arbitrary superposition a|0⟩+b|1⟩ is forbidden by linearity; a "broadcast" of the form |0⟩→|00…0⟩, |1⟩→|11…1⟩ copies only the labels of orthogonal states. Only pointer-basis information can be broadcast — which is exactly the answer to "why the classical world is written entirely in pointer quantities".',
+    },
+  ]}
+/>
+
+## What comes next
+
+Chapter 10 closes here. Looking back over it: density matrices, the Bloch sphere, channels, Lindblad, decoherence, Darwinism — we stayed inside one language throughout (states and operators, Hilbert space, tracing out), pulling the camera further and further back, until the classical world developed into view at the far end of the lens.
+
+The next chapter does something wholly different: **it replaces the language altogether**. No state vectors, no operators — back to Feynman in 1948: a particle goes from A to B, and you add up **every path it could possibly take**, each path carrying a phase $\ee^{\ii S/\hbar}$. You will see that all of quantum mechanics can be rebuilt from that one sentence, that double-slit interference becomes its most trivial special case, and that classical mechanics' principle of least action floats up out of the sea of phases by itself, under the name of "stationary phase".

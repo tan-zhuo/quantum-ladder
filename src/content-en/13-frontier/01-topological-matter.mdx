@@ -1,18 +1,172 @@
 ---
-title: 'Quantum mechanics in topological matter'
-summary: 'The Berry phase reincarnated in a band structure.'
+title: Quantum mechanics in topological matter
 section: '13.1'
 order: 1
-status: stub
+summary: 'Why the quantum Hall conductance is accurate to one part in a billion: it isn''t a property you "measure", it''s an integer you "count" — the Berry phase, grown up into a topological invariant of the band structure.'
+status: done
+prereqs:
+  - 07-approximation/07-berry-phase
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - Explain why a "topological invariant" is naturally insensitive to impurities, sample shape and other details
+  - Compute the winding number of the SSH model by hand and state its relation to the edge states
+  - State the TKNN formula and the physical meaning of bulk–boundary correspondence
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The properties of materials are usually sensitive to details: resistivity drifts with temperature, shifts with impurity concentration, differs from sample to sample. Measuring a material parameter "accurate to one part in a billion" sounds like a fantasy.
+
+Yet in 1980, von Klitzing put a not-especially-clean semiconductor into a strong magnetic field, cooled it down, measured its Hall conductance, and found
+
+$$
+\sigma_{xy}=\nu\,\frac{e^2}{h},\qquad \nu=1,2,3,\dots
+$$
+
+**Integer multiples, accurate to better than $10^{-9}$.** The sample had impurities, the edges were ragged, the geometry was drawn however you liked — none of it mattered. How good is that precision? Good enough that the SI resistance standard is now defined by it: $R_K=h/e^2\approx 25\,812.807\ \Omega$, the von Klitzing constant.
+
+How can a grubby macroscopic sample produce a number as exact as $\pi$? This section's answer: **because $\nu$ is not an ordinary physical quantity at all — it is a topological invariant, a "count" that can only take integer values and cannot be changed by any continuous perturbation.** And the Berry phase you learned in [section 7.7](/en/ch/07-approximation/07-berry-phase/) is precisely the bridge to it.
+
+## What "topological" means: a first look with the simplest model
+
+The everyday translation of "topology" is: **a coarse classification that cares only about overall shape, never about local detail.** A coffee mug and a doughnut are topologically the same (each has one hole), because you can continuously squish one into the other; but a doughnut can never become a bun — the number of holes is an integer, and continuous deformation cannot change it.
+
+Band theory has its own "number of holes". The cleanest example is the **SSH model** (Su–Schrieffer–Heeger): a one-dimensional chain of atoms with two sites, A and B, per unit cell, hopping amplitude $v$ within a cell and $w$ between cells. It is precisely a stripped-down model of a polyacetylene chain.
+
+<Derivation title="The winding number of the SSH model: a quantity that can only be 0 or 1" level="基础" minutes={10} open={true}>
+
+**Step 1: write the momentum-space Hamiltonian.**
+
+After a Bloch transform to wavevector $k$, each $k$ leaves behind a two-level problem (the A and B sublattices), so the Hamiltonian is a $2\times2$ matrix. You learned in [section 5.3](/en/ch/05-angular-momentum/03-spin-half/) that any two-level Hamiltonian can be written as a combination of Pauli matrices:
+
+$$
+H(k)=\vec h(k)\cdot\vec\sigma,\qquad
+h_x=v+w\cos k,\quad h_y=w\sin k,\quad h_z=0
+$$
+
+The energy eigenvalues are $E_\pm(k)=\pm|\vec h(k)|$. As long as $\vec h(k)\neq0$, there is a gap between the two bands.
+
+**Step 2: look at the curve traced out by $\vec h(k)$.**
+
+As $k$ runs from $-\pi$ to $\pi$ (once around the Brillouin zone), $(h_x,h_y)=(v+w\cos k,\ w\sin k)$ traces out **a circle of radius $w$ centred at $(v,0)$** in the plane.
+
+There is only one question that matters: **does this circle enclose the origin?**
+
+- $v>w$: the centre is too far from the origin, the circle does not enclose it. Winding number about the origin: $W=0$.
+- $v<w$: the circle wraps around the origin. Winding number: $W=1$.
+
+**Step 3: why this winding number cannot be changed.**
+
+$W$ can only be an integer — a closed curve winds around the origin some whole number of times; there is no such thing as "0.7 turns". To deform $W=1$ continuously into $W=0$, the curve must at some moment **pass through the origin**, and $\vec h(k_0)=0$ means the gap closes at that point: $E_+=E_-=0$.
+
+So the conclusion is: **as long as the gap stays open, no amount of tweaking $v$ and $w$ or adding weak disorder will budge $W$.** That is the entire meaning of the phrase "topological protection" — not that some force field guards it, but that an integer has nowhere to go under continuous change.
+
+**Step 4: the connection to the Berry phase.**
+
+The winding number is no ad-hoc definition: the Berry phase accumulated by the occupied-band wavefunction around the Brillouin zone (here called the Zak phase) is exactly $\pi W$. $W$ is the "quantised readout" of the Berry phase.
+
+**Step 5: edge states.**
+
+Now take a finite chain and compute (numerically it is trivially easy): for $v<w$ ($W=1$), a state appears at each end of the chain with energy exactly zero and a wavefunction exponentially localised at the end; for $v>w$ there is none. An integer in the bulk decides whether bound states live on the boundary — this is **bulk–boundary correspondence**.
+
+</Derivation>
+
+<Callout type="insight" title="The reason for the precision: it is counted, not measured">
+Ordinary physical quantities (resistivity, effective mass) are continuous, and impurities and temperature make them drift. A topological invariant is an **integer** — the answer to a counting question, "how many times does the wavefunction wind?". Impurities can knead the loop into any crooked shape, but they cannot knead away a whole turn.
+
+The quantum Hall conductance is accurate to $10^{-9}$ not because the sample is clean, but because $\nu$ is a Chern number. This idea moved condensed-matter physics from the era of "measuring properties" into the era of "counting integers".
 </Callout>
 
-## Planned contents
+## From SSH to the quantum Hall effect: Chern numbers and the TKNN formula
 
-- Chern numbers and the TKNN formula
-- The integer quantum Hall effect
-- Topological insulators and edge states
-- Bulk-boundary correspondence
+The SSH winding number is a one-dimensional toy. The real protagonist lives in two dimensions: in 1982 Thouless, Kohmoto, Nightingale and den Nijs (TKNN for short) proved that the Hall conductance of a two-dimensional insulator can be written as
+
+$$
+\sigma_{xy}=\frac{e^2}{h}\,C,\qquad
+C=\frac{1}{2\pi}\int_{\text{BZ}}\Omega(k_x,k_y)\,\dd k_x\,\dd k_y\in\mathbb{Z}
+$$
+
+where $\Omega$ is the **Berry curvature** you met in section 7.7, integrated over the whole two-dimensional Brillouin zone. The integral is called the **Chern number**, and mathematics guarantees it is an integer — it counts how many times the wavefunction's phase twists over the Brillouin zone, which (with periodic boundaries in two directions) is itself a "doughnut". It belongs to the same family as the SSH winding number.
+
+How to read this formula:
+
+- the **left side** is a macroscopic transport coefficient measured in the lab with a voltmeter and an ammeter;
+- the **right side** is an integer built from a purely geometric property of the occupied-band wavefunctions;
+- impurities, sample shape and electrode placement are all mere "continuous deformations" and cannot touch the integer on the right — unless they close the gap.
+
+Bulk–boundary correspondence holds here too: a sample with Chern number $C$ necessarily carries $C$ conducting channels along its edge that run in one direction only (chiral edge states). The current actually flows along the edge, and **an electron that wants to backscatter has no road home** — that is the microscopic picture behind the flatness of the quantum Hall plateaux.
+
+## Topological insulators: no magnetic field required
+
+The quantum Hall effect needs a strong magnetic field. After 2005 it was realised that **spin–orbit coupling** ([section 5.7](/en/ch/05-angular-momentum/07-spin-orbit/)) can play a similar role at zero field — spin-up and spin-down electrons each feel an "effective magnetic field" pointing in opposite directions. Such materials are called **topological insulators**: insulating in the bulk, yet carrying topologically protected conducting states on the surface, in which the electron's spin direction is locked to its direction of motion. HgTe quantum wells (2007) and the Bi₂Se₃ family (2009) confirmed this class of matter experimentally.
+
+The classification programme was upgraded along the way: instead of asking "what is this material's resistance", one asks "given the symmetries at hand (time reversal, particle–hole, crystalline symmetries…), into how many classes do band wavefunctions fall that cannot be continuously deformed into one another?". This "periodic table of topological matter" has been one of the main storylines of condensed-matter physics for two decades, and the proposals for Majorana zero modes, topological superconductors and topological quantum computation all grow on this tree.
+
+<Callout type="note" title="Quick glossary">
+- **Topological invariant**: an integer unchanged by continuous deformation (winding numbers and Chern numbers both qualify).
+- **Topological phase transition**: the moment the integer jumps, necessarily accompanied by a gap closing — there is no local order parameter, so it falls outside the Landau paradigm.
+- **Bulk–boundary correspondence**: the topological integer of the bulk equals the number of protected modes on the boundary.
+- **Topological protection**: not freedom from disturbance, but disturbance that cannot change the integer (provided the gap and the symmetry survive).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'SSH Hamiltonian', latex: 'H(k)=(v+w\\cos k)\\,\\sigma_x+w\\sin k\\,\\sigma_y', note: 'Winding number W = 0 (v>w) or 1 (v<w); changing W requires closing the gap' },
+    { name: 'Winding number (Zak phase)', latex: 'W=\\frac{1}{2\\pi\\ii}\\oint \\dd k\\;\\partial_k \\ln\\big(h_x-\\ii h_y\\big)', note: 'Occupied-band Berry phase = πW, integer-valued only' },
+    { name: 'TKNN formula', latex: '\\sigma_{xy}=\\frac{e^2}{h}\\,C,\\quad C=\\frac{1}{2\\pi}\\int_{\\text{BZ}}\\Omega\\,\\dd^2k', note: 'C is the Chern number of the occupied bands; macroscopic transport = wavefunction geometry' },
+    { name: 'von Klitzing constant', latex: 'R_K=\\frac{h}{e^2}\\approx 25\\,812.807\\ \\Omega', note: 'Defines the unit of resistance since 2019 — topological precision entered the SI' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'topo-1',
+      prompt: 'The quantum Hall conductance is extraordinarily insensitive to impurities and sample shape. The fundamental reason is:',
+      options: [
+        'It is set by the Chern number of the occupied bands, and an integer cannot change under continuous deformations that keep the gap open',
+        'The strong magnetic field completely screens out the effect of impurities',
+        'Impurity scattering is frozen out at low temperature',
+        'Experimenters selected exceptionally clean samples',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A magnetic field does not screen impurities; in fact a moderate amount of disorder is required for the Hall plateaux to have finite width.',
+        2: 'Low temperature merely lets the gap physics show up; it cannot explain precision at the 10⁻⁹ level.',
+        3: 'Quite the opposite — the early samples were not clean, and the precision held anyway.',
+      },
+      explain: 'σ_xy = C e²/h, and C is a topological invariant. Impurities and shape changes are continuous deformations of the Hamiltonian; as long as they do not close the gap, they cannot touch the integer.',
+    },
+    {
+      id: 'topo-2',
+      prompt: 'Which of the following statements about the SSH model are correct? (Select all that apply.)',
+      options: [
+        'For v < w the winding number is 1 and zero-energy edge states appear at both ends of a finite chain',
+        'Deforming W = 1 continuously into W = 0 must pass through a point where the gap closes',
+        'The winding number is determined by the intracell hopping v alone',
+        'Bulk–boundary correspondence means the bulk topological integer sets the number of protected boundary states',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The winding number is set by the relative size of v and w: whether the vector (v + w cos k, w sin k) wraps the origin depends on comparing the centre v with the radius w.',
+      },
+      explain: '(h_x, h_y) traces a circle of centre (v,0) and radius w; for v < w it encloses the origin and W = 1. Passing through the origin means |h| = 0, i.e. the gap closes. The value of W shows up, via bulk–boundary correspondence, as zero modes at the ends.',
+    },
+    {
+      id: 'topo-3',
+      type: 'numeric',
+      prompt: 'How many ohms is the von Klitzing constant R_K = h/e²? (h = 6.626×10⁻³⁴ J·s, e = 1.602×10⁻¹⁹ C)',
+      answer: 25813,
+      tolerance: 30,
+      unit: 'Ω',
+      explain: 'R_K = 6.626×10⁻³⁴ / (1.602×10⁻¹⁹)² ≈ 25 813 Ω. Since the 2019 redefinition of the SI, h and e have exact defined values, making R_K an exact number — a condensed-matter sample became the international standard of resistance.',
+    },
+  ]}
+/>
+
+## Where to dig deeper
+
+If you want to get your hands dirty: write the finite SSH chain as a $2N\times2N$ matrix and diagonalise it numerically (the methods of [Appendix C.3](/en/ch/appendix-c-numerics/03-exact-diagonalization-mc/) are all you need), then tune $v/w$ and watch the edge states appear and disappear — worth more than ten pages of review articles.
+
+If you want to read: the original TKNN paper (1982) is surprisingly readable; for shorter treatments, look for lecture notes on Berry curvature, Chern insulators and bulk–boundary correspondence (e.g. by A. Bernevig, or J. Asbóth's SSH lecture notes — the latter is an entire book built around the derivation in this section). Keywords: topological band theory, bulk-boundary correspondence, symmetry-protected topological phases.
+
+Next section we change stage: instead of engineering a material, we **build a crystal out of thin air with lasers**.

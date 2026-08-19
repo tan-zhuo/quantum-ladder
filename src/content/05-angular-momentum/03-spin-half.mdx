@@ -2,24 +2,300 @@
 title: 自旋 1/2 与 Pauli 矩阵
 section: '5.3'
 order: 3
-summary: 没有经典对应物的内禀角动量。
-status: stub
-sims: ['bloch-sphere']
+summary: 电子自带一份角动量，但它不是任何东西在转。三个 2×2 矩阵就装下了它的全部数学。
+status: done
+prereqs:
+  - 05-angular-momentum/02-spherical-harmonics
+  - 03-formalism/01-from-wavefunction-to-vector
+objectives:
+  - 说明「电子在自转」这个图像错在哪里，以及自旋的正确定义方式
+  - 从梯算符矩阵元出发构造出三个 Pauli 矩阵
+  - 熟练使用 Pauli 代数：平方、反对易、乘积公式
+  - 写出任意方向自旋态的一般形式，并解读 θ/2 的含义
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节留下两条线索：代数允许半整数角动量但球面波函数容不下；
+以及一次实验里银原子束分成了恰好两束。这一节把两条线索接上。
+
+先看逼出自旋的实验证据。到 1925 年，光谱学攒了一堆用「轨道 + 整数 $l$」
+解释不了的账：
+
+- **谱线成对出现。** 钠的黄色 D 线用光谱仪细看是**两条**，波长 589.0 nm 和
+  589.6 nm，能量只差约 0.002 eV。氢的谱线也有同样的「双线」细结构。
+  仿佛每个能级都被某个未知的东西轻轻掰成了两半。
+- **反常 Zeeman 效应。** 磁场中的谱线分裂常常是偶数条。
+  可上一节刚数过：轨道角动量给出 $2l+1$ 条，$l$ 是整数，这个数**永远是奇数**。
+  偶数条意味着有个角动量的 $2j+1$ 是偶数——$j$ 必须是半整数。
+
+Goudsmit 和 Uhlenbeck（当时都是研究生）提出：电子本身携带一份角动量
+$s=\tfrac12$，以及随之而来的磁矩。他们给它起名 spin——自转。
+
+## 先把名字里的坑填掉：电子不是小陀螺
+
+「自旋」这个名字是历史遗留的误导。它让人以为电子是个小球，绕自己的轴转。
+**这个图像是错的**，而且错得可以定量演示：
+
+<Callout type="warning" title="小陀螺图像的定量破产">
+就算把电子想象成能想象的最大的球——经典电子半径
+$r_e\approx2.8\times10^{-15}\ \text{m}$（再大就与散射实验矛盾）——
+要让这个匀质小球靠自转攒出 $\hbar/2$ 的角动量，
+由 $L=\tfrac25 m r^2\omega=\hbar/2$ 解出赤道线速度：
+
+$$
+v=\omega r=\frac{5\hbar}{4m_e r_e}\approx5.1\times10^{10}\ \text{m/s}\approx170\,c
+$$
+
+超光速 170 倍。而实际上电子在实验精度内是**点粒子**（$r$ 更小，$v$ 还要更大）。
+结论：自旋角动量不来自任何空间中的转动。
 </Callout>
 
-## 内容规划
+那自旋到底是什么？这正是 [5.1 节](/ch/05-angular-momentum/01-orbital-angular-momentum/)
+末尾那个反转的用武之地：**角动量的定义是对易关系，不是 $\vec r\times\vec p$**。
+自旋是三个厄米算符 $\hat S_x,\hat S_y,\hat S_z$，满足
 
-- 自旋的实验证据
-- Pauli 矩阵及其代数
-- 自旋态的一般形式
+$$
+[\hat S_x,\hat S_y]=\ii\hbar\hat S_z\ \text{及其轮换}
+$$
 
-## 计划中的交互模拟
+仅此而已。它不依附于任何位置波函数，所以 [5.2 节](/ch/05-angular-momentum/02-spherical-harmonics/)
+里「转一圈必须回到原值」的单值性论证对它无效——半整数席位对它敞开。
+电子占据的正是最小的那个非平庸席位：$s=\tfrac12$，
+本征值 $\hat S^2=\tfrac12\cdot\tfrac32\hbar^2=\tfrac34\hbar^2$，
+$\hat S_z=\pm\tfrac\hbar2$，共 $2s+1=2$ 个态。
 
-- `bloch-sphere`
+自旋是电子的**内禀属性**，和电荷、质量并列：你无法给电子「减速自转」或「加速自转」，
+$s=\tfrac12$ 是出厂设置，能变的只有它在各方向上的取向分量。
 
-模拟组件写好后在 `src/components/mdx/Sim.astro` 的 REGISTRY 里登记，
-正文里用 `<Sim name="bloch-sphere" />` 嵌入即可。
+## 两维空间与 Pauli 矩阵
+
+只有两个基矢的系统，是量子力学能给出的最小舞台。记
+
+$$
+\ket{\uparrow}=\ket{s=\tfrac12,m=+\tfrac12}
+=\begin{pmatrix}1\\0\end{pmatrix},\qquad
+\ket{\downarrow}=\ket{s=\tfrac12,m=-\tfrac12}
+=\begin{pmatrix}0\\1\end{pmatrix}
+$$
+
+一般态是二维复矢量 $\ket{\chi}=a\ket{\uparrow}+b\ket{\downarrow}$，$|a|^2+|b|^2=1$。
+第 3 章「态是矢量、可观测量是矩阵」的抽象语言，在这里第一次变得**具体到能用手算**：
+所有算符都是 $2\times2$ 矩阵。
+
+<Derivation title="从梯算符矩阵元构造出 Pauli 矩阵" level="基础" minutes={8} open={true}>
+
+**第一步：$\hat S_z$ 是现成的。** 基矢就是它的本征态，对角线摆本征值：
+
+$$
+\hat S_z=\frac\hbar2\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+$$
+
+**第二步：用上一节的通用公式写 $\hat S_\pm$。** 公式
+$\hat S_\pm\ket{s,m}=\hbar\sqrt{s(s+1)-m(m\pm1)}\ket{s,m\pm1}$
+在 $s=\tfrac12$ 时只有一个非零矩阵元。对 $\hat S_+$：作用在
+$\ket{\downarrow}$（$m=-\tfrac12$）上，系数为
+$\hbar\sqrt{\tfrac34-(-\tfrac12)(\tfrac12)}=\hbar\sqrt{\tfrac34+\tfrac14}=\hbar$；
+作用在 $\ket{\uparrow}$ 上则到顶湮灭。所以
+
+$$
+\hat S_+=\hbar\begin{pmatrix}0&1\\0&0\end{pmatrix},\qquad
+\hat S_-=\hat S_+^\dagger=\hbar\begin{pmatrix}0&0\\1&0\end{pmatrix}
+$$
+
+**第三步：反解出 $\hat S_x,\hat S_y$。** 由定义 $\hat S_\pm=\hat S_x\pm\ii\hat S_y$ 反解：
+
+$$
+\hat S_x=\frac{\hat S_++\hat S_-}{2}=\frac\hbar2\begin{pmatrix}0&1\\1&0\end{pmatrix},\qquad
+\hat S_y=\frac{\hat S_+-\hat S_-}{2\ii}=\frac\hbar2\begin{pmatrix}0&-\ii\\ \ii&0\end{pmatrix}
+$$
+
+**第四步：提出公因子。** 三个矩阵都带 $\hbar/2$，把剩下的骨架单独命名：
+
+$$
+\hat{\vec S}=\frac\hbar2\vec\sigma,\qquad
+\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+\sigma_y=\begin{pmatrix}0&-\ii\\ \ii&0\end{pmatrix},\quad
+\sigma_z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+$$
+
+这就是 **Pauli 矩阵**。
+
+**第五步：验收。** 直接相乘可验证 $[\hat S_x,\hat S_y]=\ii\hbar\hat S_z$
+（即 $\sigma_x\sigma_y=\ii\sigma_z$），并且
+
+$$
+\hat S^2=\frac{\hbar^2}{4}(\sigma_x^2+\sigma_y^2+\sigma_z^2)
+=\frac{3\hbar^2}{4}\begin{pmatrix}1&0\\0&1\end{pmatrix}
+$$
+
+——单位矩阵乘 $\tfrac34\hbar^2$：**每个**二维态都是 $\hat S^2$ 的本征态，
+本征值正是 $s(s+1)\hbar^2$，$s=\tfrac12$。代数完全自洽。
+
+</Derivation>
+
+Pauli 矩阵的代数好用到值得单独背下来。每个都平方成单位阵，不同的两个反对易，
+两条合成一条万能乘积公式：
+
+$$
+\sigma_i\sigma_j=\delta_{ij}\,\mathbb{1}+\ii\sum_k\epsilon_{ijk}\,\sigma_k
+$$
+
+（$\epsilon_{ijk}$ 是轮换记号：$xyz$ 顺序取 $+1$，逆序取 $-1$，有重复取 0。）
+一个立即的推论：任意方向 $\hat n$ 上的自旋 $\hat n\cdot\vec\sigma$ 满足
+$(\hat n\cdot\vec\sigma)^2=\mathbb{1}$，所以它的本征值只能是 $\pm1$，即
+$\hat S_n=\pm\tfrac\hbar2$。**不管你从哪个方向测，答案永远只有「上」或「下」两种，
+大小永远是 $\hbar/2$。**这件事下一节会在实验里反复上演。
+
+## 任意方向的自旋态
+
+沿 $\hat n=(\sin\theta\cos\phi,\sin\theta\sin\phi,\cos\theta)$ 方向「朝上」的态
+（即 $\hat n\cdot\hat{\vec S}$ 的本征值 $+\tfrac\hbar2$ 的本征态）解出来是：
+
+$$
+\ket{+\hat n}=\cos\frac\theta2\,\ket{\uparrow}+\ee^{\ii\phi}\sin\frac\theta2\,\ket{\downarrow}
+$$
+
+<DualView>
+<div slot="left">
+
+**直觉：一个球装下所有自旋态。**
+
+归一化加上整体相位不重要，二维复矢量剩下两个实参数——恰好是球面上的两个角
+$(\theta,\phi)$。每个自旋态对应球面上一个点，这个球叫 **Bloch 球**：
+北极是 $\ket{\uparrow}$，南极是 $\ket{\downarrow}$，
+赤道上是各种「横着」的叠加态。
+
+验证一下最陌生的赤道：$\theta=\tfrac\pi2,\phi=0$ 给出
+$(\ket{\uparrow}+\ket{\downarrow})/\sqrt2$——它是 $\hat S_x$ 的本征态。
+「沿 x 朝上」不是什么新东西，就是 z 基下的等幅叠加。
+
+量子计算里的 qubit 就是一个自旋 1/2（或任何二能级系统），
+单比特操作就是在 Bloch 球上转动这个点。
+
+</div>
+<div slot="right">
+
+**公式：为什么是 θ/2。**
+
+注意态里出现的是**半角** $\theta/2$，而不是 $\theta$。这不是笔误：
+
+$$
+\theta=\pi\ \text{（反向）}\Longrightarrow
+\ket{-\hat z}=\ket{\downarrow}
+$$
+
+空间里转 $180°$，态矢量只转了「一半」；空间转满 $360°$ 时，
+
+$$
+\cos\pi\,\ket{\uparrow}+\dots=-\ket{\uparrow}
+$$
+
+态矢量**变号**了！要转 $720°$ 才真正回到自己。
+这正是半整数角动量「转一圈变号」的老毛病——作为空间波函数它是死刑
+（5.2 节），但自旋态不住在空间里，变号只是个整体相位，无罪释放。
+（不过让两束自旋相干叠加，这个负号可以被干涉实验真实测到——
+中子干涉实验 1975 年做到了。）
+
+</div>
+</DualView>
+
+<Callout type="insight" title="「向上」的自旋也没有完全向上">
+$\ket{\uparrow}$ 这个名字有夸大之嫌。它的 $S_z=\tfrac\hbar2$，
+但总长度是 $|\vec S|=\sqrt{s(s+1)}\hbar=\tfrac{\sqrt3}2\hbar\approx0.87\hbar$——
+比 $\tfrac\hbar2$ 大得多。「自旋矢量」与 z 轴的夹角是
+
+$$
+\cos\theta=\frac{\hbar/2}{\sqrt3\hbar/2}=\frac1{\sqrt3}
+\quad\Longrightarrow\quad\theta\approx54.7^\circ
+$$
+
+在最「向上」的态里，自旋也歪着 $54.7°$——横向分量 $\hat S_x,\hat S_y$
+的涨落被不确定性关系钉死在那里，压不掉。
+这是 5.1 节圆锥图像在最小系统上的极端版本：$s=\tfrac12$ 的锥张得最开。
+</Callout>
+
+<Callout type="note" title="自旋和位置是两本账">
+完整的电子态是「位置的账」乘「自旋的账」：
+$\Psi(\vec r)\,\ket{\chi}$，一个二分量的整体（旋量）。
+薛定谔方程管前者，自旋在无磁场时只是安静的旁观者。
+两本账在什么时候会耦合起来？磁场一开就会——那是 5.5 节和 5.7 节的故事。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '自旋 1/2 的谱', latex: '\\hat S^2=\\tfrac34\\hbar^2\\,\\mathbb{1},\\qquad \\hat S_z\\ket{\\uparrow}=\\tfrac\\hbar2\\ket{\\uparrow},\\ \\ \\hat S_z\\ket{\\downarrow}=-\\tfrac\\hbar2\\ket{\\downarrow}', note: '内禀属性：s = 1/2 不可更改，只有取向可变' },
+    { name: 'Pauli 矩阵', latex: '\\sigma_x=\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix},\\ \\sigma_y=\\begin{pmatrix}0&-\\ii\\\\ \\ii&0\\end{pmatrix},\\ \\sigma_z=\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}', note: 'S = (ħ/2)σ；厄米、无迹、本征值 ±1' },
+    { name: 'Pauli 代数', latex: '\\sigma_i\\sigma_j=\\delta_{ij}\\mathbb{1}+\\ii\\,\\epsilon_{ijk}\\sigma_k', note: '平方为 1、互相反对易、乘积轮换——全在这一条里' },
+    { name: '任意方向自旋态', latex: '\\ket{+\\hat n}=\\cos\\tfrac\\theta2\\ket{\\uparrow}+\\ee^{\\ii\\phi}\\sin\\tfrac\\theta2\\ket{\\downarrow}', note: '半角 θ/2：空间转 360° 态变号，720° 才复原' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am3-1',
+      prompt: '「电子的自旋来自电子绕自身轴的转动」这个说法的问题在于：',
+      options: [
+        '按经典电子半径估算，所需的表面速度约为光速的 170 倍，且电子实际是点粒子',
+        '电子太轻，转不起来',
+        '转动会辐射能量，电子会塌缩',
+        '说法完全正确，只是转速很快',
+      ],
+      answer: 0,
+      distractors: {
+        1: '质量小恰恰让同样角动量需要更高转速——问题是「太快」而不是「转不动」。',
+        2: '那是轨道运动的经典困难（第 1 章），不是自旋的。',
+      },
+      explain: 'L = (2/5)mr²ω = ħ/2 配上 r ≈ 2.8×10⁻¹⁵ m 给出 v ≈ 5×10¹⁰ m/s ≈ 170c。自旋是由对易代数定义的内禀角动量，与空间转动无关——这正是 5.1 节「代数定义角动量」的用武之地。',
+    },
+    {
+      id: 'am3-2',
+      prompt: '关于 Pauli 矩阵，正确的是：（多选）',
+      options: [
+        '每个 Pauli 矩阵的平方都是单位矩阵',
+        'σ_x σ_y = iσ_z',
+        '三个 Pauli 矩阵两两对易',
+        '任意方向的 n̂·σ 的本征值都是 ±1',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: '恰恰相反，不同的 Pauli 矩阵反对易：σ_xσ_y = −σ_yσ_x。对易的话就不是角动量了。',
+      },
+      explain: '全部包含在 σ_iσ_j = δ_ij·1 + iε_ijk σ_k 里。由 (n̂·σ)² = 1 知其本征值只能是 ±1——沿任何方向测自旋分量都只有 ±ħ/2 两种结果。',
+    },
+    {
+      id: 'am3-3',
+      prompt: '把自旋态绕某轴在空间中转动 360°，态矢量会怎样？',
+      options: [
+        '变为原来的 −1 倍；需要转 720° 才回到原态',
+        '回到原态，和任何矢量一样',
+        '变成正交的态',
+        '变化不可预测',
+      ],
+      answer: 0,
+      distractors: {
+        1: '那是整数角动量（和日常矢量）的行为；半整数角动量转一圈差一个负号。',
+        2: '−|χ⟩ 与 |χ⟩ 只差整体相位，物理上是同一个态，绝不正交。',
+      },
+      explain: '一般自旋态含半角 θ/2，空间转 2π 对应态空间转 π，出一个 −1。单独看是不可观测的整体相位，但让转过 2π 的束与未转的束干涉，负号就能被测出（1975 年中子干涉实验证实）。',
+    },
+    {
+      id: 'am3-4',
+      type: 'numeric',
+      prompt: '在 S_z = +ħ/2 的态中，「自旋矢量」与 z 轴的夹角是多少度？（用 cos θ = S_z/|S|，保留一位小数）',
+      answer: 54.7,
+      tolerance: 0.3,
+      unit: '°',
+      explain: 'cos θ = (ħ/2)/(√3ħ/2) = 1/√3 ≈ 0.577，θ = 54.7°。最「向上」的自旋也歪着 54.7°——横向涨落 ⟨S_x²⟩ = ⟨S_y²⟩ = ħ²/4 由不确定性关系保底，永远压不为零。',
+    },
+  ]}
+/>
+
+## 接下来
+
+我们已经有了自旋的全部数学：两维空间、三个矩阵、任意方向只有「上下」两种答案。
+
+但这些结论听起来实在离奇——「从任何方向测都恰好是 $\pm\hbar/2$」，
+中间值一个都没有？是时候回到 1922 年法兰克福的那间实验室了。
+一块磁铁、一束银原子、一块玻璃板，
+这个装置不但直接演示了以上每一条，还把第 3 章的测量公设变成了看得见的东西。
+下一节整节只讲这一个实验。

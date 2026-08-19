@@ -1,17 +1,213 @@
 ---
-title: 'Fourier analysis reference'
-summary: 'The bridge between the position and momentum representations.'
+title: Fourier analysis reference
 section: 'A.2'
 order: 2
-status: stub
+summary: 'Transform conventions (including the ħ version for momentum space), a table of standard transform pairs, Parseval and convolution theorems, the δ function and Gaussian integrals — the complete bridge between the position and momentum representations.'
+status: done
+prereqs:
+  - Calculus (definite integrals and integration by parts)
+objectives:
+  - Distinguish the mathematical and quantum-mechanical (ħ) Fourier conventions and convert between them
+  - Look up and use the standard transform pairs (Gaussian, square pulse, plane wave, δ function)
+  - Use Parseval's theorem to explain why "normalised in position ⇔ normalised in momentum"
+  - Evaluate Gaussian integrals with linear and quadratic terms (completing the square)
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The physical content of the Fourier transform in one sentence: **decompose a function into a superposition of waves of different frequencies**. In quantum mechanics, "frequency" is momentum ($p=\hbar k$), so the Fourier transform is precisely the **change-of-basis formula between the position and momentum representations**.
+
+**Where the main text needs this:**
+[2.10 The free particle](/en/ch/02-wavefunction/10-free-particle/) uses it to build wave packets;
+[3.3 Hilbert space](/en/ch/03-formalism/03-hilbert-space/) interprets it as an expansion in a continuous basis;
+[7.6 Fermi's golden rule](/en/ch/07-approximation/06-fermi-golden-rule/) and
+the [Chapter 11 path integral](/en/ch/11-path-integral/02-propagator/) lean heavily on Gaussian integrals;
+appendix [C.2 The split-operator method](/en/ch/appendix-c-numerics/02-split-operator/) uses the FFT to hop back and forth between the two representations.
+
+## Transform conventions
+
+The same "Fourier transform" differs between books by a constant or a sign in the exponent, so let us nail down this book's convention first.
+
+**Mathematical convention** (symmetric version, $k$ is the wavenumber):
+
+$$
+\tilde f(k)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} f(x)\,\ee^{-\ii kx}\,\dd x,
+\qquad
+f(x)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \tilde f(k)\,\ee^{\ii kx}\,\dd k
+$$
+
+**Quantum-mechanical convention** ($p=\hbar k$, momentum wavefunction written $\phi(p)$):
+
+$$
+\phi(p)=\frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^{\infty}\psi(x)\,\ee^{-\ii px/\hbar}\,\dd x,
+\qquad
+\psi(x)=\frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^{\infty}\phi(p)\,\ee^{\ii px/\hbar}\,\dd p
+$$
+
+The prefactor $1/\sqrt{2\pi\hbar}$ is there so that both sides are normalised simultaneously (see Parseval below). In Dirac notation this is nothing but inserting a complete set of momentum eigenstates: $\phi(p)=\braket{p}{\psi}$, with $\braket{x}{p}=\ee^{\ii px/\hbar}/\sqrt{2\pi\hbar}$.
+
+<Callout type="warning" title="Three traps when consulting other books">
+1. Sign convention: some books use $\ee^{+\ii kx}$ for the forward transform. Physics is almost unanimous on the version above, whose payoff is that the plane wave $\ee^{\ii(kx-\omega t)}$ travels towards $+x$.
+2. Constant placement: engineering texts often dump the whole $2\pi$ onto the inverse transform (no factor on the forward one). Change the convention and the constants in the transform-pair table change with it — check conventions before copying results.
+3. Frequency variable: signal processing uses $\nu$ (in Hz), with exponent $\ee^{-2\pi\ii\nu t}$ and no prefactor at all.
 </Callout>
 
-## Planned contents
+## The δ function
 
-- Fourier transform conventions
-- Parseval's theorem
-- The delta function
+The **Dirac δ function** is not an ordinary function but a "value picker": whenever it appears inside an integral, it pulls out the value of the integrand at the position of the spike:
+
+$$
+\int_{-\infty}^{\infty} f(x)\,\delta(x-x_0)\,\dd x=f(x_0)
+$$
+
+Picture it as a limiting spike whose width goes to zero while its area stays 1. Its most important representation is a **superposition of plane waves**:
+
+$$
+\delta(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\ee^{\ii kx}\,\dd k
+$$
+
+— plane waves of every wavenumber added with equal weight, cancelling everywhere and piling up in phase only at $x=0$. This formula is the origin of the continuous-basis orthonormality relations $\braket{x}{x'}=\delta(x-x')$ and $\braket{p}{p'}=\delta(p-p')$.
+
+Frequently used properties:
+
+| Property | Formula |
+| --- | --- |
+| Scaling | $\delta(ax)=\delta(x)/\lvert a\rvert$ |
+| Composite argument | $\delta(g(x))=\sum_i \delta(x-x_i)/\lvert g'(x_i)\rvert$, where the $x_i$ are the simple roots of $g$ |
+| Derivative | $\int f(x)\,\delta'(x-x_0)\,\dd x=-f'(x_0)$ |
+| Step function | $\dd\Theta/\dd x=\delta(x)$ |
+
+## Table of standard transform pairs
+
+Listed in the mathematical (symmetric) convention. To switch to the ħ convention, set $k\to p/\hbar$ and multiply the result by $1/\sqrt{\hbar}$.
+
+| $f(x)$ | $\tilde f(k)$ | Remarks |
+| --- | --- | --- |
+| $\ee^{-x^2/2\sigma^2}$ | $\sigma\,\ee^{-\sigma^2k^2/2}$ | Gaussian stays Gaussian; widths are reciprocal, $\sigma_x\sigma_k=1$ |
+| $\ee^{ik_0x}$ | $\sqrt{2\pi}\,\delta(k-k_0)$ | Plane wave = a single momentum |
+| $\delta(x-x_0)$ | $\ee^{-\ii kx_0}/\sqrt{2\pi}$ | A position eigenstate contains every momentum |
+| Square pulse (equal to 1 for $\lvert x\rvert<a$) | $\sqrt{2/\pi}\,\dfrac{\sin ka}{k}$ | sinc-shaped; the mathematical prototype of single-slit diffraction |
+| $\ee^{-a\lvert x\rvert}$ | $\sqrt{2/\pi}\,\dfrac{a}{a^2+k^2}$ | Lorentzian; exponential decay ⇔ power-law tails |
+| $f(x-x_0)$ | $\ee^{-\ii kx_0}\tilde f(k)$ | Translation ⇔ attaching a phase |
+| $f'(x)$ | $\ii k\tilde f(k)$ | Differentiation ⇔ multiplying by $\ii k$; the algorithmic basis of C.2 |
+
+The first row deserves a second look: the narrower a Gaussian wave packet (small $\sigma$), the wider its momentum distribution — this is the [uncertainty principle](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) showing up at the Fourier level, and the Gaussian saturates the bound exactly, $\sigma_x\sigma_p=\hbar/2$.
+
+## Parseval's theorem and the convolution theorem
+
+**Parseval's (Plancherel's) theorem**: the "total amount" is unchanged by the transform,
+
+$$
+\int_{-\infty}^{\infty}\lvert f(x)\rvert^2\,\dd x=\int_{-\infty}^{\infty}\lvert\tilde f(k)\rvert^2\,\dd k
+$$
+
+Physical translation: if $\psi(x)$ is normalised, then $\phi(p)$ is automatically normalised too — total probability is 1 in the position representation and still 1 after switching to momentum. That is why $\lvert\phi(p)\rvert^2$ can be directly interpreted as the probability density for momentum.
+
+**Convolution theorem**: the convolution of two functions,
+$(f*g)(x)=\int f(y)\,g(x-y)\,\dd y$ (shift $g$ everywhere and stack the copies weighted by $f$),
+becomes a product after transforming:
+
+$$
+\widetilde{f*g}(k)=\sqrt{2\pi}\,\tilde f(k)\,\tilde g(k)
+$$
+
+The use: convolutions are hard, products are easy, so "transform — multiply — transform back" is the standard play. Numerically this is exactly how FFT convolution works, and it is what the [C.2 split-operator method](/en/ch/appendix-c-numerics/02-split-operator/) does at every step.
+
+## Gaussian integrals
+
+The most frequently occurring family of integrals in quantum mechanics. The basic formula ($\operatorname{Re}a>0$):
+
+$$
+\int_{-\infty}^{\infty}\ee^{-ax^2}\,\dd x=\sqrt{\frac{\pi}{a}}
+$$
+
+<Derivation title="Gaussian integral with a linear term: completing the square" level="基础" minutes={5} open={true}>
+
+The target:
+
+$$
+I=\int_{-\infty}^{\infty}\ee^{-ax^2+bx}\,\dd x
+$$
+
+**Complete the square.** Write the exponent as a perfect square:
+
+$$
+-ax^2+bx=-a\left(x-\frac{b}{2a}\right)^2+\frac{b^2}{4a}
+$$
+
+**Shift the integration variable** $u=x-b/2a$ (the limits are unchanged) and pull out the constant factor:
+
+$$
+I=\ee^{b^2/4a}\int_{-\infty}^{\infty}\ee^{-au^2}\,\dd u
+=\sqrt{\frac{\pi}{a}}\;\ee^{b^2/4a}
+$$
+
+This one formula handles most situations: $b$ may be complex (for instance $b=\ii k$ — this is exactly where "the Fourier transform of a Gaussian is a Gaussian" comes from), and $a$ may carry an imaginary part (in the path integral $a\propto\ii$, i.e. the Fresnel integral; the result has the same form, understood as convergent in the limiting sense).
+
+**Versions with polynomial factors** are generated by "differentiating with respect to the parameter":
+
+$$
+\int x^2\,\ee^{-ax^2}\dd x=-\frac{\partial}{\partial a}\int\ee^{-ax^2}\dd x
+=\frac{1}{2a}\sqrt{\frac{\pi}{a}}
+$$
+
+Odd powers give $\int x^{2n+1}\ee^{-ax^2}\dd x=0$ (an odd function integrated over a symmetric interval vanishes).
+
+</Derivation>
+
+<KeyFormulas
+  items={[
+    { name: 'Momentum representation (ħ convention)', latex: '\\phi(p)=\\frac{1}{\\sqrt{2\\pi\\hbar}}\\int\\psi(x)\\,\\ee^{-\\ii px/\\hbar}\\,\\dd x', note: 'This is ⟨p|ψ⟩ — inserting the complete momentum basis' },
+    { name: 'Plane-wave form of the δ function', latex: '\\delta(x)=\\frac{1}{2\\pi}\\int_{-\\infty}^{\\infty}\\ee^{\\ii kx}\\,\\dd k', note: 'Origin of continuous-basis orthonormalisation' },
+    { name: "Parseval's theorem", latex: '\\int|\\psi(x)|^2\\dd x=\\int|\\phi(p)|^2\\dd p', note: 'Position-normalised ⇔ momentum-normalised; only then does |φ(p)|² have a probability reading' },
+    { name: 'Convolution theorem', latex: '\\widetilde{f*g}=\\sqrt{2\\pi}\\,\\tilde f\\,\\tilde g', note: 'When a convolution is hard, multiply in Fourier space instead' },
+    { name: 'Gaussian integral', latex: '\\int_{-\\infty}^{\\infty}\\ee^{-ax^2+bx}\\dd x=\\sqrt{\\frac{\\pi}{a}}\\,\\ee^{b^2/4a}', note: 'Complete the square + shift; b may be complex — the basic brick of the path integral' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apa2-1',
+      prompt: 'A Gaussian wave packet becomes narrower in position space. What happens to its momentum distribution?',
+      options: [
+        'It broadens — Fourier widths are reciprocal',
+        'It narrows too — the two move together',
+        'It stays the same — normalisation pins the distribution down',
+        'It depends on the central momentum of the packet',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'If both could narrow simultaneously, position and momentum could be known precisely at once, violating the uncertainty principle.',
+        3: 'The central momentum k₀ only shifts where the momentum distribution sits; it does not change its width.',
+      },
+      explain: 'The pair exp(−x²/2σ²) ↔ σ·exp(−σ²k²/2): as σ shrinks, the position distribution narrows and the momentum distribution broadens, with the product σ_x σ_p = ħ/2 sitting exactly at the uncertainty-principle bound.',
+    },
+    {
+      id: 'apa2-2',
+      prompt: "What is the direct physical meaning of Parseval's theorem in quantum mechanics?",
+      options: [
+        'A wavefunction normalised in the position representation is automatically normalised in the momentum representation',
+        'Energy is conserved under the Fourier transform',
+        'The product of position and momentum uncertainties has a lower bound',
+        'The group velocity of a wave packet equals the particle velocity',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Parseval concerns the integral of the modulus squared (total probability), not energy.',
+        2: 'The uncertainty relation comes from the Cauchy–Schwarz inequality plus a commutator — a different theorem.',
+      },
+      explain: '∫|ψ|²dx = ∫|φ|²dp: total probability is representation-independent. That is precisely why |φ(p)|² can be interpreted as the probability density for a momentum measurement.',
+    },
+    {
+      id: 'apa2-3',
+      prompt: 'What is ∫ f(x) δ(2x) dx?',
+      options: ['f(0)/2', 'f(0)', '2f(0)', '0'],
+      answer: 0,
+      distractors: {
+        1: 'You forgot the scaling factor: δ(ax) = δ(x)/|a|.',
+        2: 'The factor is a division by |a|, not a multiplication.',
+      },
+      explain: 'Substituting u = 2x gives δ(2x) = δ(x)/2, so the integral is f(0)/2. In general δ(ax) = δ(x)/|a| — the δ function is defined by "unit area", so horizontal compression must be compensated vertically.',
+    },
+  ]}
+/>

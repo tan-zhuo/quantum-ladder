@@ -1,17 +1,300 @@
 ---
-title: 'The complete solution for hydrogen'
-summary: 'The foundation of all of chemistry.'
+title: The complete analytic solution of hydrogen
 section: '6.3'
 order: 3
-status: stub
+summary: 'The full derivation from the radial equation to −13.6 eV/n²: nondimensionalisation, pinning down the asymptotics at both ends, the series solution, and the termination condition that decides everything. The foundation of all of chemistry, with no step skipped.'
+status: done
+prereqs:
+  - 06-hydrogen/02-radial-equation
+objectives:
+  - Carry out the solution of the radial equation independently — nondimensionalise → asymptotic analysis → series → termination and quantisation
+  - State what mathematically forces the quantisation of energy
+  - Write down the first few radial wavefunctions and locate the Bohr radius within them
+  - Explain why the Bohr model "happened" to get every energy level right, and where it went wrong
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Everything is in place: a one-dimensional equation on the half-line, $u\sim r^{l+1}$ at the origin, exponential decay far away. In this section we put in the Coulomb potential and solve straight through to the end.
+
+This is the longest derivation in the book, and it earns its keep. Its output is **the foundation of all of chemistry**: the shell structure of the periodic table, the directionality of chemical bonds, every quantitative prediction of spectroscopy — all of it grows out of these few pages. And once it is done, the Bohr mystery that has hung over us for five chapters — why that semi-classical contraption got the levels exactly right — can finally be answered head-on.
+
+## Goal and route map
+
+The equation to solve (last section's standard form, with $V=-e^2/4\pi\varepsilon_0r$):
+
+$$
+-\frac{\hbar^2}{2\mu}\frac{\dd^2u}{\dd r^2}
++\left[-\frac{e^2}{4\pi\varepsilon_0 r}+\frac{l(l+1)\hbar^2}{2\mu r^2}\right]u=Eu,
+\qquad E<0
+$$
+
+The strategy has four steps, each a standard move for solving special-function equations — the same playbook you will reuse for the harmonic oscillator and other central potentials:
+
+1. **Nondimensionalise** — bundle the physical constants into one variable so the equation contains nothing but pure numbers;
+2. **Asymptotic analysis** — first pin down what the solution must look like as $r\to\infty$ and $r\to0$, and peel those two ends off;
+3. **Series solution** — grind through the middle with a power series, obtaining a recurrence relation;
+4. **Termination** — discover that an unterminated series wrecks normalisability, and that the termination condition is exactly the quantisation of energy.
+
+<Derivation title="Steps 1–2: nondimensionalisation and asymptotics" level="基础" minutes={8} open={true}>
+
+**Nondimensionalise.** For a bound state $E<0$, define
+
+$$
+\kappa\equiv\frac{\sqrt{-2\mu E}}{\hbar}
+$$
+
+$\kappa$ has dimensions of inverse length (far away $u\sim\ee^{-\kappa r}$ — it is the decay rate). Use it to make length dimensionless: $\rho\equiv\kappa r$. Dividing through by $E$ and tidying:
+
+$$
+\frac{\dd^2u}{\dd\rho^2}=\left[1-\frac{\rho_0}{\rho}+\frac{l(l+1)}{\rho^2}\right]u,
+\qquad
+\rho_0\equiv\frac{\mu e^2}{2\pi\varepsilon_0\hbar^2\kappa}
+$$
+
+Every physical constant has been compressed into the single dimensionless number $\rho_0$. Note $\rho_0\propto1/\kappa\propto1/\sqrt{-E}$: **finding the energy means finding which values $\rho_0$ is allowed to take**.
+
+**Far-end asymptotics.** As $\rho\to\infty$ only the 1 survives in the bracket:
+
+$$
+\frac{\dd^2u}{\dd\rho^2}\approx u
+\quad\Longrightarrow\quad
+u\sim A\ee^{-\rho}+B\ee^{+\rho}
+$$
+
+The growing solution must be discarded ($B=0$) or normalisation fails. So far away, $u\sim\ee^{-\rho}$.
+
+**Near-end asymptotics.** As $\rho\to0$ the $1/\rho^2$ term dominates (for $l\ge1$; the $l=0$ conclusion is the same and can be checked separately):
+
+$$
+\frac{\dd^2u}{\dd\rho^2}\approx\frac{l(l+1)}{\rho^2}u
+\quad\Longrightarrow\quad
+u\sim C\rho^{\,l+1}+D\rho^{-l}
+$$
+
+$\rho^{-l}$ violates $u(0)=0$, so discard it ($D=0$). This is exactly the behaviour we read off from the centrifugal barrier last section.
+
+**Peel off both ends.** Since the solution's shape at both extremes is now forced, factor them out and write
+
+$$
+u(\rho)=\rho^{\,l+1}\,\ee^{-\rho}\,v(\rho)
+$$
+
+The only unknown left is the middle piece $v(\rho)$. With luck, $v$ will turn out to be a polynomial — and it really will.
+
+</Derivation>
+
+<Derivation title="Steps 3–4: series solution and quantisation" level="进阶" minutes={10} open={true}>
+
+**Substitute to get the equation for $v$.** Differentiate $u=\rho^{l+1}\ee^{-\rho}v$ twice (tedious but not hard — worth doing yourself once) and tidy:
+
+$$
+\rho\,\frac{\dd^2v}{\dd\rho^2}+2(l+1-\rho)\frac{\dd v}{\dd\rho}+\left[\rho_0-2(l+1)\right]v=0
+$$
+
+**Try a power series.** Set $v(\rho)=\sum_{j=0}^{\infty}c_j\rho^j$, differentiate term by term, substitute, and collect equal powers (the standard manoeuvre: shift the dummy index by one so every term lines up at $\rho^j$). Each power's coefficient must vanish:
+
+$$
+c_{j+1}=\frac{2(j+l+1)-\rho_0}{(j+1)(j+2l+2)}\,c_j
+$$
+
+One recurrence relation determines everything: given $c_0$, the whole series is fixed.
+
+**The crucial step: look at large $j$.** When $j$ is large,
+
+$$
+\frac{c_{j+1}}{c_j}\approx\frac{2j}{j\cdot j}=\frac{2}{j}
+$$
+
+Which familiar series has that ratio? $\ee^{2\rho}=\sum\frac{(2\rho)^j}{j!}$, whose adjacent-coefficient ratio is exactly $2/(j+1)$. So if the series runs on forever, $v\sim\ee^{2\rho}$, and then
+
+$$
+u=\rho^{l+1}\ee^{-\rho}v\sim\rho^{l+1}\ee^{+\rho}\longrightarrow\infty
+$$
+
+**The growing solution we so carefully threw out has snuck back in through the rear door.** Mathematics leaves no room to negotiate here: either the wavefunction blows up at infinity (physically forbidden), or the series **terminates abruptly** at some term.
+
+**The termination condition.** The numerator of the recurrence must hit zero exactly at some $j=j_\text{max}$, after which every coefficient dies:
+
+$$
+\rho_0=2(j_\text{max}+l+1)
+$$
+
+The right-hand side is an even positive integer. Define the **principal quantum number**
+
+$$
+n\equiv j_\text{max}+l+1=1,2,3,\dots
+$$
+
+so that $\rho_0=2n$. **Quantisation is not postulated — it is forced by the normalisation condition**, in exactly the spirit of the infinite well's "the wave must vanish at the wall", except this time the "wall" is the normalisability requirement at infinity.
+
+**Convert back to energy.** From $\rho_0=\mu e^2/2\pi\varepsilon_0\hbar^2\kappa=2n$, solve $\kappa=\mu e^2/4\pi\varepsilon_0\hbar^2 n$, then use $E=-\hbar^2\kappa^2/2\mu$:
+
+$$
+E_n=-\left[\frac{\mu}{2\hbar^2}\left(\frac{e^2}{4\pi\varepsilon_0}\right)^2\right]\frac{1}{n^2}
+=-\frac{13.606\ \text{eV}}{n^2}
+$$
+
+At the same time $\kappa=1/na$, where
+
+$$
+a=\frac{4\pi\varepsilon_0\hbar^2}{\mu e^2}=0.0529\ \text{nm}
+$$
+
+**The Bohr radius has walked out of the equation on its own** — but this time it is not an orbital radius; it is the natural length unit of the wavefunction: the $n=1$ state decays on the scale $r\sim a$.
+
+**A bonus.** From $j_\text{max}=n-l-1\ge0$ we immediately get
+
+$$
+l\le n-1
+$$
+
+The angular quantum number is capped by the principal one — the constraint we guessed last section from "the bowl is too shallow" now stands as a rigorous result.
+
+</Derivation>
+
+## The solution in full view
+
+The terminated polynomial $v(\rho)$ is an old acquaintance of mathematical physics: the **associated Laguerre polynomial** $L_{n-l-1}^{2l+1}(2\rho)$ — an intimidating name for something that is simply "the polynomial generated by that recurrence, terminated at order $n-l-1$", playing the same role the Hermite polynomials play for the oscillator. The complete normalised wavefunction:
+
+$$
+\psi_{nlm}(r,\theta,\phi)=R_{nl}(r)\,Y_l^m(\theta,\phi),\qquad
+R_{nl}=\frac{u_{nl}}{r}\propto\left(\frac{2r}{na}\right)^{\!l}\ee^{-r/na}\,L_{n-l-1}^{2l+1}\!\left(\frac{2r}{na}\right)
+$$
+
+The first few radial functions (writing $\sigma=r/a$):
+
+| $(n,l)$ | Name | $R_{nl}(r)$ |
+| --- | --- | --- |
+| $(1,0)$ | 1s | $2a^{-3/2}\,\ee^{-\sigma}$ |
+| $(2,0)$ | 2s | $\frac{1}{\sqrt2}a^{-3/2}\left(1-\frac{\sigma}{2}\right)\ee^{-\sigma/2}$ |
+| $(2,1)$ | 2p | $\frac{1}{2\sqrt6}a^{-3/2}\,\sigma\,\ee^{-\sigma/2}$ |
+| $(3,0)$ | 3s | $\frac{2}{3\sqrt3}a^{-3/2}\left(1-\frac{2\sigma}{3}+\frac{2\sigma^2}{27}\right)\ee^{-\sigma/3}$ |
+| $(3,1)$ | 3p | $\frac{8}{27\sqrt6}a^{-3/2}\,\sigma\left(1-\frac{\sigma}{6}\right)\ee^{-\sigma/3}$ |
+
+Three patterns worth checking against the table line by line:
+
+- the exponential decay scale is $na$ — larger $n$ means a "fatter" atom ($\sim n^2a$; see [section 6.5](/en/ch/06-hydrogen/05-orbital-visualization/));
+- the leading $\sigma^l$ factor presses $l\ge1$ wavefunctions away from the origin — the signature of the centrifugal barrier;
+- the polynomial part has $n-l-1$ positive roots, i.e. $n-l-1$ **radial nodes** — the termination order is the node count.
+
+<DualView>
+<div slot="left">
+
+**What the ground state looks like.**
+
+$$
+\psi_{100}=\frac{1}{\sqrt{\pi a^3}}\,\ee^{-r/a}
+$$
+
+A spherically symmetric, nodeless probability cloud decaying as $\ee^{-r/a}$. No orbit, no circling — in fact its angular momentum is **zero** ($l=0$). The electron's most probable radius is exactly $a=a_0$ (next section covers this in detail), yet it also has about a one-in-three chance of being found inside $a_0$, and can even show up right on top of the nucleus.
+
+</div>
+<div slot="right">
+
+A check: is $\psi_{100}$ really a solution? Substitute into the radial equation ($l=0$, $u=r\ee^{-r/a}$ up to a constant):
+
+$$
+u''=\left(\frac{1}{a^2}-\frac{2}{ar}\right)u
+$$
+
+Compare with what the equation demands, $u''=\left(\kappa^2-\frac{2}{ar}\right)u$ (writing the Coulomb term as $2/ar$ uses the definition of $a$): they agree if and only if $\kappa=1/a$, i.e.
+
+$$
+E=-\frac{\hbar^2}{2\mu a^2}=-13.6\ \text{eV}\ \checkmark
+$$
+
+</div>
+</DualView>
+
+## The verdict on the Bohr mystery
+
+We can now close the case left open in [section 1.4](/en/ch/01-history/04-bohr-model/).
+
+<Callout type="insight" title='Why Bohr "happened" to get everything right'>
+Item by item:
+
+**Energy levels $E_n=-13.6\ \text{eV}/n^2$: entirely correct.** And not by mere luck. Dimensional analysis shows that from $\mu$, $e^2/4\pi\varepsilon_0$ and $\hbar$ there is only one energy scale you can assemble: $\mu e^4/(4\pi\varepsilon_0)^2\hbar^2$. Bohr's quantisation condition $L=n\hbar$ inserted $\hbar$ at the right power, so dimensions guaranteed he could only be off by a dimensionless coefficient — and the correspondence principle (transition frequencies must reduce to the classical orbital frequency at large $n$) nailed even that coefficient down. **Any quantity constrained by the large-$n$ limit, he could not get wrong.**
+
+**The length scale $a_0$: right number, wrong meaning.** Bohr called it the radius of the $n=1$ circular orbit; in truth it is the decay length of the ground-state probability cloud — one combination of constants, two readings.
+
+**Angular momentum: cleanly wrong.** Bohr's $n=1$ orbit carries angular momentum $\hbar$; the real ground state has $l=0$, angular momentum zero. This is not a small error — it is the collapse of the model at the level of its picture, and it explains why the Bohr model could never produce spectral-line intensities or selection rules (they depend on the true shape of the wavefunction).
+
+**Degeneracy: entirely invisible to him.** In Bohr's model each $n$ is a single state; in the true solution each $n$ hides $n^2$ states. With no external field they share the same energy and are spectroscopically indistinguishable, so Bohr had no way to notice — next section unpacks this.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="The series method is not a master key">
+The reason "power series + termination" triumphs on hydrogen is that the Coulomb potential is special enough: after peeling off the asymptotic factors, what remains happens to land in the solvable Laguerre family. Change the potential — give the electron two nuclei (the hydrogen molecular ion $\mathrm H_2^+$), or add a second electron (helium) — and the series no longer terminates into a polynomial; the analytic solution ceases to exist. Solvable models are quantum mechanics' rarest animals: a handful of one-dimensional wells, the harmonic oscillator, the hydrogen atom — and the list essentially ends there. That is why Chapter 7 teaches approximation methods.
+</Callout>
 
-- Series solution of the radial equation
-- Laguerre polynomials
-- The levels En = −13.6 eV/n²
+<KeyFormulas
+  items={[
+    { name: 'Energy levels', latex: 'E_n=-\\frac{\\mu e^4}{2\\hbar^2(4\\pi\\varepsilon_0)^2}\\cdot\\frac{1}{n^2}=-\\frac{13.606\\ \\text{eV}}{n^2}', note: 'From the series termination condition ρ₀ = 2n; depends on n only' },
+    { name: 'Bohr radius', latex: 'a=\\frac{4\\pi\\varepsilon_0\\hbar^2}{\\mu e^2}=0.0529\\ \\text{nm}', note: 'The natural length unit of the wavefunction, not an orbital radius' },
+    { name: 'Eigenfunctions', latex: '\\psi_{nlm}=R_{nl}(r)\\,Y_l^m(\\theta,\\phi),\\quad R_{nl}\\propto\\left(\\tfrac{2r}{na}\\right)^{l}\\ee^{-r/na}L_{n-l-1}^{2l+1}\\!\\left(\\tfrac{2r}{na}\\right)', note: 'Radial nodes n−l−1; quantum-number constraints l ≤ n−1, |m| ≤ l' },
+    { name: 'Ground state', latex: '\\psi_{100}=\\frac{1}{\\sqrt{\\pi a^3}}\\,\\ee^{-r/a}', note: 'Spherically symmetric, zero angular momentum — not Bohr\'s circular orbit' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'hs-1',
+      prompt: 'What mathematically forces the quantisation of energy in the hydrogen atom?',
+      options: [
+        'If the series does not terminate, u grows like e^{+ρ} and destroys normalisability; the termination condition ρ₀ = 2n is the quantisation condition',
+        'The angular-momentum quantisation condition L = nħ',
+        'The divergence of the Coulomb potential at the origin',
+        'The existence of electron spin',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That was Bohr\'s postulate; the real derivation never uses it — quantisation grew out on its own.',
+        2: 'The behaviour at the origin only fixes u ∼ r^(l+1); it produces no discrete levels.',
+      },
+      explain: 'The recurrence ratio tends to 2/j at large j, the same as e^{2ρ}, which would overwhelm the e^{−ρ} factor. The only way out is for the numerator to vanish at some order, turning the series into a polynomial — which requires ρ₀ to take the discrete values 2n. Same spirit as the infinite well\'s standing-wave condition: normalisability is the master switch of quantisation.',
+    },
+    {
+      id: 'hs-2',
+      prompt: 'The constraint l ≤ n − 1 comes from which step of the derivation?',
+      options: [
+        'The termination order j_max = n − l − 1 must be a non-negative integer',
+        'The definition of the spherical harmonics',
+        'The uncertainty principle',
+        'Fitting to experiment',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The spherical harmonics only require |m| ≤ l; they have no say over n.',
+      },
+      explain: 'n is defined as j_max + l + 1, and j_max ≥ 0 immediately gives l ≤ n − 1. Physical picture: when l is too large, the centrifugal barrier lifts the effective-potential bowl too shallow to hold a bound state at energy E_n.',
+    },
+    {
+      id: 'hs-3',
+      prompt: 'Comparing the Bohr model with the exact solution, which statements are correct? (Select all that apply.)',
+      options: [
+        'The energy-level formulas agree exactly',
+        'Bohr\'s ground-state angular momentum ħ is wrong; the true ground state has zero angular momentum',
+        'In the exact solution the Bohr radius is the decay length of the ground-state wavefunction, not an orbital radius',
+        'The exact solution proves the electron really moves on a circular orbit',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Quite the opposite: the ground state is a spherically symmetric probability cloud — there is no orbit.',
+      },
+      explain: 'Dimensions plus the correspondence principle nailed the levels down, so Bohr "could not have got them wrong"; but everything that depends on the wavefunction\'s shape (angular momentum, degeneracy, transition strengths) was beyond his reach. "Right results, wrong picture" now has its complete technical explanation.',
+    },
+    {
+      id: 'hs-4',
+      type: 'numeric',
+      prompt: 'In ground-state hydrogen, what is the probability of finding the electron inside the sphere r less than a₀? (Answer as a decimal, e.g. 0.5)',
+      answer: 0.323,
+      tolerance: 0.02,
+      unit: '',
+      explain: 'P = ∫₀^{a}|ψ₁₀₀|²4πr²dr = (4/a³)∫₀^{a}r²e^{−2r/a}dr = 1 − 5e^{−2} ≈ 0.323. About one-third of the probability lies inside the "Bohr orbit" — showing once again that a₀ is the characteristic scale of a distribution, not a circle the electron rides on.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The equation is solved, and we got far more than Bohr did: under each $n$ lives not one state but a whole family labelled by $(l,m)$, all with exactly the same energy. Count how many there are, ask why the Coulomb potential in particular is granted this "accidental" generosity, and see why the spectrum lights up only certain transitions among them — those are the next section's three tasks.

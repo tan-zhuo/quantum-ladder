@@ -1,17 +1,252 @@
 ---
-title: 'The radial equation and the effective potential'
-summary: 'Where the centrifugal barrier comes from.'
+title: The radial equation and the effective potential
 section: '6.2'
 order: 2
-status: stub
+summary: 'The substitution u = rR restyles the radial equation into a one-dimensional Schrödinger equation, at the price of a centrifugal barrier added to the potential. A single plot of the effective potential then reads off the existence of bound states, why larger l keeps the electron farther out, and why the Coulomb potential holds infinitely many levels.'
+status: done
+prereqs:
+  - 06-hydrogen/01-central-force
+  - 02-wavefunction/07-infinite-well
+objectives:
+  - Use u = rR to cast the radial equation in one-dimensional form and explain the physical origin of the centrifugal term
+  - Sketch and interpret the effective-potential curve for the Coulomb potential, showing how l reshapes the well
+  - Explain where the boundary behaviours u(0) = 0 and u ∼ r^(l+1) near r→0 come from
+  - Argue that the Coulomb potential has infinitely many bound states while short-range potentials have only finitely many
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section compressed the hydrogen atom into an ordinary differential equation for $R(r)$, containing a term of mysterious origin: $l(l+1)\hbar^2/2\mu r^2$. In this section we first tidy the equation into the shape we know best, then look that term squarely in the face.
+
+## A familiar phenomenon: why satellites don't fall down
+
+Warm up with classical mechanics. Earth's gravity pulls relentlessly downward — why doesn't a satellite fall? Because it has angular momentum. At fixed angular momentum $L$, the rotational kinetic energy $L^2/2\mu r^2$ climbs steeply as you approach the centre: to get closer you must spin faster, and the kinetic-energy cost outweighs what gravity pays back in potential energy. Book that kinetic energy on the "potential" side of the ledger and you get the **effective potential** of classical orbital mechanics:
+
+$$
+V_\text{eff}(r)=V(r)+\frac{L^2}{2\mu r^2}
+$$
+
+The second term is the **centrifugal term** (in plain words: a fictitious outward-pushing barrier produced by rotation — really kinetic energy, just booked differently). A planet's perihelion and aphelion are the two turning points of one-dimensional motion on this curve.
+
+Exactly the same structure will reappear in quantum mechanics — with $L^2$ replaced by its eigenvalue $l(l+1)\hbar^2$.
+
+## Cosmetic surgery: u = rR
+
+The radial equation
+
+$$
+-\frac{\hbar^2}{2\mu}\frac{1}{r^2}\frac{\dd}{\dd r}\!\left(r^2\frac{\dd R}{\dd r}\right)
++\left[V(r)+\frac{l(l+1)\hbar^2}{2\mu r^2}\right]R=ER
+$$
+
+has a first-derivative term $\frac{2}{r}R'$ that keeps it from looking like the one-dimensional equations we are used to solving. One substitution removes it.
+
+<Derivation title="The substitution u(r) = rR(r): the radial equation in standard form" level="基础" minutes={6} open={true}>
+
+**Step 1: change the function.** Set $u(r)=rR(r)$, i.e. $R=u/r$. Differentiate term by term:
+
+$$
+\frac{\dd R}{\dd r}=\frac{u'}{r}-\frac{u}{r^2}
+\quad\Longrightarrow\quad
+r^2\frac{\dd R}{\dd r}=ru'-u
+$$
+
+$$
+\frac{\dd}{\dd r}\!\left(r^2\frac{\dd R}{\dd r}\right)=u'+ru''-u'=ru''
+$$
+
+The first-derivative term cancels exactly. That is the entire motivation for choosing $u=rR$.
+
+**Step 2: substitute back.** The first term of the original equation becomes $-\frac{\hbar^2}{2\mu}\frac{ru''}{r^2}=-\frac{\hbar^2}{2\mu}\frac{u''}{r}$; multiply through by $r$:
+
+$$
+-\frac{\hbar^2}{2\mu}\frac{\dd^2u}{\dd r^2}
++\underbrace{\left[V(r)+\frac{l(l+1)\hbar^2}{2\mu r^2}\right]}_{V_\text{eff}(r)}u=Eu
+$$
+
+**This has the face of a one-dimensional stationary Schrödinger equation** — everything we learned in Chapters 2 and 4 (the node theorem, bound-state criteria, asymptotic analysis) carries over directly. Only two differences remain:
+
+1. the variable lives on the half-line $r\ge0$, not the full line;
+2. the potential is replaced by the effective potential $V_\text{eff}$.
+
+**Step 3: boundary conditions.** The normalisation condition tidies up too. The volume element is $\dd^3r=r^2\dd r\,\dd\Omega$, and with the angular part normalised:
+
+$$
+\int_0^\infty |R|^2r^2\dd r=\int_0^\infty|u|^2\dd r=1
+$$
+
+The normalisation of $u$ carries no $r^2$ weight — exactly like a one-dimensional wavefunction. At the origin we must require
+
+$$
+u(0)=0
+$$
+
+Reason: if $u(0)\ne0$, then $R\sim u(0)/r$ diverges at the origin, and $\nabla^2(1/r)=-4\pi\delta^3(\vec r)$ would plant a $\delta$-function source in the equation with nothing to cancel it. So as far as $u$ is concerned, **the origin is an infinitely high wall** — a one-dimensional problem on the half-line, pinned to zero at the left end, the exact twin of the infinite well's left wall.
+
+</Derivation>
+
+<Callout type="insight" title="The centrifugal barrier: angular momentum's rent">
+The quantum effective potential corresponds word for word to the classical one:
+
+$$
+V_\text{eff}(r)=-\frac{e^2}{4\pi\varepsilon_0 r}+\frac{l(l+1)\hbar^2}{2\mu r^2}
+$$
+
+As $r\to0$ the centrifugal term diverges like $1/r^2$, faster than the Coulomb attraction's $1/r$ — **for any $l\ge1$, the net effect near the origin is repulsive**. An electron carrying angular momentum is barred from the nucleus by its own rotation.
+
+Put in numbers to get a feel: for $l=1$, the two terms balance at $r=2a_0\approx0.106$ nm, the bottom of the well; any farther in, the barrier climbs fast. That is why the probability distributions of p and d electrons are squeezed to zero near the nucleus, while an $l=0$ s electron, facing no such wall, can press right up against it — a "nucleus-hugging" talent that will star twice more in this chapter (the Darwin term and the 21 cm line are both s-state exclusives).
 </Callout>
 
-## Planned contents
+## Reading the plot: where the bound states live
 
-- The standard form of the radial equation
-- The effective potential Veff = V + l(l+1)ħ²/2mr²
-- Binding conditions for different l
+<DualView>
+<div slot="left">
+
+**Draw the $V_\text{eff}$ curves in your head.**
+
+- $l=0$: just the bare Coulomb potential — a single curve rising from $-\infty$ toward 0, an "infinitely deep" needle of a well, but with no inner wall.
+- $l\ge1$: at small $r$ the centrifugal barrier props the curve up to $+\infty$, while at large $r$ it still approaches 0 from below — leaving a **finite-depth bowl** in between. The larger $l$ is, the shallower the bowl and the farther out it sits.
+
+Bound states live in the bowl: solutions with negative energy $E$ whose wavefunctions decay on both sides. Solutions with $E>0$ are scattering states (the electron swings past the proton, bends, and leaves), with a continuum of energies.
+
+That the bowl grows shallower with $l$ means: **at the same energy, higher-$l$ states "live" farther out**; and when $l$ is too large the bowl becomes too shallow to hold a state below a given energy — which will explain the constraint $l\le n-1$ appearing in the next section.
+
+</div>
+<div slot="right">
+
+Position and depth of the bowl's bottom (for the Coulomb potential, set $V_\text{eff}'=0$):
+
+$$
+r_\text{min}=l(l+1)\,a_0,\qquad
+V_\text{eff}(r_\text{min})=-\frac{13.6\ \text{eV}}{l(l+1)}
+$$
+
+where $a_0=4\pi\varepsilon_0\hbar^2/\mu e^2=0.0529$ nm.
+
+| $l$ | Bowl bottom | Depth |
+| --- | --- | --- |
+| 0 | none (plunges to the origin) | $-\infty$ |
+| 1 | $2a_0$ | $-6.8$ eV |
+| 2 | $6a_0$ | $-2.27$ eV |
+| 3 | $12a_0$ | $-1.13$ eV |
+
+Behaviour of the solution as $r\to0$: the equation reduces to $u''=\frac{l(l+1)}{r^2}u$; trying $u\sim r^s$ gives $s(s-1)=l(l+1)$, i.e. $s=l+1$ or $s=-l$. The latter violates $u(0)=0$ (or is unnormalisable), so
+
+$$
+u(r)\xrightarrow{r\to0} C\,r^{\,l+1}
+$$
+
+The larger $l$ is, the flatter the wavefunction is pressed near the origin — the quantitative version of the centrifugal barrier.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="Don't mistake the effective potential for a real force">
+The centrifugal term is not a new interaction — the only force between electron and proton is the Coulomb force. It is the bookkeeping residue left in the potential column after the "rotational share" of the 3D kinetic energy has been pre-charged. Two cautions:
+
+1. Electrons with different $l$ face **different** $V_\text{eff}$ curves — before discussing "the shape of the hydrogen atom's potential well", you must first say which $l$.
+2. The effective-potential analysis gives the skeleton of the radial probability distribution; it cannot directly tell you the 3D shape of the electron cloud — for that you still multiply by the angular $\lvert Y_l^m\rvert^2$, see [section 6.5](/en/ch/06-hydrogen/05-orbital-visualization/).
+</Callout>
+
+## The Coulomb potential's privilege: infinitely many bound states
+
+Chapter 4's finite well had only finitely many bound states. The Coulomb potential is different.
+
+<Derivation title="Why a 1/r potential holds infinitely many levels" level="进阶" minutes={6}>
+
+The criterion can be read from the "width of the bowl". Take an energy $E=-\varepsilon$ (with $\varepsilon$ a small positive number). The outer turning point of the classically allowed region sits at
+
+$$
+\frac{e^2}{4\pi\varepsilon_0 r_\text{out}}=\varepsilon
+\quad\Longrightarrow\quad
+r_\text{out}=\frac{e^2}{4\pi\varepsilon_0\,\varepsilon}\xrightarrow{\ \varepsilon\to0\ }\infty
+$$
+
+**The closer the energy gets to zero, the wider the allowed region — its width diverges.** And the number of standing waves that fit in an allowed region of width $L$ at depth of order $\varepsilon$ grows with $L$ (recall the infinite well: half-wavelengths $\lambda/2$ must fit inside $L$). The width diverges faster than the wavelength grows, so below $E=0$ you can pack **infinitely many** ever-more-crowded levels — piling up without limit toward $E=0$. This is exactly the pattern we met in the [Bohr model](/en/ch/01-history/04-bohr-model/): $E_n=-13.6/n^2$ eV, with $n$ arbitrarily large and level spacings $\to0$.
+
+Contrast: a **short-range potential** (the Yukawa potential $\ee^{-r/r_0}/r$, or anything essentially zero beyond a finite distance) has an allowed-region width that saturates at $\sim r_0$ as $\varepsilon\to0$ — too small for infinitely many states. Bound states are finite in number, possibly zero. Hydrogen's infinity of levels is rooted in the **long tail** of the Coulomb $1/r$: it decays so slowly that even at the ends of the earth it still tugs on the electron just a little.
+
+A startling corollary comes free: since $n$ can be arbitrarily large, an atom can sit in a state with $n\sim100$ or higher. Such **Rydberg atoms** have radii $\sim n^2a_0$ reaching the micrometre scale — ten thousand times the ground state. They really are made in the laboratory, and radio astronomy has observed interstellar hydrogen transitions with $n$ in the hundreds.
+
+</Derivation>
+
+## Taking stock
+
+- After the substitution $u=rR$, the radial problem is **a one-dimensional Schrödinger equation on the half-line**, with $u(0)=0$ at the left end and potential $V_\text{eff}$.
+- The centrifugal barrier $l(l+1)\hbar^2/2\mu r^2$ keeps $l\ge1$ electrons away from the nucleus; near the origin $u\sim r^{l+1}$.
+- The Coulomb potential's long tail guarantees infinitely many bound states, piling up toward $E=0$.
+
+We spent a whole chapter solving one-dimensional problems; every needed technique is in hand. The next section is the frontal assault: put the Coulomb potential in and solve for $u(r)$ exactly.
+
+<KeyFormulas
+  items={[
+    { name: 'Radial equation (standard form)', latex: '-\\frac{\\hbar^2}{2\\mu}\\frac{\\dd^2u}{\\dd r^2}+V_{\\text{eff}}(r)\\,u=Eu,\\qquad u=rR', note: 'A 1D problem on the half-line; normalisation ∫|u|²dr = 1, u(0)=0' },
+    { name: 'Effective potential', latex: 'V_{\\text{eff}}(r)=-\\frac{e^2}{4\\pi\\varepsilon_0 r}+\\frac{l(l+1)\\hbar^2}{2\\mu r^2}', note: 'The centrifugal term is bookkept rotational kinetic energy, not a new force' },
+    { name: 'Behaviour at the origin', latex: 'u(r)\\sim r^{\\,l+1}\\quad(r\\to0)', note: 'Larger l presses the wavefunction farther from the origin; only s states hug the nucleus' },
+    { name: 'Bowl bottom', latex: 'r_{\\min}=l(l+1)\\,a_0,\\qquad V_{\\text{eff}}(r_{\\min})=-\\frac{13.6\\ \\text{eV}}{l(l+1)}', note: 'Larger l: shallower well, farther out' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 're-1',
+      prompt: 'What is the direct benefit of the substitution u = rR?',
+      options: [
+        'It removes the first-derivative term, making the equation identical in form to the 1D Schrödinger equation, with normalisation ∫|u|²dr',
+        'It turns the equation into an algebraic equation',
+        'It removes the centrifugal term',
+        'It turns the Coulomb potential into a harmonic-oscillator potential',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'The centrifugal term is still there, absorbed into the effective potential; what disappears is the first-derivative term (2/r)R′.',
+        3: 'The potential is unchanged; only the unknown function changes.',
+      },
+      explain: '(d/dr)(r²dR/dr) = r u″ leaves nothing but the second derivative. All the 1D intuition accumulated in Chapters 2 and 4 (nodes, curvature, asymptotic decay) transfers directly — just remember the extra "wall" u(0) = 0.',
+    },
+    {
+      id: 're-2',
+      prompt: 'The physical essence of the centrifugal barrier is:',
+      options: [
+        'At fixed angular momentum, approaching the centre requires spinning faster, raising the rotational kinetic energy — which is then booked on the potential side of the ledger',
+        'A short-range repulsive force between electron and nucleus',
+        'A manifestation of the Pauli exclusion principle',
+        'A repulsion produced by vacuum fluctuations',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The only interaction between electron and proton is the Coulomb attraction; there is no extra force.',
+        2: 'In a one-electron problem the Pauli principle never enters the stage.',
+      },
+      explain: 'The 3D kinetic energy splits into radial plus rotational shares; the rotational share L²/2μr² depends only on r and is formally merged into the potential. It diverges as 1/r², beating the Coulomb 1/r, so wavefunctions with l ≥ 1 must vanish like r^(l+1) near the origin.',
+    },
+    {
+      id: 're-3',
+      prompt: 'The fundamental reason hydrogen has infinitely many bound states, piling up toward E = 0, is:',
+      options: [
+        'The Coulomb potential decays too slowly (1/r): as the energy approaches zero, the width of the classically allowed region diverges',
+        'The proton mass is infinite',
+        'Every attractive potential has infinitely many bound states',
+        'The electron is a fermion',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Short-range potentials (the finite well, the Yukawa potential) have only finitely many bound states; this is the privilege of the long Coulomb tail.',
+      },
+      explain: 'The outer turning point r_out ∝ 1/|E| diverges, so the "bowl" for shallow levels is infinitely wide and holds infinitely many standing waves. The astronomical version of the same mechanism: Rydberg atoms with n in the hundreds and micrometre radii, genuinely observed in interstellar radio spectra.',
+    },
+    {
+      id: 're-4',
+      type: 'numeric',
+      prompt: 'Where does the l = 1 effective potential reach its minimum? Answer in nanometres. (a₀ = 0.0529 nm)',
+      answer: 0.106,
+      tolerance: 0.01,
+      unit: 'nm',
+      explain: 'Set the derivative of V_eff to zero: r_min = l(l+1)a₀ = 2a₀ = 0.106 nm. This is exactly the scale of the peak of the 2p radial distribution — an electron tends to sit near the bottom of its own effective-potential bowl.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The equation is now in one-dimensional standard form, and both ends of its behaviour are understood: $u\sim r^{l+1}$ at the origin, exponential decay at infinity. The next section pinches these two ends together — bridging the middle with a power series. You will see that the series must **terminate abruptly** at some order, or the wavefunction blows up; and the termination condition is precisely the energy quantisation condition. Out of pure mathematics, $-13.6\ \text{eV}/n^2$ will grow all by itself.

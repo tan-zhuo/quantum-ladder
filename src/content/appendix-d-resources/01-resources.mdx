@@ -2,18 +2,148 @@
 title: 推荐学习资源
 section: 'D.1'
 order: 1
-summary: 教材、讲义、论文、视频与开源项目。
-status: stub
+summary: 读完本站之后去哪里：入门到严格的教材路线、公开课、习题集、开源数值工具与前沿资源，每条附一句「适合谁、好在哪」。
+status: done
+prereqs: []
+objectives: []
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+本站的定位是「带交互的阶梯」，但它不是终点。这一页是继续攀登的地图：
+每条资源给一句诚实的点评——适合谁、好在哪、坑在哪。
+没给链接的，用书名/课程名一搜就到；给了域名的都是长期稳定的官方站。
+清单刻意求精不求全：列出的每一条都是经得起时间检验的选择，
+而不是「所有存在的书」的目录。
+
+## 教材：按坡度排列
+
+### 入门（配合本站第 1–6 章）
+
+| 资源 | 点评 |
+| --- | --- |
+| Griffiths & Schroeter,《Introduction to Quantum Mechanics》 | 全球最流行的入门书，讲解亲切、习题极佳；本站第 2 章的叙事顺序深受它影响。中译本《量子力学概论》可得。弱点：形式理论讲得浅，学完需要补 Dirac 记号的内功。 |
+| 曾谨言，《量子力学》（卷 I、II） | 中文世界的标准教材，覆盖面大、算例详尽，适合当工具书反复查。卷 I 对应本站第 1–7 章。风格偏「解题手册」，物理动机的铺陈不如 Griffiths。 |
+| Townsend,《A Modern Approach to Quantum Mechanics》 | 反传统路线：从自旋和 Stern–Gerlach 实验开讲，二态系统先行——与本站第 5、9 章的精神一致。适合已经学过一轮波动力学、想换个视角重建直觉的人。 |
+| 赵凯华，《新概念物理教程·量子物理》 | 现象与实验先行、公式后置，与本站第 1 章的路线一致。作为「学正式教材之前的第零本」非常合适。 |
+| Feynman,《The Feynman Lectures on Physics》第三卷 | 物理直觉的巅峰之作，双缝、自旋、二态系统的讲法至今无人超越。官方免费全文在 feynmanlectures.caltech.edu。不适合当第一本系统教材（几乎没有可算的习题），适合与任何教材并行阅读。 |
+
+### 进阶（配合本站第 7–12 章）
+
+| 资源 | 点评 |
+| --- | --- |
+| Shankar,《Principles of Quantum Mechanics》 | 从线性代数公理起步，自成体系、推导不跳步，自学者的福音。路径积分一章是同类教材里最易读的。厚，但厚得值。 |
+| Sakurai & Napolitano,《Modern Quantum Mechanics》 | 研究生标准教材：对称性与角动量的处理是黄金标准，本站第 5 章大量借鉴。默认读者手快，习题不做等于没读。 |
+| Cohen-Tannoudji, Diu & Laloë,《Quantum Mechanics》 | 百科全书式的两卷（新版三卷）：正文 + 补充材料的结构，任何一个细节都能查到完整推导。当参考书是神器，从头读到尾是苦役。 |
+| 喀兴林，《高等量子力学》 | 中文研究生教材，表述严谨、自成一家，对表象理论与角动量的讲解尤其扎实。 |
+| Weinberg,《Lectures on Quantum Mechanics》 | 大师晚年的凝练之作，对测量问题与诠释的讨论罕见地坦诚。适合二刷量子力学的人，第一遍读会错过它的好。 |
+
+### 严格与基础（配合本站第 13 章与「诠释」兴趣）
+
+| 资源 | 点评 |
+| --- | --- |
+| Dirac,《The Principles of Quantum Mechanics》 | 记号的源头，历史地位无可替代。今天读它更像读经典原著：收获的是「这套语言当初为何被发明」。 |
+| Landau & Lifshitz,《量子力学（非相对论理论）》 | 理论物理教程第三卷。以「每一句都是结论」著称，准经典近似与对称性的处理独步。适合口味硬核的读者。 |
+| Ballentine,《Quantum Mechanics: A Modern Development》 | 对测量公设与系综诠释的批判性讨论最系统的教材，数学也更严格（严肃对待无界算符）。想认真思考[基础问题](/ch/13-frontier/07-foundations/)的人应当读它。 |
+| Nielsen & Chuang,《Quantum Computation and Quantum Information》 | 量子信息领域的「圣经」，本站第 9、10 章的天然续集。前两章甚至是极好的量子力学复习材料。 |
+
+<Callout type="insight" title="选书建议：一主一辅一习题">
+任何阶段同时读两本以上主教材都是灾难。可行的组合是：一本主线（如 Griffiths 或曾谨言）
++ 一本换视角的辅助（如 Feynman 或 Townsend）+ 一本习题集。
+读进阶书前，用本站[第 3 章](/ch/03-formalism/01-from-wavefunction-to-vector/)自测：
+Dirac 记号不熟，读 Sakurai 会寸步难行。
 </Callout>
 
-## 内容规划
+## 公开课视频
 
-- 入门与进阶教材对比
-- 公开课与讲义
-- 经典论文清单
-- 可用的开源量子软件
+| 资源 | 点评 |
+| --- | --- |
+| MIT OCW 8.04《Quantum Physics I》 | Allan Adams 版讲课极具感染力，开篇的「电子既不是粒子也不是波」值得所有初学者看；Barton Zwiebach 版更沉稳细致。全部课程视频、讲义、习题及解答免费：ocw.mit.edu。 |
+| MIT OCW 8.05 / 8.06《Quantum Physics II / III》 | Zwiebach 主讲，形式理论、微扰论、散射的完整研究生前置训练，与本站第 3、7 章衔接顺滑。配套讲义可当独立教材读（后整理成书《Mastering Quantum Mechanics》）。 |
+| Susskind,《Theoretical Minimum》系列（Stanford） | 面向「认真的业余爱好者」的极简路线，只讲骨架不讲血肉。数学门槛最低的严肃课程，同名系列书可配套。 |
+| David Tong 的讲义（Cambridge） | 严格说是讲义不是视频：剑桥课程讲义全部免费公开，从量子力学到量子场论一条龙，行文有罕见的可读性。搜「David Tong lectures」即到。 |
+| 国内平台 | 中国大学 MOOC 等平台上有多所高校的量子力学课程可选；B 站可搜到 MIT OCW 课程的转载与字幕版，配合官方讲义使用效果最好。 |
 
+## 习题集
+
+看懂和会算之间隔着一道鸿沟，只有习题能填。
+
+| 资源 | 点评 |
+| --- | --- |
+| Griffiths 书内习题 | 编排与正文咬合极好，从送分题到「著名难题」梯度平滑。自学者优先做带解答提示的版本。 |
+| 钱伯初、曾谨言，《量子力学习题精选与剖析》 | 中文习题集的标杆，题目经典、剖析详细，覆盖考研到研究生资格考的难度带。 |
+| Schaum's Outline,《Quantum Mechanics》 | 数百道全解答例题，适合「看例题学套路」的练法与考前突击。深度有限，不能只靠它。 |
+| Flügge,《Practical Quantum Mechanics》 | 二百余道完整解出的问题，从一维势到相对论方程，是「精确可解模型」的百科全书。附录 C 想找测试算例，来这里挖。 |
+| MIT OCW 8.04–8.06 的 Problem Sets | 免费且附官方解答，难度和物理品味都在线，是检验「是否真学会了」的可靠标尺。 |
+
+## 数值与开源工具
+
+学完[附录 C](/ch/appendix-c-numerics/01-finite-difference/) 后可以直接上手的生态：
+
+| 工具 | 点评 |
+| --- | --- |
+| NumPy / SciPy | 一切的地基。`scipy.linalg` 与 `scipy.sparse.linalg` 就是附录 C 用的全部依赖。 |
+| QuTiP | 开放量子系统模拟的事实标准（Python）：主方程、Lindblad 演化、Wigner 函数可视化开箱即用，与本站第 10 章直接对应。文档与教程质量极高：qutip.org。 |
+| Qiskit | IBM 的量子计算框架，可以把第 9 章的电路提交到真实量子硬件上跑。配套的开源教材（Qiskit Textbook）本身就是优秀的量子计算入门读物。 |
+| Cirq / PennyLane | Google 的电路框架与 Xanadu 的变分/机器学习取向框架；PennyLane 与[第 13.9 节](/ch/13-frontier/09-quantum-machine-learning/)的主题直接相关。 |
+| QuSpin | 精确对角化的专业版：自动处理对称性分块，附录 C.3 的 Heisenberg 链用它几行就能算到更大的 N。 |
+| TeNPy | 张量网络 / DMRG 的 Python 库，是突破 C.3 里「指数墙」讨论的一维利器。 |
+| SymPy | Python 符号计算库：验证微扰论展开、算对易子、核对特殊函数恒等式，比手算更不容易抄错负号。 |
+
+## 经典论文清单
+
+原始文献比二手转述更能传达「问题当初长什么样」。以下几篇都不难找（多数有 arXiv 版或被无数教材转载），
+且以今天的知识储备完全读得动：
+
+| 论文 | 为什么读 |
+| --- | --- |
+| Einstein, Podolsky & Rosen (1935),*Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?* | 「EPR 佯谬」原文，只有四页。读它才知道被反驳的立场原本多有说服力。配合[9.4 节](/ch/09-quantum-information/04-bell-chsh/)。 |
+| Bell (1964),*On the Einstein Podolsky Rosen Paradox* | 把哲学争论变成可测不等式的那一击。数学只需要中学水平，思想密度却是顶级。 |
+| Aspect 等 (1982) 的 Bell 不等式实验检验 | 理论到实验的闭环；2022 年诺贝尔物理学奖的源头之一。 |
+| Feynman (1982),*Simulating Physics with Computers* | 量子计算的出生证明：用经典计算机模拟量子系统撞上指数墙（附录 [C.3](/ch/appendix-c-numerics/03-exact-diagonalization-mc/) 亲历过），那就造量子的计算机。 |
+| Bennett 等 (1993) 量子隐形传态方案 | [9.5 节](/ch/09-quantum-information/05-teleportation/)协议的原始提出，短而清晰。 |
+| Shor (1994/1997) 的质因数分解算法 | 让整个领域从好奇变成竞赛的论文；配合 [9.9 节](/ch/09-quantum-information/09-shor/)读。 |
+| Schrödinger (1935) 论量子力学现状的长文（「薛定谔的猫」出处） | 「纠缠（Verschränkung）」一词的诞生地；那只猫在原文里只是个配角式的反讽。 |
+| Bennett & Brassard (1984),BB84 量子密钥分发协议 | 量子密码的起点：只用单光子和不可克隆性就造出可证安全的密钥。 |
+| Zurek (2003),*Decoherence, einselection, and the quantum origins of the classical*（RMP 综述） | 退相干纲领的权威总结，第 10 章的直接延伸读物。 |
+
+<Callout type="insight" title="读经典论文的姿势">
+先在教材里学会内容，再回头读原文——顺序反过来会很受挫。
+读的时候盯住两个问题：作者当时**不知道**什么（这决定了论文的写法），
+以及哪些当年的困惑今天已有答案、哪些还没有。
+后一类（测量问题、符号问题、黑洞信息）正是[第 13 章](/ch/13-frontier/07-foundations/)的主题。
+</Callout>
+
+## 前沿综述与线上资源
+
+| 资源 | 点评 |
+| --- | --- |
+| arXiv（quant-ph 分区） | 领域内几乎所有论文的免费预印本库：arxiv.org。读前沿从「跟读综述 + 顺藤摸瓜」开始，不必啃最新灌水。 |
+| Preskill 的量子信息讲义（Caltech Ph219） | 免费公开、常读常新，从量子信息一路讲到容错与拓扑码，是第 9、10、13 章之后的标准进阶路径。 |
+| Reviews of Modern Physics | 物理各方向权威综述期刊；想进入某个具体方向（如退相干、冷原子、拓扑物态）时，先找它上面的综述当地图。 |
+| Quantum（开放获取期刊） | 量子科学的社区自治期刊，全部文章免费。浏览目录本身就是感受领域热点的方式。 |
+| Physics Stack Exchange | 概念疑难的问答库，大量高质量回答。先搜后问；提问的质量决定回答的质量。 |
+| PhET 互动模拟（University of Colorado） | 免费的物理交互模拟合集，量子部分与本站的 3D 实验室互为补充：phet.colorado.edu。适合教学演示与建立第一直觉。 |
+| HyperPhysics | 树状知识地图式的物理速查站，查一个概念的「最小上下文」很快。深度止于本科，胜在联通。 |
+| Quanta Magazine | 高水准的科普长文，把前沿进展讲给非同行听。适合保持视野，不适合当学习材料。 |
+
+## 按目标选路线
+
+| 你的目标 | 建议组合 |
+| --- | --- |
+| 应付课程 / 考研 | 曾谨言（或 Griffiths）精读 + 钱伯初 & 曾谨言习题集 + 本站对应章节的模拟与自测查漏 |
+| 转向量子计算 / 量子信息 | 本站 3、5、9、10 章 + Nielsen & Chuang 前六章 + Qiskit Textbook 动手，再上 Preskill 讲义 |
+| 走科研（凝聚态 / AMO 方向） | Sakurai 全书 + MIT 8.05/8.06 习题 + 附录 C 三节全部亲手复现，然后读 RMP 上自己方向的综述 |
+| 兴趣驱动的自学者 | Feynman 第三卷 + Susskind 系列 + 本站从头到尾；卡住的数学回附录 A 补 |
+| 关心「量子力学到底在说什么」 | 本站 13.7 + Ballentine + Zurek 综述 + Bell 原文；准备好接受「尚无共识」这个结论 |
+
+<Callout type="check" title="一条可执行的路线">
+以本站为骨架的最短闭环：本站 1–6 章 + Griffiths 精读与习题 → 第 3、7 章 + MIT 8.05
+讲义 → 按兴趣分叉：量子信息走 Nielsen & Chuang + Qiskit 动手；
+多体与凝聚态走 Sakurai + QuSpin/TeNPy 动手；基础问题走 Ballentine。
+每一步都保留「读一章、算一章习题、写一段代码验证」的三件套——
+这也是本站全部交互模拟想教会你的工作方式。
+</Callout>
+
+最后：这份清单必然随时间过时，而本站是开源项目——
+发现更好的资源、失效的条目或不同的看法，欢迎通过站点首页的开源入口提出修改。
+好地图是走出来的。

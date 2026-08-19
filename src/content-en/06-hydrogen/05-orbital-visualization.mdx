@@ -1,24 +1,229 @@
 ---
-title: 'The spatial distribution of probability density'
-summary: 'What the electron cloud actually looks like.'
+title: The spatial distribution of probability density
 section: '6.5'
 order: 5
-status: stub
-sims: ['hydrogen-orbital']
+summary: 'How to "look at" an orbital correctly: probability density and the radial distribution are two different things — the 1s density peaks on the nucleus, yet the most probable radius is a₀; the angular shapes are orientation distributions of probability, not racetracks for the electron. The most widespread misreadings, dismantled one by one.'
+status: done
+prereqs:
+  - 06-hydrogen/03-hydrogen-solution
+  - 06-hydrogen/04-energy-levels
+sims: []
+objectives:
+  - Distinguish the probability density |ψ|² from the radial distribution function P(r) = r²|R|², and explain where the r² factor comes from
+  - Compute the most probable radius and the mean radius, and explain why they differ
+  - Use the node-counting rules (n−l−1 radial, l angular) to read off the structure of any orbital
+  - Identify three common misreadings of "electron cloud" pictures and state the correct reading of each
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section ended with a provocative hint: "the place where $\lvert\psi\rvert^2$ peaks is the radius where the electron is most likely to be found" — that statement is wrong. This section explains exactly where it goes wrong. This is not hair-splitting: the orbital pictures in chemistry books and the "electron clouds" of popular science are among the most misread images in all of quantum mechanics, and reading them right takes nothing more than telling **two questions** apart.
+
+## A concrete contradiction
+
+Put the ground state on the table. Two sections ago we found
+
+$$
+\lvert\psi_{100}\rvert^2=\frac{1}{\pi a^3}\,\ee^{-2r/a}
+$$
+
+This is a monotonically decreasing function — **the probability density is largest at $r=0$, dead centre on the nucleus**.
+
+Yet a numerical exercise in that same section found the probability of the electron being inside the sphere of radius $a_0$ to be only 32%, and every textbook says "the electron is most likely to be found one Bohr radius from the nucleus". Density peaks on the nucleus, most probable radius at $a_0$ — a contradiction?
+
+No. These are **two different questions**:
+
+- Question A: "Near **which point** is the probability density of finding the electron, per small volume, the largest?" — answered by $\lvert\psi\rvert^2$: at the centre.
+- Question B: "What is the electron's most likely **distance $r$ from the nucleus**?" — this asks which spherical shell holds the most total probability, and a different function answers it.
+
+<Derivation title="The radial distribution function: where the r² factor comes from" level="基础" minutes={5} open={true}>
+
+**Step 1: write the probability that the nuclear distance lies between $r$ and $r+\dd r$.** That means integrating the probability density over the whole shell:
+
+$$
+P(r)\,\dd r=\int_\text{shell}\lvert\psi_{nlm}\rvert^2\,\dd^3r
+=\lvert R_{nl}(r)\rvert^2\,r^2\dd r\int\lvert Y_l^m\rvert^2\dd\Omega
+$$
+
+The angular integral equals 1 (spherical harmonics are normalised), so
+
+$$
+P(r)=r^2\,\lvert R_{nl}(r)\rvert^2
+$$
+
+$P(r)$ is called the **radial distribution function** (in plain words: the probability distribution of the electron's distance from the nucleus).
+
+**Step 2: see where the $r^2$ comes from.** A shell of radius $r$ and thickness $\dd r$ has volume $4\pi r^2\dd r$ — **bigger radius, bigger shell**. Distance distribution = density × shell volume, a competition between density and geometric weight:
+
+- small $r$: the density is high, but the shell is pitifully small (volume $\to0$ as $r\to0$), so $P(r)\to0$;
+- large $r$: the shell is big, but the density dies exponentially, so $P(r)\to0$;
+- somewhere in between, a peak.
+
+**Step 3: find the ground state's peak.** $P(r)\propto r^2\ee^{-2r/a}$; set the derivative to zero:
+
+$$
+\frac{\dd}{\dd r}\left(r^2\ee^{-2r/a}\right)=\left(2r-\frac{2r^2}{a}\right)\ee^{-2r/a}=0
+\;\Longrightarrow\; r_\text{mp}=a=a_0
+$$
+
+**The most probable radius is exactly the Bohr radius.** The afterimage of Bohr's circular orbit at $r=a_0$ in the true theory is the peak of this distribution curve.
+
+**Step 4: compute the mean while we're at it.** Peak is not mean: the distribution has a tail toward large $r$, dragging the average rightward:
+
+$$
+\langle r\rangle_{1s}=\int_0^\infty r\,P(r)\,\dd r=\frac{4}{a^3}\int_0^\infty r^3\ee^{-2r/a}\dd r=\frac{4}{a^3}\cdot\frac{3!\,a^4}{2^4}=\frac{3a}{2}
+$$
+
+Peak at $a$, mean $1.5a$, median about $1.34a$ — three "typical radii", three different numbers. Before quoting one, say which you mean.
+
+</Derivation>
+
+<Callout type="insight" title="The general formula and size scaling">
+For arbitrary $(n,l)$ the mean radius has a clean closed form:
+
+$$
+\langle r\rangle_{nl}=\frac{a}{2}\left[3n^2-l(l+1)\right]
+$$
+
+Two readings:
+
+1. **Size grows madly, as $n^2$.** For $n=1$ it is $1.5a$; for $n=10$, about $150a$; for a Rydberg atom at $n=100$, about fifteen thousand Bohr radii — micrometre scale, approaching the size of a bacterium.
+2. **Within one $n$, larger $l$ actually sits closer in on average** ($\langle r\rangle_{2s}=6a$ exceeds $\langle r\rangle_{2p}=5a$) — yet nothing rivals the s states' talent for "hugging the nucleus" via their small inner peak: 2s has a small peak at $r\approx0.76a$, while 2p is flattened near the nucleus by $r^l$. This is the root of the chemists' "penetration effect" (s electrons drilling through inner-shell screening), and of the fact — coming in [section 6.6](/en/ch/06-hydrogen/06-fine-structure/) — that only s states feel the Darwin term.
 </Callout>
 
-## Planned contents
+## Nodes: an orbital's fingerprint
 
-- The radial distribution function
-- Angular nodal surfaces
-- How to read the standard orbital pictures correctly
+Sketching the first few $P(r)$ in words (all $r$ in units of $a$; peak positions from setting derivatives to zero — check them yourself):
 
-## Planned simulations
+| Orbital | Radial nodes $n-l-1$ | Shape of $P(r)$ | Main peak | $\langle r\rangle$ |
+| --- | --- | --- | --- | --- |
+| 1s | 0 | single peak | $1.0\,a$ | $1.5\,a$ |
+| 2s | 1 | small peak — zero (at $r=2a$) — main peak | $5.24\,a$ | $6\,a$ |
+| 2p | 0 | single peak | $4\,a$ | $5\,a$ |
+| 3s | 2 | peak — zero — peak — zero — main peak | $13.1\,a$ | $13.5\,a$ |
+| 3d | 0 | single peak | $9\,a$ | $10.5\,a$ |
 
-- `hydrogen-orbital`
+The patterns leap out:
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="hydrogen-orbital" />`.
+- **Radial node count = $n-l-1$** (the series termination order, a product of [section 6.3](/en/ch/06-hydrogen/03-hydrogen-solution/)): there $R_{nl}=0$, the probability of that exact nuclear distance is zero, and the distribution is sliced into concentric shells;
+- **Angular node count = $l$**: $Y_l^m$ has $l$ nodal surfaces (planes or cones) — the "waist" of a p orbital and the "cross" of a d orbital are angular nodal surfaces;
+- the two add up to exactly $n-1$ — reconnecting with the old one-dimensional rule that "the $k$-th excited bound state has $k$ nodes".
+
+One more look at the angular part. $\lvert Y_l^m\rvert^2$ does not depend on $\phi$ (the phase $\ee^{\ii m\phi}$ disappears on taking the modulus), so **the electron cloud of any strict $(n,l,m)$ eigenstate is rotationally symmetric about the $z$ axis**: $\lvert Y_1^0\rvert^2\propto\cos^2\theta$ is a dumbbell along $z$, and $\lvert Y_1^{\pm1}\rvert^2\propto\sin^2\theta$ is a doughnut around the equator.
+
+<DualView>
+<div slot="left">
+
+**Then where do the mutually perpendicular $\mathrm p_x$, $\mathrm p_y$, $\mathrm p_z$ of the chemistry books come from?**
+
+They are **superpositions**. The two $m=\pm1$ doughnuts share an energy ($m$ degeneracy), and their real-coefficient combinations
+
+$$
+\mathrm p_x=\frac{Y_1^{-1}-Y_1^{1}}{\sqrt2},\qquad
+\mathrm p_y=\frac{\ii\,(Y_1^{-1}+Y_1^{1})}{\sqrt2}
+$$
+
+are equally legitimate stationary states of the same energy, shaped precisely as dumbbells along $x$ and $y$. Chemists prefer them because they are real functions with a strong sense of direction, convenient for discussing bonding. Physicists doing magnetic-field problems insist on the $m$ eigenstates, because those are the eigenfunctions of $\hat L_z$. **Two bases describing the same degenerate subspace — neither is more "real" than the other.**
+
+</div>
+<div slot="right">
+
+The quick node-counting drill, using 3p ($n=3,l=1,m=0$) as the example:
+
+- radial nodes: $3-1-1=1$ — one spherical surface;
+- angular nodes: $l=1$ — the equatorial plane;
+- picture: a dumbbell along $z$, each lobe further sliced into an inner and outer segment by the spherical nodal surface.
+
+Or 3d ($l=2$): 0 radial nodes, 2 angular nodal surfaces — for $m=0$ these are two cones (the $\mathrm d_{z^2}$ shape with its "waist ring"), while real combinations like $\mathrm d_{xy}$ are four-leaf clovers carved out by two perpendicular planes.
+
+For any orbital picture: count the nodes first, then determine the shape — and no fancy colour scheme will fool you.
+
+</div>
+</DualView>
+
+## The three commonest misreadings
+
+<Callout type="warning" title="The orbital-picture fact-check list">
+**Misreading one: "the cloud's boundary is the atom's boundary."** Textbook orbital pictures show **isosurfaces of probability density**, usually the one enclosing 90% of the probability. The wavefunction decays exponentially and has no boundary; 90% is the illustrator's choice, not nature's. The same 1s state drawn at 50% is a size smaller, at 99% a size bigger.
+
+**Misreading two: "the dumbbell is the electron's racetrack."** The two lobes of a p orbital are **not** a path the electron shuttles along. The picture shows the orientation distribution of probability; the electron has no trajectory (the old lesson of [section 2.1](/en/ch/02-wavefunction/01-double-slit/)). And the inevitable question — how does the electron "get through" the zero-probability nodal plane from the upper lobe to the lower? — is itself wrong: the electron is not a little ball travelling continuously, and the nodal plane merely says "the probability of finding it there is zero".
+
+**Misreading three: "the cloud is smeared-out charge paste."** The electron cloud is not the electron smoothed into jelly. Every position measurement yields **a point**; the cloud is the histogram of many repeated measurements' landing spots. A hydrogen atom never has "part of the electron here and part there" — it has "the whole electron, appearing with this probability distribution".
+</Callout>
+
+One day you will spin all these shapes around with your own hands — the 3D orbital visualiser for this chapter is on the roadmap. For now, the node-counting drill plus the fact-check list above are enough to read any textbook figure correctly.
+
+## Calibrating your sense of scale
+
+Close with real numbers. The ground-state hydrogen "90% probability radius" is about $2.7a_0\approx0.14$ nm — this is where the chemical size of atoms (about 0.1 nm) comes from — while the nuclear radius is about $10^{-6}$ nm: **one part in $10^{15}$ of the atom's volume is nucleus; all the rest is the probability cloud's thin frontier**. Blow the nucleus up to a marble at the centre of a stadium, and the "electron" at the most probable radius sits in the stands — but remember, it still has a 32% chance of being anywhere between the marble and the stands, including inside the marble itself. That last point is not rhetoric: the electron's small but non-zero probability of being inside the nucleus is the precondition for electron capture (a nucleus absorbing an inner electron), and the physical root of the next section's Darwin term.
+
+<KeyFormulas
+  items={[
+    { name: 'Radial distribution function', latex: 'P(r)=r^2\\lvert R_{nl}(r)\\rvert^2,\\qquad\\int_0^\\infty P(r)\\,\\dd r=1', note: 'r² is the shell-volume weight; answers "what is the most likely nuclear distance"' },
+    { name: 'Three ground-state radii', latex: 'r_{\\text{mp}}=a_0,\\quad\\langle r\\rangle=1.5\\,a_0,\\quad P(r<a_0)=0.32', note: 'Peak = Bohr radius; yet the density maximum is at r = 0' },
+    { name: 'Mean radius', latex: '\\langle r\\rangle_{nl}=\\frac{a}{2}\\left[3n^2-l(l+1)\\right]', note: 'Size ∝ n²; within one n, larger l sits slightly closer in on average' },
+    { name: 'Node counting', latex: '(n-l-1)_{\\text{radial}}+l_{\\text{angular}}=n-1', note: 'Reading any orbital picture starts with counting nodes' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ov-1',
+      prompt: 'In ground-state hydrogen, where is the maximum of the probability density |ψ|², and where is the most probable nuclear distance?',
+      options: [
+        'Density peaks at r = 0 (on the nucleus); most probable nuclear distance at r = a₀',
+        'Both at a₀',
+        'Both at r = 0',
+        'Density peaks at a₀; most probable nuclear distance at r = 0',
+      ],
+      answer: 0,
+      distractors: {
+        1: '|ψ₁₀₀|² ∝ e^{−2r/a} decreases monotonically; its peak is at the origin.',
+        2: 'The distance distribution P(r) = r²|R|² carries the shell-volume weight and vanishes at r = 0.',
+      },
+      explain: '"Where is the density largest" and "what is the most likely nuclear distance" are two questions: the latter multiplies by the shell volume 4πr²dr. Density and geometric weight compete, and the peak lands exactly on the Bohr radius.',
+    },
+    {
+      id: 'ov-2',
+      prompt: 'How many radial nodes and how many angular nodal surfaces does the 3p orbital have?',
+      options: [
+        '1 radial node (a sphere), 1 angular nodal surface (a plane)',
+        '2 radial nodes, 1 angular nodal surface',
+        '1 radial node, 0 angular nodal surfaces',
+        '0 radial nodes, 2 angular nodal surfaces',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Radial node count = n − l − 1 = 3 − 1 − 1 = 1.',
+      },
+      explain: 'Radial n−l−1 = 1, angular l = 1, total nodes n−1 = 2. 3p is a "dumbbell wrapped in one spherical nodal surface"; the counting works for any (n,l).',
+    },
+    {
+      id: 'ov-3',
+      prompt: 'Which statements about the chemistry books\' p_x and p_y orbitals are correct? (Select all that apply.)',
+      options: [
+        'They are superpositions of the m = +1 and m = −1 eigenstates',
+        'They describe the same degenerate subspace as the m eigenstates, just in a different basis',
+        'They are more "real" orbitals than Y₁^{±1}',
+        'They are real functions, more convenient for discussing bond directions',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The two bases are physically fully equivalent; the m degeneracy guarantees any combination is still a stationary state of the same energy. Which is "handier" depends on the problem: with a magnetic field on, the m eigenstates are the right starting point.',
+      },
+      explain: 'Within a degenerate subspace the choice of basis is free. Chemistry takes real combinations to see directions; physics takes L_z eigenstates to see magnetic response — one physics, two pairs of glasses.',
+    },
+    {
+      id: 'ov-4',
+      type: 'numeric',
+      prompt: 'Find the most probable nuclear distance for the 2p orbital, in nm. (P(r) ∝ r⁴e^{−r/a}, a₀ = 0.0529 nm)',
+      answer: 0.212,
+      tolerance: 0.01,
+      unit: 'nm',
+      explain: 'Set the derivative to zero: 4r³ − r⁴/a = 0, giving r = 4a = 4×0.0529 = 0.212 nm. Exactly the Bohr model\'s r₂ = 4a₀ — for the "circular-orbit-like" state with l = n−1 in each n (2p, 3d, 4f…), the most probable radius lands precisely on Bohr\'s n²a₀. One more place the Bohr model refuses to die.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The Coulomb-model hydrogen atom has now been squeezed dry: levels, degeneracies, lines, shapes — all in hand. But turn the spectrometer's resolution up one more notch and the story turns a page: back in 1887 Michelson found that $\mathrm H\alpha$ is not one line at all, but **two**, about 0.016 nm apart. Coulomb potential plus Schrödinger equation cannot produce that splitting. The three missing pieces — relativity, spin–orbit coupling, and a correction with no classical counterpart — are collectively called fine structure, and they enter next.

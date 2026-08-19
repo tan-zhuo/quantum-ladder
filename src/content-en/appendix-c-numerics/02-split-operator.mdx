@@ -1,17 +1,231 @@
 ---
-title: 'The split-operator method'
-summary: 'The algorithm behind the wave-packet animations on this site.'
+title: The split-operator method
 section: 'C.2'
 order: 2
-status: stub
+summary: 'The algorithm behind this site''s wave-packet animations: multiply a potential phase in position space, a kinetic phase in momentum space, and let the FFT hop between them — strictly norm-preserving, second-order convergent, with full code and a trap list.'
+status: done
+prereqs:
+  - 02-wavefunction/04-time-dependent-schrodinger
+  - appendix-a-math/02-fourier
+objectives:
+  - State the operator-splitting idea and the error order of Strang splitting
+  - Write a complete program that evolves a wave packet using the FFT
+  - Explain why the algorithm preserves the norm exactly, and know the traps that periodic boundaries bring
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The solution of the time-dependent Schrödinger equation, $\Psi(t)=\ee^{-\ii\hat Ht/\hbar}\Psi(0)$, takes one line to write and considerable trouble to compute: inside $\hat H=\hat T+\hat V$, the kinetic term $\hat T$ is a differential operator in the position representation. The observation behind the **split-operator method**:
+
+- $\ee^{-\ii\hat V\Delta t/\hbar}$ is diagonal in the **position representation** — a pointwise phase multiplication, essentially free;
+- $\ee^{-\ii\hat T\Delta t/\hbar}$ is diagonal in the **momentum representation** — also a pointwise phase;
+- the change of basis between the two representations is exactly the Fourier transform ([A.2](/en/ch/appendix-a-math/02-fourier/)), and the FFT does it in $O(N\log N)$.
+
+So each evolution step = multiply a phase → FFT → multiply a phase → inverse FFT. The animations in the main text — the [wave packet hitting a barrier](/en/ch/02-wavefunction/11-tunneling/), the [spreading free packet](/en/ch/02-wavefunction/10-free-particle/) — are all this algorithm running.
+
+## The splitting formula and its error order
+
+The trouble is that $\hat T$ and $\hat V$ **do not commute**, so
+$\ee^{-\ii(\hat T+\hat V)\Delta t/\hbar}\ne\ee^{-\ii\hat T\Delta t/\hbar}\ee^{-\ii\hat V\Delta t/\hbar}$.
+But for small $\Delta t$ they can be approximately pulled apart, and the symmetry of the split determines the accuracy:
+
+<Derivation title="Trotter versus Strang: why the symmetric split earns an extra order" level="进阶" minutes={6}>
+
+Write $\hat A=-\ii\hat T\Delta t/\hbar$ and $\hat B=-\ii\hat V\Delta t/\hbar$, both small quantities of order $O(\Delta t)$. The Baker–Campbell–Hausdorff formula (when two exponentials merge into one, the commutator crashes the party):
+
+$$
+\ee^{\hat A}\ee^{\hat B}=\exp\left(\hat A+\hat B+\tfrac12[\hat A,\hat B]+\cdots\right)
+$$
+
+**Naive split (Trotter)**: $\ee^{\hat A}\ee^{\hat B}$ differs from the target $\ee^{\hat A+\hat B}$ by $\tfrac12[\hat A,\hat B]=O(\Delta t^2)$ — second-order error per step, but covering a fixed total time takes $t/\Delta t$ steps, so the global error is $O(\Delta t)$: a first-order method.
+
+**Symmetric split (Strang)**: split the potential in half and sandwich the kinetic term,
+
+$$
+\ee^{\hat B/2}\,\ee^{\hat A}\,\ee^{\hat B/2}
+=\exp\left(\hat A+\hat B+O(\Delta t^3)\right)
+$$
+
+The $O(\Delta t^2)$ commutator term is cancelled by the symmetry (left and right are mirror images, so odd-order errors flip sign and cancel), giving third-order error per step and **global error $O(\Delta t^2)$**: a second-order method. The extra cost is essentially zero — the two adjacent "half potential steps" of consecutive steps can even be merged into one.
+
+</Derivation>
+
+The complete flow of one evolution step (Strang splitting):
+
+$$
+\Psi\ \xrightarrow{\ \times\,\ee^{-\ii V\Delta t/2\hbar}\ }
+\ \xrightarrow{\ \text{FFT}\ }
+\ \xrightarrow{\ \times\,\ee^{-\ii\hbar k^2\Delta t/2m}\ }
+\ \xrightarrow{\ \text{FFT}^{-1}\ }
+\ \xrightarrow{\ \times\,\ee^{-\ii V\Delta t/2\hbar}\ }\ \Psi'
+$$
+
+<Callout type="insight" title="Exact norm preservation, for free">
+Each step performs only two kinds of operation: pointwise multiplication by unit-modulus phases, and the unitary FFT. So **no matter how large Δt is, total probability is conserved to machine precision** — the error appears only in the phases (energies), never as the embarrassingly visible disease of "leaking probability". By contrast, naive explicit difference schemes (e.g. a plain Euler step in time) are unstable: the norm grows exponentially.
 </Callout>
 
-## Planned contents
+## Complete code: a wave packet hits a square barrier
 
-- Operator splitting and the Trotter error
-- What the FFT is for
-- Unitarity and absorbing boundaries
+A packet with $E\approx V_0$ strikes a barrier and roughly half passes, half bounces back (natural units $\hbar=m=1$):
+
+```python
+import numpy as np
+
+# ---- Grid ----
+L, N = 40.0, 1024
+x = np.linspace(-L/2, L/2, N, endpoint=False)
+dx = x[1] - x[0]
+k = 2 * np.pi * np.fft.fftfreq(N, d=dx)     # momentum grid in FFT convention
+
+# ---- Potential: a square barrier in the middle ----
+V0, a = 2.0, 1.0
+V = np.where(np.abs(x) < a / 2, V0, 0.0)
+
+# ---- Initial state: Gaussian packet incident from the left (central momentum k0, kinetic energy k0²/2 = 2 = V0) ----
+x0, k0, sigma = -10.0, 2.0, 1.5
+psi = np.exp(-(x - x0)**2 / (4 * sigma**2) + 1j * k0 * x)
+psi /= np.sqrt(np.sum(np.abs(psi)**2) * dx)   # normalise
+
+# ---- Precompute the evolution factors (Strang splitting: V/2 → T → V/2) ----
+dt, steps = 0.005, 2000
+expV_half = np.exp(-0.5j * V * dt)
+expT      = np.exp(-0.5j * k**2 * dt)
+
+for _ in range(steps):
+    psi = expV_half * psi                        # half step of potential
+    psi = np.fft.ifft(expT * np.fft.fft(psi))    # full kinetic step (momentum space)
+    psi = expV_half * psi                        # half step of potential
+
+# ---- Checks: norm conservation + transmission/reflection probabilities ----
+norm = np.sum(np.abs(psi)**2) * dx
+T = np.sum(np.abs(psi[x >  a/2])**2) * dx
+R = np.sum(np.abs(psi[x < -a/2])**2) * dx
+print(f"after {steps} steps  norm = {norm:.12f}")
+print(f"transmission T = {T:.4f}   reflection R = {R:.4f}   T + R = {T+R:.4f}")
+```
+
+Measured output:
+
+```text
+after 2000 steps  norm = 1.000000000000
+transmission T = 0.5119   reflection R = 0.4865   T + R = 0.9984
+```
+
+The key lines:
+
+- `np.fft.fftfreq(N, d=dx)`: gives the wavenumber corresponding to each array index in FFT convention (the first half is positive $k$, the second half negative $k$); multiplied by $2\pi$ it is the momentum grid. **Hand-rolling the $k$ array yourself is this algorithm's number-one source of bugs** — get the ordering wrong and the packet shatters instantly.
+- `endpoint=False`: the FFT implies periodic boundaries; $x=-L/2$ and $x=+L/2$ are the same point and must not be counted twice.
+- The evolution factors are **precomputed** outside the loop: each step is then only pointwise multiplications and two FFTs.
+- The norm is exact to 12 digits — norm preservation is structural, not dependent on $\Delta t$ being small.
+- $T+R=0.9984$ is not an error: the missing 0.0016 is the probability still lingering inside the barrier region $\lvert x\rvert<a/2$.
+- Plot `np.abs(psi)**2` every few steps along the way, and you have the tunnelling animation from the main text.
+
+## Convergence-order check
+
+Evolve a coherent state in the oscillator potential, using a tiny-step solution as reference, and watch the error against $\Delta t$:
+
+```python
+import numpy as np
+
+L, N = 40.0, 1024
+x = np.linspace(-L/2, L/2, N, endpoint=False)
+dx = x[1] - x[0]
+k = 2 * np.pi * np.fft.fftfreq(N, d=dx)
+V = 0.5 * x**2                        # oscillator potential
+
+psi0 = np.exp(-(x - 3.0)**2 / 2)      # coherent state: sloshes back and forth without changing shape
+psi0 = psi0 / np.sqrt(np.sum(np.abs(psi0)**2) * dx)
+
+def evolve(psi, dt, steps):
+    expV_half = np.exp(-0.5j * V * dt)
+    expT = np.exp(-0.5j * k**2 * dt)
+    for _ in range(steps):
+        psi = expV_half * np.fft.ifft(expT * np.fft.fft(expV_half * psi))
+    return psi
+
+T_total = 2.0
+ref = evolve(psi0.copy(), T_total / 6400, 6400)   # tiny step as reference solution
+
+print("   dt        error ‖ψ - ψ_ref‖    ratio")
+prev = None
+for steps in [50, 100, 200, 400]:
+    psi = evolve(psi0.copy(), T_total / steps, steps)
+    err = np.sqrt(np.sum(np.abs(psi - ref)**2) * dx)
+    ratio = f"{prev/err:.2f}" if prev else "  --"
+    print(f" {T_total/steps:.4f}     {err:.3e}      {ratio}")
+    prev = err
+```
+
+Measured output:
+
+```text
+   dt        error ‖ψ - ψ_ref‖    ratio
+ 0.0400     1.162e-03        --
+ 0.0200     2.905e-04      4.00
+ 0.0100     7.257e-05      4.00
+ 0.0050     1.809e-05      4.01
+```
+
+Halve the step, the error drops precisely to a quarter — the $O(\Delta t^2)$ global error of Strang splitting, in perfect agreement with the derivation.
+
+<Callout type="warning" title="Three traps — all descendants of 'the FFT implies periodic boundaries'">
+1. **The packet exits on the right and sneaks back in on the left.** The box is a ring. Run too long and the transmitted wave wraps around to contaminate the reflected one. Remedies: a bigger box, stopping the clock in time, or an **absorbing layer** at both ends — a stretch of imaginary potential $-\ii\Gamma(x)$ (it deliberately breaks norm preservation, "eating" the probability that reaches the edge, mimicking a particle gone for good).
+2. **Momentum has a ceiling too.** The largest momentum the grid can represent is $k_{\max}=\pi/dx$. When the packet's momentum approaches it, aliasing sets in — high-momentum components masquerade as backwards low-momentum ones, and inexplicable ripples appear. Remedy: ensure $\lvert k_0\rvert+3/\sigma\ll\pi/dx$, or refine the grid.
+3. **Spurious ringing at potential jumps.** The sharp edges of a square barrier contain arbitrarily high Fourier components; truncated by the grid, they leave small oscillations near the edges. The physical conclusions ($T$, $R$) are usually unaffected, but smooth the barrier edges if you want to plot wavefunction details.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Strang splitting', latex: '\\ee^{-\\ii\\hat H\\Delta t/\\hbar}\\approx\\ee^{-\\ii\\hat V\\Delta t/2\\hbar}\\,\\ee^{-\\ii\\hat T\\Delta t/\\hbar}\\,\\ee^{-\\ii\\hat V\\Delta t/2\\hbar}', note: 'Symmetric split; global error O(Δt²), versus only O(Δt) for the naive split' },
+    { name: 'Where the error comes from', latex: '\\ee^{\\hat A}\\ee^{\\hat B}=\\ee^{\\hat A+\\hat B+\\frac12[\\hat A,\\hat B]+\\cdots}', note: 'The BCH formula: splitting tricks are needed only because T and V do not commute' },
+    { name: 'One step of the flow', latex: '\\Psi\\to\\ee^{-\\ii V\\Delta t/2\\hbar}\\Psi\\to\\mathcal{F}\\to\\ee^{-\\ii\\hbar k^2\\Delta t/2m}\\to\\mathcal{F}^{-1}\\to\\ee^{-\\ii V\\Delta t/2\\hbar}', note: 'Two FFTs + three pointwise phase multiplications; strictly norm-preserving' },
+    { name: 'Momentum ceiling of the grid', latex: 'k_{\\max}=\\pi/\\dd x', note: 'Approach the ceiling and you alias; periodic boundary = the box is a ring' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apc2-1',
+      prompt: 'Why does the split-operator method conserve total probability exactly, regardless of the step size?',
+      options: [
+        'Each step consists only of pointwise phase multiplications and FFTs — all unitary operations',
+        'Because the step error is a second-order small quantity',
+        'Because the normalisation is manually reset after every step',
+        'Because the potential is a real function, so energy is conserved',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The error order governs the phase (energy) accuracy and has nothing to do with the norm — norm preservation is structural.',
+        2: 'The code normalises exactly once, at initialisation, and never resets afterwards.',
+      },
+      explain: 'Unit-modulus phase factors and the unitary Fourier transform never change the norm of a vector. All the error lands on "is the evolution right", never on "did probability leak". Only when an absorbing imaginary potential −iΓ is added is this property deliberately broken.',
+    },
+    {
+      id: 'apc2-2',
+      prompt: 'Reduce the time step from 0.04 to 0.01 (a factor of 1/4). The global error of Strang splitting becomes roughly:',
+      options: ['1/16', '1/4', '1/2', '1/64'],
+      answer: 0,
+      distractors: {
+        1: 'That is the behaviour of the first-order (naive Trotter) split.',
+        3: '1/64 corresponds to a third-order method; Strang is second-order.',
+      },
+      explain: 'Global error ∝ Δt², so Δt → Δt/4 gives error → 1/16. The convergence table\'s "ratio 4.00 per halving" is the same law.',
+    },
+    {
+      id: 'apc2-3',
+      prompt: 'A scattering simulation runs too long, and suddenly an extra lump appears in the "reflected wave" on the left. The most likely explanation is:',
+      options: [
+        'The transmitted wave wrapped around through the right boundary — FFT periodicity turned the box into a ring',
+        'The algorithm does not preserve the norm, and probability is growing',
+        'The barrier emitted new particles',
+        'Accumulated floating-point error',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Norm preservation is exact; the printed norm is still 1.000000000000.',
+        3: 'The Schrödinger equation is a one-particle equation — it does not create particles.',
+      },
+      explain: 'Periodic boundaries mean x = +L/2 connects to x = −L/2. Remedies: enlarge the box, shorten the run, or add an imaginary absorbing potential at the edges to eat the outgoing wave.',
+    },
+  ]}
+/>

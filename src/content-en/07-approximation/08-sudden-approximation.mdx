@@ -1,16 +1,272 @@
 ---
-title: 'The sudden approximation'
-summary: 'The opposite extreme to adiabaticity.'
+title: The sudden approximation
 section: '7.8'
 order: 8
-status: stub
+summary: 'When the change is too fast for the wavefunction to react, the old wavefunction is frozen untouched into the new Hamiltonian — and the fate of tritium''s electron after nuclear decay comes down to one overlap integral.'
+status: done
+prereqs:
+  - 07-approximation/07-berry-phase
+  - 03-formalism/08-measurement
+objectives:
+  - Write down the criterion for the sudden approximation — the switching time far shorter than the system's intrinsic period ħ/ΔE
+  - Re-expand the "frozen" old wavefunction in the new Hamiltonian's eigenbasis and read off the probabilities
+  - Compute the level populations of the daughter ion in tritium beta decay (70% in 1s, 25% in 2s)
+  - Make clear the boundary between the sudden and adiabatic limits, and who governs the middle ground
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section finished off the "infinitely slow" end: in adiabatic evolution the system never strays a step from the instantaneous eigenstate.
+To close the chapter, look at the other end of the scale — the Hamiltonian **switching in an instant**. Surprisingly,
+this end is even simpler than the adiabatic one, and it comes with a textbook-grade real case whose answer is almost too beautiful to be true.
+
+The case is tritium. Tritium ($^3$H) is hydrogen's radioactive isotope: one proton, two neutrons,
+with one electron in orbit whose wavefunction is our old friend, the hydrogen 1s state.
+The tritium nucleus undergoes beta decay:
+
+$$
+^3\text{H}\ \longrightarrow\ ^3\text{He}^+ + e^-_{\beta} + \bar\nu
+$$
+
+A neutron turns into a proton, ejecting a high-energy beta electron (up to 18.6 keV) and an antineutrino.
+For the orbital electron left behind, the sky falls in a very specific way:
+**the nuclear charge jumps from $Z=1$ to $Z=2$ in an instant.** The "hydrogen atom" it lived in is gone;
+underfoot is now a "helium ion" — a whole new ladder of levels with completely different spacings.
+
+The question: which level of the new system does this electron land on, and with what probabilities?
+
+First, be clear why none of the old tools apply. Perturbation theory? The potential doubles outright — no small parameter.
+The adiabatic theorem? It requires the change to be far slower than the electron's orbital period, and here it is exactly the opposite —
+the beta electron bursts out of the atom at nearly the speed of light (crossing $a_0$ takes about $10^{-19}$ seconds),
+while the orbital electron's intrinsic period is $\sim10^{-16}$ seconds: **the change is a thousand times faster than the system's beat.**
+
+## Too fast to react — which makes it easy
+
+The Schrödinger equation says the wavefunction's rate of change is $\partial_t\Psi=-\ii\hat H\Psi/\hbar$ — a finite number.
+A finite rate of change times a switching time tending to zero gives zero change:
+
+$$
+\ket{\Psi(0^+)}=\ket{\Psi(0^-)}
+$$
+
+**At the instant of the switch, the wavefunction is untouched.** That is the entire content of the sudden approximation — what it approximates is not the wavefunction
+(the wavefunction is exactly continuous) but the idealisation that "the switching time is strictly zero".
+
+What changes is the wavefunction's **identity**. Before the switch it was an eigenstate of the old Hamiltonian, sitting pretty;
+after the switch, the very same wavefunction finds itself on the new Hamiltonian's turf, where it is no eigenstate at all
+but a **superposition** of the new eigenstates. The script from here on we have rehearsed countless times in [section 3.8](/en/ch/03-formalism/08-measurement/):
+expand it in the new basis, and the squared moduli of the expansion coefficients are the probabilities of finding each new level.
+
+$$
+\ket{\Psi}=\sum_n c_n\ket{n^{\text{new}}},\qquad
+c_n=\braket{n^{\text{new}}}{\Psi},\qquad
+P_n=|c_n|^2
+$$
+
+**Set the criterion first.** "Instantaneous" is always relative: if the switch takes a time $\tau$, and the system's intrinsic beat is
+$\hbar/\Delta E$ ($\Delta E$ being the spacing of the relevant levels — the timescale on which the wavefunction's components drift out of phase), then
+
+$$
+\tau\ \ll\ \frac{\hbar}{\Delta E}
+\quad\Longleftrightarrow\quad\text{the sudden approximation holds}
+$$
+
+Tritium's ledger: $\tau\sim10^{-19}$ s, $\hbar/\Delta E\sim10^{-16}$ s (level spacings of tens of eV) —
+the criterion is met with three orders of magnitude to spare.
+
+<DualView>
+<div slot="left">
+
+**Two faces of the same coin.** Adiabatic and sudden are the two limits of the same ratio $\tau\Delta E/\hbar$:
+
+- Far greater than 1: adiabatic — the wavefunction follows step for step, staying an instantaneous eigenstate; **populations unchanged**,
+  only phases accumulate (last section);
+- Far less than 1: sudden — the wavefunction stands stock-still while its identity is reshuffled; **populations redistributed**.
+
+Slow change means following in place, fast change means freezing in place — both ends are simple. The genuinely hard part is the middle ground,
+$\tau\Delta E/\hbar\sim1$ — there you can neither freeze nor follow, and must honestly solve the time-dependent equation
+(or fall back on section 7.5's time-dependent perturbation theory, if the change is small in amplitude).
+
+</div>
+<div slot="right">
+
+Same initial state $\ket{n^{\text{old}}}$, same change from $\hat H_{\text{old}}$ to $\hat H_{\text{new}}$:
+
+$$
+\text{Adiabatic:}\quad P_{m}=\delta_{mn}\qquad\text{(follows into the corresponding new state)}
+$$
+
+$$
+\text{Sudden:}\quad P_{m}=\bigl|\braket{m^{\text{new}}}{n^{\text{old}}}\bigr|^2
+$$
+
+In the sudden limit the probabilities are settled once and for all by **the overlap of old and new eigenstates** — no evolution equation to solve;
+the entire dynamical problem collapses into a single integral.
+
+</div>
+</DualView>
+
+## A worked example: where did tritium's electron go?
+
+<Derivation title="Level populations of the daughter ion after tritium decay" level="基础" minutes={8} open={true}>
+
+**The frozen old state**: the $Z=1$ 1s wavefunction
+
+$$
+\psi_{1s}^{(Z=1)}=\frac{1}{\sqrt{\pi a_0^3}}\,\ee^{-r/a_0}
+$$
+
+**The new basis**: the $Z=2$ hydrogen-like wavefunctions (take the hydrogen solutions and replace $a_0\to a_0/Z$).
+The new 1s state:
+
+$$
+\psi_{1s}^{(Z=2)}=\sqrt{\frac{8}{\pi a_0^3}}\,\ee^{-2r/a_0}
+$$
+
+**Clear the field with symmetry first**: the old state is spherically symmetric ($\ell=0$), and the charge jump involves no direction whatsoever —
+angular momentum is strictly conserved across the switch. So the electron **can only land in the s states of the new system**:
+$P(2p)=P(3p)=P(3d)=\cdots=0$, not a scrap of probability. All that remains is the overlap with each $n$s state.
+
+**Overlap with the new 1s** (the angular integral gives $4\pi$; the radial one is elementary):
+
+$$
+c_{1s}=\int\psi_{1s}^{(Z=2)}\,\psi_{1s}^{(Z=1)}\,\dd^3r
+=\frac{2\sqrt2\cdot4\pi}{\pi a_0^3}\int_0^\infty r^2\ee^{-3r/a_0}\,\dd r
+=8\sqrt2\cdot\frac{2}{27}=\frac{16\sqrt2}{27}
+$$
+
+(using $\int_0^\infty r^2\ee^{-\lambda r}\dd r=2/\lambda^3$). Hence
+
+$$
+P(1s)=\left(\frac{16\sqrt2}{27}\right)^2=\frac{512}{729}\approx0.702
+$$
+
+**Overlap with the new 2s**: insert $\psi_{2s}^{(Z=2)}=\sqrt{\dfrac{1}{\pi a_0^3}}\left(1-\dfrac{r}{a_0}\right)\ee^{-r/a_0}$;
+both pieces are the same kind of integral, and the result is suspiciously clean:
+
+$$
+c_{2s}=-\frac12,\qquad P(2s)=\frac14=0.250
+$$
+
+**The tally:**
+
+| Final state | Probability |
+| --- | --- |
+| He⁺ 1s | 70.2% |
+| He⁺ 2s | 25.0% |
+| All p and d states | Strictly 0 |
+| Higher ns + ionisation | 4.8% |
+
+Seven in ten electrons settle quietly into the new ground state, a quarter get lifted to 2s (falling back later with a flash of light),
+and about 3% are ionised outright and fly away — one decay, with a miniature "chemical reaction" thrown in for free.
+These numbers are no paper game: precision measurements of the tritium decay spectrum (today the heart of the KATRIN
+neutrino-mass experiment) must subtract exactly these electron-side energy allocations term by term,
+using precisely the overlap integrals computed here (carried, of course, to far higher accuracy).
+
+</Derivation>
+
+<Callout type="insight" title="All the dynamics, collapsed into a geometry problem">
+The sudden approximation turns a time-dependent problem into pure geometry: **how long are the projections of the old-state vector
+onto the directions of the new basis?** No evolution equation, no time integral —
+only angles in Hilbert space. The intuitive reading of P(1s)=70%: the $Z=2$ orbital radius
+shrinks to half, so the old wavefunction is "too fat" and matches the new ground state's shape only 70% of the way.
+
+This also explains why the answer cares nothing for the beta electron's energy or the neutrino's direction —
+once the change is "fast enough", the details of the fastness are wiped away entirely. The virtue of approximation methods reaches its peak here:
+not grinding through every detail, but seeing which details never enter the answer at all.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="'Sudden' does not mean 'sloppy'">
+Three pitfalls that are easy to step in:
 
-- The criterion for the sudden approximation
-- The tritium decay problem
+1. **Using the wrong energy scale in the criterion.** $\Delta E$ is the spacing of the levels you care about. The same nuclear decay
+   may no longer count as sudden for the inner-shell electrons (keV scales, $10^{-19}$-second beats) —
+   in the beta decay of heavy atoms, inner-shell shake-off probabilities must be corrected beyond the zeroth-order sudden approximation.
+2. **Do not forget the conservation laws.** "The wavefunction is unchanged" automatically respects symmetry (the vanishing p-state probabilities above are its gift),
+   but if the switch itself carries away angular momentum or momentum (recoil, say), that part must be put into the final states explicitly.
+3. **The probabilities must balance the books.** All the $P_n$ must sum to 1 (continuum included). The 4.8% "remainder" above
+   is not an error but the genuine share of the higher excitations and the ionisation channel — throw it away as error, and the books will not balance.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Sudden approximation', latex: '\\ket{\\Psi(0^+)}=\\ket{\\Psi(0^-)},\\qquad P_m=\\bigl|\\braket{m^{\\text{new}}}{\\Psi(0^-)}\\bigr|^2', note: 'The wavefunction freezes; probability = squared overlap of old and new eigenstates' },
+    { name: 'Criterion', latex: '\\tau\\ll\\frac{\\hbar}{\\Delta E}', note: 'The two limits of the same ratio as the adiabatic criterion; the middle ground needs the full time-dependent equation' },
+    { name: 'Tritium: new ground-state population', latex: 'P(1s)=\\left(\\frac{16\\sqrt2}{27}\\right)^2=\\frac{512}{729}\\approx0.702', note: '2s takes 1/4; p and d states strictly zero by angular-momentum conservation' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'sa-1',
+      prompt: 'What exactly is being approximated in the sudden approximation?',
+      options: [
+        'Idealising the finite but extremely short switching time as zero, so the wavefunction is taken as completely unchanged at the instant of the switch',
+        'Assuming the wavefunction jumps straight to the new ground state after the switch',
+        'Neglecting the interactions between electrons',
+        'Assuming the old and new Hamiltonians are approximately equal',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite: the wavefunction stays as it was, and it is exactly because of this that it is "not" the new ground state but a superposition of the new eigenstates.',
+        3: 'The old and new Hamiltonians can differ enormously (tritium’s potential doubles outright) and the sudden approximation works regardless — it asks nothing about the size of the change, only about its speed.',
+      },
+      explain: 'The Schrödinger equation gives a finite rate of change; multiplied by a switching time tending to zero, the change in the wavefunction tends to zero. The approximation is entirely the idealisation τ→0, with criterion τ ≪ ħ/ΔE.',
+    },
+    {
+      id: 'sa-2',
+      prompt: 'After tritium decays, what is the probability that the electron lands in the 2p state of He⁺, and why?',
+      options: [
+        'Strictly zero: the old state is spherically symmetric, the charge jump carries no directionality, and angular-momentum conservation forbids a change of ℓ',
+        'About 25%',
+        'About 5%, from higher-order corrections',
+        'It depends on the direction the beta electron flew out',
+      ],
+      answer: 0,
+      distractors: {
+        1: '25% is the population of the 2s state; 2s is spherically symmetric like 1s, so their overlap is non-zero.',
+        3: 'Within the sudden approximation this is an exact zero, not an approximate small quantity; corrections come only from effects like "the switch is not infinitely fast".',
+      },
+      explain: '"The wavefunction is unchanged" means the state before and after the switch is the same vector, and an ℓ=0 state is strictly orthogonal to every new eigenstate with ℓ≠0. Symmetry hands out a batch of exact zeros for free in the sudden approximation — clear the field first, integrate second, as always.',
+    },
+    {
+      id: 'sa-3',
+      prompt: 'Same system, same pair of old and new Hamiltonians: the outcomes of an adiabatic switch versus a sudden switch are, respectively:',
+      options: [
+        'Adiabatic: stays in the corresponding new eigenstate (populations unchanged); sudden: populations redistributed according to the old–new overlaps',
+        'The two outcomes are identical up to a phase',
+        'Adiabatic: populations redistributed; sudden: populations unchanged',
+        'In both cases only the full time-dependent equation can tell',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The phase difference is a story internal to the adiabatic case (dynamical phase + Berry phase); the population distributions of the two limits are completely different.',
+        3: 'That is backwards.',
+      },
+      explain: 'Under slow change the system follows the eigenstate step for step; under fast change the wavefunction is frozen and its identity reshuffled. The criterion is the same number τΔE/ħ compared with 1: far above 1 adiabatic, far below 1 sudden, and near 1 both shortcuts close.',
+    },
+    {
+      id: 'sa-4',
+      type: 'numeric',
+      prompt: 'After tritium decays, the probability that the electron remains in the He⁺ ground state is P(1s) = (16√2/27)². Evaluate this number (to three decimal places).',
+      answer: 0.702,
+      tolerance: 0.01,
+      unit: '',
+      explain: '16√2/27 = 22.63/27 ≈ 0.838, squared gives 512/729 ≈ 0.702. Seven in ten electrons settle quietly into the new ground state, 25% go to 2s, and about 5% end up in higher s states and the ionisation continuum — the three together balance the probability books to 1.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Chapter 7's inventory is complete: perturbation theory (static, degenerate, time-dependent), the variational method, WKB, the golden rule,
+adiabatic and sudden — in a world without exact solutions, these seven tools carry nearly every practical calculation.
+
+But there is one account this chapter never dared examine closely. Helium appeared three times (perturbation in 7.1, variation in 7.3),
+and we kept calling its two electrons "electron 1" and "electron 2", writing the wavefunction as $\psi(\vec r_1,\vec r_2)$
+as if one wore a red hat and the other a blue one. But electrons have no hats — swap the two electrons, and
+**no observable can possibly change**. This seemingly harmless "indistinguishability"
+will react back on the mathematical structure of the wavefunction with astonishing force: it splits all many-particle states into two great camps, symmetric and antisymmetric,
+giving birth to the Pauli exclusion principle, the periodic table, the degeneracy pressure that holds up white dwarfs —
+and it will circle back to settle the final 1.5 eV this chapter still owes on the helium atom.
+Next chapter: identical particles.

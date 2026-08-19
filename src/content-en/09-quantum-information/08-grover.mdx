@@ -1,24 +1,274 @@
 ---
-title: 'Grover’s search algorithm'
-summary: 'A quadratic speed-up, and why it is optimal.'
+title: Grover's search algorithm
 section: '9.8'
 order: 8
-status: stub
-sims: ['quantum-circuit']
+summary: 'Two mirrors squeeze out a rotation: an oracle reflection plus an inversion-about-the-mean turns the state 2θ toward the target each round, hitting it in about (π/4)√N rounds — a quadratic speedup, proven to be the limit.'
+status: done
+prereqs:
+  - 09-quantum-information/07-deutsch-jozsa
+objectives:
+  - 'Explain the Grover iteration with two-dimensional plane geometry: two reflections compose into one 2θ rotation'
+  - Hand-compute the complete N = 4 example and verify a 100% hit after one iteration
+  - Derive the optimal iteration count ≈ (π/4)√N and explain why overshooting hurts
+  - 'State the BBBV lower bound: √N is the limit of black-box search, not an engineering shortfall'
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Deutsch–Jozsa won on an artificial problem. This section tackles a problem everyone understands —
+**finding a needle in a haystack** — and this time the opponent is a genuine classical lower bound.
+
+## The problem at the door: N drawers, one key
+
+$N=2^n$ drawers, numbered $0$ to $N-1$, exactly one of which (call it $w$) hides the key.
+You have a black box $f$: give it a number $x$ and it answers $f(x)=1$ if and only if $x=w$.
+The only classical strategy is opening drawers: $N/2$ on average, $N$ in the worst case, with no
+shortcut whatsoever — $f$ has no structure to exploit (this is not a sorted phone book; it is
+shuffled).
+
+The quantum oracle copies last section's phase kickback (the $\ket{-}$ ancilla is now left implicit):
+
+$$
+O\ket{x}=(-1)^{f(x)}\ket{x}
+\qquad\Longleftrightarrow\qquad
+O=I-2\ket{w}\bra{w}
+$$
+
+It does exactly one thing: **flip the sign of the target branch**.
+
+## Why one round of interference no longer suffices
+
+Try copying DJ's three moves: a row of $H$'s prepares the uniform superposition
+$\ket{s}=\frac{1}{\sqrt N}\sum_x\ket{x}$, call the oracle once, then interfere.
+The trouble: the oracle flips the sign of only **one** of the $2^n$ amplitudes, and that
+perturbation affects the overall distribution at order $O(1/\sqrt N)$ — one round of interference
+cannot wash it out, and a direct measurement still hits with probability about $1/N$.
+In DJ's problem, "all the function values conspiring" produced a stark global signal;
+the search problem's signal is thread-thin. The way out: **stop hoping for a one-shot kill and let
+a small advantage snowball**. Each round twists the amplitude pointing at the target a little
+larger; twist for $\sqrt N$ rounds. This "amplitude amplifier" is built from two mirrors.
+
+## The geometric picture: two mirrors = one rotation
+
+All the action happens in a two-dimensional plane — the one spanned by the target state $\ket{w}$
+and the uniform superposition $\ket{s}$. Take the in-plane unit vector perpendicular to $\ket{w}$,
+$\ket{r}=\frac{1}{\sqrt{N-1}}\sum_{x\ne w}\ket{x}$ (the "uniform superposition of the other
+drawers"); then
+
+$$
+\ket{s}=\cos\theta\,\ket{r}+\sin\theta\,\ket{w},
+\qquad \sin\theta=\braket{w}{s}=\frac{1}{\sqrt N}
+$$
+
+The initial state $\ket{s}$ sits only a small angle $\theta\approx1/\sqrt N$ above the "ground"
+$\ket{r}$. The Grover iteration has two steps:
+
+1. **The oracle $O$**: flips the sign of the $\ket{w}$ component = a **reflection about $\ket{r}$** (mirror one);
+2. **The diffusion operator** $D=2\ket{s}\bra{s}-I$: a **reflection about $\ket{s}$** (mirror two).
+
+<Derivation title="Two reflections compose into one 2θ rotation" level="基础" minutes={7} open={true}>
+
+**Step 1: confirm $O$ is a reflection.** For any in-plane state
+$\ket{\psi}=\cos\phi\ket{r}+\sin\phi\ket{w}$:
+
+$$
+O\ket{\psi}=\cos\phi\ket{r}-\sin\phi\ket{w}
+$$
+
+The angle maps $\phi\mapsto-\phi$: precisely a reflection with $\ket{r}$ as the mirror.
+
+**Step 2: confirm $D$ is a reflection.** $D=2\ket{s}\bra{s}-I$ satisfies
+$D\ket{s}=\ket{s}$ (vectors on the mirror stay put) and negates the component perpendicular to
+$\ket{s}$ — a reflection with $\ket{s}$ (at angle $\theta$) as the mirror: $\phi\mapsto2\theta-\phi$.
+
+**Step 3: compose.** $O$ first, then $D$:
+
+$$
+\phi\ \xrightarrow{\ O\ }\ -\phi\ \xrightarrow{\ D\ }\ 2\theta+\phi
+$$
+
+**Two reflections = one rotation, by angle $2\theta$, toward $\ket{w}$.** This is an old theorem of
+plane geometry (mirrors at angle $\theta$: two reflections make a rotation by $2\theta$), restaged
+verbatim in Hilbert space.
+
+**Step 4: iterate $k$ rounds.** Starting angle $\theta$, adding $2\theta$ per round:
+
+$$
+\phi_k=(2k+1)\theta,\qquad
+P_{\text{hit}}(k)=\sin^2\big[(2k+1)\theta\big]
+$$
+
+We want $\phi_k\approx\pi/2$ (dead-on target), so
+
+$$
+k_{\text{opt}}\approx\frac{\pi/2-\theta}{2\theta}\approx\frac{\pi}{4}\sqrt N
+$$
+
+(The last step uses $\theta\approx\sin\theta=1/\sqrt N$ for large $N$.)
+$O(\sqrt N)$ queries, each round costing only two rows of $H$'s and a little phase work —
+the quadratic speedup is in hand.
+
+</Derivation>
+
+<Callout type="insight" title="The diffusion operator's nickname: 'inversion about the mean'">
+Landed on the amplitudes, $D=2\ket{s}\bra{s}-I$ is plain speech. Let the post-query amplitudes be
+$a_x$ with mean $\bar a=\frac1N\sum_x a_x$; then $D$ maps each amplitude to
+
+$$
+a_x\ \mapsto\ 2\bar a-a_x
+$$
+
+— **every amplitude is mirrored about the collective mean**. The target amplitude, flipped negative
+by the oracle, sits far below the mean and rebounds to about $+3/\sqrt N$, in one stroke three times
+above the crowd; the other amplitudes dip slightly to compensate. Each round the target amplitude
+gains a net $\approx 2/\sqrt N$, growing to $O(1)$ after $\sqrt N$ rounds. "Reflection" and
+"inversion about the mean" are the geometric and arithmetic tongues for the same thing.
 </Callout>
 
-## Planned contents
+## Hand-compute N = 4: one iteration, a perfect hit
 
-- The geometry of amplitude amplification
-- Why the iteration count goes as √N
-- How optimality is proved
+$N=4$ (two qubits), target $w=10$. Here $\sin\theta=\tfrac12$, $\theta=30^\circ$ —
+not a "small" angle, which lets us hand-compute a whole round.
 
-## Planned simulations
+**Step 0:** $\ket{s}=\tfrac12(\ket{00}+\ket{01}+\ket{10}+\ket{11})$,
+all four amplitudes $0.5$.
 
-- `quantum-circuit`
+**Step 1 (oracle):** the target flips sign:
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="quantum-circuit" />`.
+$$
+\big(\tfrac12,\ \tfrac12,\ -\tfrac12,\ \tfrac12\big)
+$$
+
+**Step 2 (inversion about the mean):** the mean is $\bar a=\frac{0.5+0.5-0.5+0.5}{4}=\tfrac14$.
+Each amplitude $\mapsto 2\times\tfrac14-a_x=\tfrac12-a_x$:
+
+$$
+\big(0,\ 0,\ 1,\ 0\big)
+$$
+
+The state has become exactly $\ket{10}$. Measure: **100% hit**, one query.
+Classically it takes $2.25$ drawer-openings on average (3 in the worst case) to be sure.
+Geometric check: $\phi_1=(2\times1+1)\times30^\circ=90^\circ$, dead-on target, to the degree.
+
+<DualView>
+<div slot="left">
+
+**Overshooting hurts.** The rotation has no automatic brake: past $90^\circ$ it keeps turning and
+the hit probability **turns around and falls**. For $N=4$, a second round gives $\phi_2=150^\circ$,
+$P=\sin^2150^\circ=25\%$ — back down to guessing level. Grover's algorithm must **count its laps
+and stop**, the exact opposite of the classical instinct that "more computation can only make you
+safer". Fortunately $P(k)=\sin^2[(2k+1)\theta]$ is a known sinusoid: at
+$k=\lfloor\frac{\pi}{4}\sqrt N\rfloor$ the failure probability is at most $O(1/N)$, and a rerun or
+two makes it negligible.
+
+</div>
+<div slot="right">
+
+$$
+P(k)=\sin^2\big[(2k+1)\theta\big],\qquad\sin\theta=\tfrac{1}{\sqrt N}
+$$
+
+$N=4$: $P(0)=0.25\to P(1)=1\to P(2)=0.25$.
+
+$N=10^6$: $k_{\text{opt}}=\lfloor\tfrac{\pi}{4}\times10^3\rfloor=785$,
+$P\approx1-10^{-6}$.
+
+With $M$ targets, $\sin\theta=\sqrt{M/N}$ and
+$k_{\text{opt}}\approx\tfrac{\pi}{4}\sqrt{N/M}$ —
+the more needles, the faster the fishing.
+
+</div>
+</DualView>
+
+## Quadratic is the limit: the BBBV lower bound
+
+Could a cleverer quantum algorithm manage $\log N$? **No.**
+The Bennett–Bernstein–Brassard–Vazirani theorem: any quantum algorithm for unstructured search
+needs at least $\Omega(\sqrt N)$ oracle queries. The idea is worth remembering:
+each query perturbs the state by at most $O(1/\sqrt N)$ (it moves the sign of only one branch),
+while pulling the final states for "the target is $w_1$" and "the target is $w_2$" apart to a
+distinguishable distance requires a cumulative perturbation of $O(1)$ — divide, and
+$\Omega(\sqrt N)$ falls out. Grover flies flush against the bound; even the constant $\pi/4$ is
+optimal.
+
+<Callout type="warning" title="De-mystifying 'quantum search'">
+1. **The speedup is quadratic, not exponential.** NP-hard problems do not become polynomial:
+   the square root of $2^n$ is still $2^{n/2}$. For symmetric cryptography the implication is
+   "double the key length" (brute-forcing AES-128 falls to around $2^{64}$, hence the post-quantum
+   recommendation of AES-256), not "all ciphers are dead" — the latter is what next section's Shor
+   does to **public-key** cryptography.
+2. **The oracle is not free.** "One query" means one call to the reversible circuit for $f$;
+   if $f$ itself is expensive, or a database must first be loaded into quantum-queryable form,
+   that cost is extra. Grover's home turf is problems where "$f$ is easy to compute but solutions
+   are hard to find" (satisfiability, collision finding, optimisation subroutines),
+   not "searching a database" in the literal sense.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Grover iteration', latex: 'G=D\\,O,\\quad O=I-2\\ket{w}\\bra{w},\\quad D=2\\ket{s}\\bra{s}-I', note: 'Two mirrors: oracle reflection + mean reflection = rotation by 2θ' },
+    { name: 'Angle parameter', latex: '\\sin\\theta=\\sqrt{M/N},\\qquad \\phi_k=(2k+1)\\theta', note: 'M is the number of targets; each round turns 2θ toward the target' },
+    { name: 'Hit probability', latex: 'P(k)=\\sin^2[(2k+1)\\theta]', note: 'A sinusoidal oscillation — past π/2 it turns back down; count laps and park' },
+    { name: 'Optimal rounds', latex: 'k_{\\text{opt}}\\approx\\frac{\\pi}{4}\\sqrt{N/M}', note: 'BBBV lower bound Ω(√N): quadratic speedup is the black-box search limit' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'gr-1',
+      prompt: 'Geometrically, what are the two steps of a Grover iteration?',
+      options: [
+        'A reflection about ∣r⟩ (perpendicular to the target), and a reflection about ∣s⟩ (the uniform superposition)',
+        'A reflection about ∣w⟩, and a reflection about ∣r⟩',
+        'A rotation by θ, and a rotation by −θ',
+        'A projective measurement, and a unitary rotation',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The oracle flips the sign of the ∣w⟩ component, so the mirror is ∣r⟩, perpendicular to ∣w⟩ — not ∣w⟩ itself.',
+        3: 'Everything is unitary — no measurement. A measurement would collapse the superposition and the snowball could never roll.',
+      },
+      explain: 'O negates the ∣w⟩ component (mirror ∣r⟩); D = 2∣s⟩⟨s∣ − I keeps ∣s⟩ fixed and negates the perpendicular component (mirror ∣s⟩). Mirrors at angle θ: two reflections compose into a rotation by 2θ — middle-school plane geometry making its comeback in Hilbert space.',
+    },
+    {
+      id: 'gr-2',
+      type: 'numeric',
+      prompt: 'N = 10⁶ entries, a single target. Roughly how many Grover iterations are optimal? (Integer.)',
+      answer: 785,
+      tolerance: 3,
+      explain: 'k ≈ (π/4)√N = 0.7854 × 1000 ≈ 785. Classically the average is 500,000 queries — from half a million to 785: that is what a quadratic speedup feels like.',
+    },
+    {
+      id: 'gr-3',
+      type: 'numeric',
+      prompt: 'N = 4, a single target, and you ran 2 Grover iterations (one too many). What is the hit probability now?',
+      answer: 0.25,
+      tolerance: 0.02,
+      explain: 'θ = 30°, φ₂ = 5θ = 150°, P = sin²150° = 0.25. One round gives P = 1; two rounds fall back to 25% — "a few extra rounds for safety" is wrong here; you must stop at k_opt.',
+    },
+    {
+      id: 'gr-4',
+      prompt: 'Which statements about the scope of Grover’s algorithm are correct? (Select all that apply.)',
+      options: [
+        'It gives a quadratic speedup for unstructured search, and the BBBV theorem proves nothing faster is possible',
+        'It makes NP-complete problems polynomial-time solvable',
+        'With M targets, the iteration count is about (π/4)√(N/M)',
+        'The countermeasure for symmetric cryptography is doubling the key length',
+      ],
+      answer: [0, 2, 3],
+      distractors: {
+        1: 'The square root of 2ⁿ is 2^{n/2}, still exponential — Grover weakens brute force but does not change the complexity class.',
+      },
+      explain: 'The quadratic speedup hugs the Ω(√N) lower bound — the ceiling of the black-box model. With M targets the initial angle is sinθ = √(M/N). The cryptographic upshot: Grover reduces an n-bit symmetric key’s effective strength to n/2 bits, so switching from AES-128 to AES-256 restores a sound night’s sleep.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The quadratic speedup already touches the ceiling of black-box search; for exponential speedup we
+must leave the black box behind and mine the problem's **internal structure**.
+One problem's structure happens to be exactly what quantum mechanics does best — **periodicity**:
+factoring large integers reduces to "finding the period of a function",
+and finding periods is interference's signature trade. Next section: Shor's algorithm,
+and the sword it dangles over RSA.

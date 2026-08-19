@@ -1,17 +1,170 @@
 ---
-title: 'Cavity QED and superconducting qubits'
-summary: 'Trapping atoms and photons in a box.'
+title: Cavity QED and superconducting qubits
 section: '13.3'
 order: 3
-status: stub
+summary: 'An LC circuit etched from a strip of aluminium film becomes an "artificial atom" at 20 mK; lock it in a box with microwave photons, and the entire script of quantum optics replays on a chip.'
+status: done
+prereqs:
+  - 02-wavefunction/09-harmonic-oscillator
+  - 09-quantum-information/01-qubit-bloch-sphere
+objectives:
+  - Explain why an LC circuit can be quantised and why quantum behaviour only shows up below about 20 mK
+  - Explain why the nonlinearity supplied by a Josephson junction is the key to an "artificial atom"
+  - Use the Jaynes–Cummings model to explain vacuum Rabi splitting and dispersive readout
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+In circuits class, the LC oscillator is one of the dullest components on the syllabus: charge sloshes between a capacitor and an inductor at frequency $\omega=1/\sqrt{LC}$, lecture over, turn the page.
+
+But etch a strip of aluminium film into a micron-scale circuit, put it in a dilution refrigerator at **20 mK** — over a hundred times colder than interstellar space — and that piece of metal wire starts to behave **like an atom**: it has discrete energy levels, absorbs and emits single microwave photons, can be prepared in its "excited state", can sit in a superposition of two levels, and even "spontaneously decays". Experimenters gave it a name that hides nothing: the **artificial atom**.
+
+Natural atoms are dealt by nature: their levels are fixed once and for all by hydrogen-atom physics. Artificial atoms deal their own hand: change the size of a capacitor on the lithography mask and the "atom's" transition frequency changes with it. This section covers two things: why a metal circuit gets to be quantum in the first place, and the physics that unfolds when you lock an artificial atom in a box with photons — **cavity quantum electrodynamics** (cavity QED), whose circuit incarnation, **circuit QED**, is the entire foundation of today's superconducting quantum computers.
+
+## Step one: an LC circuit is a harmonic oscillator — literally
+
+<Derivation title="Quantise a circuit, and work out how cold it needs to be" level="基础" minutes={9} open={true}>
+
+**Step 1: recognise the canonical variables.**
+
+The energy of an LC circuit is
+
+$$
+E=\frac{Q^2}{2C}+\frac{\Phi^2}{2L}
+$$
+
+where $Q$ is the charge on the capacitor and $\Phi$ the flux through the inductor. Compare with the oscillator $H=\dfrac{p^2}{2m}+\dfrac{m\omega^2x^2}{2}$: $\Phi$ plays position, $Q$ plays momentum, $C$ plays mass, $1/L$ plays the spring constant. And the circuit equations give $\dot\Phi=Q/C$, $\dot Q=-\Phi/L$ — exactly Hamilton's canonical equations.
+
+**Step 2: canonical quantisation.**
+
+Since the structures are identical, promote to operators the same way as in [section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/):
+
+$$
+[\hat\Phi,\hat Q]=\ii\hbar
+\qquad\Longrightarrow\qquad
+\hat H=\hbar\omega\left(\hat a^\dagger\hat a+\tfrac12\right),\quad
+\omega=\frac{1}{\sqrt{LC}}
+$$
+
+Equally spaced levels, separated by $\hbar\omega$. Note what is being quantised here: not any single electron, but **the collective oscillation mode of billions of electrons** — one macroscopic degree of freedom. Superconductivity is non-negotiable: resistance would dissipate energy and wipe out coherence, so it must be exactly zero.
+
+**Step 3: work out how cold.**
+
+With typical parameters around $L\sim10\ \text{nH}$ and $C\sim1\ \text{pF}$, take a design frequency $\omega/2\pi=5\ \text{GHz}$. To see discrete levels, thermal fluctuations must be far smaller than the level spacing, $k_BT\ll\hbar\omega$. The crossover temperature is
+
+$$
+T^*=\frac{\hbar\omega}{k_B}=\frac{6.63\times10^{-34}\times5\times10^9}{1.38\times10^{-23}}
+\approx0.24\ \text{K}
+$$
+
+The 20 mK of a dilution refrigerator sits an order of magnitude below it, so the thermal excitation probability is $\ee^{-\hbar\omega/k_BT}\approx\ee^{-12}\sim10^{-6}$ — the "box" sits cleanly in its quantum ground state. That is why every photo of a superconducting quantum computer features a glittering chandelier-shaped refrigerator: **that is not the computer; that is the fridge that keeps the computer quiet.**
+
+</Derivation>
+
+## Step two: nonlinearity — why a Josephson junction is needed
+
+The harmonic oscillator has a fatal flaw: **its levels are equally spaced**. You want to use the lowest two, $\ket{0},\ket{1}$, as a qubit ([section 9.1](/en/ch/09-quantum-information/01-qubit-bloch-sphere/)), but the microwave that drives the $0\to1$ transition is equally resonant with $1\to2$, $2\to3$… Drive it and it climbs the ladder without end — there is no way to fence off a two-level system.
+
+The cure is the **Josephson junction**: two superconductors sandwiching a nanometre-thick insulating film, through which Cooper pairs pass by tunnelling ([section 2.11](/en/ch/02-wavefunction/11-tunneling/)). Its energy is no longer quadratic in the flux, but
+
+$$
+E_J(1-\cos\varphi)
+$$
+
+where $\varphi$ is the superconducting phase difference across the junction (a variable proportional to the flux). Replace the inductor by a Josephson junction and the Hamiltonian becomes
+
+$$
+\hat H=4E_C\hat n^2-E_J\cos\hat\varphi
+$$
+
+where $\hat n$ counts Cooper pairs that have crossed the junction and $E_C=e^2/2C$ is the charging energy. The $\cos\varphi$ well is roughly parabolic at the bottom but **flattens as you go up** — the level spacings shrink step by step. So the $0\to1$ and $1\to2$ frequencies split apart (typically by 200–300 MHz), and a microwave pulse can address only the lowest pair: a genuine artificial two-level atom.
+
+In the parameter regime $E_J/E_C\sim50$ this design is called the **transmon** (proposed 2007) — it trades away a little nonlinearity for extreme insensitivity to charge noise, and it is the standard chip unit of the superconducting processors at Google, IBM and elsewhere. Its coherence time has climbed from nanoseconds in the early 2000s to hundreds of microseconds today: five orders of magnitude, won almost entirely by patient, unglamorous work on materials and design.
+
+## Step three: lock the atom and the photon in the same box
+
+The original question of cavity QED (which won Haroche and Wineland the 2012 Nobel Prize): how strongly can one atom interact with **a single photon**? Trap the photon in a standing-wave cavity between two mirrors so it sweeps past the atom over and over, and the answer is: strongly enough that "atom + photon" becomes an inseparable whole.
+
+The circuit version: place a microwave resonator (another LC oscillator) next to a transmon and couple them capacitively. Near resonance, in the approximation where only one excitation is exchanged at a time, you get the star model of quantum optics — the **Jaynes–Cummings model**:
+
+$$
+\hat H=\hbar\omega_r\hat a^\dagger\hat a
++\frac{\hbar\omega_q}{2}\hat\sigma_z
++\hbar g\left(\hat a^\dagger\hat\sigma_-+\hat a\,\hat\sigma_+\right)
+$$
+
+The three terms are: the cavity's photons, the artificial atom, and the exchange term — "atom emits a photon / atom swallows a photon".
+
+**Vacuum Rabi splitting.** On resonance, $\omega_q=\omega_r$, the states $\ket{\text{excited atom},0\ \text{photons}}$ and $\ket{\text{ground-state atom},1\ \text{photon}}$ are degenerate, and the exchange term mixes them into symmetric/antisymmetric combinations split in energy by $2\hbar g$ — exactly the same mathematics as the degenerate perturbation theory of [section 7.2](/en/ch/07-approximation/02-degenerate-perturbation/). Scanning a probe frequency in the experiment reveals **two peaks**: a single photon and a single (artificial) atom have hybridised into a new half-light, half-matter particle (a polariton). In 2004 circuit QED saw this pair of peaks on a chip for the first time, announcing that circuits had entered the territory of quantum optics.
+
+**Dispersive readout.** Pull the frequencies apart (detuning $\Delta=\omega_q-\omega_r\gg g$) and second-order perturbation theory gives
+
+$$
+\hat H_{\text{eff}}\approx\hbar\left(\omega_r+\chi\hat\sigma_z\right)\hat a^\dagger\hat a,
+\qquad \chi=\frac{g^2}{\Delta}
+$$
+
+Read it this way: **the cavity frequency shifts by $\pm\chi$ depending on the qubit's state**. Send a microwave tone at the cavity and look at the reflected phase, and you know whether the qubit is $\ket{0}$ or $\ket{1}$ — without ever touching the qubit directly. This is the engineering realisation of the "quantum non-demolition measurement" idea from [section 3.8](/en/ch/03-formalism/08-measurement/), and it is how every superconducting processor today reads out its qubits.
+
+<Callout type="insight" title="Why the circuit version is, if anything, more quantum">
+A natural atom's dipole is only ångströms across and couples feebly to photons; Haroche's experiments needed ultra-high-quality cavities to bounce the photon hundreds of millions of times just to accumulate enough interaction. An artificial atom is a **millimetre-scale antenna**, with a dipole moment four or five orders of magnitude larger, so the coupling $g$ easily exceeds both the cavity and atomic linewidths a thousandfold — the "strong-coupling regime" comes as a factory default on a chip.
+
+This upends an intuition: quantum effects are not reserved for the microscopic. **As long as a degree of freedom is isolated cleanly enough (zero dissipation from superconductivity + no thermal noise at 20 mK), a macroscopic collective variable obeys quantum mechanics just the same** — superposition, entanglement, measurement, the whole repertoire.
 </Callout>
 
-## Planned contents
+<KeyFormulas
+  items={[
+    { name: 'LC quantisation', latex: '\\hat H=\\hbar\\omega\\big(\\hat a^\\dagger\\hat a+\\tfrac12\\big),\\quad \\omega=\\frac{1}{\\sqrt{LC}}', note: 'Flux/charge are a conjugate pair; quantum behaviour needs k_BT ≪ ħω — 5 GHz corresponds to 0.24 K' },
+    { name: 'Transmon Hamiltonian', latex: '\\hat H=4E_C\\hat n^2-E_J\\cos\\hat\\varphi', note: 'The Josephson cos potential supplies the nonlinearity; unequal spacings fence off a two-level qubit' },
+    { name: 'Jaynes–Cummings model', latex: '\\hat H=\\hbar\\omega_r\\hat a^\\dagger\\hat a+\\frac{\\hbar\\omega_q}{2}\\hat\\sigma_z+\\hbar g(\\hat a^\\dagger\\hat\\sigma_-+\\hat a\\hat\\sigma_+)', note: 'On resonance: vacuum Rabi splitting 2ħg — single photon hybridises with single atom' },
+    { name: 'Dispersive readout', latex: '\\hat H_{\\text{eff}}\\approx\\hbar(\\omega_r+\\chi\\hat\\sigma_z)\\hat a^\\dagger\\hat a,\\quad \\chi=\\frac{g^2}{\\Delta}', note: 'Cavity frequency shifts with the qubit state — measure the cavity, never touch the qubit' },
+  ]}
+/>
 
-- The Jaynes–Cummings model
-- The transmon qubit
-- Readout and control in circuit QED
+<QuizBlock
+  questions={[
+    {
+      id: 'cqed-1',
+      prompt: 'Why can a bare LC circuit (no Josephson junction) not serve directly as a qubit?',
+      options: [
+        'The oscillator levels are equally spaced, so a microwave driving 0→1 is equally resonant with every higher transition and no two-level system can be isolated',
+        'Because an LC circuit cannot be quantised',
+        'Because inductors stop working at low temperature',
+        'Because a harmonic oscillator has no ground state',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'An LC circuit can be quantised rigorously — flux and charge are exactly a canonically conjugate pair.',
+        3: 'The oscillator has a ground state, with energy ħω/2. The trouble is the equal spacing of the levels, not their existence.',
+      },
+      explain: 'A qubit needs a pair of levels that can be addressed on their own. The Josephson cos φ potential makes the level spacings shrink with height, splitting the 0→1 and 1→2 frequencies apart so a microwave drives only the lowest pair — the core design of the transmon.',
+    },
+    {
+      id: 'cqed-2',
+      type: 'numeric',
+      prompt: 'For a 5 GHz superconducting qubit, at what temperature T* = ħω/k_B do thermal fluctuations match the level spacing, in kelvin? (h = 6.626×10⁻³⁴ J·s, k_B = 1.381×10⁻²³ J/K)',
+      answer: 0.24,
+      tolerance: 0.03,
+      unit: 'K',
+      explain: 'T* = hf/k_B = 6.626×10⁻³⁴ × 5×10⁹ / 1.381×10⁻²³ ≈ 0.24 K. The 20 mK operating temperature sits an order of magnitude below, making thermal excitation ~e⁻¹² and negligible — that is the entire reason dilution refrigerators exist.',
+    },
+    {
+      id: 'cqed-3',
+      prompt: 'On resonance (ω_q = ω_r), the experiment sees the transmission spectrum split from one peak into two peaks separated by 2g. What does this demonstrate?',
+      options: [
+        'A single (artificial) atom and a single photon have strongly coupled into hybrid eigenstates, with the excitation coherently exchanged between them',
+        'The cavity simultaneously contains classical electromagnetic waves at two frequencies',
+        'The atom has two transitions that had gone unnoticed',
+        'The measurement apparatus introduced a systematic error',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The splitting persists when the mean photon number is far below 1 (vacuum Rabi splitting), which no classical field can explain — it is direct evidence of field quantisation.',
+      },
+      explain: '|excited atom, 0 photons⟩ and |ground-state atom, 1 photon⟩ are degenerate; the coupling mixes them into symmetric/antisymmetric combinations split by 2ħg — the same mathematics as degenerate perturbation theory. Two peaks = half-light, half-matter polaritons.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We now have two kinds of "artificial quantum system": a million atoms in an optical lattice, and arrays of artificial atoms on a chip. Building them is not only about building computers — the next section returns to the original question Feynman posed in 1981: **why must a quantum system be simulated by a quantum system?**

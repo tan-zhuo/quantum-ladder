@@ -1,24 +1,309 @@
 ---
-title: 'Spin 1/2 and the Pauli matrices'
-summary: 'Intrinsic angular momentum with no classical counterpart.'
+title: Spin 1/2 and the Pauli matrices
 section: '5.3'
 order: 3
-status: stub
-sims: ['bloch-sphere']
+summary: 'The electron carries a built-in angular momentum, but nothing is actually rotating. Three 2×2 matrices hold all of its mathematics.'
+status: done
+prereqs:
+  - 05-angular-momentum/02-spherical-harmonics
+  - 03-formalism/01-from-wavefunction-to-vector
+objectives:
+  - Explain what is wrong with the picture of "the electron spinning on its axis", and how spin is properly defined
+  - Construct the three Pauli matrices starting from the ladder-operator matrix elements
+  - Use the Pauli algebra fluently — squares, anticommutation, the product formula
+  - Write the general spin state along an arbitrary direction and interpret the meaning of θ/2
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section left two loose threads: the algebra allows half-integer angular momentum but wavefunctions
+on the sphere cannot house it; and in one experiment a beam of silver atoms split into exactly two.
+This section ties the threads together.
+
+First, the experimental evidence that forced spin into existence. By 1925, spectroscopy had piled up
+a stack of debts that "orbits + integer $l$" could not pay:
+
+- **Spectral lines come in pairs.** Under a spectrometer, sodium's yellow D line is actually **two** lines,
+  at wavelengths 589.0 nm and 589.6 nm, split by a mere 0.002 eV. Hydrogen's lines show the same "doublet" fine structure.
+  It was as if something unknown was gently snapping every level in two.
+- **The anomalous Zeeman effect.** Lines in a magnetic field often split into an even number of components.
+  But we just counted in the previous section: orbital angular momentum gives $2l+1$ lines with integer $l$,
+  and that number is **always odd**. An even count means some angular momentum has an even $2j+1$ —
+  and $j$ must be a half-integer.
+
+Goudsmit and Uhlenbeck (both graduate students at the time) proposed that the electron itself carries
+an angular momentum $s=\tfrac12$, along with a magnetic moment to match. They named it spin.
+
+## First, defuse the name: the electron is not a little top
+
+"Spin" is a historically misleading name. It suggests the electron is a little ball rotating about its own axis.
+**That picture is wrong**, and wrong in a way you can demonstrate quantitatively:
+
+<Callout type="warning" title="The quantitative bankruptcy of the spinning-ball picture">
+Even granting the electron the largest radius imaginable — the classical electron radius
+$r_e\approx2.8\times10^{-15}\ \text{m}$ (any larger contradicts scattering experiments) —
+for this uniform ball to accumulate $\hbar/2$ of angular momentum by rotation,
+solving $L=\tfrac25 m r^2\omega=\hbar/2$ for the equatorial speed gives
+
+$$
+v=\omega r=\frac{5\hbar}{4m_e r_e}\approx5.1\times10^{10}\ \text{m/s}\approx170\,c
+$$
+
+One hundred and seventy times the speed of light. And in reality the electron is a **point particle**
+to within experimental precision (smaller $r$, even larger $v$).
+Conclusion: spin angular momentum comes from no rotation in space whatsoever.
 </Callout>
 
-## Planned contents
+Then what is spin? This is exactly where the reversal at the end of
+[section 5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/) earns its keep:
+**angular momentum is defined by the commutation relations, not by $\vec r\times\vec p$**.
+Spin is three Hermitian operators $\hat S_x,\hat S_y,\hat S_z$ satisfying
 
-- Experimental evidence for spin
-- The Pauli matrices and their algebra
-- The general form of a spin state
+$$
+[\hat S_x,\hat S_y]=\ii\hbar\hat S_z\ \text{and its cyclic partners}
+$$
 
-## Planned simulations
+Nothing more. It is attached to no position wavefunction, so the single-valuedness argument of
+[section 5.2](/en/ch/05-angular-momentum/02-spherical-harmonics/) — "one full turn must return the original value" —
+has no grip on it: the half-integer seats stand open. The electron occupies the smallest non-trivial one:
+$s=\tfrac12$, with eigenvalues $\hat S^2=\tfrac12\cdot\tfrac32\hbar^2=\tfrac34\hbar^2$ and
+$\hat S_z=\pm\tfrac\hbar2$ — just $2s+1=2$ states.
 
-- `bloch-sphere`
+Spin is an **intrinsic property** of the electron, on the same footing as charge and mass: you cannot
+"slow down" or "speed up" the electron's spin. $s=\tfrac12$ is a factory setting; all that can change
+is how its components along various directions come out.
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="bloch-sphere" />`.
+## A two-dimensional space and the Pauli matrices
+
+A system with only two basis vectors is the smallest stage quantum mechanics can offer. Write
+
+$$
+\ket{\uparrow}=\ket{s=\tfrac12,m=+\tfrac12}
+=\begin{pmatrix}1\\0\end{pmatrix},\qquad
+\ket{\downarrow}=\ket{s=\tfrac12,m=-\tfrac12}
+=\begin{pmatrix}0\\1\end{pmatrix}
+$$
+
+A general state is a two-component complex vector $\ket{\chi}=a\ket{\uparrow}+b\ket{\downarrow}$ with $|a|^2+|b|^2=1$.
+Chapter 3's abstract language — "states are vectors, observables are matrices" — here becomes for the first time
+**concrete enough to compute by hand**: every operator is a $2\times2$ matrix.
+
+<Derivation title="Building the Pauli matrices from the ladder-operator matrix elements" level="基础" minutes={8} open={true}>
+
+**Step 1: $\hat S_z$ comes for free.** The basis vectors are its eigenstates; put the eigenvalues on the diagonal:
+
+$$
+\hat S_z=\frac\hbar2\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+$$
+
+**Step 2: write $\hat S_\pm$ with last section's general formula.** The formula
+$\hat S_\pm\ket{s,m}=\hbar\sqrt{s(s+1)-m(m\pm1)}\ket{s,m\pm1}$
+has only one non-zero matrix element when $s=\tfrac12$. For $\hat S_+$: acting on
+$\ket{\downarrow}$ ($m=-\tfrac12$) gives the coefficient
+$\hbar\sqrt{\tfrac34-(-\tfrac12)(\tfrac12)}=\hbar\sqrt{\tfrac34+\tfrac14}=\hbar$;
+acting on $\ket{\uparrow}$ hits the top of the ladder and annihilates. So
+
+$$
+\hat S_+=\hbar\begin{pmatrix}0&1\\0&0\end{pmatrix},\qquad
+\hat S_-=\hat S_+^\dagger=\hbar\begin{pmatrix}0&0\\1&0\end{pmatrix}
+$$
+
+**Step 3: solve back for $\hat S_x,\hat S_y$.** Inverting the definition $\hat S_\pm=\hat S_x\pm\ii\hat S_y$:
+
+$$
+\hat S_x=\frac{\hat S_++\hat S_-}{2}=\frac\hbar2\begin{pmatrix}0&1\\1&0\end{pmatrix},\qquad
+\hat S_y=\frac{\hat S_+-\hat S_-}{2\ii}=\frac\hbar2\begin{pmatrix}0&-\ii\\ \ii&0\end{pmatrix}
+$$
+
+**Step 4: factor out the common piece.** All three matrices carry $\hbar/2$; give the remaining skeletons their own names:
+
+$$
+\hat{\vec S}=\frac\hbar2\vec\sigma,\qquad
+\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+\sigma_y=\begin{pmatrix}0&-\ii\\ \ii&0\end{pmatrix},\quad
+\sigma_z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+$$
+
+These are the **Pauli matrices**.
+
+**Step 5: inspection.** Direct multiplication verifies $[\hat S_x,\hat S_y]=\ii\hbar\hat S_z$
+(i.e. $\sigma_x\sigma_y=\ii\sigma_z$), and
+
+$$
+\hat S^2=\frac{\hbar^2}{4}(\sigma_x^2+\sigma_y^2+\sigma_z^2)
+=\frac{3\hbar^2}{4}\begin{pmatrix}1&0\\0&1\end{pmatrix}
+$$
+
+— the identity matrix times $\tfrac34\hbar^2$: **every** two-component state is an eigenstate of $\hat S^2$,
+with eigenvalue exactly $s(s+1)\hbar^2$ at $s=\tfrac12$. The algebra is fully self-consistent.
+
+</Derivation>
+
+The Pauli algebra is useful enough to memorise outright. Each matrix squares to the identity,
+any two distinct ones anticommute, and both facts fold into one master product formula:
+
+$$
+\sigma_i\sigma_j=\delta_{ij}\,\mathbb{1}+\ii\sum_k\epsilon_{ijk}\,\sigma_k
+$$
+
+($\epsilon_{ijk}$ is the cyclic symbol: $+1$ for the order $xyz$ and its cycles, $-1$ for the reverse, 0 with any repeated index.)
+An immediate corollary: the spin along any direction $\hat n$, $\hat n\cdot\vec\sigma$, satisfies
+$(\hat n\cdot\vec\sigma)^2=\mathbb{1}$, so its eigenvalues can only be $\pm1$, i.e.
+$\hat S_n=\pm\tfrac\hbar2$. **No matter which direction you measure along, the answer is always just "up" or "down",
+always of size $\hbar/2$.** The next section will watch this play out in the laboratory again and again.
+
+## Spin states along an arbitrary direction
+
+The state "up" along $\hat n=(\sin\theta\cos\phi,\sin\theta\sin\phi,\cos\theta)$
+(the eigenstate of $\hat n\cdot\hat{\vec S}$ with eigenvalue $+\tfrac\hbar2$) works out to be:
+
+$$
+\ket{+\hat n}=\cos\frac\theta2\,\ket{\uparrow}+\ee^{\ii\phi}\sin\frac\theta2\,\ket{\downarrow}
+$$
+
+<DualView>
+<div slot="left">
+
+**Intuition: one sphere holds every spin state.**
+
+After normalisation, and with the overall phase irrelevant, a two-component complex vector has two real parameters left —
+exactly the two angles $(\theta,\phi)$ on a sphere. Every spin state is a point on this sphere, called the **Bloch sphere**:
+the north pole is $\ket{\uparrow}$, the south pole is $\ket{\downarrow}$,
+and the equator carries the various "sideways" superpositions.
+
+Check the least familiar case, the equator: $\theta=\tfrac\pi2,\phi=0$ gives
+$(\ket{\uparrow}+\ket{\downarrow})/\sqrt2$ — which is an eigenstate of $\hat S_x$.
+"Up along x" is nothing new: it is just the equal-amplitude superposition in the z basis.
+
+A qubit in quantum computing is precisely a spin 1/2 (or any two-level system),
+and a single-qubit gate is a rotation of this point on the Bloch sphere.
+
+</div>
+<div slot="right">
+
+**Formula: why θ/2.**
+
+Note that the state contains the **half-angle** $\theta/2$, not $\theta$. This is no typo:
+
+$$
+\theta=\pi\ \text{(opposite direction)}\Longrightarrow
+\ket{-\hat z}=\ket{\downarrow}
+$$
+
+Turn $180°$ in space and the state vector turns only "half-way"; after a full $360°$ in space,
+
+$$
+\cos\pi\,\ket{\uparrow}+\dots=-\ket{\uparrow}
+$$
+
+the state vector has **changed sign**! It takes $720°$ to truly come back to itself.
+This is exactly the old half-integer disease of "one turn flips the sign" — a death sentence
+for a spatial wavefunction (section 5.2), but a spin state does not live in space,
+so the sign flip is a mere overall phase: acquitted and released.
+(Yet let two spin beams interfere coherently and that minus sign becomes genuinely measurable —
+the neutron interferometry experiments of 1975 did exactly that.)
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Even 'up' spin does not point fully up">
+The name $\ket{\uparrow}$ oversells itself. Its $S_z=\tfrac\hbar2$,
+but its total length is $|\vec S|=\sqrt{s(s+1)}\hbar=\tfrac{\sqrt3}2\hbar\approx0.87\hbar$ —
+considerably more than $\tfrac\hbar2$. The angle between the "spin vector" and the z axis is
+
+$$
+\cos\theta=\frac{\hbar/2}{\sqrt3\hbar/2}=\frac1{\sqrt3}
+\quad\Longrightarrow\quad\theta\approx54.7^\circ
+$$
+
+Even in its most "up" state, the spin leans at $54.7°$ — the fluctuations of the transverse
+components $\hat S_x,\hat S_y$ are pinned there by the uncertainty relation and cannot be squeezed away.
+This is section 5.1's cone picture in its most extreme, minimal-system form: the $s=\tfrac12$ cone opens widest.
+</Callout>
+
+<Callout type="note" title="Spin and position are separate ledgers">
+The full electron state is "the position ledger" times "the spin ledger":
+$\Psi(\vec r)\,\ket{\chi}$, one two-component object (a spinor).
+The Schrödinger equation governs the former; with no magnetic field, spin is a quiet bystander.
+When do the two ledgers couple? The moment a magnetic field switches on —
+that is the story of sections 5.5 and 5.7.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Spin-1/2 spectrum', latex: '\\hat S^2=\\tfrac34\\hbar^2\\,\\mathbb{1},\\qquad \\hat S_z\\ket{\\uparrow}=\\tfrac\\hbar2\\ket{\\uparrow},\\ \\ \\hat S_z\\ket{\\downarrow}=-\\tfrac\\hbar2\\ket{\\downarrow}', note: 'Intrinsic property: s = 1/2 is unchangeable; only the orientation can vary' },
+    { name: 'Pauli matrices', latex: '\\sigma_x=\\begin{pmatrix}0&1\\\\1&0\\end{pmatrix},\\ \\sigma_y=\\begin{pmatrix}0&-\\ii\\\\ \\ii&0\\end{pmatrix},\\ \\sigma_z=\\begin{pmatrix}1&0\\\\0&-1\\end{pmatrix}', note: 'S = (ħ/2)σ; Hermitian, traceless, eigenvalues ±1' },
+    { name: 'Pauli algebra', latex: '\\sigma_i\\sigma_j=\\delta_{ij}\\mathbb{1}+\\ii\\,\\epsilon_{ijk}\\sigma_k', note: 'Squares to 1, mutual anticommutation, cyclic products — all in one line' },
+    { name: 'Spin state along any direction', latex: '\\ket{+\\hat n}=\\cos\\tfrac\\theta2\\ket{\\uparrow}+\\ee^{\\ii\\phi}\\sin\\tfrac\\theta2\\ket{\\downarrow}', note: 'Half-angle θ/2: a 360° turn in space flips the sign; 720° restores the state' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am3-1',
+      prompt: 'What is wrong with the claim "the electron\'s spin comes from the electron rotating about its own axis"?',
+      options: [
+        'Using the classical electron radius, the required surface speed is about 170 times the speed of light — and the electron is in fact a point particle',
+        'The electron is too light to rotate',
+        'A rotating charge would radiate energy and the electron would collapse',
+        'The claim is entirely correct; the rotation is just very fast',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A small mass makes the same angular momentum require a higher speed, not a lower one — the problem is "too fast", not "cannot turn".',
+        2: 'That is the classical difficulty of orbital motion (chapter 1), not of spin.',
+      },
+      explain: 'L = (2/5)mr²ω = ħ/2 with r ≈ 2.8×10⁻¹⁵ m gives v ≈ 5×10¹⁰ m/s ≈ 170c. Spin is an intrinsic angular momentum defined by the commutator algebra, unrelated to rotation in space — exactly where section 5.1\'s "algebra defines angular momentum" earns its keep.',
+    },
+    {
+      id: 'am3-2',
+      prompt: 'Which statements about the Pauli matrices are correct? (Select all that apply.)',
+      options: [
+        'Each Pauli matrix squares to the identity matrix',
+        'σ_x σ_y = iσ_z',
+        'The three Pauli matrices commute pairwise',
+        'For any direction, n̂·σ has eigenvalues ±1',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'Quite the opposite: distinct Pauli matrices anticommute, σ_xσ_y = −σ_yσ_x. If they commuted, they would not be an angular momentum.',
+      },
+      explain: 'All of it is contained in σ_iσ_j = δ_ij·1 + iε_ijk σ_k. From (n̂·σ)² = 1 the eigenvalues can only be ±1 — measuring the spin component along any direction gives only the two outcomes ±ħ/2.',
+    },
+    {
+      id: 'am3-3',
+      prompt: 'Rotate a spin state through 360° in space about some axis. What happens to the state vector?',
+      options: [
+        'It becomes −1 times itself; a 720° rotation is needed to return to the original state',
+        'It returns to itself, like any vector',
+        'It becomes an orthogonal state',
+        'The change is unpredictable',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the behaviour of integer angular momentum (and everyday vectors); half-integer angular momentum picks up a minus sign per full turn.',
+        2: '−|χ⟩ differs from |χ⟩ only by an overall phase — physically the same state, and certainly not orthogonal.',
+      },
+      explain: 'A general spin state carries the half-angle θ/2, so a 2π rotation in space is a π rotation in state space, producing a −1. Alone it is an unobservable overall phase, but interfere a beam rotated through 2π with an unrotated one and the sign is measurable (confirmed by neutron interferometry in 1975).',
+    },
+    {
+      id: 'am3-4',
+      type: 'numeric',
+      prompt: 'In the S_z = +ħ/2 state, what is the angle in degrees between the "spin vector" and the z axis? (Use cos θ = S_z/|S|; give one decimal place.)',
+      answer: 54.7,
+      tolerance: 0.3,
+      unit: '°',
+      explain: 'cos θ = (ħ/2)/(√3ħ/2) = 1/√3 ≈ 0.577, so θ = 54.7°. Even the most "up" spin leans at 54.7° — the transverse fluctuations ⟨S_x²⟩ = ⟨S_y²⟩ = ħ²/4 are guaranteed by the uncertainty relation and can never be squeezed to zero.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We now hold all the mathematics of spin: a two-dimensional space, three matrices,
+and only "up" or "down" as answers along any direction.
+
+But these conclusions sound frankly bizarre — exactly $\pm\hbar/2$ from any direction,
+with not a single value in between? Time to go back to that Frankfurt laboratory in 1922.
+One magnet, one beam of silver atoms, one glass plate:
+the apparatus not only demonstrates every claim above directly, it turns chapter 3's measurement postulate
+into something you can see. The next section is devoted entirely to this one experiment.

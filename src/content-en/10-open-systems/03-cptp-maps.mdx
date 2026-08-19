@@ -1,17 +1,267 @@
 ---
-title: 'Quantum operations and CPTP maps'
-summary: 'What the most general quantum evolution looks like.'
+title: Quantum operations and CPTP maps
 section: '10.3'
 order: 3
-status: stub
+summary: 'Turn the sentence "system and environment evolve unitarily together, then look only at the system" into mathematics, and out come Kraus operators and CPTP maps — the most general legitimate evolution of a quantum state.'
+status: done
+prereqs:
+  - 10-open-systems/02-mixed-states
+objectives:
+  - Derive the Kraus representation from "system + environment unitary, trace out the environment", and explain what the completeness condition means
+  - Say which property of ρ each letter of CPTP protects, and use the transpose map to explain why "completely positive" is necessary
+  - Write down the Kraus operators of the depolarising, phase-damping, and amplitude-damping channels
+  - Describe the geometric effect of each channel on the Bloch sphere
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section backed the problem into a corner: unitary evolution can only make the Bloch vector circle around, yet lab qubits are plainly falling towards the centre. **What is the legitimate mathematical object that can shrink this ball?**
+
+"Legitimate" has a precise meaning. No matter what the environment does to $\hat\rho$, the resulting $\hat\rho'$ must still be a density matrix — Hermitian, unit-trace, positive semi-definite, not one condition negotiable, or it will predict negative probabilities. What we are after is **the most general map that preserves these three properties**.
+
+The good news: no guessing is required. The physical picture of an open system delivers the answer to our door.
+
+## Starting from the physics: unitary together, non-unitary alone
+
+The basic postulates of quantum mechanics have not changed: **system plus environment**, taken as a whole, is still isolated and still evolves unitarily under the Schrödinger equation. "Non-unitary" only happens because we keep one eye covered. Translate that sentence literally into formulas, and the Kraus operators grow out by themselves.
+
+<Derivation title="Trace out the environment, and Kraus operators grow out" level="基础" minutes={8}>
+
+**Setup.** The system starts in $\hat\rho$, the environment in a pure state $\ket{e_0}$ (if the environment is mixed, purify it first using section 10.1 — no loss of generality). The two start uncorrelated, so the whole is $\hat\rho\otimes\ket{e_0}\bra{e_0}$. Let the whole evolve unitarily under $\hat U$, then trace out the environment:
+
+$$
+\mathcal{E}(\hat\rho)=\operatorname{Tr}_E\!\Big[\hat U\big(\hat\rho\otimes\ket{e_0}\bra{e_0}\big)\hat U^\dagger\Big]
+$$
+
+**Expand the trace.** Take an orthonormal basis $\{\ket{e_k}\}$ for the environment:
+
+$$
+\mathcal{E}(\hat\rho)=\sum_k\bra{e_k}\hat U\big(\hat\rho\otimes\ket{e_0}\bra{e_0}\big)\hat U^\dagger\ket{e_k}
+$$
+
+Look at the object $\bra{e_k}\hat U\ket{e_0}$: $\hat U$ acts on "system $\otimes$ environment", and once the environment states are sandwiched off both ends, what remains is an **operator acting on the system alone**. Give it a name:
+
+$$
+\hat E_k\equiv\bra{e_k}\hat U\ket{e_0}
+$$
+
+(The intuitive reading: $\hat E_k$ is "the operation the system undergoes in the branch where the environment jumps from $\ket{e_0}$ to $\ket{e_k}$".) Then
+
+$$
+\mathcal{E}(\hat\rho)=\sum_k\hat E_k\,\hat\rho\,\hat E_k^\dagger
+$$
+
+This is the **Kraus representation** (also called the operator-sum representation), and the $\hat E_k$ are the Kraus operators.
+
+**The completeness condition.** Unitarity of $\hat U$ gives a constraint:
+
+$$
+\sum_k\hat E_k^\dagger\hat E_k
+=\sum_k\bra{e_0}\hat U^\dagger\ket{e_k}\bra{e_k}\hat U\ket{e_0}
+=\bra{e_0}\hat U^\dagger\hat U\ket{e_0}=\hat 1
+$$
+
+(the middle step used the completeness of the environment basis, $\sum_k\ket{e_k}\bra{e_k}=\hat 1$).
+
+**All three properties are automatically saved.** Verify that $\mathcal{E}(\hat\rho)$ is a legitimate density matrix:
+
+- Hermitian: each term $\hat E_k\hat\rho\hat E_k^\dagger$ is its own Hermitian conjugate.
+- Unit trace: $\operatorname{Tr}\sum_k\hat E_k\hat\rho\hat E_k^\dagger
+  =\operatorname{Tr}\big(\sum_k\hat E_k^\dagger\hat E_k\,\hat\rho\big)=\operatorname{Tr}\hat\rho=1$
+  (using cyclic invariance of the trace and the completeness condition — **the entire responsibility for trace preservation rests on the completeness condition**).
+- Positive semi-definite: $\bra{\phi}\hat E_k\hat\rho\hat E_k^\dagger\ket{\phi}
+  =\bra{\phi'}\hat\rho\ket{\phi'}\ge0$, where $\ket{\phi'}=\hat E_k^\dagger\ket{\phi}$.
+
+Unitary evolution is the special case with a single Kraus operator ($\hat E_0=\hat U$); with more than one operator, pure states are generally sent to mixed states — **precisely the "shrinking" evolution we were looking for**.
+
+</Derivation>
+
+<Callout type="insight" title="Kraus operators in plain words">
+Read $\mathcal{E}(\hat\rho)=\sum_k\hat E_k\hat\rho\hat E_k^\dagger$ as one sentence:
+
+**The environment secretly performed a measurement, but never told you the result.**
+
+Each $k$ is one "outcome the environment recorded": in that branch the system undergoes $\hat\rho\to\hat E_k\hat\rho\hat E_k^\dagger/p_k$, with probability $p_k=\operatorname{Tr}(\hat E_k\hat\rho\hat E_k^\dagger)$. You do not know which $k$ the environment recorded, so you can only mix the branches by their probabilities — exactly the operator-sum form. The completeness condition $\sum_k\hat E_k^\dagger\hat E_k=\hat 1$ is just "the branch probabilities add up to 1".
+
+In section 10.5 this "environment-as-measurer" reading is promoted from metaphor to the official mechanism of decoherence.
 </Callout>
 
-## Planned contents
+## Why "CPTP": the easily overlooked "completely"
 
-- The Kraus operator representation
-- Complete positivity and trace preservation
-- Common channels: depolarising, phase damping, amplitude damping
+Now for the formal name. $\mathcal{E}$ must satisfy:
+
+1. **Linearity**;
+2. **Trace-Preserving (TP)**: $\operatorname{Tr}\mathcal{E}(\hat\rho)=\operatorname{Tr}\hat\rho$ — no probability leaks;
+3. **Completely Positive (CP)**: it not only maps positive semi-definite matrices to positive semi-definite matrices ("positive"), but **remains positivity-preserving on the whole even when it acts on only one part of a larger system** ("completely").
+
+Together: a CPTP map, also called a **quantum channel**. The first two conditions anyone can accept; the "completely" in the third looks like a mathematician's fastidiousness — preserving positivity is not enough, it has to be "completely" preserved?
+
+It is not fastidiousness. There is a famous map that is **positive yet not completely positive**, and you have known it for years: the transpose.
+
+<Derivation title="Counterexample: why the transpose map gets expelled" level="进阶" minutes={7}>
+
+**On its own, nothing wrong.** The transpose $\mathcal{T}(\hat\rho)=\hat\rho^{\mathsf T}$ preserves Hermiticity, preserves the trace, and preserves eigenvalues (a matrix and its transpose have the same spectrum), so positive semi-definite in, positive semi-definite out — it is a **positive** map. Acting alone on any single qubit, its output is a legitimate density matrix.
+
+**Put it inside entanglement and disaster strikes at once.** Readers of chapter 9 know a real system may be entangled with someone else. Take the Bell state $\ket{\Phi^+}=\frac{1}{\sqrt2}(\ket{00}+\ket{11})$ and let the transpose act **on B only** (doing nothing to A); write the combined operation as $\mathcal{I}\otimes\mathcal{T}$.
+
+The Bell state's density matrix (basis order $\ket{00},\ket{01},\ket{10},\ket{11}$):
+
+$$
+\hat\rho_{AB}=\frac12\begin{pmatrix}1&0&0&1\\0&0&0&0\\0&0&0&0\\1&0&0&1\end{pmatrix}
+$$
+
+Transposing on B swaps B's indices: matrix elements go $\rho_{(a b),(a'b')}\to\rho_{(a b'),(a' b)}$. The two corner $\frac12$'s (that is, $\ket{00}\bra{11}$ and $\ket{11}\bra{00}$) get moved into the middle (becoming $\ket{01}\bra{10}$ and $\ket{10}\bra{01}$):
+
+$$
+(\mathcal{I}\otimes\mathcal{T})(\hat\rho_{AB})=\frac12\begin{pmatrix}1&0&0&0\\0&0&1&0\\0&1&0&0\\0&0&0&1\end{pmatrix}
+$$
+
+The middle $2\times2$ block $\frac12\begin{pmatrix}0&1\\1&0\end{pmatrix}$ has eigenvalues $\pm\frac12$. So the full spectrum is
+
+$$
+\Big\{\tfrac12,\ \tfrac12,\ \tfrac12,\ -\tfrac12\Big\}
+$$
+
+**A negative eigenvalue has appeared**: the output is not a density matrix, and it would predict probability $-\frac12$ for some measurement.
+
+**Conclusion.** "Preserving positivity for every individual state" is not enough to guarantee "still legitimate when acting on half of an entangled system". A physical evolution must survive the test "my system might be entangled with anything in the world" — that is what the word "completely" protects. Maps in Kraus form pass the test automatically (repeat the positivity check in the derivation above for $\mathcal{I}\otimes\mathcal{E}$), and the converse holds too (Choi's theorem, stated here without proof): **completely positive + trace-preserving $\Leftrightarrow$ a Kraus representation exists**.
+
+A footnote: the transpose map's "illegitimacy" did not get it thrown away — it became a tool. It flips out negative eigenvalues only on entangled states, so "partial transpose yields a negative spectrum" became a standard entanglement test (the PPT criterion).
+
+</Derivation>
+
+## The three most-used channels
+
+Theory in hand, look at three examples that happen in real devices every day. For each we give the Kraus operators and the Bloch-sphere picture (notation: $\ket{0}$ ground state, $\ket{1}$ excited state).
+
+<DualView>
+<div slot="left">
+
+**Depolarising channel**: completely scrambled with probability $p$
+
+$$
+\mathcal{E}(\hat\rho)=(1-p)\,\hat\rho+\frac p3\big(\hat\sigma_x\hat\rho\hat\sigma_x+\hat\sigma_y\hat\rho\hat\sigma_y+\hat\sigma_z\hat\rho\hat\sigma_z\big)
+$$
+
+Kraus operators: $\sqrt{1-p}\,\hat 1,\ \sqrt{p/3}\,\hat\sigma_{x,y,z}$.
+
+**Bloch picture: uniform shrinking.** $\vec r\to\big(1-\tfrac{4p}{3}\big)\vec r$ — the whole ball scales down towards the centre. The default model when you know nothing about the noise.
+
+**Phase-damping channel**: loses phase only, not energy
+
+$$
+\hat E_0=\sqrt{1-p}\,\hat 1,\qquad \hat E_1=\sqrt{p}\,\hat\sigma_z
+$$
+
+The diagonal does not budge; the off-diagonal is multiplied by $(1-2p)$.
+
+**Bloch picture: squashing.** $r_z$ unchanged, $r_{x,y}\to(1-2p)r_{x,y}$ — the ball is squashed along $z$ into an olive. Applied repeatedly it presses every state onto the $z$ axis: this is the very hand that "squashes superpositions onto the axis" in section 10.2.
+
+</div>
+<div slot="right">
+
+**Amplitude-damping channel**: spontaneous emission, falling to the ground state
+
+$$
+\hat E_0=\begin{pmatrix}1&0\\0&\sqrt{1-\gamma}\end{pmatrix},\qquad
+\hat E_1=\begin{pmatrix}0&\sqrt{\gamma}\\0&0\end{pmatrix}
+$$
+
+$\hat E_1$ is the branch "the atom emits a photon and drops from $\ket{1}$ to $\ket{0}$" (probability $\gamma\rho_{11}$); $\hat E_0$ is the branch "no photon observed" — and note it is **not** the identity either: seeing no photon is itself information, and it nudges the state towards $\ket{0}$.
+
+The matrix elements change as:
+
+$$
+\rho_{11}\to(1-\gamma)\rho_{11},\qquad
+\rho_{01}\to\sqrt{1-\gamma}\,\rho_{01}
+$$
+
+**Bloch picture: the whole ball contracts towards the north pole** ($\ket{0}$, the ground state). Not towards the centre — energy relaxation has a definite destination.
+
+The populations decay fast (factor $1-\gamma$), the coherences slowly (factor $\sqrt{1-\gamma}$) — in the next section this "square root" becomes the famous $T_2=2T_1$.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The Kraus representation is not unique">
+One channel can have several different sets of Kraus operators. Phase damping, for instance, can also be written in the measurement-like form "the environment recorded, with some probability, which level you are on":
+$\hat E_0'=\sqrt{1-p'}\,\hat 1,\ \hat E_1'=\sqrt{p'}\ket{0}\bra{0},\ \hat E_2'=\sqrt{p'}\ket{1}\bra{1}$ — a different set of operators, exactly the same channel. Two Kraus sets describe the same channel if and only if they are unitary recombinations of each other (the same phenomenon — and the same family of theorems — as "infinitely many recipes for one ρ" in section 10.1). Physically this corresponds to "tracing out the environment in a different basis" — and of course the traced result cannot depend on your choice of basis.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Physical definition of a channel', latex: '\\mathcal{E}(\\hat\\rho)=\\operatorname{Tr}_E\\big[\\hat U(\\hat\\rho\\otimes\\ket{e_0}\\bra{e_0})\\hat U^\\dagger\\big]', note: 'System + environment unitary together; the system alone is not' },
+    { name: 'Kraus representation', latex: '\\mathcal{E}(\\hat\\rho)=\\sum_k\\hat E_k\\hat\\rho\\hat E_k^\\dagger,\\qquad \\hat E_k=\\bra{e_k}\\hat U\\ket{e_0}', note: 'Completely positive and trace-preserving ⇔ such a representation exists (Choi)' },
+    { name: 'Completeness condition', latex: '\\sum_k\\hat E_k^\\dagger\\hat E_k=\\hat 1', note: 'Comes from global unitarity; responsible for trace preservation (total probability 1)' },
+    { name: 'The complete-positivity counterexample', latex: '(\\mathcal{I}\\otimes\\mathcal{T})\\ket{\\Phi^+}\\bra{\\Phi^+}\\ \\text{has eigenvalue}\\ -\\tfrac12', note: 'Transpose is positive but not completely positive: acting on half of an entangled pair yields negative probability' },
+    { name: 'Amplitude damping', latex: '\\rho_{11}\\to(1-\\gamma)\\rho_{11},\\quad\\rho_{01}\\to\\sqrt{1-\\gamma}\\,\\rho_{01}', note: 'Populations decay as 1−γ, coherences as its square root — next section’s T₂ = 2T₁' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'cptp-1',
+      prompt: 'What does the completeness condition Σ E†ₖEₖ = 1 physically guarantee?',
+      options: [
+        'Trace preservation: total probability remains 1 after the evolution',
+        'Positive semi-definiteness: probabilities stay non-negative',
+        'Hermiticity',
+        'Reversibility of the evolution',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Positivity is guaranteed automatically by the "sandwich" structure EρE† of the operator sum, independent of the completeness condition.',
+        2: 'Hermiticity likewise comes from the sandwich structure.',
+        3: 'A general channel is not reversible — only the special case of a single unitary Kraus operator is.',
+      },
+      explain: 'Tr[ΣEₖρE†ₖ] = Tr[(ΣE†ₖEₖ)ρ], and the completeness condition makes this equal Tr ρ = 1. It is the shadow of global unitarity U†U = 1 projected onto the system — and the statement "all environment branch probabilities sum to 1".',
+    },
+    {
+      id: 'cptp-2',
+      prompt: 'The transpose map preserves positive semi-definiteness. Why is it still not a legitimate physical evolution?',
+      options: [
+        'When it acts on only half of an entangled pair, the overall density matrix acquires a negative eigenvalue',
+        'It does not preserve the trace',
+        'It destroys Hermiticity',
+        'It is actually legitimate, just hard to implement',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Transposition leaves the diagonal untouched; the trace is unchanged.',
+        2: 'For real matrices transposition preserves Hermiticity.',
+        3: 'Transposing half of a Bell state gives eigenvalue −1/2 and would predict a negative probability — a matter of principle, not of engineering.',
+      },
+      explain: 'This is exactly what the "completely" in "completely positive" means: a physical evolution must survive the test that the system may be entangled with anything. The transpose is harmless alone but flips out a negative spectrum inside entanglement — which is also why it became the PPT entanglement criterion.',
+    },
+    {
+      id: 'cptp-3',
+      type: 'numeric',
+      prompt: 'A pure qubit (r = 1) passes once through the channel "replace by the maximally mixed state with probability p = 0.2": ρ → 0.8ρ + 0.2·(1/2). Find the purity Tr(ρ²) of the output.',
+      answer: 0.82,
+      tolerance: 0.005,
+      unit: '',
+      explain: 'This channel rescales the whole Bloch vector: r → 0.8 × 1 = 0.8. Purity = (1 + r²)/2 = (1 + 0.64)/2 = 0.82. A shrinking ball, a falling purity — last section’s geometry put straight to work.',
+    },
+    {
+      id: 'cptp-4',
+      prompt: 'Which statements about the amplitude-damping channel are correct? (Select all that apply.)',
+      options: [
+        'E₁ corresponds to the branch "photon emitted, atom drops to the ground state"',
+        'The no-photon-detected E₀ is not the identity either — no news is also news',
+        'It contracts the Bloch ball towards the centre',
+        'Coherences decay as √(1−γ), slower than the populations’ (1−γ)',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The fixed point of amplitude damping is the ground state |0⟩ (the north pole), not the centre — energy relaxation has a definite destination. Contracting towards the centre is the depolarising channel.',
+      },
+      explain: 'The √(1−γ) inside E₀ says that "seeing no photon" itself updates our knowledge of the state. The gap between the population and coherence decay factors (square vs square root) is exactly where next section’s T₂ = 2T₁ comes from.',
+    },
+  ]}
+/>
+
+## What comes next
+
+A channel is a "snapshot": a state goes in, a state comes out, and the time in between is flattened into one map. But experimentally the questions we ask are usually **continuous** — how does a qubit's coherence decay with time? Where do the constants $T_1$ and $T_2$ come from?
+
+Slice the CPTP map into infinitesimally thin slabs of time and ask "what is the most general legitimate differential equation" — the answer has a beautifully universal form: the Lindblad master equation. The next section writes it down, and solves a damped atom in full.

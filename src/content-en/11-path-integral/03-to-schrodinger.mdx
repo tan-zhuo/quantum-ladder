@@ -1,16 +1,235 @@
 ---
-title: 'From the path integral to the Schrödinger equation'
-summary: 'The equivalence of the two formulations.'
+title: From the path integral to the Schrödinger equation
 section: '11.3'
 order: 3
-status: stub
+summary: 'Look at propagation over just one short interval ε and expand to first order — the Schrödinger equation grows out of the path integral step by step. From here on, the two formulations are officially equivalent.'
+status: done
+prereqs:
+  - 11-path-integral/02-propagator
+  - 02-wavefunction/04-time-dependent-schrodinger
+objectives:
+  - Write down the short-time propagator with a potential present and explain why it is accurate enough for small ε
+  - 'Work through Feynman''s derivation in full: from the integral equation to the Schrödinger equation'
+  - Explain the Gaussian-suppression mechanism behind "only paths within √(ħε/m) contribute"
+  - Explain where the jagged character of typical paths (divergent velocity, non-differentiability) comes from
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section we computed the free-particle propagator and checked that it satisfies the Schrödinger equation — but that was only one example. Now we settle a much larger debt: in chapter 2 we accepted the Schrödinger equation as a **postulate**; this section proves that once you accept the single rule "sum over all paths, each contributing $\ee^{\ii S/\hbar}$", the Schrödinger equation is no longer a postulate but a **consequence**. This is the central calculation of Feynman's 1948 paper, and every step uses nothing beyond first-year calculus.
+
+## Strategy: look at just one short interval
+
+Tackling the finite-time path integral head-on is hard (for a general potential it cannot be done in closed form). But a differential equation only ever talks about "what happens in the next instant" — so all we need is the short-time behaviour.
+
+Take a short interval $\varepsilon$. In the slicing definition, this interval contains just a single step: the particle goes in a straight line from $x'$ to $x$. By the zigzag rule the action of this step is
+
+$$
+S_\varepsilon\approx\frac{m(x-x')^2}{2\varepsilon}-\varepsilon V\!\Bigl(\frac{x+x'}{2}\Bigr)
+$$
+
+The kinetic term uses the average velocity $(x-x')/\varepsilon$; the potential term uses the midpoint value times the duration (to first order in $\varepsilon$, midpoint, endpoint or average all give the same result — see the warning box at the end). The **short-time propagator** is therefore
+
+$$
+K_\varepsilon(x,x')=\sqrt{\frac{m}{2\pi\ii\hbar\varepsilon}}\,
+\exp\!\left[\frac{\ii m(x-x')^2}{2\hbar\varepsilon}-\frac{\ii\varepsilon}{\hbar}V\!\Bigl(\frac{x+x'}{2}\Bigr)\right]
+$$
+
+The evolution formula for this one small step becomes an integral equation:
+
+$$
+\Psi(x,t+\varepsilon)=\int_{-\infty}^{\infty}K_\varepsilon(x,x')\,\Psi(x',t)\,\dd x'
+$$
+
+From here the whole game is: expand both sides to first order in $\varepsilon$ and see what equation gets forced out.
+
+## Which x′ actually contribute?
+
+<DualView>
+<div slot="left">
+
+**Read the structure of the integral before computing.** The fiercest factor in the integrand is
+
+$$
+\exp\!\left[\frac{\ii m(x-x')^2}{2\hbar\varepsilon}\right]
+$$
+
+When $x'$ is far from $x$, $(x-x')^2/\varepsilon$ is large and this phase oscillates wildly with $x'$, so the contributions cancel — the stationary-phase mechanism of two sections ago, replayed within a single step.
+
+What survives is the range over which the phase varies by no more than $\sim1$:
+
+$$
+\frac{m(x-x')^2}{2\hbar\varepsilon}\lesssim1
+\;\Longrightarrow\;
+|x-x'|\lesssim\sqrt{\frac{2\hbar\varepsilon}{m}}
+$$
+
+In one step $\varepsilon$ the particle only "probes" a neighbourhood of size $\sqrt{\hbar\varepsilon/m}$. That is why we can safely Taylor-expand in $x'-x$ below.
+
+</div>
+<div slot="right">
+
+**A remarkable property, read off in passing.** The typical displacement per step is $\delta x\sim\sqrt{\hbar\varepsilon/m}$, so the typical "velocity" is
+
+$$
+\frac{\delta x}{\varepsilon}\sim\sqrt{\frac{\hbar}{m\varepsilon}}
+\xrightarrow{\ \varepsilon\to0\ }\infty
+$$
+
+Displacement scales as $\sqrt{\varepsilon}$, not $\varepsilon$ — exactly the scaling of Brownian motion (a diffusion process). Typical paths in the path integral are everywhere continuous, nowhere differentiable, and an instantaneous velocity simply does not exist. This meshes perfectly with the uncertainty principle: slicing time more finely means pinning the position more tightly, so the momentum runs ever wilder.
+
+</div>
+</DualView>
+
+## The derivation
+
+<Derivation title="From the short-time propagator to the Schrödinger equation" level="进阶" minutes={12} open={true}>
+
+**Step 1: change variables.** Let $\eta=x'-x$ (the displacement of this step); the integral equation becomes
+
+$$
+\Psi(x,t+\varepsilon)=\sqrt{\frac{m}{2\pi\ii\hbar\varepsilon}}
+\int\dd\eta\;\ee^{\ii m\eta^2/2\hbar\varepsilon}\;
+\ee^{-\ii\varepsilon V(x+\eta/2)/\hbar}\;\Psi(x+\eta,t)
+$$
+
+**Step 2: count the orders of each factor.** The effective $\eta\sim\sqrt{\hbar\varepsilon/m}$, so $\eta^2\sim\varepsilon$: to keep first order in $\varepsilon$, $\Psi$ must be expanded to **second** order in $\eta$ — the single most important judgement in the whole derivation (and the origin of the second spatial derivative):
+
+$$
+\Psi(x+\eta,t)=\Psi+\eta\,\partial_x\Psi+\frac{\eta^2}2\,\partial_x^2\Psi+O(\eta^3)
+$$
+
+In the potential factor, $\varepsilon V$ is already first-order small, so $V(x+\eta/2)\to V(x)$ suffices:
+
+$$
+\ee^{-\ii\varepsilon V/\hbar}=1-\frac{\ii\varepsilon}{\hbar}V(x)+O(\varepsilon^2)
+$$
+
+**Step 3: do the Gaussian integrals term by term.** Three moments are needed (all standard Gaussian integrals, with $\alpha\equiv m/2\hbar\varepsilon$):
+
+$$
+\int\ee^{\ii\alpha\eta^2}\dd\eta=\sqrt{\frac{\pi\ii}{\alpha}},\qquad
+\int\eta\,\ee^{\ii\alpha\eta^2}\dd\eta=0,\qquad
+\int\eta^2\,\ee^{\ii\alpha\eta^2}\dd\eta=\frac{\ii}{2\alpha}\sqrt{\frac{\pi\ii}{\alpha}}
+$$
+
+(The second vanishes because the integrand is odd; the third follows from the first by differentiating with respect to $\alpha$.) Insert $\alpha=m/2\hbar\varepsilon$: the zeroth moment exactly cancels the normalisation prefactor $\sqrt{m/2\pi\ii\hbar\varepsilon}$ — total coefficient 1 — and the second moment brings an extra factor $\ii\hbar\varepsilon/m$.
+
+**Step 4: collect to first order in ε.** Multiply the pieces together and keep only $\varepsilon^1$:
+
+$$
+\Psi(x,t+\varepsilon)=\Psi(x,t)
++\frac{\ii\hbar\varepsilon}{2m}\,\partial_x^2\Psi
+-\frac{\ii\varepsilon}{\hbar}V(x)\,\Psi
++O(\varepsilon^2)
+$$
+
+(Cross terms such as $\varepsilon V\times\eta^2\partial_x^2\Psi$ are of order $\varepsilon^2$ and get discarded.)
+
+**Step 5: take the limit.** Write the left side as $\Psi(x,t)+\varepsilon\,\partial_t\Psi+O(\varepsilon^2)$, cancel $\Psi(x,t)$ from both sides, divide by $\varepsilon$, let $\varepsilon\to0$, and multiply through by $\ii\hbar$:
+
+$$
+\boxed{\;\ii\hbar\,\frac{\partial\Psi}{\partial t}
+=-\frac{\hbar^2}{2m}\frac{\partial^2\Psi}{\partial x^2}+V(x)\,\Psi\;}
+$$
+
+The Schrödinger equation. Chapter 2's postulate has just become a theorem.
+
+</Derivation>
+
+<Callout type="insight" title="Every term has a birthplace">
+It pays to look back at how the parts of this machine mesh:
+
+- **$\ii\hbar\partial_t$**: from expanding one step of evolution to first order in $\varepsilon$ — the first time derivative reflects the "one step" structure.
+- **The kinetic term $-\frac{\hbar^2}{2m}\partial_x^2$**: from the second moment of the kinetic phase $\ee^{\ii m\eta^2/2\hbar\varepsilon}$. The more violently the path jitters (the larger $\partial_x^2\Psi$), the larger this term — the kinetic-energy operator measures exactly the "bending" of the wavefunction, in full accord with the reading in [section 2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/).
+- **The potential term $V\Psi$**: from the first-order expansion of $\ee^{-\ii\varepsilon V/\hbar}$ — every instant spent in the potential accumulates phase.
+
+The coefficients match exactly, neither more nor less, and this depends on the normalisation constant $A=\sqrt{2\pi\ii\hbar\varepsilon/m}$ taking the value fixed by composition self-consistency last section. Three sources, one equation, a perfect fit.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Two technical traps">
+1. **Where do you evaluate the potential?** We used the midpoint, $V\bigl((x+x')/2\bigr)$. To first order in $\varepsilon$ the endpoint works just as well — because $V(x+\eta/2)-V(x)\sim\eta\sim\sqrt\varepsilon$, and multiplied by the existing $\varepsilon$ it is a higher-order correction. But the moment the potential depends on velocity (for instance the $\vec A\cdot\dot{\vec x}$ term in a magnetic field), the midpoint rule is **no longer optional** — different choices differ by exactly the operator-ordering ambiguity. This is the most famous fine print in the correspondence between path integrals and operator language.
+2. **Count the expansion orders correctly.** The classic beginner's mistake is expanding $\Psi(x+\eta)$ only to first order in $\eta$ — the kinetic term simply vanishes. The criterion is always "$\eta^2\sim\varepsilon$": wherever you intend to keep $\varepsilon^1$, you must keep $\eta$ to second order.
+</Callout>
 
-- The short-time propagator
-- Taking the limit to obtain the Schrödinger equation
+At this point the three formulations formally join forces: Heisenberg's matrices (1925), Schrödinger's wave equation (1926), Feynman's sum over paths (1948) — three formal languages, one quantum mechanics. Chapter 3 proved the first two equivalent; this section supplies the third piece of the puzzle.
+
+<KeyFormulas
+  items={[
+    { name: 'Short-time propagator', latex: 'K_\\varepsilon=\\sqrt{\\frac{m}{2\\pi\\ii\\hbar\\varepsilon}}\\,\\exp\\Bigl[\\frac{\\ii m(x-x\')^2}{2\\hbar\\varepsilon}-\\frac{\\ii\\varepsilon}{\\hbar}V\\Bigr]', note: 'Exact to first order in ε; everything expands from here' },
+    { name: 'Effective displacement range', latex: '|x-x\'|\\sim\\sqrt{\\hbar\\varepsilon/m}', note: 'Gaussian oscillation suppresses distant contributions; displacement ∝ √ε is diffusive scaling' },
+    { name: 'Key Gaussian moment', latex: '\\int\\eta^2\\ee^{\\ii\\alpha\\eta^2}\\dd\\eta=\\frac{\\ii}{2\\alpha}\\sqrt{\\frac{\\pi\\ii}{\\alpha}}', note: 'The η² moment → the kinetic term −(ħ²/2m)∂ₓ²' },
+    { name: 'Conclusion of the derivation', latex: '\\ii\\hbar\\,\\partial_t\\Psi=-\\frac{\\hbar^2}{2m}\\partial_x^2\\Psi+V\\Psi', note: 'The Schrödinger equation: demoted from postulate to consequence of the path integral' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pi3-1',
+      prompt: 'Why must Ψ(x+η) be expanded to second order in η in the derivation, rather than first order?',
+      options: [
+        'Because the effective η satisfies η²∼ε, so keeping first order in ε requires second order in η',
+        'Because the first-order term is non-zero and needs a second-order correction',
+        'Because Gaussian integrals can only handle even powers',
+        'Because second order is always more accurate than first — the more the better',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The first-order term ∫η·e^{iαη²}dη vanishes exactly, being an odd integrand — it contributes nothing to the result.',
+        3: 'The derivation demands consistent accuracy "to exactly first order in ε": the η³ terms are of order ε^{3/2} and would be discarded even if kept.',
+      },
+      explain: 'The Gaussian kernel confines the effective displacement to η∼√(ħε/m), so η²∼ε is of the same order. Dropping the η² term means dropping the kinetic term — the second spatial derivative in the Schrödinger equation is born exactly here.',
+    },
+    {
+      id: 'pi3-2',
+      prompt: 'Which are properties of typical paths in the path integral? (Select all that apply.)',
+      options: [
+        'The typical displacement per step ε scales as √ε — the same scaling as Brownian motion',
+        'They are everywhere continuous but nowhere differentiable; instantaneous velocity is undefined',
+        'They tend to smooth classical trajectories as ε→0',
+        'This jaggedness is consistent with the uncertainty principle: finer time slicing means larger momentum fluctuations',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'As ε→0 the jaggedness does not fade but intensifies (typical velocity ∼√(ħ/mε)→∞); what is smooth is the centreline of the stationary-phase band in the macroscopic limit, not any single typical path.',
+      },
+      explain: 'The diffusive scaling δx∼√(ħε/m) means δx/ε→∞. "The particle has a smooth trajectory" is never true in the path integral; what holds is only the classical envelope that interference selects when S≫ħ.',
+    },
+    {
+      id: 'pi3-3',
+      prompt: 'In the path-integral derivation, the kinetic term −(ħ²/2m)∂ₓ²Ψ in the Schrödinger equation originates from:',
+      options: [
+        'The second Gaussian moment of the kinetic phase factor e^{imη²/2ħε}',
+        'The first-order expansion of the potential factor e^{−iεV/ħ}',
+        'The choice of normalisation constant A',
+        'The Taylor expansion in the time direction',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The first-order expansion of the potential factor gives the VΨ term.',
+        2: 'A only ensures the zeroth-order coefficient is exactly 1 (probability conservation); it generates no new terms.',
+      },
+      explain: '∫η²e^{iαη²}dη brings the factor iħε/m, which multiplied by the ½∂ₓ²Ψ in the expansion of Ψ yields exactly (iħε/2m)∂ₓ²Ψ. The second-order statistics of the path jitter = the curvature of the wavefunction = the kinetic energy.',
+    },
+    {
+      id: 'pi3-4',
+      prompt: 'Regarding "evaluate the potential at the midpoint or the endpoint", the correct statement is:',
+      options: [
+        'For an ordinary potential V(x) the two differ only at higher order and give the same result; for velocity-dependent potentials (such as magnetic coupling) the midpoint rule is mandatory',
+        'The midpoint must be used in all cases, or the derivation fails',
+        'Any choice works in all cases — it is purely a matter of notation',
+        'The endpoint rule corresponds to the correct operator ordering; the midpoint rule is an approximation',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'In this section’s derivation, evaluating V at the endpoint gives the Schrödinger equation just the same — the difference ∼η·ε is of order ε^{3/2}.',
+        3: 'Exactly backwards: the midpoint rule corresponds to symmetric (Weyl) ordering, the choice consistent with the standard Hamiltonian operator.',
+      },
+      explain: 'The difference V(x+η/2)−V(x) ∼ √ε, and multiplied by the factor ε it cannot affect the first-order result; but in A·ẋ-type couplings the displacement factor is itself ∼√ε, so the choice of evaluation point is promoted to first order in ε — precisely the operator-ordering ambiguity.',
+    },
+  ]}
+/>
+
+## What comes next
+
+With the equivalence proven, the path integral might seem to have merely "re-derived what we already knew". The next section lets it show off a trick the wavefunction language finds very hard: rotate time onto the imaginary axis, and tunnelling becomes a **classical** mechanics problem — hiding beneath the barrier is a classical path called the "instanton".

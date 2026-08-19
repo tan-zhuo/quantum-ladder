@@ -1,17 +1,212 @@
 ---
-title: 'Instantons and tunnelling'
-summary: 'Classical paths in imaginary time.'
+title: Instantons and tunnelling
 section: '11.4'
 order: 4
-status: stub
+summary: 'Rotate time onto the imaginary axis and the potential flips upside down — under the barrier a perfectly respectable classical path appears: the instanton. Double-well level splitting and the ammonia maser are both settled by its Euclidean action.'
+status: done
+prereqs:
+  - 11-path-integral/03-to-schrodinger
+  - 02-wavefunction/11-tunneling
+  - 07-approximation/04-wkb
+objectives:
+  - Explain why the real-time path integral breaks down for tunnelling and how the Wick rotation rescues it
+  - Explain "the potential flips in imaginary time" and write down the instanton solution in a double well
+  - Use the instanton's Euclidean action to obtain the splitting formula ΔE ∼ ħω e^{−S_E/ħ} and match its exponent to WKB
+  - Give real applications of the instanton picture (ammonia inversion, chemical reactions, vacuum decay)
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+With the equivalence proven last section, you may well ask: if the path integral only re-derives known results, why learn it? This section is the answer. There is a class of problems where the wavefunction language gets the numbers but not the picture, while the path integral delivers a geometric image beautiful enough to be unforgettable — **barrier tunnelling**.
+
+## The phenomenon: double wells and ammonia
+
+Consider a double-well potential: two wells of equal depth separated by a barrier of height $V_0$ (picture $V(x)=\lambda(x^2-a^2)^2$, with the two minima at $x=\pm a$).
+
+This is no toy. The ammonia molecule NH₃ is a genuine double well: the nitrogen atom can sit above or below the plane of the three hydrogens, the two configurations are symmetric and equivalent, and between them stands the barrier of "nitrogen pushing through the hydrogen plane".
+
+Classical mechanics makes a clean prediction: a particle with energy below $V_0$ is trapped in one well, forever. Experiment says otherwise — the nitrogen atom of ammonia oscillates back and forth between the two configurations at about 24 GHz. In spectral terms: if the two wells were truly isolated, the ground state would be doubly degenerate (one state per well); what is actually measured is **a pair of split levels**, with splitting $\Delta E=h\times23.87\ \text{GHz}\approx10^{-4}$ eV — the bound-state face of the tunnelling we met in [section 2.11](/en/ch/02-wavefunction/11-tunneling/). The first maser, in 1954, ran on exactly this pair of levels.
+
+## Why the real-time path integral gets stuck
+
+Try to compute the tunnelling amplitude with last chapter's stationary-phase method and you hit a wall immediately. Stationary phase lives on finding classical paths — but **there is no real classical path from the bottom of the left well to the bottom of the right**: inside the barrier $E<V$, the classical kinetic energy $\frac{m\dot x^2}2=E-V<0$, so the velocity would have to be imaginary.
+
+With no stationary point, the real-time path integral is a heap of wildly oscillating phases, none more important than any other — impossible to compute and impossible to read. Tunnelling is an "exponentially small" effect ($T\sim\ee^{-2\gamma}$, recall section 2.11), and the one thing oscillatory integrals are worst at is fishing an exponentially small remainder out of a page full of cancellations.
+
+"The velocity would have to be imaginary" — it sounds like a death sentence, but it is actually a signpost. Velocity is displacement divided by **time**; the most elegant way to make the velocity imaginary is to make the time imaginary.
+
+## The Wick rotation: turning time into the imaginary axis
+
+<DualView>
+<div slot="left">
+
+**What we do.** Replace real time by a pure imaginary one: $t=-\ii\tau$, with $\tau$ a real parameter called **imaginary time** or **Euclidean time** (the name: this substitution turns the relativistic spacetime interval $-c^2t^2+x^2$ into $c^2\tau^2+x^2$, converting Minkowski geometry into Euclidean geometry).
+
+**What happens.** Two things at once:
+
+1. The oscillating weight becomes a decaying weight: $\ee^{\ii S/\hbar}\to\ee^{-S_E/\hbar}$. The integral goes from "oscillate and cancel" to "smaller is better" — the dominant contribution is obvious at a glance: **the path of least Euclidean action $S_E$**.
+2. In the equation of motion the **potential flips**: "classical motion" in imaginary time is motion in the inverted potential $-V(x)$.
+
+</div>
+<div slot="right">
+
+Substitute $t=-\ii\tau$ into the action (with $\dot x=\dd x/\dd t=\ii\,\dd x/\dd\tau$):
+
+$$
+\ii S=\ii\int\Bigl[\frac m2\dot x^2-V\Bigr]\dd t
+=-\int\Bigl[\frac m2\Bigl(\frac{\dd x}{\dd\tau}\Bigr)^2+V(x)\Bigr]\dd\tau
+\equiv-S_E
+$$
+
+Therefore
+
+$$
+\ee^{\ii S/\hbar}=\ee^{-S_E/\hbar},\qquad
+S_E=\int\Bigl[\frac m2 x'^2+V(x)\Bigr]\dd\tau
+$$
+
+Note the **plus** sign between kinetic and potential energy in $S_E$ — equivalent to the ordinary action for motion in the potential $-V$. The path minimising $S_E$ satisfies
+
+$$
+m\,\frac{\dd^2x}{\dd\tau^2}=+\frac{\dd V}{\dd x}
+$$
+
+(Compare the real-time $m\ddot x=-V'$: the force has changed sign, i.e. the potential has flipped.)
+
+</div>
+</DualView>
+
+Turn the double well $V(x)$ upside down: the two well bottoms become two **hilltops**, and the barrier between them becomes a **valley**. Rolling from the left hilltop to the right one — in the inverted potential that is a perfectly legitimate classical path! The predicament of "no classical path under the barrier" evaporates in imaginary time.
+
+<Derivation title="The instanton solution and the splitting formula" level="进阶" minutes={10}>
+
+**Step 1: energy conservation in imaginary time.** The equation $m x''=+V'(x)$ has the conserved quantity $\frac m2x'^2-V(x)=E_E$ (the "energy" in the inverted potential). The path we want starts from the left hilltop (at rest at $x=-a$ as $\tau\to-\infty$, where $V=0$), so $E_E=0$, giving
+
+$$
+\frac{\dd x}{\dd\tau}=\sqrt{\frac{2V(x)}{m}}
+$$
+
+**Step 2: solve for the instanton.** For $V=\lambda(x^2-a^2)^2$, separating variables and integrating gives
+
+$$
+x(\tau)=a\tanh\!\left[\frac{\omega(\tau-\tau_0)}{2}\right],
+\qquad \omega\equiv\sqrt{\frac{8\lambda a^2}{m}}
+$$
+
+($\omega$ is exactly the small-oscillation frequency near the bottom of a single well.) The solution completes its crossing from $-a$ to $+a$ within a window of width about $1/\omega$ around $\tau_0$, sitting nearly still before and after — the whole "event" occupies but an instant of imaginary time, hence the name **instanton**. $\tau_0$ is arbitrary: the crossing can happen at any moment, and this freedom contributes a factor in the exact calculation.
+
+**Step 3: the instanton's action.** Use $E_E=0$ to merge the two terms in $S_E$ ($\frac m2x'^2=V$, so the integrand $=mx'^2=x'\cdot m x'$) and change to an integral over $x$:
+
+$$
+S_E=\int_{-\infty}^{\infty}m\,x'^2\,\dd\tau
+=\int_{-a}^{a}\sqrt{2mV(x)}\,\dd x
+$$
+
+Substituting the quartic double well: $\sqrt{2mV}=\sqrt{2m\lambda}\,(a^2-x^2)$, and $\int_{-a}^{a}(a^2-x^2)\dd x=\frac{4a^3}{3}$; using $\sqrt{2m\lambda}=\frac{m\omega}{2a}$ then gives
+
+$$
+S_E=\frac{4a^3}{3}\cdot\frac{m\omega}{2a}=\frac{2}{3}\,m\omega a^2
+$$
+
+**Recognise an old friend**: $\int\sqrt{2mV}\,\dd x$ is precisely the numerator of the WKB tunnelling exponent $\gamma=\frac1\hbar\int\sqrt{2m(V-E)}\,\dd x$ of [section 7.4](/en/ch/07-approximation/04-wkb/) at $E\approx0$. The two methods must agree in the exponent — they are keeping the same books.
+
+**Step 4: the splitting formula (result, stated qualitatively).** The full calculation also requires the Gaussian fluctuations around the instanton (beyond the scope of this book); the result is
+
+$$
+\Delta E=2\hbar\omega\,\sqrt{\frac{2S_E}{\pi\hbar}}\;\ee^{-S_E/\hbar}
+$$
+
+The skeleton is what really matters:
+
+$$
+\Delta E\;\sim\;\hbar\omega\,\ee^{-S_E/\hbar}
+$$
+
+An attempt frequency $\omega$ (how many times per second the particle "hits the wall" in its well) times the per-attempt tunnelling suppression $\ee^{-S_E/\hbar}$. Make the barrier taller and wider → $S_E$ grows → the splitting shrinks **exponentially**.
+
+</Derivation>
+
+<Callout type="insight" title="Why the splitting is 'symmetric versus antisymmetric'">
+The true ground states of the double well are not "particle on the left" $\ket{L}$ or "particle on the right" $\ket{R}$, but their symmetric and antisymmetric combinations:
+
+$$
+\ket{\pm}=\frac{\ket{L}\pm\ket{R}}{\sqrt2},\qquad
+E_-\!-E_+=\Delta E
+$$
+
+The symmetric combination has no node and lies lower. Prepare the initial state as $\ket{L}$ and it is a superposition of $\ket{+}$ and $\ket{-}$; the two components beat at the frequency difference $\Delta E/\hbar$ — the particle oscillates between left and right wells with period $h/\Delta E$. Ammonia's 24 GHz is exactly this beat. What the instanton tells us is precisely the size of $\Delta E$: the "cost" $\ee^{-S_E/\hbar}$ of one crossing of the valley in imaginary time sets how fast the left-right oscillation runs in real time.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Imaginary time is not a new time dimension">
+The Wick rotation is a **computational technique plus a physical lens**, not a claim that the universe contains an imaginary time axis along which the particle genuinely traced the instanton trajectory. Only real-time outcomes are observable (the splitting ΔE, the oscillation period); the instanton is the "shadow path" these outcomes cast under analytic continuation. But the shadow is enormously useful: the Euclidean weight $\ee^{-S_E/\hbar}$ has exactly the same structure as statistical mechanics' Boltzmann factor $\ee^{-E/k_BT}$ — and this "quantum mechanics ↔ statistical mechanics" bridge is an everyday tool of modern field theory and Monte Carlo methods.
+</Callout>
 
-- Wick rotation
-- The instanton solution
-- Level splitting in a double well
+The instanton picture reaches far beyond the double well: tunnelling corrections to low-temperature reaction rates in chemistry, quantum phase slips in superconducting junctions, even the rate at which a "false vacuum decays by bubble nucleation" in cosmology — all use the same template: find the Euclidean classical solution, compute $S_E$, rate $\propto\ee^{-S_E/\hbar}$.
+
+<KeyFormulas
+  items={[
+    { name: 'Wick rotation', latex: 't=-\\ii\\tau,\\qquad \\ee^{\\ii S/\\hbar}\\to\\ee^{-S_E/\\hbar}', note: 'Oscillation becomes decay; stationary phase becomes least action' },
+    { name: 'Euclidean action', latex: 'S_E=\\int\\Bigl[\\frac m2\\Bigl(\\frac{\\dd x}{\\dd\\tau}\\Bigr)^2+V(x)\\Bigr]\\dd\\tau', note: 'A plus sign! Equivalent to ordinary mechanics in the inverted potential −V' },
+    { name: 'Instanton solution (quartic double well)', latex: 'x(\\tau)=a\\tanh\\frac{\\omega(\\tau-\\tau_0)}{2}', note: 'Rolls from left hilltop to right hilltop in the inverted potential; width ∼1/ω' },
+    { name: 'Instanton action and splitting', latex: 'S_E=\\int_{-a}^{a}\\sqrt{2mV}\\,\\dd x,\\qquad \\Delta E\\sim\\hbar\\omega\\,\\ee^{-S_E/\\hbar}', note: 'Exponent matches the WKB tunnelling exponent; ΔE sets the left-right beat frequency' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pi4-1',
+      prompt: 'The fundamental difficulty of the real-time path integral with barrier tunnelling is:',
+      options: [
+        'No real classical path exists inside the barrier, stationary phase loses its foothold, and the oscillatory integral cannot extract the exponentially small net contribution',
+        'The path integral only applies to free particles',
+        'The wavefunction vanishes inside the barrier, so there are no paths to take',
+        'Tunnelling violates energy conservation, which the path integral cannot describe',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Section 2.11 already showed the wavefunction inside the barrier is a decaying exponential, not zero; and in the path integral all paths still exist regardless.',
+        3: 'Tunnelling does not violate energy conservation — a particle detected beyond the barrier has the same total energy as when it came in.',
+      },
+      explain: 'Inside the barrier E<V means the classical velocity is imaginary, so e^{iS/ħ} has no stationary point. The Wick rotation t=−iτ turns the "imaginary velocity" into a real velocity in imaginary time, and the difficulty dissolves wholesale.',
+    },
+    {
+      id: 'pi4-2',
+      prompt: 'Which statements about the world after the Wick rotation t=−iτ are correct? (Select all that apply.)',
+      options: [
+        'The weight changes from the oscillating e^{iS/ħ} to the decaying e^{−S_E/ħ}, and the dominant path is the one minimising S_E',
+        'The imaginary-time equation of motion is equivalent to classical mechanics in the inverted potential −V',
+        'The particle really does cross the barrier along the instanton trajectory in real time',
+        'e^{−S_E/ħ} has the same structure as the Boltzmann factor of statistical mechanics',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The instanton is a "shadow path" produced by analytic continuation; only the real-time splitting and oscillation are observable — one cannot say the particle actually followed this trajectory.',
+      },
+      explain: 'iS = −S_E turns an oscillatory integral into a minimisation problem; the plus sign between kinetic and potential terms in S_E is equivalent to flipping the potential; and the formal match with the partition function is the starting point of the quantum-statistical correspondence.',
+    },
+    {
+      id: 'pi4-3',
+      prompt: 'Raise the double well’s barrier (S_E goes from 5ħ to 10ħ, ω unchanged). The ground-state splitting ΔE becomes roughly:',
+      options: ['e⁻⁵ ≈ 1/150 of its old value', 'Half', 'e⁻¹⁰ of its old value', 'Unchanged — the splitting depends only on ω'],
+      answer: 0,
+      distractors: {
+        1: 'ΔE depends on S_E exponentially, not linearly — the very hallmark of tunnelling’s "exponential sensitivity".',
+        2: 'e^{−10} is the ratio of the new splitting to ħω, not to the old splitting: ΔE_new/ΔE_old ≈ e^{−(10−5)} = e^{−5}.',
+      },
+      explain: 'ΔE ∼ ħω e^{−S_E/ħ}, so the ratio is e^{−(S_E,new−S_E,old)/ħ} = e^{−5} ≈ 1/148. (The prefactor contains √S_E, contributing only a correction of order √2 — the conclusion stands.)',
+    },
+    {
+      id: 'pi4-4',
+      type: 'numeric',
+      prompt: 'The inversion oscillation frequency of ammonia is ν=23.87 GHz. What is the corresponding ground-state splitting ΔE=hν in eV? (h=6.626×10⁻³⁴ J·s, 1 eV=1.602×10⁻¹⁹ J)',
+      answer: 9.87e-5,
+      tolerance: 5e-6,
+      unit: 'eV',
+      explain: 'ΔE = 6.626×10⁻³⁴ × 2.387×10¹⁰ / 1.602×10⁻¹⁹ ≈ 9.9×10⁻⁵ eV. Three orders of magnitude below a typical molecular vibrational level (∼0.1 eV) — the exponential suppression of tunnelling splitting, plain to see. This pair of levels drove the 1954 ammonia maser.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The path integral has rewritten quantum mechanics and built a bridge to statistical mechanics and field theory. But the whole edifice still rests on an unspoken foundation: time is Newton's absolute time, energy is $p^2/2m$ — all **non-relativistic**. What happens when an electron moves near the speed of light? When energies are high enough to create particles out of nothing? The next chapter generalises in a different direction: making quantum mechanics compatible with special relativity. At the end of that road wait two of quantum mechanics' greatest gifts to physics — the origin of spin, and the prediction of antimatter.

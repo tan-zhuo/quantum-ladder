@@ -2,17 +2,269 @@
 title: 传播子
 section: '11.2'
 order: 2
-summary: K(x,t;x₀,t₀) 是路径积分的产物。
-status: stub
+summary: 把「对所有路径求和」真的算出来：自由粒子传播子的完整推导。结果的相位恰好是经典作用量，用它演化高斯波包，波包扩散分毫不差地重现。
+status: done
+prereqs:
+  - 11-path-integral/01-path-integral-idea
+  - 02-wavefunction/10-free-particle
+objectives:
+  - 写出传播子的定义，说明它与波函数演化、初条件、拼接性质的关系
+  - 用时间切片把路径积分定义成普通积分的极限
+  - 完整算出自由粒子传播子，并识别其相位就是经典作用量
+  - 用传播子演化高斯波包，重现 2.10 节的波包扩散
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节立了纲领：从 $a$ 到 $b$ 的振幅是所有路径的 $\ee^{\ii S/\hbar}$ 之和。
+但「对所有路径求和」还只是一句话——路径有不可数无穷多条，怎么加？
+这一节我们把这个和真的算出来，对象是最简单的体系：自由粒子（$V=0$）。
+
+先给这个「从 $a$ 到 $b$ 的振幅」起个正式名字。
+
+## 传播子是什么
+
+**传播子** $K(x_b,t_b;x_a,t_a)$ 定义为：粒子 $t_a$ 时刻确定在 $x_a$ 处，
+$t_b$ 时刻在 $x_b$ 处被找到的概率振幅。用第 3 章的语言写就是演化算符的矩阵元：
+
+$$
+K(x_b,t_b;x_a,t_a)=\bra{x_b}\ee^{-\ii\hat H(t_b-t_a)/\hbar}\ket{x_a}
+$$
+
+它为什么值得单独起名？因为**知道了 $K$ 就知道了一切演化**。
+任意初态 $\Psi(x_a,t_a)$ 是各位置本征态的叠加，每个成分独立传播，所以
+
+$$
+\Psi(x_b,t_b)=\int K(x_b,t_b;x_a,t_a)\,\Psi(x_a,t_a)\,\dd x_a
+$$
+
+传播子是薛定谔方程的「万能解」：解一次 $K$，任何初条件的解都是一次积分的事。
+（数学上这正是格林函数的角色：$K$ 满足薛定谔方程，初条件是
+$K\to\delta(x_b-x_a)$ 当 $t_b\to t_a$——一开始粒子就在 $x_a$，别处振幅为零。）
+
+$K$ 还有一条「拼接」性质，直接继承自路径的可拼接性：
+先从 $a$ 到中间点 $c$、再从 $c$ 到 $b$，对所有中间点求和，等于直接从 $a$ 到 $b$：
+
+$$
+K(b,a)=\int K(b,c)\,K(c,a)\,\dd x_c
+$$
+
+这条性质马上就要大显身手——它允许我们把长时间的传播切成许多小段。
+
+## 把路径积分定义清楚：时间切片
+
+<DualView>
+<div slot="left">
+
+**怎么给「所有路径」编号？** 学定积分的老办法：先离散、再取极限。
+
+把时间段 $t_a\to t_b$ 切成 $N$ 小段，每段 $\varepsilon=(t_b-t_a)/N$。
+一条路径由它在各个切片时刻的位置 $x_1,x_2,\dots,x_{N-1}$ 决定
+（两端 $x_0=x_a$、$x_N=x_b$ 固定），段与段之间用直线连。
+
+「对所有路径求和」= 让每个 $x_j$ 独立地跑遍整条实轴，
+也就是 $N-1$ 重普通积分；最后让 $N\to\infty$。
+上一节「插无穷多块全是缝的挡板」的图像，在这里变成了严格定义。
+
+</div>
+<div slot="right">
+
+$$
+K(b,a)=\lim_{N\to\infty}\frac1A\int\frac{\dd x_1}{A}\cdots\frac{\dd x_{N-1}}{A}\;\ee^{\ii S(x_0,\dots,x_N)/\hbar}
+$$
+
+其中折线路径的作用量按段累加：
+
+$$
+S=\sum_{j=0}^{N-1}\varepsilon\left[\frac{m}{2}\Bigl(\frac{x_{j+1}-x_j}{\varepsilon}\Bigr)^2-V(x_j)\right]
+$$
+
+$A$ 是每一步的归一化常数（保证极限存在），下面的推导会顺带把它定出来：
+
+$$
+A=\sqrt{\frac{2\pi\ii\hbar\varepsilon}{m}}
+$$
+
+</div>
+</DualView>
+
+## 自由粒子：把积分算到底
+
+<Derivation title="自由粒子传播子的完整推导" level="进阶" minutes={12} open={true}>
+
+$V=0$，要算的是一串嵌套的高斯型积分。全程只用一个工具——高斯积分公式
+（对复参数 $\alpha$ 同样成立，理解为解析延拓）：
+
+$$
+\int_{-\infty}^{\infty}\ee^{\ii\alpha u^2}\dd u=\sqrt{\frac{\pi\ii}{\alpha}}
+$$
+
+**第一步：单步传播子。** 一小段 $\varepsilon$ 内只有直线一条「路径」可言，振幅是
+
+$$
+K_\varepsilon(x_{j+1},x_j)=\frac1A\exp\!\left[\frac{\ii m(x_{j+1}-x_j)^2}{2\hbar\varepsilon}\right]
+$$
+
+**第二步：拼接两步。** 用拼接公式把两段 $\varepsilon$ 合成一段 $2\varepsilon$，
+对中间点 $x_1$ 积分：
+
+$$
+K_{2\varepsilon}(x_2,x_0)=\frac1{A^2}\int\dd x_1\,
+\exp\!\left[\frac{\ii m}{2\hbar\varepsilon}\bigl[(x_2-x_1)^2+(x_1-x_0)^2\bigr]\right]
+$$
+
+把指数里的二次式对 $x_1$ 配方：
+
+$$
+(x_2-x_1)^2+(x_1-x_0)^2=2\Bigl(x_1-\frac{x_0+x_2}{2}\Bigr)^2+\frac{(x_2-x_0)^2}{2}
+$$
+
+第二项与 $x_1$ 无关，提出去；第一项用高斯公式积掉
+（令 $u=x_1-\frac{x_0+x_2}2$，$\alpha=\frac{m}{\hbar\varepsilon}$）：
+
+$$
+K_{2\varepsilon}(x_2,x_0)=\frac1{A^2}\sqrt{\frac{\pi\ii\hbar\varepsilon}{m}}\,
+\exp\!\left[\frac{\ii m(x_2-x_0)^2}{2\hbar(2\varepsilon)}\right]
+$$
+
+**关键观察**：结果和单步传播子形状完全一样，只是 $\varepsilon\to2\varepsilon$。
+若取 $A=\sqrt{2\pi\ii\hbar\varepsilon/m}$，系数恰好整理成
+$\sqrt{m/2\pi\ii\hbar(2\varepsilon)}$——归一化常数就是这样被「自洽」定下来的。
+
+**第三步：归纳到 N 步。** 每积掉一个中间点，传播子保持同一形状、时间加一段。
+$N$ 步之后（$N\varepsilon=t$，记 $t=t_b-t_a$、$x=x_b-x_a$）：
+
+$$
+\boxed{\;K(x_b,t_b;x_a,t_a)=\sqrt{\frac{m}{2\pi\ii\hbar t}}\,
+\exp\!\left[\frac{\ii m(x_b-x_a)^2}{2\hbar t}\right]\;}
+$$
+
+$N\to\infty$ 的极限是平庸的——形状根本不随 $N$ 变。
+
+**第四步：检验。**
+- $t\to0$ 时，指数振荡无限快、系数发散，这正是 $\delta(x_b-x_a)$ 的一种表示。初条件对。
+- 代回薛定谔方程 $\ii\hbar\partial_t K=-\frac{\hbar^2}{2m}\partial_{x_b}^2K$，两边逐项对得上（动手验一次，五行）。
+
+</Derivation>
+
+<Callout type="insight" title="相位正是经典作用量">
+自由粒子从 $x_a$ 匀速走到 $x_b$（用时 $t$）的经典作用量是
+
+$$
+S_{\text{cl}}=\int_0^t\frac{m}{2}\Bigl(\frac{x_b-x_a}{t}\Bigr)^2\dd t'=\frac{m(x_b-x_a)^2}{2t}
+$$
+
+对比推导结果：$K\propto\ee^{\ii S_{\text{cl}}/\hbar}$——
+无穷多条路径加完，相位竟然**恰好**等于那一条经典路径的作用量，
+所有量子修正都收进了前面的系数 $\sqrt{m/2\pi\ii\hbar t}$。
+
+这不是自由粒子独享的运气：只要拉格朗日量是坐标和速度的二次式
+（自由粒子、谐振子、匀强场都算），路径积分都精确等于
+$F(t)\,\ee^{\ii S_{\text{cl}}/\hbar}$，涨落部分与端点无关。
+上一节的驻相论证在二次体系里从「近似」升格为「精确」。
 </Callout>
 
-## 内容规划
+## 和波包扩散对账
 
-- 传播子的定义与性质
-- 自由粒子传播子的计算
-- 与格林函数的关系
+传播子要是算对了，就必须重现我们已经知道的物理。
+[2.10 节](/ch/02-wavefunction/10-free-particle/)用动量叠加法算过：
+初始宽度 $\sigma_0$ 的自由高斯波包会扩散，宽度随时间增长。现在用 $K$ 再算一遍。
 
+取初态为中心在原点的高斯波包 $\Psi(x_a,0)\propto\ee^{-x_a^2/4\sigma_0^2}$，代入演化公式：
+
+$$
+\Psi(x,t)=\int K(x,t;x_a,0)\,\Psi(x_a,0)\,\dd x_a
+\;\propto\;\int\dd x_a\exp\!\left[\frac{\ii m(x-x_a)^2}{2\hbar t}-\frac{x_a^2}{4\sigma_0^2}\right]
+$$
+
+指数仍是 $x_a$ 的二次式——又是一个高斯积分，配方后积掉，整理得
+
+$$
+|\Psi(x,t)|^2\propto\exp\!\left[-\frac{x^2}{2\sigma(t)^2}\right],\qquad
+\sigma(t)=\sigma_0\sqrt{1+\Bigl(\frac{\hbar t}{2m\sigma_0^2}\Bigr)^2}
+$$
+
+与 2.10 节的结果一字不差：展宽时间 $\tau=2m\sigma_0^2/\hbar$，越窄的波包散得越快。
+两种语言、同一个物理——这是等价性的第一次实物对账。
+
+<Callout type="warning" title="传播子不是概率，别急着取模平方">
+$|K(b,a)|^2$ 对自由粒子等于 $m/2\pi\hbar t$，与 $x_b$ 无关——
+这不是说「粒子等概率出现在任何地方」的合理分布（它根本不可归一化）。
+原因是初态 $\delta(x-x_a)$ 本身不是物理上可实现的态（无限窄、无限大动量不确定度）。
+$K$ 的正确用法是当**积分核**：夹在真实的、可归一化的波函数中间用。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '传播子定义', latex: 'K(b,a)=\\bra{x_b}\\ee^{-\\ii\\hat H(t_b-t_a)/\\hbar}\\ket{x_a}', note: '演化算符的位置表象矩阵元；t_b→t_a 时趋于 δ(x_b−x_a)' },
+    { name: '演化万能公式', latex: '\\Psi(x_b,t_b)=\\int K(b,a)\\,\\Psi(x_a,t_a)\\,\\dd x_a', note: '解一次 K，任何初条件都只剩一次积分' },
+    { name: '拼接性质', latex: 'K(b,a)=\\int K(b,c)\\,K(c,a)\\,\\dd x_c', note: '时间切片法的根据；也叫 Chapman-Kolmogorov 关系' },
+    { name: '自由粒子传播子', latex: 'K=\\sqrt{\\frac{m}{2\\pi\\ii\\hbar t}}\\,\\ee^{\\ii m(x_b-x_a)^2/2\\hbar t}', note: '相位 = 经典作用量 m(Δx)²/2t；二次拉氏量的普遍特征' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'pi2-1',
+      prompt: '传播子 K(b,a) 的物理意义是：',
+      options: [
+        '粒子 t_a 时刻位于 x_a 的条件下，t_b 时刻在 x_b 处被找到的概率振幅',
+        '粒子从 x_a 走到 x_b 的概率',
+        '粒子沿经典路径从 a 到 b 的振幅',
+        '位置 x_a 与 x_b 处波函数的关联函数',
+      ],
+      answer: 0,
+      distractors: {
+        1: '概率要对振幅取模平方，而且 δ 初态不可归一化，|K|² 本身不能当概率分布用。',
+        2: 'K 包含所有路径的贡献；只是对二次拉氏量，加总后的相位恰好等于经典路径的作用量。',
+      },
+      explain: 'K 是演化算符的位置表象矩阵元 ⟨x_b|U(t)|x_a⟩，是振幅不是概率；它的正确用法是当积分核演化任意初态。',
+    },
+    {
+      id: 'pi2-2',
+      prompt: '自由粒子传播子 K ∝ e^{iS_cl/ħ}，相位恰好是经典作用量。这个「恰好」成立的条件是：',
+      options: [
+        '拉格朗日量是坐标与速度的二次式',
+        '任何势场下都精确成立',
+        '只在 ħ→0 的极限下成立',
+        '只对 V=0 成立',
+      ],
+      answer: 0,
+      distractors: {
+        1: '一般势场下驻相只是近似（半经典近似）；二次体系的特殊性在于高阶变分为零。',
+        3: '谐振子、匀强场同样精确满足 K = F(t)e^{iS_cl/ħ}，不止自由粒子。',
+      },
+      explain: '二次拉氏量下 S[x_cl+η] = S[x_cl] + 纯二次涨落项，涨落积分与端点无关，全部收进系数 F(t)。这也是谐振子传播子能精确求出的原因。',
+    },
+    {
+      id: 'pi2-3',
+      prompt: '关于时间切片定义 ∫𝒟x(t)，正确的说法是：（多选）',
+      options: [
+        '一条离散路径由各切片时刻的位置 x₁,…,x_{N−1} 指定，对它们做 N−1 重积分',
+        '归一化常数 A=√(2πiħε/m) 由拼接自洽性定出',
+        '只有可导的光滑路径参与求和',
+        '拼接性质 K(b,a)=∫K(b,c)K(c,a)dx_c 是切片法成立的根据',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: '恰恰相反：折线路径在 N→∞ 时典型地处处不可导，光滑路径在求和中是零测集。',
+      },
+      explain: '切片法把无穷维积分定义为普通多重积分的极限；每积掉一个中间点传播子形状不变、时间加一段，这个自洽性同时定出了 A。',
+    },
+    {
+      id: 'pi2-4',
+      type: 'numeric',
+      prompt: '初始宽度 σ₀=1.0 nm 的电子高斯波包，展宽时间 τ=2mσ₀²/ħ 是多少飞秒？（m=9.11×10⁻³¹ kg，ħ=1.055×10⁻³⁴ J·s）',
+      answer: 17.3,
+      tolerance: 1.5,
+      unit: 'fs',
+      explain: 'τ = 2×9.11×10⁻³¹×(10⁻⁹)²/1.055×10⁻³⁴ ≈ 1.73×10⁻¹⁴ s ≈ 17.3 fs。用传播子演化高斯波包得到的 σ(t) 公式与 2.10 节动量叠加法完全一致——两种语言对同一个物理记的账必须相同。',
+    },
+  ]}
+/>
+
+## 接下来
+
+我们已经从路径积分一侧算出了具体结果，并验证它满足薛定谔方程。
+但「验证一个例子」不等于「证明两种表述等价」。下一节做一件更彻底的事：
+从短时间切片出发，**推导出**薛定谔方程本身——让第 2 章的出发点变成路径积分的定理。

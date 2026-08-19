@@ -1,16 +1,239 @@
 ---
-title: 'Symmetry and parity'
-summary: 'When the potential is symmetric, eigenstates have definite parity.'
+title: Symmetry and parity
 section: '4.1'
 order: 1
-status: stub
+summary: 'When a potential is left-right symmetric, every bound-state wavefunction is either even or odd — not a coincidence, but a free gift delivered by the commutator [H,P] = 0.'
+status: done
+prereqs:
+  - 02-wavefunction/08-finite-well
+  - 03-formalism/06-commutators
+objectives:
+  - Write down the parity operator and prove that it commutes with the Hamiltonian for a symmetric potential
+  - Explain why one-dimensional bound states automatically have definite parity, alternating even and odd with energy
+  - "Use parity to cut a symmetric-potential problem in half: solve only half the axis, with the boundary condition ψ'(0)=0 or ψ(0)=0"
+  - Decide when quantities like ⟨x⟩ must vanish, without computing a single integral
+sims: ['harmonic-oscillator']
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+[Chapter 3](/en/ch/03-formalism/) ended with a promise: armed with the new language, one-dimensional problems can move faster. This section pays the first installment.
+
+Start by revisiting something that appeared in chapter 2 but went unexplained at the time. Line up the eigenstates of the [harmonic oscillator](/en/ch/02-wavefunction/09-harmonic-oscillator/) from lowest to highest: $\psi_0$ is a bell curve, mirror-symmetric about the origin; $\psi_1$ is negative on the left and positive on the right, changing sign under reflection; $\psi_2$ is symmetric again; $\psi_3$ antisymmetric again… **Even, odd, even, odd, alternating without a single exception.** The [finite square well](/en/ch/02-wavefunction/08-finite-well/) does the same — back then we even split the solutions outright into an "even class" and an "odd class" to solve them.
+
+The pattern is too tidy to be a coincidence. But in the language of chapter 2 it was merely "that's how the solutions happen to come out": change the potential and you must solve again, observe again. What we were missing is an argument that delivers the conclusion **in advance**.
+
+The commutators of chapter 3 exist for precisely this kind of job.
+
+## The mirror operator
+
+Define the **parity operator** $\hat P$: its action is simply to hold the wavefunction up to a mirror,
+
+$$
+\hat P\,\psi(x)=\psi(-x)
+$$
+
+"Parity" sounds arcane, but it just means "does it change when left and right are swapped". Two properties can be read off immediately:
+
+**First, reflecting twice is the same as not reflecting at all:** $\hat P^2=\hat 1$. So if $\psi$ is an eigenstate of $\hat P$ with eigenvalue $\lambda$, then $\lambda^2=1$, leaving only
+
+$$
+\lambda=+1\quad\text{or}\quad\lambda=-1
+$$
+
+States with eigenvalue $+1$ satisfy $\psi(-x)=\psi(x)$: they are **even functions** (even-parity states). States with eigenvalue $-1$ satisfy $\psi(-x)=-\psi(x)$: **odd functions** (odd-parity states). Beyond $\pm1$ there is no third option.
+
+**Second, $\hat P$ is Hermitian** (a change of variables $x\to-x$ verifies $\braket{\phi}{\hat P\psi}=\braket{\hat P\phi}{\psi}$), so by the standard of [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) it is a legitimate observable — measure it, and the only possible answers are $+1$ and $-1$.
+
+Any function splits into an even part plus an odd part: $\psi=\frac12(\psi(x)+\psi(-x))+\frac12(\psi(x)-\psi(-x))$. In chapter 3 language: the even and odd functions together form a complete basis, and the spectral decomposition of $\hat P$ is clean.
+
+## The key step: commuting with H
+
+The central result of [section 3.6](/en/ch/03-formalism/06-commutators/) was: **two operators that commute share a common eigenbasis; a commuting observable is conserved.** So now we compute $[\hat H,\hat P]$.
+
+<Derivation title="Derivation: [H, P] = 0 when V(−x) = V(x)" level="基础" minutes={6} open={true}>
+
+The Hamiltonian is $\hat H=-\frac{\hbar^2}{2m}\frac{\dd^2}{\dd x^2}+V(x)$. To compute $[\hat H,\hat P]$, apply $\hat H\hat P$ and $\hat P\hat H$ to an arbitrary $\psi(x)$ and check whether the results agree.
+
+**The kinetic term first.** One order of operations is mirror first, then second derivative:
+
+$$
+\frac{\dd^2}{\dd x^2}\big[\psi(-x)\big]
+$$
+
+By the chain rule the first derivative gives $-\psi'(-x)$ (the inner function $-x$ contributes a minus sign), and differentiating again contributes another one: $(-1)^2\psi''(-x)=\psi''(-x)$.
+
+The other order is second derivative first, then mirror: $\hat P\big[\psi''(x)\big]=\psi''(-x)$.
+
+**They agree.** The minus sign appeared twice and cancelled — a second derivative is inherently blind to left versus right. So the kinetic term always commutes with $\hat P$, no conditions attached.
+
+**Now the potential term.** One side is
+
+$$
+V(x)\,\hat P\psi=V(x)\,\psi(-x)
+$$
+
+The other is
+
+$$
+\hat P\big[V(x)\psi(x)\big]=V(-x)\,\psi(-x)
+$$
+
+Subtracting:
+
+$$
+[V,\hat P]\,\psi=\big[V(x)-V(-x)\big]\,\psi(-x)
+$$
+
+For this to vanish for every $\psi$, it is necessary and sufficient that
+
+$$
+V(-x)=V(x)
+$$
+
+**Conclusion: the potential is left-right symmetric $\Longleftrightarrow$ $[\hat H,\hat P]=0$.** This is the precise meaning of the word "symmetry" in operator language: the mirror transformation leaves the Hamiltonian unchanged.
+
+</Derivation>
+
+## What commuting buys you
+
+<DualView>
+<div slot="left">
+
+**The intuitive version.** A symmetric potential means the mirror-image world obeys the very same Schrödinger equation. Reflect any stationary state and you get another stationary state of the same energy.
+
+If that energy level holds **only one** state (and one-dimensional bound states do exactly that), the mirror image can only be the state itself times a constant — and reflecting twice must restore the original, so the constant can only be $+1$ or $-1$. **Symmetry forces the wavefunction to be purely even or purely odd.**
+
+From the conservation angle: $[\hat H,\hat P]=0$ says parity does not change in time. A state that starts even stays even forever — the Schrödinger equation will never "skew" it.
+
+</div>
+<div slot="right">
+
+From $[\hat H,\hat P]=0$ and the theorem of section 3.6: there exists a **common eigenbasis** of $\hat H$ and $\hat P$.
+
+Add the signature property of one-dimensional bound states — **no degeneracy** (if two solutions $\psi_1,\psi_2$ shared an energy, their Wronskian $\psi_1\psi_2'-\psi_2\psi_1'$ would be constant; bound states vanish at infinity, forcing that constant to 0, so the two solutions are proportional — the same state) — and the conclusion upgrades to:
+
+$$
+\hat H\psi_n=E_n\psi_n\ \Longrightarrow\ \hat P\psi_n=\pm\psi_n
+$$
+
+Every bound state **must** have definite parity — not merely "can be chosen to".
+
+</div>
+</DualView>
+
+<Callout type="warning" title="Two premises, and you need both">
+The conclusion above rests on two conditions, and losing either one breaks it:
+
+1. **The potential must be symmetric.** If $V(-x)\ne V(x)$ then $[\hat H,\hat P]\ne0$, and eigenstates are in general neither even nor odd. A double well that is deep on the left and shallow on the right, for instance, has a ground state leaning bodily toward the deep side.
+2. **No degeneracy.** The continuous spectrum is degenerate ($\ee^{\ii kx}$ and $\ee^{-\ii kx}$ share an energy), and a single plane wave has no definite parity — its mirror image is a different state. There one can only say the degenerate states "can be combined" into one even and one odd ($\cos kx$ and $\sin kx$); the combination is a choice, not a necessity.
 </Callout>
 
-## Planned contents
+## Why even and odd alternate exactly
 
-- The parity operator and [H,P] = 0
-- Why even and odd states alternate
+"Even or odd, nothing else" is settled, but we are still half a step from the opening observation: why, ordered by energy, does the sequence run even, odd, even, odd?
+
+The answer hides in **node counting**. Chapter 2 showed the pattern repeatedly: ordering one-dimensional bound states by energy, the $n$-th state (counting from 0) has exactly $n$ nodes — the higher the energy, the more sharply the wavefunction bends and the more times it crosses zero. Now splice that together with parity:
+
+- **An odd function must pass through the origin**: $\psi(-0)=-\psi(0)$ forces $\psi(0)=0$, so the origin is always a node. Whereas if an even function vanished at the origin, its derivative (the derivative of an even function is odd) would vanish there too, and by uniqueness of solutions the entire curve would be identically zero — so **an even state can never vanish at the origin**.
+- In a symmetric potential nodes also come in mirror pairs: if $x_0$ is a node, so is $-x_0$. Hence **an even state has an even number of nodes, an odd state an odd number**.
+
+The node counts $0,1,2,3,\dots$ climb one at a time; even counts belong to even states, odd counts to odd states — **the alternation is locked in**. The ground state has 0 nodes and is always even; the first excited state has 1 node and is always odd. The harmonic oscillator, the finite well, and every symmetric one-dimensional potential you will ever meet all obey this, with no further checking required.
+
+Step through $n$ in the simulation below and count the nodes, watch the parity, with your own eyes:
+
+<Sim name="harmonic-oscillator" />
+
+## Three benefits, free of charge
+
+<Callout type="insight" title="Knowing the answer is zero without doing the integral">
+Let $\psi$ have definite parity, and ask for $\braket{\psi}{\hat x\psi}=\int|\psi(x)|^2\,x\,\dd x$.
+
+Whether $\psi$ is even or odd, $|\psi|^2$ is an **even function** (two sign flips cancel); multiplied by the odd function $x$, the whole integrand is odd — and its integral over a symmetric interval is **zero, no computation needed**. In physical terms: in a symmetric potential, a stationary state keeps its average position dead centre, forever.
+
+This parity arithmetic reaches much further. The transition matrix element $\int\psi_m\, x\,\psi_n\,\dd x$ can only be non-zero when $\psi_m$ and $\psi_n$ have **opposite parity** (even × odd × odd = even is the only way to survive) — the embryo of the **selection rules** of spectroscopy: radiative transitions in atoms must change parity. When [chapter 6](/en/ch/06-hydrogen/) reaches the hydrogen spectrum, this one rule will strike out half of the "seemingly possible" lines at a stroke.
+</Callout>
+
+The second benefit is **half the work**. Since the eigenstates of a symmetric potential are either even or odd, it suffices to solve on the half-axis $x\ge0$:
+
+- For **even states**: impose $\psi'(0)=0$ at the origin (an even function is flat at its centre of symmetry);
+- For **odd states**: impose $\psi(0)=0$.
+
+[Section 2.8](/en/ch/02-wavefunction/08-finite-well/) split the finite well into a $\tan z$ family and a $-\cot z$ family, which looked like an algebraic trick at the time — now it is transparent: that was parity doing the sorting. The $\tan$ family are the even states, the $\cot$ family the odd ones, and the two families take the stage alternately along the energy axis. Each time the dimensionless parameter $z_0=a\sqrt{2mV_0}/\hbar$ crosses another $\pi/2$, one more state appears, even and odd taking turns.
+
+The third benefit is cashed in during the numerical work of [section 4.4](/en/ch/04-1d-problems/04-finite-difference/): solving on the half-axis halves the matrix, and blocking by parity also keeps nearly degenerate even and odd states from getting numerically mixed.
+
+<KeyFormulas
+  items={[
+    { name: 'Parity operator', latex: '\\hat P\\,\\psi(x)=\\psi(-x),\\qquad \\hat P^2=\\hat 1\\ \\Rightarrow\\ \\lambda=\\pm1', note: 'Hermitian and unitary; its eigenstates are the even and odd functions' },
+    { name: 'Symmetry condition', latex: 'V(-x)=V(x)\\ \\Longleftrightarrow\\ [\\hat H,\\hat P]=0', note: 'The kinetic term always commutes; the condition falls entirely on the potential' },
+    { name: 'Bound-state parity', latex: '\\hat H\\psi_n=E_n\\psi_n\\ \\Rightarrow\\ \\psi_n(-x)=\\pm\\psi_n(x)', note: '1D bound states are non-degenerate, so parity is forced, not chosen; even and odd alternate with n' },
+    { name: 'Parity selection rule', latex: '\\int\\psi_m\\,x\\,\\psi_n\\,\\dd x\\ne0\\ \\text{requires}\\ \\psi_m,\\psi_n\\ \\text{of opposite parity}', note: 'An odd integrand integrates to zero; the embryo of spectroscopic selection rules' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'par-1',
+      prompt: 'Why can the eigenvalues of the parity operator only be +1 or −1?',
+      options: [
+        'Because P² = 1, so eigenvalues must satisfy λ² = 1',
+        'Because the wavefunction must be normalised',
+        'Because energy eigenvalues are real',
+        'Because one-dimensional bound states are non-degenerate',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Normalisation constrains the norm of the wavefunction and has nothing to do with parity eigenvalues.',
+        2: 'That is a consequence of Hermiticity — it guarantees λ is real, but there are infinitely many reals; what pins them to ±1 is P² = 1.',
+        3: 'Non-degeneracy answers "why must eigenstates have definite parity", not "why does parity take only two values".',
+      },
+      explain: 'Reflecting twice does nothing at all: P²ψ = ψ. If Pψ = λψ, then λ²ψ = ψ, hence λ = ±1. Hermiticity separately guarantees λ is real; together the two nail the answer down to even (+1) and odd (−1).',
+    },
+    {
+      id: 'par-2',
+      prompt: 'For one-dimensional bound states in a symmetric potential V(−x) = V(x), which statements are correct? (Select all that apply.)',
+      options: [
+        'The ground state is always even parity',
+        '⟨x⟩ = 0 in every eigenstate',
+        'Ordered by energy, the eigenstates alternate even and odd',
+        'Any superposition of two eigenstates also has definite parity',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'A superposition of an even and an odd state (such as ψ₀ + ψ₁) is neither even nor odd — which is exactly why its probability distribution can lean to one side and slosh in time.',
+      },
+      explain: 'The ground state has no nodes, so it can only be even; definite parity makes |ψ|² even, so the integrand of ⟨x⟩ is odd and integrates to zero; node counts increasing one by one, combined with "even states have an even node count, odd states an odd one", gives the alternation. A superposition generally has no definite parity unless both components share the same parity.',
+    },
+    {
+      id: 'par-3',
+      prompt: 'When solving for the even-parity bound states of a symmetric potential on the half-axis x ≥ 0, the boundary condition to impose at the origin is:',
+      options: [
+        "ψ'(0) = 0",
+        'ψ(0) = 0',
+        "ψ(0) = ψ'(0) = 0",
+        'No condition is needed',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is the odd-state condition: an odd function must pass through the origin.',
+        2: 'Both conditions together would force ψ ≡ 0 by uniqueness of solutions — no particle.',
+        3: 'Without a condition at the origin the half-axis problem is underdetermined, and the even and odd families get mixed together.',
+      },
+      explain: 'An even function is necessarily flat at its centre of symmetry (zero derivative) but non-zero there; an odd function is exactly the opposite. Using ψ\'(0) = 0 to sift out the even family and ψ(0) = 0 for the odd family lets you solve just half the axis — half the work.',
+    },
+    {
+      id: 'par-4',
+      type: 'numeric',
+      prompt: 'A one-dimensional finite symmetric square well has dimensionless depth parameter z₀ = a√(2mV₀)/ħ = 4.0. How many bound states does it hold in total? (Hint: each time z₀ crosses another π/2 ≈ 1.571, the even and odd families take turns gaining one state.)',
+      answer: 3,
+      tolerance: 0.4,
+      explain: 'The number of bound states is N = floor(2z₀/π) + 1. 2×4/π ≈ 2.55, so N = 3: two even states plus one odd, ordered in energy as even, odd, even. However small z₀ gets, N ≥ 1 — the first even state always exists, which is section 2.8\'s "an arbitrarily shallow symmetric well holds at least one bound state".',
+    },
+  ]}
+/>
+
+## What comes next
+
+Parity has put the **bound states** in perfect order: even or odd, alternating level by level, with a pile of integrals now self-evidently zero.
+
+But the other half of chapter 2's world — the **continuum** states of [tunneling and scattering](/en/ch/02-wavefunction/11-tunneling/) — is still lying about loose. There we had only two numbers, the transmission $T$ and reflection $R$; they said "how many particles got through" but not what the potential **did** to the wave. The next section introduces a sharper quantity — the **phase shift**: everything a potential does to an incident wave ends up condensed into a single angle, "how far did it pull the waveform in, or push it out". And you will see that parity has a part in the continuum too — it splits scattering into two channels that never interfere with each other's business.

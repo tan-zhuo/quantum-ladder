@@ -1,24 +1,240 @@
 ---
-title: 'Exchange interaction and its spectral effects'
-summary: 'An energy difference with no interaction present.'
+title: The exchange interaction and its mark on spectra
 section: '8.4'
 order: 4
-status: stub
-sims: ['exchange-symmetry']
+summary: 'Helium''s Hamiltonian contains no spin, yet its levels split into two ladders by spin. Exchange symmetry locks the Coulomb energy to the spin orientation, manufacturing an energy difference that "looks like a force but isn''t" — and it unlocks the helium-spectrum puzzle and the ferromagnetism puzzle in one stroke.'
+status: done
+prereqs:
+  - 08-identical-particles/02-bosons-fermions
+  - 07-approximation/01-nondegenerate-perturbation
+  - 05-angular-momentum/06-clebsch-gordan
+objectives:
+  - Compute the energy of helium's 1s2s configuration in first-order perturbation theory, defining the direct integral J and the exchange integral K
+  - Explain why the triplet (orthohelium) lies below the singlet (parahelium), and quote the experimental numbers
+  - Show that the exchange interaction is not a new interaction but a symmetry-driven redistribution of Coulomb energy
+  - Explain the quantum origin of ferromagnetism with an effective spin Hamiltonian, and compute why the dipole interaction falls short
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Nineteenth-century spectroscopists saw something odd in the helium spectrum: the lines sorted themselves neatly into **two sets**, with transitions between the sets almost never occurring — as if the bottle held two different gases. For a while people genuinely believed it did, naming them "orthohelium" and "parahelium" and treating them as two substances.
+
+Only later did it become clear: the bottle holds one kind of helium. The two sets of lines correspond to the two values of the two electrons' **total spin** — singlet ($S=0$, parahelium) and triplet ($S=1$, orthohelium). And with that came something odder still:
+
+> For the same configuration (say one electron in $1s$ and one in $2s$), the singlet and triplet differ in energy by about **0.80 eV**.
+
+What is odd about that? Helium's Hamiltonian
+
+$$
+\hat{H}=\frac{\hat p_1^2}{2m}+\frac{\hat p_2^2}{2m}
+-\frac{2e^2}{4\pi\epsilon_0 r_1}-\frac{2e^2}{4\pi\epsilon_0 r_2}
++\frac{e^2}{4\pi\epsilon_0 r_{12}}
+$$
+
+**contains no spin from start to finish** (spin-field couplings and spin-orbit coupling are small enough to neglect for now; chapter 6's fine structure is only of order $10^{-4}$ eV). Spin appears nowhere in the energy, yet the energies sort themselves by spin, differing by nearly 1 eV — four orders of magnitude too much. Where does this energy come from?
+
+The perturbation tools of chapter 7 are ready to hand, and the last missing puzzle piece was fitted in the previous section: **the total spin, via the antisymmetry requirement, dictates the symmetry of the spatial wavefunction.** And the shape of the spatial wavefunction is something the Coulomb energy can see.
+
+## Settling the account: helium's 1s2s configuration
+
+<Derivation title="The singlet-triplet energy splitting" level="进阶" minutes={12} open={true}>
+
+**Step 0: set up the zeroth-order states.** Neglecting the electron-electron repulsion $e^2/4\pi\epsilon_0 r_{12}$, each electron lives in a hydrogen-like orbital (nuclear charge $Z=2$). Consider the excited configuration: one electron in $\phi_{1s}$, one in $\phi_{2s}$. By [section 8.2](/en/ch/08-identical-particles/02-bosons-fermions/), the spatial part has only two legal combinations:
+
+$$
+\psi_\pm(\vec{r}_1,\vec{r}_2)=\frac{1}{\sqrt2}\bigl[\phi_{1s}(\vec{r}_1)\phi_{2s}(\vec{r}_2)\pm\phi_{2s}(\vec{r}_1)\phi_{1s}(\vec{r}_2)\bigr]
+$$
+
+$\psi_+$ (symmetric) must pair with the spin singlet; $\psi_-$ (antisymmetric) with the spin triplet. The zeroth-order energies are equal: $E^{(0)}=E_{1s}+E_{2s}$.
+
+**Step 1: treat the electron repulsion as a perturbation and find the first-order correction.** Write $\hat V=\dfrac{e^2}{4\pi\epsilon_0 r_{12}}$. The first-order energy correction is the expectation value (the spin part is normalised and contracts away):
+
+$$
+E^{(1)}_\pm=\braket{\psi_\pm}{\hat V\,\psi_\pm}
+=\frac12\Bigl[\braket{ab}{\hat V\,ab}+\braket{ba}{\hat V\,ba}
+\pm\braket{ab}{\hat V\,ba}\pm\braket{ba}{\hat V\,ab}\Bigr]
+$$
+
+Here $\ket{ab}$ abbreviates $\phi_{1s}(\vec{r}_1)\phi_{2s}(\vec{r}_2)$. Since $\hat V$ is symmetric under $1\leftrightarrow2$, the four terms are equal in pairs, giving
+
+$$
+E^{(1)}_\pm=J\pm K
+$$
+
+**Step 2: meet the two integrals.**
+
+The **direct integral** $J$:
+
+$$
+J=\int|\phi_{1s}(\vec{r}_1)|^2\,\frac{e^2}{4\pi\epsilon_0 r_{12}}\,|\phi_{2s}(\vec{r}_2)|^2\,\dd^3r_1\dd^3r_2
+$$
+
+This is just the classical Coulomb repulsion energy of the two charge clouds $|\phi_{1s}|^2$ and $|\phi_{2s}|^2$ — no quantum strangeness whatsoever.
+
+The **exchange integral** $K$:
+
+$$
+K=\int\phi_{1s}^*(\vec{r}_1)\phi_{2s}^*(\vec{r}_2)\,\frac{e^2}{4\pi\epsilon_0 r_{12}}\,\phi_{2s}(\vec{r}_1)\phi_{1s}(\vec{r}_2)\,\dd^3r_1\dd^3r_2
+$$
+
+Notice that the orbitals on the two sides of the kernel have **swapped places** — this has no classical counterpart. It is an interference term: the interference between the two histories "particle 1 in $1s$, particle 2 in $2s$" and "the other way round". For nodeless overlapping real orbitals like $1s,2s$, $K>0$ (one can prove it is strictly positive here).
+
+**Step 3: read off the physics.**
+
+$$
+E_{\text{singlet}}=E^{(0)}+J+K,\qquad
+E_{\text{triplet}}=E^{(0)}+J-K,\qquad
+\Delta E=2K
+$$
+
+**The triplet is lower.** For helium 1s2s, experiment gives: triplet $2^3S_1$ at excitation energy 19.82 eV, singlet $2^1S_0$ at 20.62 eV — a splitting of 0.80 eV, i.e. $K\approx0.40$ eV. Evaluating the integral directly with hydrogen-like orbitals gives the same order of magnitude (somewhat too large, because screening is neglected).
+
+</Derivation>
+
+## Why is the triplet lower? — the Fermi hole
+
+The formula has answered; intuition is still owed. Look at $\psi_-$ at $\vec{r}_1=\vec{r}_2$:
+
+$$
+\psi_-(\vec{r},\vec{r})=\frac{1}{\sqrt2}\bigl[\phi_{1s}(\vec{r})\phi_{2s}(\vec{r})-\phi_{2s}(\vec{r})\phi_{1s}(\vec{r})\bigr]=0
+$$
+
+In the triplet, the probability density for the two electrons **to meet at the same point is identically zero**, and it is suppressed throughout each other's neighbourhood — every electron is surrounded by a "moat" its companion refuses to enter, called the **Fermi hole**. The electrons stay far apart on average, so the Coulomb repulsion $\propto1/r_{12}$ costs less. The singlet is the opposite: $\psi_+$ is enhanced at coincidence (a "Fermi heap"), and the repulsion bill runs high.
+
+<DualView>
+<div slot="left">
+
+**The one-sentence version.** Spin itself never appears in the energy, but spin **remote-controls the electrons' relative positions through the symmetry**, and position sets the Coulomb energy. Every joule of the energy difference is Coulomb energy — spin is merely the switch that decides "how the bill is paid".
+
+The chain: total spin → (antisymmetry requirement) → spatial symmetry → electrons approach/avoid → Coulomb energy high/low.
+
+</div>
+<div slot="right">
+
+**The expectation-value version.** For two general orthogonal orbitals $\phi_a,\phi_b$, the mean-square separation splits off a cross term:
+
+$$
+\bigl\langle r_{12}^2\bigr\rangle_\pm
+=\bigl\langle r_{12}^2\bigr\rangle_{\text{unsymmetrized}}
+\mp2\,\bigl|\braket{\phi_a}{\,\vec{r}\,\phi_b}\bigr|^2
+$$
+
+In the antisymmetric case (lower sign, i.e. $+2|\cdots|^2$) the mean-square separation is larger: the avoidance is computable, not a figure of speech. (For same-parity s orbitals like $1s,2s$ this particular matrix element vanishes by parity and the avoidance shows up in higher-order correlations, but $\psi_-(\vec{r},\vec{r})=0$ remains exact throughout.)
+
+</div>
+</DualView>
+
+<Callout type="warning" title="The exchange interaction is not a new force">
+Textbook shorthand like "exchange force" or "exchange interaction" invites confusion, so let us nail this down:
+
+The only interaction in the system **is the Coulomb interaction**; not one term has been added to the Hamiltonian. "Exchange interaction" means this: because the wavefunction must be (anti)symmetrized, the expectation value of the Coulomb energy acquires an extra piece, the exchange integral $\pm K$ — **a contribution classical physics does not have**. It is the product of "old force × new symmetry", not a new force.
+
+Two touchstones. First, if the two particles were distinguishable despite different spins (replace one electron by a muon, say), the $K$ term disappears — since when does a "force" care about particle identity? Second, the size of $K$ is set by **wavefunction overlap**: it is exactly zero for non-overlapping orbitals and decays exponentially with distance — which is also why exchange effects are always short-ranged.
 </Callout>
 
-## Planned contents
+## From helium to iron: the quantum origin of ferromagnetism
 
-- The exchange integral
-- Ortho- and parahelium
-- The quantum origin of ferromagnetism
+Abstract the conclusion one step. Since the energy depends only on whether the total spin is singlet or triplet, we can **rewrite it as a function of spin operators**. Using the fact that $\hat{\vec S}_1\cdot\hat{\vec S}_2$ takes the value $-\frac{3}{4}\hbar^2$ in the singlet and $+\frac{1}{4}\hbar^2$ in the triplet (the addition results of chapter 5), the two levels can be packaged into a single **effective Hamiltonian**:
 
-## Planned simulations
+$$
+\hat{H}_{\text{eff}}=\text{const}-\frac{2K}{\hbar^2}\,\hat{\vec S}_1\cdot\hat{\vec S}_2
+$$
 
-- `exchange-symmetry`
+Check by substitution: the triplet gets a relative shift of $-K/2$, the singlet $+3K/2$, and the gap is exactly $2K$. ✔
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="exchange-symmetry" />`.
+The significance of this form goes far beyond the helium atom: it says that **pure Coulomb + antisymmetry is equivalent to a spin-spin coupling**. Generalised to the countless atoms of a crystal lattice, it is the starting point of the theory of magnetism — the Heisenberg model $\hat H=-\sum_{ij}J_{ij}\,\hat{\vec S}_i\cdot\hat{\vec S}_j/\hbar^2$. For $J_{ij}>0$ the spins prefer to align in parallel: **ferromagnetism**.
+
+<Callout type="insight" title="Why ferromagnetism has to be a quantum effect: an order-of-magnitude audit">
+The most obvious candidate for a "spin-aligning mechanism" is the magnetic dipole interaction — each electron is a tiny compass needle, and needles orient one another. Check whether it is enough. For two electron magnetic moments ($\mu_B=9.27\times10^{-24}$ J/T each) a lattice spacing $r\approx0.25$ nm apart, the dipole energy is
+
+$$
+U\sim\frac{\mu_0}{4\pi}\frac{\mu_B^2}{r^3}
+=\frac{10^{-7}\times(9.27\times10^{-24})^2}{(2.5\times10^{-10})^3}
+\approx5.5\times10^{-25}\,\text{J}\approx3.4\ \mu\text{eV}
+$$
+
+Converted to temperature, that is only **0.04 K**: thermal motion above a few hundredths of a kelvin would scramble such an alignment completely. Yet iron's Curie temperature is **1043 K** — an energy scale of about 0.09 eV, more than four orders of magnitude beyond the dipole interaction.
+
+What bridges the chasm is precisely the exchange interaction: $K$ is a Coulomb-scale quantity (a good fraction of an eV), and in helium it is already 0.4 eV. The "aligning force" of ferromagnetism is not magnetic at all — it is Coulomb repulsion acting through the hands of antisymmetry. A magnet is quantum mechanics you can hold. (Incidentally, the sign of the exchange integral depends on the orbital details; for $J_{ij}<0$ the spins prefer antiparallel alignment — that is an antiferromagnet.)
+</Callout>
+
+## The spectrum puzzle, revisited
+
+Finally, close the case we opened with. The two sets of lines rarely cross-transition because the operator for optical transitions (electric dipole) contains no spin and cannot change the total spin: the singlet-to-triplet matrix element is approximately zero (the "spin selection rule" $\Delta S=0$). So parahelium and orthohelium each transition internally, forming two independent line systems; $2^3S_1$ cannot drop back to the $1^1S_0$ ground state and becomes a metastable state living over two hours — one of the longest-lived metastable states in atomic physics. The "two heliums" are one helium's two spin families, driven apart by exchange symmetry.
+
+<KeyFormulas
+  items={[
+    { name: 'First-order energies', latex: 'E_\\pm=E^{(0)}+J\\pm K', note: '+ pairs with symmetric space (spin singlet), − with antisymmetric space (triplet)' },
+    { name: 'Direct integral', latex: 'J=\\int|\\phi_a(\\vec{r}_1)|^2\\,\\frac{e^2}{4\\pi\\epsilon_0 r_{12}}\\,|\\phi_b(\\vec{r}_2)|^2\\,\\dd^3r_1\\dd^3r_2', note: 'The classical Coulomb energy of two charge clouds' },
+    { name: 'Exchange integral', latex: 'K=\\int\\phi_a^*(\\vec{r}_1)\\phi_b^*(\\vec{r}_2)\\,\\frac{e^2}{4\\pi\\epsilon_0 r_{12}}\\,\\phi_b(\\vec{r}_1)\\phi_a(\\vec{r}_2)\\,\\dd^3r_1\\dd^3r_2', note: 'No classical counterpart; set by orbital overlap, short-ranged' },
+    { name: 'Effective spin coupling', latex: '\\hat{H}_{\\text{eff}}=\\text{const}-\\frac{2K}{\\hbar^2}\\,\\hat{\\vec S}_1\\cdot\\hat{\\vec S}_2', note: 'Prototype of the Heisenberg model; K>0 → parallel spins more stable, ferromagnetism' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ex-1',
+      prompt: 'Helium''s Hamiltonian contains no spin, yet the singlet and triplet differ by about 0.8 eV. The essence of this energy difference is:',
+      options: [
+        'Coulomb repulsion energy — the spin, via the antisymmetry requirement, sets the symmetry of the spatial wavefunction and hence the average electron separation',
+        'The magnetic interaction between the two electrons'' spin magnetic moments',
+        'A fine-structure effect of spin-orbit coupling',
+        'A new type of fundamental interaction appearing only between identical particles',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The magnetic dipole interaction is only of μeV order — five orders of magnitude short.',
+        2: 'Fine structure is about 10⁻⁴ eV, likewise nowhere near enough.',
+        3: 'Not one term has been added to the Hamiltonian; the "exchange interaction" is the old Coulomb force wearing the new symmetry.',
+      },
+      explain: 'The triplet''s spatial wavefunction is antisymmetric, so the probability of electrons being near each other is suppressed (the Fermi hole) and the Coulomb bill is small; the singlet is the reverse. Every bit of the 2K difference is Coulomb energy — spin merely "remote-controls" how the bill gets paid, through the symmetry.',
+    },
+    {
+      id: 'ex-2',
+      type: 'numeric',
+      prompt: 'In helium''s 1s2s configuration the triplet 2³S lies at excitation energy 19.82 eV and the singlet 2¹S at 20.62 eV. Using E± = E⁽⁰⁾ + J ± K, find the exchange integral K in eV.',
+      answer: 0.4,
+      tolerance: 0.02,
+      unit: 'eV',
+      explain: 'The splitting is ΔE = E₊ − E₋ = 2K = 20.62 − 19.82 = 0.80 eV, so K = 0.40 eV. Note that J cannot be extracted from these two numbers alone — it lifts both levels together and only surfaces in an absolute energy calculation.',
+    },
+    {
+      id: 'ex-3',
+      prompt: 'Which statements about the exchange integral K are correct? (Select all that apply.)',
+      options: [
+        'It arises from interference between the "two ways of occupying the orbitals" and has no counterpart in classical electromagnetism',
+        'It decays as the overlap of the two orbitals shrinks, and vanishes when the orbitals do not overlap',
+        'It always lowers the energy of the parallel-spin configuration',
+        'In the effective spin Hamiltonian it plays the role of the spin coupling constant',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'For cases like helium 1s2s, K > 0 and the triplet lies lower; but in general the sign of the exchange coupling depends on orbital structure and intermediate processes — systems with negative K (favouring antiparallel spins) are antiferromagnets.',
+      },
+      explain: 'K is an interference term, short-ranged, and can be packaged into a coupling of the form −(2K/ħ²)S₁·S₂; only "always favours parallel" fails — magnetic materials come in ferromagnetic and antiferromagnetic varieties, matching the two signs of the coupling constant.',
+    },
+    {
+      id: 'ex-4',
+      prompt: 'Iron''s Curie temperature is as high as 1043 K. Why can we rule out the magnetic dipole interaction as what sustains ferromagnetism?',
+      options: [
+        'The dipole energy converts to about 0.04 K, over four orders of magnitude below 1043 K — thermal motion would have destroyed it long ago',
+        'The magnetic dipole interaction exists only in vacuum',
+        'Iron atoms have no magnetic moment',
+        'The dipole interaction always drives spins antiparallel',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The dipole interaction exists in media just as well; it is simply too weak.',
+        2: 'Iron atoms certainly have magnetic moments — otherwise there would be no ferromagnetism to discuss.',
+        3: 'The dipole interaction''s preferred orientation depends on geometry, but the crux here is magnitude, not sign.',
+      },
+      explain: 'μ₀μ_B²/4πr³ at lattice spacing comes to about 3.4 μeV ≈ 0.04 K. Only the Coulomb-scale exchange interaction can hold up 1043 K (about 0.09 eV). The everyday sight of a magnet on a fridge is antisymmetry pulling the strings of Coulomb energy.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Helium has just two electrons, and we have already filled pages with symmetrized combinations. Iron has 26, whose antisymmetrized expansion runs to $26!\approx4\times10^{26}$ terms; a mole of metal does not bear thinking about. Clearly, the road of "writing out every term" has come to its end.
+
+The next section switches bookkeeping systems: stop asking "which particle is in which state" (a question that should never have been asked — particles carry no labels) and ask instead "**how many particles are in each state**". A new language — second quantization — will shrink the $N!$-term determinant to a single line.

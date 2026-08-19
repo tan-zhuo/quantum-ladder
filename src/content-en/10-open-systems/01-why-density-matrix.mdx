@@ -1,17 +1,249 @@
 ---
-title: 'Why we need density matrices'
-summary: 'A pure state cannot express "I do not know".'
+title: Why we need the density matrix
 section: '10.1'
 order: 1
-status: stub
+summary: 'No lab owns an isolated system: qubits soak in their environment, atoms fly out of an oven at random. The tool for "not knowing" and "having no state of one''s own" is the density matrix — and this chapter sets it in motion.'
+status: done
+prereqs:
+  - 03-formalism/10-density-operator
+  - 09-quantum-information/03-entanglement-measures
+objectives:
+  - Distinguish classical uncertainty from quantum superposition, and say where each sits in the density matrix
+  - Restate the definition of ρ and its three properties, and explain the ensemble interpretation
+  - Explain why one and the same ρ corresponds to infinitely many preparation procedures, and why that is not a defect
+  - Use the purification theorem to explain why every mixed state is a local view of some entangled pure state
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+By the end of chapter 9 we held a complete quantum-information toolkit: qubits, entanglement, Bell inequalities, teleportation. But that chapter ran on an assumption that was never said out loud — **every system is isolated**, evolution is always unitary, states are always pure.
+
+Open the door of any real laboratory and that assumption shatters on the spot.
+
+## The phenomenon first: why a qubit in the lab "goes bad"
+
+A superconducting qubit is fabricated, initialised into the superposition $\frac{1}{\sqrt2}(\ket{0}+\ket{1})$, and then left alone. Measure it again a few tens of microseconds later and its ability to interfere has **vanished** — it behaves exactly like a classical coin that is "50% $\ket{0}$, 50% $\ket{1}$".
+
+Nobody measured it, and the Hamiltonian did not evolve it anywhere else. By the rules of chapter 3, unitary evolution preserves inner products and preserves superpositions; $\ket{\psi}$ should forever remain some definite $\ket{\psi(t)}$. And yet it went bad.
+
+The reason is not hard to guess: the qubit is not isolated. It soaks in an **environment** of electromagnetic noise, substrate phonons, and stray two-level defects. To describe a system that "is entangled with its environment while we can only see the system itself", the language of state vectors is congenitally inadequate — which is exactly why [section 3.10](/en/ch/03-formalism/10-density-operator/) introduced the density operator.
+
+What this chapter does is turn that section's static tool into **dynamics**: how open systems evolve (10.3, 10.4), how coherence disappears (10.5), and how the classical world emerges from all of it (10.6). This section first re-inspects the foundations, then pushes three steps forward.
+
+## Re-inspecting the foundations: ρ at a glance
+
+The essentials of [section 3.10](/en/ch/03-formalism/10-density-operator/), in four sentences:
+
+$$
+\hat\rho=\sum_i p_i\ket{\psi_i}\bra{\psi_i},\qquad
+\langle A\rangle=\operatorname{Tr}(\hat\rho\hat A)
+$$
+
+1. **Definition**: an ensemble that is in the pure state $\ket{\psi_i}$ with classical probability $p_i$ is described by the formula above; a pure state is the special case with a single term.
+2. **Three properties**: Hermitian, $\operatorname{Tr}\hat\rho=1$, positive semi-definite — and conversely, any operator satisfying these three is a legitimate quantum state.
+3. **Purity**: $\operatorname{Tr}(\hat\rho^2)=1$ if and only if the state is pure; the maximally mixed state in $d$ dimensions gives the lowest value, $1/d$.
+4. **Reduction**: a part of an entangled state is described by $\hat\rho_A=\operatorname{Tr}_B\hat\rho_{AB}$, which is necessarily mixed.
+
+If any one of these four sentences makes you hesitate, go back and work through section 3.10 first — every page of this chapter is built on it.
+
+## Two kinds of randomness, one table
+
+Quantum mechanics contains two completely different kinds of "uncertain", and the density matrix files them into different places within one and the same object.
+
+<DualView>
+<div slot="left">
+
+**Classical uncertainty: I don't know**
+
+Silver atoms flying out of an oven: 70% are prepared in $\ket{\uparrow}$, 30% in $\ket{\downarrow}$. Each atom has a definite state — it is just **we** who don't know which. This ignorance is classical, no different from drawing balls out of a lottery box.
+
+It sits on the **diagonal** of $\hat\rho$:
+
+$$
+\hat\rho=\begin{pmatrix}0.7&0\\0&0.3\end{pmatrix}
+$$
+
+</div>
+<div slot="right">
+
+**Quantum superposition: it has no definite value**
+
+For the state $\sqrt{0.7}\ket{\uparrow}+\sqrt{0.3}\ket{\downarrow}$, the $z$ component of the spin is **not** "there really is a value, we just haven't measured it" — chapter 9's Bell experiments have ruled that reading out. The randomness is created only at measurement.
+
+Its signature is the **off-diagonal elements** (the coherences):
+
+$$
+\hat\rho=\begin{pmatrix}0.7&\sqrt{0.21}\\\sqrt{0.21}&0.3\end{pmatrix}
+$$
+
+</div>
+</DualView>
+
+The two matrices have the same diagonal, so a measurement along $z$ gives identical statistics; the entire difference lives in the off-diagonal elements, and measuring along any other direction separates them at once (section 3.10 worked the 50/50 version). **A real state generally carries both kinds of randomness**: the diagonal gives "the probability of what you measure", the off-diagonal records "how much interference capability is left". The main plot of this chapter is how the environment devours specifically the latter.
+
+## Step one forward: the ensemble interpretation and "infinitely many recipes"
+
+Reading $\hat\rho=0.7\ket{\uparrow}\bra{\uparrow}+0.3\ket{\downarrow}\bra{\downarrow}$ as "an ensemble, 70% up and 30% down" comes naturally. But the warning at the end of section 3.10 must now be promoted to an official position: **the recipe is not unique, and the recipes are indistinguishable in principle.**
+
+<Derivation title="Two completely different recipes, one and the same ρ" level="基础" minutes={5}>
+
+Recipe one: mix $\ket{\uparrow},\ket{\downarrow}$ in proportions $0.7/0.3$.
+
+Recipe two: prepare, with probability $\tfrac12$ each, the two pure states
+
+$$
+\ket{a}=\sqrt{0.7}\,\ket{\uparrow}+\sqrt{0.3}\,\ket{\downarrow},\qquad
+\ket{b}=\sqrt{0.7}\,\ket{\uparrow}-\sqrt{0.3}\,\ket{\downarrow}
+$$
+
+Compute recipe two's density matrix. The two projectors are
+
+$$
+\ket{a}\bra{a}=\begin{pmatrix}0.7&\sqrt{0.21}\\\sqrt{0.21}&0.3\end{pmatrix},\qquad
+\ket{b}\bra{b}=\begin{pmatrix}0.7&-\sqrt{0.21}\\-\sqrt{0.21}&0.3\end{pmatrix}
+$$
+
+Multiply each by $\tfrac12$ and add; the off-diagonal elements cancel in pairs:
+
+$$
+\hat\rho=\begin{pmatrix}0.7&0\\0&0.3\end{pmatrix}
+$$
+
+**Element for element identical** to recipe one. Since every measurable prediction enters only through $\operatorname{Tr}(\hat\rho\hat A)$, the two recipes give the same results for any measurement and any subsequent evolution — not "hard to tell apart", but **no fact of the matter, in principle**.
+
+The general result (the Hughston–Jozsa–Wootters theorem, stated here without proof): two ensembles give the same $\hat\rho$ if and only if their lists of states are related by a unitary matrix. One and the same $\hat\rho$ has infinitely many legitimate recipes.
+
+</Derivation>
+
+<Callout type="warning" title="Don't read ρ as an 'objective list of ingredients'">
+Beginners tend to picture $\hat\rho$ as "the system is objectively in some $\ket{\psi_i}$, and the $p_i$ are the mixing proportions". The derivation above shows this picture cannot stand: the ingredient list simply is not unique.
+
+The correct reading is operational: $\hat\rho$ **is** the complete ledger of every prediction you can make about this system — no more, no less. Two identical ledgers are, physically, one and the same state. The security of quantum key distribution in chapter 9 rests exactly here — the eavesdropper's reduced state is independent of the legitimate recipe, and reading the recipe out of it is impossible in principle.
 </Callout>
 
-## Planned contents
+## Step two forward: where mixed states come from — purification
 
-- Classical uncertainty versus quantum superposition
-- The ensemble interpretation
-- Different preparations giving the same ρ
+There is a deeper question still: are mixed states "fundamental"? Or does every mixed state hide a larger pure state behind it?
+
+The answer is the latter, and the construction is surprisingly simple.
+
+<Derivation title="Purification: finding an entangled 'upstream' for any mixed state" level="进阶" minutes={6}>
+
+Take any $\hat\rho_A$ and first diagonalise it (section 3.10: it is Hermitian, so this can always be done):
+
+$$
+\hat\rho_A=\sum_k\lambda_k\ket{k}\bra{k},\qquad \lambda_k\ge0,\ \sum_k\lambda_k=1
+$$
+
+Bring in an auxiliary system B whose dimension is at least the number of non-zero $\lambda_k$, and build the **pure state** of the composite system
+
+$$
+\ket{\Psi}_{AB}=\sum_k\sqrt{\lambda_k}\,\ket{k}_A\ket{k}_B
+$$
+
+(You should recognise this: it is exactly the Schmidt form from chapter 9.) Verify that it really is the upstream of $\hat\rho_A$ — trace out B:
+
+$$
+\operatorname{Tr}_B\ket{\Psi}\bra{\Psi}
+=\sum_j\bra{j}_B\Big(\sum_{k,l}\sqrt{\lambda_k\lambda_l}\,
+\ket{k}_A\bra{l}_A\otimes\ket{k}_B\bra{l}_B\Big)\ket{j}_B
+$$
+
+The inner products $\braket{j}{k}_B=\delta_{jk}$ and $\braket{l}{j}_B=\delta_{lj}$ collapse the double sum into a single one:
+
+$$
+=\sum_k\lambda_k\ket{k}_A\bra{k}_A=\hat\rho_A\qquad\blacksquare
+$$
+
+Example: one purification of $\hat\rho_A=0.7\ket{\uparrow}\bra{\uparrow}+0.3\ket{\downarrow}\bra{\downarrow}$ is
+
+$$
+\ket{\Psi}_{AB}=\sqrt{0.7}\,\ket{\uparrow}_A\ket{\uparrow}_B+\sqrt{0.3}\,\ket{\downarrow}_A\ket{\downarrow}_B
+$$
+
+— an entangled state. The more mixed the state, the more entanglement it takes; the purification of the maximally mixed state is precisely a Bell state.
+
+</Derivation>
+
+<Callout type="insight" title="Mixedness = a local view of entanglement">
+The purification theorem welds this chapter to chapter 9: **any mixed state can be seen as the reduction of some larger pure state**, and "the larger part" is the environment.
+
+Read in reverse it is even more powerful. When a qubit in the lab "goes mixed", there is no need to imagine a hand throwing dice — it has simply **become entangled with the environment**, and we cannot see the environment's half. What is lost is not the information itself; the information has moved from "the system's own person" into "the correlations between system and environment" (the lesson of the singlet state in section 3.10: globally pure, locally maximally mixed).
+
+This one viewpoint runs through the whole chapter: the quantum channels of section 10.3 = "evolve unitarily together with the environment, then trace it out"; the decoherence of 10.5 = the environment continually "keeping records" of the system; and 10.6 goes one further — the classical world = those records copied countless times over.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Density matrix and expectation values', latex: '\\hat\\rho=\\sum_ip_i\\ket{\\psi_i}\\bra{\\psi_i},\\quad\\langle A\\rangle=\\operatorname{Tr}(\\hat\\rho\\hat A)', note: 'The foundation from section 3.10; this whole chapter is built on it' },
+    { name: 'Where the two randomnesses sit', latex: '\\rho_{nn}\\ \\text{probabilities};\\quad \\rho_{mn}\\,(m\\ne n)\\ \\text{coherences}', note: 'The environment devours specifically the off-diagonal — the main plot of this chapter' },
+    { name: 'Recipes are not unique', latex: '\\sum_ip_i\\ket{\\psi_i}\\bra{\\psi_i}=\\sum_jq_j\\ket{\\phi_j}\\bra{\\phi_j}', note: 'One ρ has infinitely many ensemble decompositions, indistinguishable in principle' },
+    { name: 'Purification', latex: '\\ket{\\Psi}_{AB}=\\sum_k\\sqrt{\\lambda_k}\\,\\ket{k}_A\\ket{k}_B,\\quad\\operatorname{Tr}_B\\ket{\\Psi}\\bra{\\Psi}=\\hat\\rho_A', note: 'Every mixed state is a local view of some entangled pure state' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'why-dm-1',
+      prompt: 'How do the density matrices of "70% prepared in |↑⟩, 30% in |↓⟩" and of the pure state √0.7|↑⟩ + √0.3|↓⟩ differ?',
+      options: [
+        'Same diagonal, different off-diagonal: zero for the former, √0.21 for the latter',
+        'Different diagonal, same off-diagonal',
+        'The two matrices are completely identical',
+        'The two matrices are completely different, with no element in common',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The diagonals are both 0.7 and 0.3 — measured along z, the two are indistinguishable.',
+        2: 'If they were identical, measuring along x would not give different results.',
+        3: 'The diagonals are the same.',
+      },
+      explain: 'Classical ignorance shows up only on the diagonal; quantum superposition additionally brings the off-diagonal coherence √0.21. A z measurement sees only the diagonal and cannot tell them apart; measure along another direction and the coherences make themselves felt.',
+    },
+    {
+      id: 'why-dm-2',
+      type: 'numeric',
+      prompt: 'The ensemble is 70% |↑⟩, 30% |↓⟩. Find the purity Tr(ρ²).',
+      answer: 0.58,
+      tolerance: 0.005,
+      unit: '',
+      explain: 'ρ is diagonal, so Tr(ρ²) = 0.7² + 0.3² = 0.49 + 0.09 = 0.58. It sits between the maximally mixed value 0.5 and the pure-state value 1: this ensemble is mixed but not pure, yet not mixed to the bottom either.',
+    },
+    {
+      id: 'why-dm-3',
+      prompt: 'Which statements about "different preparation recipes for the same ρ" are correct? (Select all that apply.)',
+      options: [
+        'One and the same ρ can be mixed from infinitely many different ensembles of pure states',
+        'With sufficiently precise instruments, one can always determine which recipe prepared the system',
+        'All predictions enter only through Tr(ρÂ), so a difference in recipe has no observable consequence',
+        'The security of quantum key distribution exploits exactly this indistinguishability',
+      ],
+      answer: [0, 2, 3],
+      distractors: {
+        1: 'This is not a matter of precision: the two recipes give element-for-element the same ρ, every measurement has the same statistics — the indistinguishability is in principle.',
+      },
+      explain: '½|↑⟩⟨↑|+½|↓⟩⟨↓| and ½|+ₓ⟩⟨+ₓ|+½|−ₓ⟩⟨−ₓ| are the same operator. The HJW theorem gives all legitimate recipes: they are related to one another by unitary matrices, and there are infinitely many.',
+    },
+    {
+      id: 'why-dm-4',
+      prompt: 'The purification theorem says "every mixed state is the reduction of some larger pure state". The correct understanding of a lab qubit "going mixed" is:',
+      options: [
+        'The qubit entangles with the environment; the information moves into system-environment correlations, and the system alone looks mixed',
+        'Some random force is literally throwing dice, swapping the pure state for other pure states at random',
+        'The Schrödinger equation fails for open systems, and quantum mechanics needs modification',
+        'The length of the qubit’s state vector slowly shrinks',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'No extra randomness needs to be introduced: the whole (system + environment) evolves unitarily throughout and stays pure.',
+        2: 'The Schrödinger equation for the whole holds all along; what "fails" is only the isolated-system approximation.',
+        3: 'State vectors stay normalised forever; what changes is the purity of the reduced density matrix.',
+      },
+      explain: 'This is exactly the dynamical version of the singlet example in section 3.10: whole pure, part mixed. The entire framework of this chapter — channels, the Lindblad equation, decoherence — is this one sentence unfolded at different levels.',
+    },
+  ]}
+/>
+
+## What comes next
+
+A density matrix is a $2\times2$ complex matrix, which sounds abstract. But for a qubit it has an exact **map** — the Bloch sphere. Pure states live on the surface, mixed states live in the interior, and every "going bad" process in this chapter appears on the map as a visible **contraction**. The next section draws that map.

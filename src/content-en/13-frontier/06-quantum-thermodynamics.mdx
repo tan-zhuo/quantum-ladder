@@ -1,17 +1,146 @@
 ---
-title: 'Quantum thermodynamics and quantum batteries'
-summary: 'What the laws of thermodynamics look like at the quantum scale.'
+title: Quantum thermodynamics and quantum batteries
 section: '13.6'
 order: 6
-status: stub
+summary: 'A 150-year-old thought-experiment imp forced out the iron law that "information is physical": erasing one bit releases at least kT ln 2 of heat — and at the single-molecule scale, the second law becomes a statistical statement whose "violation probability" can be quantified.'
+status: done
+prereqs:
+  - 03-formalism/10-density-operator
+  - 10-open-systems/02-mixed-states
+objectives:
+  - Use the Szilard engine and Landauer's principle to explain why Maxwell's demon does not violate the second law, and compute the value of kT ln 2
+  - State how fluctuation theorems upgrade the second law into a precise statement about "violation probabilities"
+  - Assess soberly what "quantum advantage" really means in quantum heat engines and quantum batteries
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+In 1867, Maxwell imagined a little demon: it stands by a small door between two chambers of gas, opening the door for fast molecules arriving from the left and blocking the slow ones. It does no work, spends no effort — it merely **looks, and flicks a door** — yet the left chamber cools, the right one warms, a temperature difference appears out of nowhere, ready to drive a heat engine. The second law of thermodynamics, slain by a little creature that can see?
+
+The demon lived on in physics for nearly a century, and what finally killed it was not mechanics but a concept that did not yet exist: **information**. To follow that hunt is to understand the starting point of the modern field of "quantum thermodynamics" — what do the laws of thermodynamics become when the system shrinks to a single molecule, a single spin, a single qubit?
+
+## From demon to bit: the Szilard engine
+
+In 1929, Szilard pared the demon's trick to its minimum: a box containing **one** molecule, immersed in a heat bath at temperature $T$.
+
+1. Insert a partition at the middle of the box;
+2. **Measure** whether the molecule is in the left or right half — that is 1 bit of information;
+3. Depending on the answer, attach a pulley and weight on the correct side and let the molecule's collisions push the partition in an isothermal expansion;
+4. When the partition reaches the end, remove it; the box is back in its initial state.
+
+The work extracted in step 3 is computable: a single-molecule "gas" expanding isothermally to double its volume gives
+
+$$
+W=\int_{V/2}^{V}p\,\dd V=\int_{V/2}^{V}\frac{k_BT}{V'}\dd V'=k_BT\ln2
+$$
+
+Repeat the cycle and you have a perpetual motion machine (of the second kind), extracting work indefinitely from a **single heat bath** — unless, somewhere in the cycle, a price of at least $k_BT\ln2$ is being quietly paid.
+
+The hunt for the culprit took decades. The measurement itself? It can be engineered to be almost dissipation-free. The door mechanism? Can be made arbitrarily light. In 1961, Landauer at IBM found the real offender, and in 1982 Bennett completed the argument: **it is the "forgetting" step.** After each cycle the demon must wipe the previous measurement record from its memory to make room for the next — and **erasing information carries a thermodynamic minimum price**.
+
+<Derivation title="Landauer's principle: what is the minimum heat to erase one bit?" level="基础" minutes={8} open={true}>
+
+**Step 1: what erasure is.** A bit has two possible states, 0 and 1. "Erasure" means resetting it to 0 regardless of what it was — two possible initial states compressed into one definite final state.
+
+**Step 2: the entropy ledger.** A bit unknown to the outside world carries entropy $S=k_B\ln2$ (two equally likely states, by Boltzmann counting; in the language of [section 3.10](/en/ch/03-formalism/10-density-operator/): the von Neumann entropy of the maximally mixed state, $\ln 2$). After erasure the state is unique and the entropy is 0. The bit's entropy has decreased by $k_B\ln2$.
+
+**Step 3: the second law collects its debt.** Total entropy cannot decrease, so that $k_B\ln2$ must be shifted into the environment. An environment at temperature $T$ receiving entropy $\Delta S$ means absorbing heat $Q=T\Delta S$. Hence erasing 1 bit releases at least
+
+$$
+Q_{\min}=k_BT\ln2
+=1.38\times10^{-23}\times300\times0.693
+\approx2.9\times10^{-21}\ \text{J}\quad(T=300\ \text{K})
+$$
+
+**Step 4: close the demon's account.** The demon used 1 bit of information to extract $k_BT\ln2$ of work, but erasing that bit releases at least $k_BT\ln2$ of heat. Income and expenditure cancel; the second law stands untouched. The demon broke no law — it merely kept its books in its own memory, and memory is a physical system too.
+
+**Step 5: compare with reality.** What does $2.9\times10^{-21}$ J mean? A modern CPU dissipates about $10^{-17}$ J per logic flip — four orders of magnitude above the Landauer limit, so chip heat is for now a purely engineering problem; but at the historic rate of one order of magnitude per decade, we hit this physical floor around mid-century. And in 2012 (Bérut et al., a single colloidal particle in a double well), the Landauer limit was measured directly — **"information is physical" went from slogan to data**.
+
+</Derivation>
+
+<Callout type="insight" title="Information is physical">
+Landauer's slogan "information is physical" is the manifesto of this whole field: information never floats in a vacuum; it is always inscribed in some physical degree of freedom — the demon's memory, the orientation of a magnetic domain, the levels of a qubit. Hence logical operations fall under thermodynamic jurisdiction (irreversible logic = heat), and conversely thermodynamics gains an information-theoretic formulation — entropy is both "heat over temperature" and "the number of bits you don't know", two definitions strictly equivalent at the exchange rate of kT ln 2.
+
+The von Neumann entropy you learned in chapters 9 and 10 and the thermodynamic entropy here were the same quantity all along.
 </Callout>
 
-## Planned contents
+## The second law, upgraded: fluctuation theorems
 
-- Quantum heat engines
-- Fluctuation theorems
-- The charging advantage of quantum batteries
+In the world of a single molecule there is no "thermodynamic limit" to hide in: work and heat become **random variables** — repeat the same operation a thousand times, and the work comes out different every time. What becomes of the second law?
+
+The 1997 **Jarzynski equality** gave an astonishingly muscular answer. Drive a system starting from equilibrium in any manner whatsoever (as fast and as violent as you like), record the work $W$ in each run, and then
+
+$$
+\left\langle \ee^{-W/k_BT}\right\rangle=\ee^{-\Delta F/k_BT}
+$$
+
+This is an **equality**, not an inequality — exact for processes arbitrarily far from equilibrium. The convexity inequality $\langle\ee^x\rangle\ge\ee^{\langle x\rangle}$ immediately recovers the familiar second law, $\langle W\rangle\ge\Delta F$. But it says more: in individual runs $W$ **can** come out below $\Delta F$ ("violating" the second law) — only such events are exponentially suppressed, with the exact ratio supplied by the Crooks theorem:
+
+$$
+\frac{P(+W)}{P(-W)}=\ee^{(W-\Delta F)/k_BT}
+$$
+
+The second law is demoted from "prohibition" to "statistical tendency", and precisely thereby becomes **quantitatively testable**: experiments stretching single RNA molecules (from 2002 on) used it to reconstruct free-energy landscapes. The quantum version (with work defined via two projective energy measurements) holds just the same, and connects to the open-system framework of [section 10.4](/en/ch/10-open-systems/04-lindblad/).
+
+## Quantum heat engines and quantum batteries: where the advantage is — and isn't
+
+**Quantum heat engines.** How small can a heat engine be? Answer: three energy levels. In 1959 Scovil and Schulz-DuBois pointed out that a laser/maser is itself a heat engine — pumped by a hot bath, dumping to a cold bath, outputting work as coherent radiation, with an efficiency ceiling exactly at Carnot. Experiments have since built engines and refrigerators from single ions and single spins (NV centres), confirming that the Carnot bound remains incorruptible even for a single quantum system. What coherence and correlations can buy is advantage in **power** and in **fluctuations** (e.g. reaching a given output faster), never beyond Carnot — every scheme claiming to beat Carnot turns out, on careful audit, to have paid resources off the books (such as the cost of preparing the coherence itself).
+
+**Quantum batteries.** Store energy in $N$ two-level systems and ask: how fast can they be charged? Charging each qubit separately, the total time does not improve with $N$; but couple them **collectively** to the charger (the same physics as the cavity coupling of [section 13.3](/en/ch/13-frontier/03-cqed-superconducting/) — the Dicke model), and theory allows a collective speed-up of the charging power by up to a factor of $\sqrt N$ — entanglement lets the energy take a "shortcut". Signatures of superlinear charging have been observed since 2022 in organic microcavities and similar platforms. Swallow the sobering pill along with it: the speed-up relies on long-range collective coupling, an expensive resource; what goes in must also **come out** — the extractable work (ergotropy) is generally less than the stored energy; and comparing energy density with a lithium battery is out of the question. For now its significance is as a testbed for fundamental physics, not as energy technology.
+
+<KeyFormulas
+  items={[
+    { name: 'Szilard engine', latex: 'W=k_BT\\ln2\\ \\text{(max work bought by 1 bit of information)}', note: 'The information–work exchange rate; exactly cancelled by the cost of erasing the demon\'s memory' },
+    { name: 'Landauer principle', latex: 'Q_{\\min}=k_BT\\ln2\\approx2.9\\times10^{-21}\\ \\text{J}\\ (300\\ \\text{K})', note: 'Minimum heat to erase 1 bit; measured in 2012; modern CPUs run ~10⁴ above it' },
+    { name: 'Jarzynski equality', latex: '\\big\\langle \\ee^{-W/k_BT}\\big\\rangle=\\ee^{-\\Delta F/k_BT}', note: 'Exact arbitrarily far from equilibrium; convexity recovers ⟨W⟩ ≥ ΔF' },
+    { name: 'Crooks theorem', latex: '\\frac{P(+W)}{P(-W)}=\\ee^{(W-\\Delta F)/k_BT}', note: 'Second-law-"violating" events exist, but are exponentially suppressed' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qth-1',
+      prompt: 'Maxwell\'s demon ultimately does not violate the second law. The key is:',
+      options: [
+        'The demon\'s memory is a physical system; running in a cycle requires erasing its records, and erasure releases at least kT ln 2 of heat, exactly cancelling the extracted work',
+        'Measuring the molecule\'s position necessarily consumes a large amount of energy',
+        'A single molecule fluctuates too much for the demon to see accurately',
+        'The mechanical work of operating the door exceeds the work extracted',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A historically popular wrong answer — Bennett showed measurement can in principle be made nearly dissipation-free; the truly unavoidable cost is erasure.',
+        3: 'The door can be made arbitrarily light and frictionless; that is not an obstacle of principle.',
+      },
+      explain: 'The Landauer–Bennett argument: the only link in the information-processing chain with a thermodynamic floor price is irreversible erasure. Each cycle the demon records 1 bit and erases 1 bit; the books balance and the second law is intact.',
+    },
+    {
+      id: 'qth-2',
+      type: 'numeric',
+      prompt: 'At room temperature T = 300 K, what is the Landauer minimum heat kT ln 2 for erasing 1 bit, in joules? (k_B = 1.381×10⁻²³ J/K; enter the value in units of 10⁻²¹ J)',
+      answer: 2.87,
+      tolerance: 0.15,
+      unit: '×10⁻²¹ J',
+      explain: 'kT ln 2 = 1.381×10⁻²³ × 300 × 0.6931 ≈ 2.87×10⁻²¹ J. A modern transistor dissipates about 10⁻¹⁷ J per flip — still some four orders of magnitude above this physical floor.',
+    },
+    {
+      id: 'qth-3',
+      prompt: 'Which of the following statements about fluctuation theorems and quantum engines/batteries are correct? (Select all that apply.)',
+      options: [
+        'The Jarzynski equality holds exactly for processes arbitrarily far from equilibrium, and implies ⟨W⟩ ≥ ΔF',
+        'Individual runs where the work is less than the free-energy difference can occur, with probabilities quantified by the Crooks theorem',
+        'Quantum coherence makes it possible to build heat engines exceeding the Carnot efficiency',
+        'The collective charging speed-up of quantum batteries relies on collective coupling of all the units, and the extractable work is generally less than the stored energy',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The Carnot bound survives at the quantum scale; schemes claiming to beat it always paid an unbooked resource cost elsewhere (such as the work of preparing coherence). Quantum advantage shows up in power and fluctuations, not in the efficiency ceiling.',
+      },
+      explain: 'Fluctuation theorems upgrade the second law from prohibition to testable statistics; quantum engines confirmed the universality of Carnot; the √N speed-up of quantum batteries is a genuine theoretical prediction, but constrained by the cost of collective coupling and the ergotropy limit.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Throughout this section we booked "measurement" as an ordinary physical process — measurement acquires information, erasure pays heat. But measurement in quantum mechanics still carries a question that has hung open since 1927: **when, and by what right, does the wavefunction collapse?** The next section faces it head-on.

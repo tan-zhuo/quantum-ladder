@@ -1,17 +1,321 @@
 ---
-title: 'Angular-momentum eigenvalues and spherical harmonics'
-summary: 'Pure algebra fixes every eigenvalue.'
+title: Angular momentum eigenvalues and spherical harmonics
 section: '5.2'
 order: 2
-status: stub
+summary: 'Climb out every angular momentum eigenvalue from the commutation relations alone, without solving a single differential equation; then return to the sphere to see what the eigenstates look like.'
+status: done
+prereqs:
+  - 05-angular-momentum/01-orbital-angular-momentum
+objectives:
+  - Derive the eigenvalues l(l+1)ħ² and mħ of L² and L_z in full using the ladder-operator method
+  - Explain why l can only be an integer or half-integer, and why orbital angular momentum keeps only the integers
+  - Write down the first few spherical harmonics and read their node structure and shapes
+  - Compute the coefficients produced when L± acts on |l, m⟩
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section placed a bet: the commutation relations $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$
+(and their cyclic partners) alone can determine every eigenvalue. This section pays it off. The whole argument
+uses just three ingredients: the commutation relations, the Hermiticity of the operators,
+and the plain truth that "a squared length cannot be negative".
+
+## Building the ladder
+
+The lesson of the harmonic oscillator: to "hop rungs" among the eigenvalues, you need an operator $\hat A$
+whose commutator with $\hat L_z$ is **proportional to $\hat A$ itself** — then acting with $\hat A$ on an eigenstate
+produces another eigenstate, with the eigenvalue shifted by one rung. Try this combination:
+
+$$
+\hat L_\pm\equiv\hat L_x\pm\ii\hat L_y
+$$
+
+They are not Hermitian ($\hat L_+^\dagger=\hat L_-$) and represent no observable — they are tools, not objects of study.
+Compute the two key commutators (both expand directly from the fundamental relations):
+
+$$
+[\hat L_z,\hat L_\pm]=[\hat L_z,\hat L_x]\pm\ii[\hat L_z,\hat L_y]
+=\ii\hbar\hat L_y\pm\ii(-\ii\hbar\hat L_x)=\pm\hbar\hat L_\pm
+$$
+
+$$
+[\hat L^2,\hat L_\pm]=0\quad(\hat L^2\ \text{commutes with every component})
+$$
+
+The first line says: $\hat L_+$ raises the $L_z$ eigenvalue by $\hbar$ and $\hat L_-$ lowers it by $\hbar$ — that is the ladder.
+The second line says: while you climb, the eigenvalue of $\hat L^2$ **does not budge** — the ladder stands on a cone of fixed length.
+
+## Climbing out the full spectrum
+
+<Derivation title="The spectrum by pure algebra: from commutators to l(l+1)ħ²" level="进阶" minutes={12} open={true}>
+
+**Set up notation.** Let $\ket{\lambda,m}$ be a joint eigenstate:
+
+$$
+\hat L^2\ket{\lambda,m}=\lambda\hbar^2\ket{\lambda,m},\qquad
+\hat L_z\ket{\lambda,m}=m\hbar\ket{\lambda,m}
+$$
+
+(Factoring out $\hbar$ makes $\lambda$ and $m$ pure numbers. At this point we know nothing about either.)
+
+**Step 1: check that the ladder really climbs.** Ask what $\hat L_+\ket{\lambda,m}$ is an eigenstate of:
+
+$$
+\hat L_z\big(\hat L_+\ket{\lambda,m}\big)
+=\big(\hat L_+\hat L_z+[\hat L_z,\hat L_+]\big)\ket{\lambda,m}
+=\big(m\hbar+\hbar\big)\hat L_+\ket{\lambda,m}
+$$
+
+So $\hat L_+\ket{\lambda,m}$ is either the zero vector or an eigenstate with $m+1$.
+Likewise $\hat L_-$ gives $m-1$. And $[\hat L^2,\hat L_\pm]=0$ guarantees $\lambda$ stays put.
+
+**Step 2: the ladder must have a top.** The crucial physical input: a component cannot exceed the total length. Precisely,
+
+$$
+\lambda\hbar^2-m^2\hbar^2
+=\bra{\lambda,m}\hat L^2-\hat L_z^2\ket{\lambda,m}
+=\bra{\lambda,m}\hat L_x^2+\hat L_y^2\ket{\lambda,m}\ge0
+$$
+
+The last step holds because the expectation of $\hat L_x^2$ is $\|\hat L_x\ket{\lambda,m}\|^2$, a squared length, hence non-negative.
+So $m^2\le\lambda$: $m$ is trapped in a finite interval and the ladder **cannot climb forever**.
+There must be a top rung $m_{\max}$ with
+
+$$
+\hat L_+\ket{\lambda,m_{\max}}=0
+$$
+
+(Not "acts and survives" but outright annihilated — that is the only way a ladder can terminate.)
+
+**Step 3: solve for λ from the top-rung condition.** We need an identity, obtained by direct expansion:
+
+$$
+\hat L_-\hat L_+=(\hat L_x-\ii\hat L_y)(\hat L_x+\ii\hat L_y)
+=\hat L_x^2+\hat L_y^2+\ii[\hat L_x,\hat L_y]
+=\hat L^2-\hat L_z^2-\hbar\hat L_z
+$$
+
+Apply it to the top-rung state: the left side is zero, and the right side gives
+
+$$
+0=\big(\lambda-m_{\max}^2-m_{\max}\big)\hbar^2
+\quad\Longrightarrow\quad
+\lambda=m_{\max}(m_{\max}+1)
+$$
+
+**Step 4: treat the bottom the same way.** With $\hat L_-\ket{\lambda,m_{\min}}=0$, the identity
+$\hat L_+\hat L_-=\hat L^2-\hat L_z^2+\hbar\hat L_z$ gives
+
+$$
+\lambda=m_{\min}(m_{\min}-1)
+$$
+
+Setting the two expressions equal: $m_{\max}(m_{\max}+1)=m_{\min}(m_{\min}-1)$.
+Read as a quadratic in $m_{\min}$, the two roots are $m_{\min}=-m_{\max}$ and
+$m_{\min}=m_{\max}+1$. The latter is absurd (a bottom above the top), so
+
+$$
+m_{\min}=-m_{\max}
+$$
+
+The ladder is symmetric about zero.
+
+**Step 5: integers or half-integers?** Climbing from bottom to top in steps of $+1$ takes some whole number of steps $N$:
+
+$$
+m_{\max}-m_{\min}=2m_{\max}=N
+\quad\Longrightarrow\quad
+m_{\max}=\frac{N}{2}=0,\ \tfrac12,\ 1,\ \tfrac32,\ 2,\ \dots
+$$
+
+**Conclusion.** Writing $l\equiv m_{\max}$ (the conventional symbol):
+
+$$
+\hat L^2\ket{l,m}=l(l+1)\hbar^2\ket{l,m},\qquad
+\hat L_z\ket{l,m}=m\hbar\ket{l,m}
+$$
+
+where $l$ is a non-negative integer or half-integer, and $m$ runs from $-l$ to $+l$ one rung at a time — $2l+1$ values in all.
+Not one differential equation solved, and the whole spectrum is in hand.
+
+</Derivation>
+
+While we are at it, fix the ladder-operator coefficients (we will need them for building matrices and for Clebsch–Gordan coefficients).
+From the identity above, $\|\hat L_\pm\ket{l,m}\|^2=\big[l(l+1)-m(m\pm1)\big]\hbar^2$; with the positive-real phase convention:
+
+$$
+\hat L_\pm\ket{l,m}=\hbar\sqrt{l(l+1)-m(m\pm1)}\;\ket{l,m\pm1}
+$$
+
+Substitute $m=\pm l$ and the square root vanishes on the spot — the formula seals the top and bottom of the ladder all by itself.
+
+<Callout type="insight" title="Note that it is l(l+1), not l²">
+$|\vec L|=\sqrt{l(l+1)}\,\hbar$ is strictly larger than the maximum of $L_z$, namely $l\hbar$ (whenever $l\neq0$):
+the angular momentum vector **can never lie down fully along the z axis** — if it could, $L_x=L_y=0$ would both be sharp,
+violating last section's uncertainty relation. The excess is exactly the quantum fluctuation that can never be scrubbed out of
+$L_x,L_y$: in the $m=l$ state, $\langle\hat L_x^2\rangle+\langle\hat L_y^2\rangle=l\hbar^2$.
+The "cone" of the cone picture never closes up into a line; its minimum opening angle satisfies $\cos\theta=l/\sqrt{l(l+1)}$.
 </Callout>
 
-## Planned contents
+## Back to the sphere: orbital angular momentum drops half the values
 
-- The ladder-operator method with L±
-- Allowed values of l and m
-- Spherical harmonics Ylm: form and pictures
+The algebra allows half-integer $l$. But **orbital** angular momentum — the kind genuinely built from
+$\vec r\times\vec p$ — realises only the integer half. The reason lives in the wavefunction. In spherical coordinates
+$(r,\theta,\phi)$ (with $\theta$ the angle from the z axis and $\phi$ the azimuthal angle around it),
+$\hat L_z$ takes a remarkably clean form:
+
+$$
+\hat L_z=-\ii\hbar\frac{\partial}{\partial\phi}
+$$
+
+Its eigenfunctions are $\ee^{\ii m\phi}$. Now the decisive blow:
+$\phi$ and $\phi+2\pi$ are **the same point in space**, and a wavefunction must have a single value at a single point:
+
+$$
+\ee^{\ii m(\phi+2\pi)}=\ee^{\ii m\phi}
+\quad\Longrightarrow\quad
+\ee^{2\pi\ii m}=1
+\quad\Longrightarrow\quad
+m\ \text{must be an integer}
+$$
+
+Were $m=\tfrac12$, the wavefunction would change sign after one full turn — two values at the same point,
+which no function on space is allowed to do. So orbital angular momentum has only $l=0,1,2,\dots$.
+The half-integer seats stand empty: the algebra plainly permits them, but a position wavefunction cannot accommodate them.
+Hold on to this loose end — next section it finds its owner.
+
+## Spherical harmonics: what the eigenstates look like
+
+The joint eigenfunctions of $(\hat L^2,\hat L_z)$ depend only on the angles. Written $Y_l^m(\theta,\phi)$,
+they are the **spherical harmonics** — "harmonics on the sphere", playing the role that $\sin$ and $\cos$ play on a line.
+The construction copies the algebra: the top-rung condition $\hat L_+Y_l^l=0$ is a first-order differential equation
+with solution $Y_l^l\propto\sin^l\theta\,\ee^{\ii l\phi}$, and $\hat L_-$ walks you down from there. The first few:
+
+$$
+Y_0^0=\frac{1}{\sqrt{4\pi}},\qquad
+Y_1^0=\sqrt{\frac{3}{4\pi}}\cos\theta,\qquad
+Y_1^{\pm1}=\mp\sqrt{\frac{3}{8\pi}}\sin\theta\,\ee^{\pm\ii\phi}
+$$
+
+<DualView>
+<div slot="left">
+
+**How to read the shapes.**
+
+$l=0$ (the s states of chemistry): $Y_0^0$ is constant — the probability is perfectly uniform over all directions, a round ball.
+No angular momentum means no "rotation axis" available to break spherical symmetry, which makes perfect sense.
+
+$l=1$ (p states): $|Y_1^0|^2\propto\cos^2\theta$ is a dumbbell along the z axis —
+$m=0$ means no rotation about z, the angular momentum lies sideways, and the particle prefers the poles;
+$|Y_1^{\pm1}|^2\propto\sin^2\theta$ is a doughnut around the equator — full-speed rotation about z, with the particle concentrated at the equator.
+The general rule: the closer $|m|$ is to $l$, the more the distribution hugs the equatorial plane; $m=0$ hugs the z axis instead —
+just like a classical spinning top: whatever axis you spin about, the mass flings out into the plane perpendicular to it.
+
+</div>
+<div slot="right">
+
+**Node structure and basic properties.**
+
+$Y_l^m$ has $l$ nodal lines (curves where the function vanishes) on the sphere:
+$|m|$ of them run along meridians, from the oscillation of the real/imaginary parts of $\ee^{\ii m\phi}$,
+and $l-|m|$ run along circles of latitude, from the zeros of the $\theta$ part.
+**$l$ counts the total nodal lines, $m$ counts the windings around the axis** — the direct heir of the one-dimensional
+"number of nodes = n − 1" rule.
+
+Orthonormality and completeness:
+
+$$
+\int_0^{2\pi}\!\!\int_0^\pi (Y_{l'}^{m'})^*\,Y_l^m\,\sin\theta\,\dd\theta\,\dd\phi
+=\delta_{ll'}\delta_{mm'}
+$$
+
+Any well-behaved function on the sphere can be expanded in the $Y_l^m$ —
+they are to the sphere what plane waves are to the line.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="l fixes the length, m fixes the tilt — nothing more">
+A common misreading: "the $m=1$ state is rotating clockwise about the z axis".
+$Y_l^m$ is the angular part of a **stationary state**; the probability distribution does not change in time,
+and nothing is "in the middle of rotating".
+What $m$ tells you is that measuring $L_z$ yields $m\hbar$,
+and whether the probability cloud leans towards the poles or the equator — it is not a movie of rotation.
+Likewise, $l(l+1)\hbar^2$ is the value of $L^2$; do not write $l^2\hbar^2$.
+That difference enters the hydrogen level formula of the next chapter, where it is compared against experiment in cold hard numbers.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Eigenvalue spectrum', latex: '\\hat L^2\\ket{l,m}=l(l+1)\\hbar^2\\ket{l,m},\\quad \\hat L_z\\ket{l,m}=m\\hbar\\ket{l,m}', note: 'A purely algebraic result; m = −l, …, +l gives 2l+1 values' },
+    { name: 'Ladder operators', latex: '\\hat L_\\pm\\ket{l,m}=\\hbar\\sqrt{l(l+1)-m(m\\pm1)}\\,\\ket{l,m\\pm1}', note: 'The coefficient vanishes at m = ±l: the ladder caps itself at both ends' },
+    { name: 'Key identity', latex: '\\hat L_\\mp\\hat L_\\pm=\\hat L^2-\\hat L_z^2\\mp\\hbar\\hat L_z', note: 'The engine of the spectrum derivation; also yields the ladder coefficients' },
+    { name: 'Orbital angular momentum: integers only', latex: '\\ee^{2\\pi\\ii m}=1\\ \\Rightarrow\\ m\\in\\mathbb{Z}', note: 'Single-valuedness of the wavefunction excludes half-integers; those seats are reserved for spin' },
+    { name: 'Spherical harmonics (l=1)', latex: 'Y_1^0=\\sqrt{\\tfrac{3}{4\\pi}}\\cos\\theta,\\quad Y_1^{\\pm1}=\\mp\\sqrt{\\tfrac{3}{8\\pi}}\\sin\\theta\\,\\ee^{\\pm\\ii\\phi}', note: 'm=0 is a dumbbell along the axis, |m|=1 a doughnut at the equator' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am2-1',
+      prompt: 'In the ladder-operator derivation, what is the physical basis for "the ladder must have a top"?',
+      options: [
+        '⟨L_x² + L_y²⟩ ≥ 0, so m² ≤ l(l+1) and m cannot grow without bound',
+        'Energy conservation forbids the angular momentum from growing without bound',
+        'ħ is the minimum action, and climbing cannot exceed it',
+        'After finitely many applications the operator L_+ itself becomes zero',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The derivation never touches the Hamiltonian; energy plays no role.',
+        3: 'L_+ as an operator is never zero; what gets annihilated is the top-rung state, not the operator.',
+      },
+      explain: 'The square of a component cannot exceed the square of the total length: λħ² − m²ħ² = ⟨L_x²⟩+⟨L_y²⟩ is a sum of two squared norms, hence non-negative. That one plain truth plus the commutation relations locks the spectrum completely.',
+    },
+    {
+      id: 'am2-2',
+      prompt: 'Why can orbital angular momentum not have l = 1/2, even though the algebra allows it?',
+      options: [
+        'With m = 1/2 the wavefunction e^{imφ} changes sign after one full turn about z, but a spatial wavefunction must be single-valued at each point',
+        'Half-integer l would make the energy negative',
+        'l = 1/2 has never been observed, so it is excluded by hand',
+        'Half-integer l breaks the commutativity of L² and L_z',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The spectrum derivation has nothing to do with energy.',
+        2: 'This is a mathematical conclusion, not a decree — and half-integer angular momentum genuinely exists, as spin.',
+        3: 'The commutation relations hold for any l.',
+      },
+      explain: 'φ and φ+2π are the same point in space. e^{iπ} = −1 ≠ 1, so an m = 1/2 "wavefunction" would carry two values at every point — not a legitimate position wavefunction. But the argument only constrains functions defined on space; an angular momentum that never touches a position wavefunction (spin) is exempt.',
+    },
+    {
+      id: 'am2-3',
+      prompt: 'Acting with L̂_+ on |l=1, m=0⟩ gives ħ·c·|1,1⟩. What is the coefficient c?',
+      options: ['√2', '1', '2', '√6'],
+      answer: 0,
+      distractors: {
+        1: 'Remember the formula contains l(l+1) = 2, not l² = 1.',
+        3: '√6 is |L|/ħ for an l = 2 state, not the ladder coefficient here.',
+      },
+      explain: 'c = √( l(l+1) − m(m+1) ) = √(2 − 0) = √2. The same formula gives zero at m = l = 1: the ladder stops itself at the top.',
+    },
+    {
+      id: 'am2-4',
+      type: 'numeric',
+      prompt: 'A beam of particles is in an l = 3 state. At most how many distinct outcomes can a measurement of L_z give?',
+      answer: 7,
+      tolerance: 0,
+      unit: 'outcomes',
+      explain: 'm steps from −3 to +3: −3, −2, −1, 0, 1, 2, 3, i.e. 2l+1 = 7 values. This (2l+1)-fold multiplicity splits into 2l+1 spectral lines in a magnetic field — exactly the count of the Zeeman effect (see section 6.7).',
+    },
+  ]}
+/>
+
+## What comes next
+
+The algebra allows $l=\tfrac12,\tfrac32,\dots$, yet wavefunctions on the sphere cannot house them.
+Mathematics reserved the seats; space cannot fill them — so were those seats reserved for nothing?
+
+In 1922, two German physicists fired a beam of silver atoms through an inhomogeneous magnetic field
+and found **two** separated traces on a glass plate — precisely the value of $2l+1$ at $l=\tfrac12$.
+The half-integer seat has an owner, and the angular momentum it carries has nothing to do with motion through space.

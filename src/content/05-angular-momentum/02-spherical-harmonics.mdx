@@ -2,17 +2,316 @@
 title: 角动量本征值与球谐函数
 section: '5.2'
 order: 2
-summary: 纯代数就能定出全部本征值。
-status: stub
+summary: 不解一个微分方程，光靠对易关系就爬出角动量的全部本征值；再回到球面上，看这些本征态长什么样。
+status: done
+prereqs:
+  - 05-angular-momentum/01-orbital-angular-momentum
+objectives:
+  - 用梯算符方法完整推出 L² 与 L_z 的本征值 l(l+1)ħ² 与 mħ
+  - 说明 l 为什么只能取整数或半整数，以及轨道角动量为何只剩整数
+  - 写出前几个球谐函数并读懂它们的节点结构与图像
+  - 计算 L± 作用在 |l, m⟩ 上产生的系数
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节押了一个赌：光靠对易关系 $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$
+（及其轮换）就能定出全部本征值。这一节兑现它。整个论证只用三样东西：
+对易关系、算符的厄米性、以及「长度的平方不能是负数」这句大实话。
+
+## 造梯子
+
+谐振子的经验：想在本征值上「爬格子」，需要一个算符 $\hat A$，
+它与 $\hat L_z$ 的对易子**正比于它自己**——这样 $\hat A$ 作用在本征态上，
+产出的还是本征态，只是本征值挪了一格。试试这个组合：
+
+$$
+\hat L_\pm\equiv\hat L_x\pm\ii\hat L_y
+$$
+
+它们不厄米（$\hat L_+^\dagger=\hat L_-$），不代表可观测量——它们是工具，不是对象。
+算两条关键对易子（都从基本对易关系直接展开）：
+
+$$
+[\hat L_z,\hat L_\pm]=[\hat L_z,\hat L_x]\pm\ii[\hat L_z,\hat L_y]
+=\ii\hbar\hat L_y\pm\ii(-\ii\hbar\hat L_x)=\pm\hbar\hat L_\pm
+$$
+
+$$
+[\hat L^2,\hat L_\pm]=0\quad(\hat L^2\ \text{与每个分量都对易})
+$$
+
+第一条说：$\hat L_+$ 把 $L_z$ 的本征值抬高 $\hbar$，$\hat L_-$ 压低 $\hbar$——这就是梯子。
+第二条说：爬梯子的过程中 $\hat L^2$ 的本征值**纹丝不动**——梯子是竖在固定长度的圆锥上的。
+
+## 爬出全部本征值
+
+<Derivation title="纯代数定谱：从对易关系到 l(l+1)ħ²" level="进阶" minutes={12} open={true}>
+
+**设定记号。** 设 $\ket{\lambda,m}$ 是共同本征态：
+
+$$
+\hat L^2\ket{\lambda,m}=\lambda\hbar^2\ket{\lambda,m},\qquad
+\hat L_z\ket{\lambda,m}=m\hbar\ket{\lambda,m}
+$$
+
+（把 $\hbar$ 提出来，$\lambda$ 和 $m$ 都是纯数。此刻我们对它们一无所知。）
+
+**第一步：验证梯子真的能爬。** 考察 $\hat L_+\ket{\lambda,m}$ 是谁的本征态：
+
+$$
+\hat L_z\big(\hat L_+\ket{\lambda,m}\big)
+=\big(\hat L_+\hat L_z+[\hat L_z,\hat L_+]\big)\ket{\lambda,m}
+=\big(m\hbar+\hbar\big)\hat L_+\ket{\lambda,m}
+$$
+
+所以 $\hat L_+\ket{\lambda,m}$ 要么是零矢量，要么是 $m+1$ 的本征态。
+同理 $\hat L_-$ 给出 $m-1$。而 $[\hat L^2,\hat L_\pm]=0$ 保证 $\lambda$ 不变。
+
+**第二步：梯子必须有顶。** 关键的物理输入：垂直分量不能超过总长度。严格地说，
+
+$$
+\lambda\hbar^2-m^2\hbar^2
+=\bra{\lambda,m}\hat L^2-\hat L_z^2\ket{\lambda,m}
+=\bra{\lambda,m}\hat L_x^2+\hat L_y^2\ket{\lambda,m}\ge0
+$$
+
+最后一步是因为 $\hat L_x^2$ 的期望值是 $\|\hat L_x\ket{\lambda,m}\|^2$，是长度的平方，非负。
+于是 $m^2\le\lambda$：$m$ 被夹在有限区间里，
+梯子**不能无限爬**。必然存在顶层 $m_{\max}$，满足
+
+$$
+\hat L_+\ket{\lambda,m_{\max}}=0
+$$
+
+（不是「作用后还在」，而是干脆被湮灭——这是梯子终止的唯一方式。）
+
+**第三步：用顶层条件解出 λ。** 需要一个恒等式，直接展开可得：
+
+$$
+\hat L_-\hat L_+=(\hat L_x-\ii\hat L_y)(\hat L_x+\ii\hat L_y)
+=\hat L_x^2+\hat L_y^2+\ii[\hat L_x,\hat L_y]
+=\hat L^2-\hat L_z^2-\hbar\hat L_z
+$$
+
+把它作用在顶层态上，左边是零，右边给出
+
+$$
+0=\big(\lambda-m_{\max}^2-m_{\max}\big)\hbar^2
+\quad\Longrightarrow\quad
+\lambda=m_{\max}(m_{\max}+1)
+$$
+
+**第四步：同样处理底层。** 记 $\hat L_-\ket{\lambda,m_{\min}}=0$，用
+$\hat L_+\hat L_-=\hat L^2-\hat L_z^2+\hbar\hat L_z$ 得
+
+$$
+\lambda=m_{\min}(m_{\min}-1)
+$$
+
+两式相等：$m_{\max}(m_{\max}+1)=m_{\min}(m_{\min}-1)$。
+把它看成关于 $m_{\min}$ 的二次方程，两个根是 $m_{\min}=-m_{\max}$ 和
+$m_{\min}=m_{\max}+1$。后者荒谬（底比顶还高），所以
+
+$$
+m_{\min}=-m_{\max}
+$$
+
+梯子上下对称。
+
+**第五步：整数还是半整数？** 从底爬到顶，每步 $+1$，共走整数步 $N$：
+
+$$
+m_{\max}-m_{\min}=2m_{\max}=N
+\quad\Longrightarrow\quad
+m_{\max}=\frac{N}{2}=0,\ \tfrac12,\ 1,\ \tfrac32,\ 2,\ \dots
+$$
+
+**结论。** 记 $l\equiv m_{\max}$（惯例记号）：
+
+$$
+\hat L^2\ket{l,m}=l(l+1)\hbar^2\ket{l,m},\qquad
+\hat L_z\ket{l,m}=m\hbar\ket{l,m}
+$$
+
+其中 $l$ 取非负整数或半整数，$m$ 从 $-l$ 到 $+l$ 一格一格取，共 $2l+1$ 个值。
+微分方程一个没解，谱已经全部到手。
+
+</Derivation>
+
+顺手把梯算符的系数定下来（构造矩阵和算 CG 系数都要用）。由上面的恒等式，
+$\|\hat L_\pm\ket{l,m}\|^2=\big[l(l+1)-m(m\pm1)\big]\hbar^2$，取正实系数约定：
+
+$$
+\hat L_\pm\ket{l,m}=\hbar\sqrt{l(l+1)-m(m\pm1)}\;\ket{l,m\pm1}
+$$
+
+代入 $m=\pm l$ 可以直接看到根号变零——梯子的顶和底被公式自己堵住了。
+
+<Callout type="insight" title="注意 l(l+1)，而不是 l²">
+$|\vec L|=\sqrt{l(l+1)}\,\hbar$ 严格大于 $L_z$ 的最大值 $l\hbar$（只要 $l\neq0$）：
+角动量矢量**永远不能完全躺到 z 轴上**——如果能，$L_x=L_y=0$ 就同时确定了，
+违反上一节的不确定性关系。多出来的部分正是留在 $L_x,L_y$ 里抹不掉的
+量子涨落：$m=l$ 的态上 $\langle\hat L_x^2\rangle+\langle\hat L_y^2\rangle=l\hbar^2$。
+圆锥图像的「锥」永远合不拢成一条线，最小张角满足 $\cos\theta=l/\sqrt{l(l+1)}$。
 </Callout>
 
-## 内容规划
+## 回到球面：轨道角动量丢掉一半
 
-- 升降算符 L± 方法
-- l 与 m 的取值范围
-- 球谐函数 Ylm 的形式与图像
+代数给出的 $l$ 可以取半整数。但**轨道**角动量——真的由 $\vec r\times\vec p$
+构造出来的那种——只实现了整数的一半。原因要回到波函数。在球坐标
+$(r,\theta,\phi)$ 下（$\theta$ 是与 z 轴的夹角，$\phi$ 是绕 z 轴的方位角），
+$\hat L_z$ 有个非常干净的形式：
 
+$$
+\hat L_z=-\ii\hbar\frac{\partial}{\partial\phi}
+$$
+
+它的本征函数是 $\ee^{\ii m\phi}$。现在关键一击：
+$\phi$ 和 $\phi+2\pi$ 是**空间里的同一个点**，波函数在同一点必须只有一个值：
+
+$$
+\ee^{\ii m(\phi+2\pi)}=\ee^{\ii m\phi}
+\quad\Longrightarrow\quad
+\ee^{2\pi\ii m}=1
+\quad\Longrightarrow\quad
+m\ \text{必须是整数}
+$$
+
+若 $m=\tfrac12$，转一圈波函数会变号——同一点两个值，作为空间中的函数这不允许。
+所以轨道角动量只有 $l=0,1,2,\dots$。半整数的座位空着：
+代数明明允许它，位置波函数却容不下它。记住这个悬念——下一节它就会有主人。
+
+## 球谐函数：本征态的长相
+
+$(\hat L^2,\hat L_z)$ 的共同本征函数只依赖角度，记作 $Y_l^m(\theta,\phi)$，
+称为**球谐函数**——「球面上的谐波」，地位相当于球面版的 $\sin$ 与 $\cos$。
+构造思路照抄代数：顶层条件 $\hat L_+Y_l^l=0$ 是一阶微分方程，
+解出 $Y_l^l\propto\sin^l\theta\,\ee^{\ii l\phi}$，再用 $\hat L_-$ 一路降下来。前几个是：
+
+$$
+Y_0^0=\frac{1}{\sqrt{4\pi}},\qquad
+Y_1^0=\sqrt{\frac{3}{4\pi}}\cos\theta,\qquad
+Y_1^{\pm1}=\mp\sqrt{\frac{3}{8\pi}}\sin\theta\,\ee^{\pm\ii\phi}
+$$
+
+<DualView>
+<div slot="left">
+
+**怎么读这些图像。**
+
+$l=0$（化学里的 s 态）：$Y_0^0$ 是常数——概率在所有方向上完全均匀，一个圆球。
+没有任何角动量，也就没有任何「转轴」可以打破球对称，这非常合理。
+
+$l=1$（p 态）：$|Y_1^0|^2\propto\cos^2\theta$ 是沿 z 轴的哑铃——
+$m=0$ 意味着绕 z 轴不转，角动量横躺着，粒子反而爱待在两极；
+$|Y_1^{\pm1}|^2\propto\sin^2\theta$ 是赤道上的甜甜圈——绕 z 轴全速转，粒子集中在赤道。
+普遍规律：$|m|$ 越接近 $l$，分布越贴近赤道面；$m=0$ 则贴近 z 轴——
+和经典陀螺一致：绕哪根轴转，质量就甩向那根轴的垂直面。
+
+</div>
+<div slot="right">
+
+**节点结构与基本性质。**
+
+$Y_l^m$ 在球面上共有 $l$ 条节线（函数为零的曲线）：
+$|m|$ 条经线方向的来自 $\ee^{\ii m\phi}$ 的实部/虚部振荡，
+$l-|m|$ 条纬线方向的来自 $\theta$ 部分的零点。
+**$l$ 数节线总数，$m$ 数绕轴的圈数**——与一维「节点数 = n − 1」一脉相承。
+
+正交归一与完备性：
+
+$$
+\int_0^{2\pi}\!\!\int_0^\pi (Y_{l'}^{m'})^*\,Y_l^m\,\sin\theta\,\dd\theta\,\dd\phi
+=\delta_{ll'}\delta_{mm'}
+$$
+
+球面上任何行为良好的函数都能展开成 $Y_l^m$ 的叠加——
+它们之于球面，正如平面波之于直线。
+
+</div>
+</DualView>
+
+<Callout type="warning" title="l 定长度，m 定倾角，仅此而已">
+常见误读：「$m=1$ 的态在绕 z 轴顺时针转动」。
+$Y_l^m$ 是**定态**的角向部分，概率分布不随时间变化，没有任何东西在「转动中」。
+$m$ 告诉你的是测 $L_z$ 会得到 $m\hbar$，
+以及概率云的形状偏向极区还是赤道——不是一部旋转的电影。
+同样，$l(l+1)\hbar^2$ 是 $L^2$ 的值，别写成 $l^2\hbar^2$；
+这个差别在下一章氢原子的能级公式里是要真金白银地进入实验对比的。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '本征值谱', latex: '\\hat L^2\\ket{l,m}=l(l+1)\\hbar^2\\ket{l,m},\\quad \\hat L_z\\ket{l,m}=m\\hbar\\ket{l,m}', note: '纯代数结果；m = −l, …, +l 共 2l+1 个' },
+    { name: '梯算符', latex: '\\hat L_\\pm\\ket{l,m}=\\hbar\\sqrt{l(l+1)-m(m\\pm1)}\\,\\ket{l,m\\pm1}', note: 'm = ±l 时系数为零，梯子自动封顶封底' },
+    { name: '关键恒等式', latex: '\\hat L_\\mp\\hat L_\\pm=\\hat L^2-\\hat L_z^2\\mp\\hbar\\hat L_z', note: '定谱推导的引擎，也给出梯算符系数' },
+    { name: '轨道角动量限整数', latex: '\\ee^{2\\pi\\ii m}=1\\ \\Rightarrow\\ m\\in\\mathbb{Z}', note: '波函数单值性排除半整数；半整数席位留给自旋' },
+    { name: '球谐函数（l=1）', latex: 'Y_1^0=\\sqrt{\\tfrac{3}{4\\pi}}\\cos\\theta,\\quad Y_1^{\\pm1}=\\mp\\sqrt{\\tfrac{3}{8\\pi}}\\sin\\theta\\,\\ee^{\\pm\\ii\\phi}', note: 'm=0 沿轴哑铃，|m|=1 赤道甜甜圈' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am2-1',
+      prompt: '梯算符推导中，「梯子必须有顶」的物理依据是什么？',
+      options: [
+        '⟨L_x² + L_y²⟩ ≥ 0，因此 m² ≤ l(l+1)，m 不能无限增大',
+        '能量守恒不允许角动量无限增大',
+        'ħ 是最小作用量，爬梯不能超过它',
+        'L_+ 作用有限次后算符本身变为零',
+      ],
+      answer: 0,
+      distractors: {
+        1: '整个推导根本没用到哈密顿量，与能量无关。',
+        3: 'L_+ 作为算符永远不为零；被湮灭的是顶层那个态，不是算符。',
+      },
+      explain: '垂直分量的平方不能超过总长度的平方：λħ² − m²ħ² = ⟨L_x²⟩+⟨L_y²⟩ 是两个范数平方之和，非负。这一条「大实话」加上对易关系，就把谱完全锁死了。',
+    },
+    {
+      id: 'am2-2',
+      prompt: '为什么轨道角动量的 l 不能取 1/2，尽管代数允许？',
+      options: [
+        'm = 1/2 时波函数 e^{imφ} 绕 z 轴一圈后变号，空间波函数在同一点必须单值',
+        '半整数 l 会让能量变成负的',
+        '实验从未观测到 l = 1/2，所以人为排除',
+        '半整数 l 破坏 L² 与 L_z 的对易性',
+      ],
+      answer: 0,
+      distractors: {
+        1: '谱的推导与能量无关。',
+        2: '这不是人为规定而是数学结论；而且半整数角动量在自旋中真实存在。',
+        3: '对易关系对任何 l 都成立。',
+      },
+      explain: 'φ 与 φ+2π 是空间同一点。e^{iπ} = −1 ≠ 1，所以 m = 1/2 的「波函数」在每个点都有两个值，不是合法的位置波函数。但这个论证只限制「定义在空间上的函数」——不依赖位置波函数的角动量（自旋）不受此限。',
+    },
+    {
+      id: 'am2-3',
+      prompt: 'L̂_+ 作用在 |l=1, m=0⟩ 上得到 ħ·c·|1,1⟩。系数 c 是多少？',
+      options: ['√2', '1', '2', '√6'],
+      answer: 0,
+      distractors: {
+        1: '别忘了公式里的 l(l+1) = 2 而不是 l² = 1。',
+        3: '√6 是 l = 2 态的 |L|/ħ，不是这里的梯算符系数。',
+      },
+      explain: 'c = √( l(l+1) − m(m+1) ) = √(2 − 0) = √2。同一公式在 m = l = 1 时给零：梯子到顶自动停。',
+    },
+    {
+      id: 'am2-4',
+      type: 'numeric',
+      prompt: '一束粒子处于 l = 3 的态。测量 L_z，最多可能得到多少种不同的结果？',
+      answer: 7,
+      tolerance: 0,
+      unit: '种',
+      explain: 'm 从 −3 到 +3 一格一格取：−3, −2, −1, 0, 1, 2, 3，共 2l+1 = 7 种。这个「2l+1 重」在磁场中会分裂成 2l+1 条谱线——正是 Zeeman 效应数出来的条数（见 6.7 节）。',
+    },
+  ]}
+/>
+
+## 接下来
+
+代数允许 $l=\tfrac12,\tfrac32,\dots$，球面上的波函数却容不下它们。
+数学预留了席位，空间填不进去——那这些席位是白留的吗？
+
+1922 年，两个德国物理学家把一束银原子射过不均匀磁场，在玻璃板上得到了
+**两条**分立的痕迹——恰好是 $2l+1$ 在 $l=\tfrac12$ 时的值。
+半整数的座位有主人了，而它带来的角动量和空间转动没有任何关系。

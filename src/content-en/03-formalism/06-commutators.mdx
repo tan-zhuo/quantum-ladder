@@ -1,17 +1,352 @@
 ---
-title: 'Commutators and the generalised uncertainty principle'
-summary: 'One inequality that unifies every uncertainty relation.'
+title: Commutators and the generalised uncertainty principle
 section: '3.6'
 order: 6
-status: stub
+summary: 'Whether two observables can be sharp at the same time comes down to whether their product cares about the order. One inequality unifies every uncertainty relation.'
+status: done
+prereqs:
+  - 03-formalism/05-hermitian-operators
+objectives:
+  - Compute common commutators, and explain the meaning of [x̂, p̂] = iħ
+  - Derive the generalised uncertainty relation in full, and obtain σₓσ_p ≥ ħ/2 from it
+  - Explain the equivalence between "sharing a common eigenbasis" and "commuting"
+  - Explain compatible observables and complete sets of commuting observables
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The question left over from the previous section: with so many observables around, can two of them be measured sharply at once?
+
+The answer is surprisingly crisp: **check whether they care about the order.**
+
+## The commutator
+
+$$
+[\hat A,\hat B]\equiv \hat A\hat B-\hat B\hat A
+$$
+
+If $[\hat A,\hat B]=0$, the two are said to **commute**.
+
+Ordinary numbers always commute, so this concept simply does not exist in classical mechanics. It is a structure peculiar to quantum mechanics.
+
+<Derivation title="Computation: the canonical commutation relation [x̂, p̂]" level="基础" minutes={4} open={true}>
+
+A commutator is an operator; to find out what it equals, let it act on an arbitrary wavefunction.
+
+$$
+[\hat x,\hat p]\psi=\hat x\hat p\psi-\hat p\hat x\psi
+$$
+
+Term by term (with $\hat p=-\ii\hbar\,\dd/\dd x$):
+
+$$
+\hat x\hat p\psi=x\cdot(-\ii\hbar\psi')=-\ii\hbar x\psi'
+$$
+
+$$
+\hat p\hat x\psi=-\ii\hbar\frac{\dd}{\dd x}(x\psi)=-\ii\hbar(\psi+x\psi')
+$$
+
+**Watch the product rule in the second line** — that extra $\psi$ is the whole story. Subtract:
+
+$$
+[\hat x,\hat p]\psi=-\ii\hbar x\psi'+\ii\hbar\psi+\ii\hbar x\psi'=\ii\hbar\psi
+$$
+
+This holds for arbitrary $\psi$, so
+
+$$
+\boxed{\ [\hat x,\hat p]=\ii\hbar\ }
+$$
+
+</Derivation>
+
+<Callout type="insight" title="This one equation carries half of quantum mechanics">
+$[\hat x,\hat p]=\ii\hbar$ is called the **canonical commutation relation**. Its standing is hard to overstate:
+
+- **Heisenberg's matrix mechanics** ([section 1.7](/en/ch/01-history/07-uncertainty-origins/)) starts from it. Historically it was written down before the Schrödinger equation.
+- **The algebraic solution of the harmonic oscillator** ([section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/)) uses nothing but this one relation, without solving a differential equation even once.
+- **The uncertainty principle** follows directly from it — see below.
+- **Canonical quantisation**, the general recipe for building a quantum theory out of a classical one, is precisely the replacement of Poisson brackets by $\frac{1}{\ii\hbar}[\ ,\ ]$.
+
+As $\hbar\to0$ it degenerates to $[\hat x,\hat p]=0$ and everything commutes again — **the classical limit is the limit in which everything commutes**.
 </Callout>
 
-## Planned contents
+<DualView>
+<div slot="left">
 
-- What the commutator [A,B] means
-- Full derivation of the generalised uncertainty relation
-- When common eigenstates exist
+**Working rules**
+
+$$
+[\hat A,\hat B]=-[\hat B,\hat A]
+$$
+
+$$
+[\hat A,\hat B+\hat C]=[\hat A,\hat B]+[\hat A,\hat C]
+$$
+
+$$
+[\hat A,\hat B\hat C]=[\hat A,\hat B]\hat C+\hat B[\hat A,\hat C]
+$$
+
+The third works like the Leibniz rule for derivatives — mind the operator ordering.
+
+**Corollaries** (apply the third rule repeatedly):
+
+$$
+[\hat x,\hat p^n]=\ii\hbar\, n\hat p^{\,n-1}
+$$
+
+$$
+[\hat x,f(\hat p)]=\ii\hbar\,\frac{\partial f}{\partial\hat p}
+$$
+
+</div>
+<div slot="right">
+
+**A few worth memorising**
+
+$$
+[\hat x_i,\hat x_j]=0,\qquad [\hat p_i,\hat p_j]=0
+$$
+
+$$
+[\hat x_i,\hat p_j]=\ii\hbar\,\delta_{ij}
+$$
+
+Position and momentum along different axes commute — **$x$ and $p_y$ can be sharp simultaneously**.
+
+Angular momentum ([chapter 5](/en/ch/05-angular-momentum/)):
+
+$$
+[\hat L_x,\hat L_y]=\ii\hbar \hat L_z
+$$
+
+The three components fail to commute pairwise, yet
+
+$$
+[\hat L^2,\hat L_z]=0
+$$
+
+so $l$ and $m$ can be fixed together while the three components cannot. The shapes of atomic orbitals trace back to this.
+
+</div>
+</DualView>
+
+## The generalised uncertainty relation
+
+<Derivation title="The full derivation" level="进阶" minutes={10}>
+
+Let $\hat A$ and $\hat B$ be Hermitian and the system be in a normalised $\ket{\psi}$. Define the mean-subtracted operators
+
+$$
+\Delta\hat A=\hat A-\langle A\rangle,\qquad \Delta\hat B=\hat B-\langle B\rangle
+$$
+
+($\langle A\rangle=\bra{\psi}\hat A\ket{\psi}$ is a number.) The variance is then
+
+$$
+\sigma_A^2=\bra{\psi}(\Delta\hat A)^2\ket{\psi}=\braket{f}{f},\qquad \ket{f}\equiv\Delta\hat A\ket{\psi}
+$$
+
+and likewise $\sigma_B^2=\braket{g}{g}$ with $\ket{g}\equiv\Delta\hat B\ket{\psi}$. (This step used the Hermiticity of $\Delta\hat A$.)
+
+**Step 1: the Cauchy-Schwarz inequality.**
+
+$$
+\braket{f}{f}\braket{g}{g}\ge|\braket{f}{g}|^2
+$$
+
+i.e. $\sigma_A^2\sigma_B^2\ge|\braket{f}{g}|^2$.
+
+**Step 2: keep only the imaginary part.** For any complex number $z$, $|z|^2\ge(\operatorname{Im}z)^2=\left(\frac{z-z^*}{2\ii}\right)^2$. Take $z=\braket{f}{g}$ and note $z^*=\braket{g}{f}$:
+
+$$
+|\braket{f}{g}|^2\ge\left(\frac{\braket{f}{g}-\braket{g}{f}}{2\ii}\right)^2
+$$
+
+**Step 3: trade it for a commutator.**
+
+$$
+\braket{f}{g}=\bra{\psi}\Delta\hat A\,\Delta\hat B\ket{\psi}
+$$
+
+Expand (note that $\langle A\rangle,\langle B\rangle$ are numbers and move around freely):
+
+$$
+=\langle \hat A\hat B\rangle-\langle A\rangle\langle B\rangle
+$$
+
+Likewise $\braket{g}{f}=\langle \hat B\hat A\rangle-\langle A\rangle\langle B\rangle$. Subtract, and the products of means cancel entirely:
+
+$$
+\braket{f}{g}-\braket{g}{f}=\langle[\hat A,\hat B]\rangle
+$$
+
+**Step 4: assemble.**
+
+$$
+\boxed{\ \sigma_A^2\sigma_B^2\ge\left(\frac{1}{2\ii}\langle[\hat A,\hat B]\rangle\right)^2\ }
+$$
+
+or, equivalently,
+
+$$
+\sigma_A\,\sigma_B\ge\frac12\left|\langle[\hat A,\hat B]\rangle\right|
+$$
+
+</Derivation>
+
+<Callout type="insight" title="Plug in x and p">
+Take $\hat A=\hat x$, $\hat B=\hat p$, $[\hat x,\hat p]=\ii\hbar$:
+
+$$
+\sigma_x\sigma_p\ge\frac12|\ii\hbar|=\frac{\hbar}{2}
+$$
+
+**This is chapter 2's inequality — now proved.**
+
+At the time, [section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) could only say "the rigorous proof needs the generalised uncertainty relation, see section 3.6" and offer an intuitive origin from Fourier analysis. The two roads now meet: the Fourier road explained **why**, and this road delivers **the rigorous, general form**.
+
+Moreover, the inequality applies to any pair of observables. Angular momentum, for instance:
+
+$$
+\sigma_{L_x}\sigma_{L_y}\ge\frac{\hbar}{2}|\langle \hat L_z\rangle|
+$$
+
+Note that the right-hand side is not a constant — it depends on the state. If $\langle L_z\rangle=0$, then $L_x$ and $L_y$ can in principle be sharp together — **a vanishing lower bound does not guarantee it can be achieved, but at least this inequality no longer stands in the way**.
+</Callout>
+
+## Commuting ⟺ sharing a common eigenbasis
+
+<Derivation title="Theorem and proof" level="进阶" minutes={6}>
+
+**Theorem**: two Hermitian operators $\hat A,\hat B$ commute if and only if they share a common orthonormal complete eigenbasis.
+
+**(⟸) The easy direction.** Suppose $\{\ket{n}\}$ is a common eigenbasis, $\hat A\ket{n}=a_n\ket{n}$, $\hat B\ket{n}=b_n\ket{n}$. Then
+
+$$
+\hat A\hat B\ket{n}=a_nb_n\ket{n}=\hat B\hat A\ket{n}
+$$
+
+This holds for every basis vector, hence by linearity for every state, so $[\hat A,\hat B]=0$.
+
+**(⟹) The other direction.** Suppose $[\hat A,\hat B]=0$ and $\hat A\ket{a}=a\ket{a}$. Look at $\hat B\ket{a}$:
+
+$$
+\hat A\big(\hat B\ket{a}\big)=\hat B\hat A\ket{a}=a\big(\hat B\ket{a}\big)
+$$
+
+**So $\hat B\ket{a}$ is also an eigenvector of $\hat A$, with the same eigenvalue $a$.**
+
+If $a$ is non-degenerate, $\hat B\ket{a}$ can only be proportional to $\ket{a}$, i.e. $\hat B\ket{a}=b\ket{a}$ — $\ket{a}$ is automatically an eigenvector of $\hat B$ too, and we are done.
+
+If $a$ is degenerate, then $\hat B$ maps the eigenspace $\mathcal H_a$ into itself. Restricted to $\mathcal H_a$, $\hat B$ is still Hermitian and can therefore be diagonalised inside it — **re-choose the basis within the degenerate subspace** so that it is simultaneously an eigenbasis of $\hat B$. $\blacksquare$
+
+That last step is exactly where the "freedom to choose a basis under degeneracy" from [section 3.4](/en/ch/03-formalism/04-linear-operators/) earns its keep.
+
+</Derivation>
+
+<Callout type="insight" title="Compatible observables and complete commuting sets">
+Commuting observables are called **compatible**: there exist states that are eigenstates of both, and measuring one does not scramble the other.
+
+If an observable is degenerate, it cannot label states uniquely on its own. So you bring in another observable that commutes with it to tell the states apart. Keep adding until the combination of eigenvalues pins down the state uniquely — such a set of operators is a **complete set of commuting observables** (CSCO).
+
+**Hydrogen is the standard example**: $\hat H$ alone is heavily degenerate (four-fold at $n=2$). Add $\hat L^2$ and $\hat L_z$ — the three operators commute pairwise — and the eigenvalue combination $(n,l,m)$ fixes the state uniquely. Add spin $\hat S_z$ and you get $(n,l,m,m_s)$ — **exactly the four quantum numbers from chemistry class**.
+
+They are not memorised facts; they are the outcome of "find a set of pairwise-commuting observables that fully resolves the degeneracy".
+</Callout>
+
+<Callout type="warning" title="Non-commuting does not mean ''cannot be sharp'' — it depends on the state">
+The right-hand side of $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ depends on the state.
+
+If $[\hat A,\hat B]$ is not a constant (angular momentum, say), there may well be states on which $\langle[\hat A,\hat B]\rangle=0$ and the lower bound collapses to zero.
+
+**But $[\hat x,\hat p]=\ii\hbar$ is a constant** — $\langle\ii\hbar\rangle=\ii\hbar$ regardless of the state — so $\sigma_x\sigma_p\ge\hbar/2$ holds for **every** state without exception. That is what makes the position-momentum pair special.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Commutator', latex: '[\\hat A,\\hat B]=\\hat A\\hat B-\\hat B\\hat A', note: 'Identically zero in classical mechanics; purely quantum' },
+    { name: 'Canonical commutation relation', latex: '[\\hat x,\\hat p]=\\ii\\hbar', note: 'The starting point of matrix mechanics; ħ→0 is the classical limit' },
+    { name: 'Leibniz rule', latex: '[\\hat A,\\hat B\\hat C]=[\\hat A,\\hat B]\\hat C+\\hat B[\\hat A,\\hat C]', note: 'Mind the operator ordering' },
+    { name: 'Generalised uncertainty relation', latex: '\\sigma_A\\sigma_B\\ge\\frac12\\left|\\langle[\\hat A,\\hat B]\\rangle\\right|', note: 'Cauchy-Schwarz + keeping only the imaginary part' },
+    { name: 'Angular momentum commutators', latex: '[\\hat L_x,\\hat L_y]=\\ii\\hbar\\hat L_z,\\qquad[\\hat L^2,\\hat L_z]=0', note: 'Hence l and m can be fixed together, but not all three components' },
+    { name: 'Compatibility criterion', latex: '[\\hat A,\\hat B]=0\\iff\\text{a common eigenbasis exists}', note: 'The origin of the CSCO and the four quantum numbers' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'comm-1',
+      prompt: 'In computing [x̂, p̂], which step produces the non-zero result?',
+      options: [
+        'The product rule in p̂x̂ψ = −iħ d(xψ)/dx contributes an extra term −iħψ',
+        'x̂ and p̂ have different eigenvalues',
+        'The wavefunction is complex',
+        'The boundary term of an integral',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Eigenvalues play no role in computing the commutator.',
+        2: 'The same result comes out on real functions.',
+        3: 'No integral is performed here.',
+      },
+      explain: 'd(xψ)/dx = ψ + xψ′, and that extra ψ is the entire source. If x̂ and p̂ were ordinary numbers, the product would of course commute and the commutator would vanish — the non-zero result comes entirely from "the derivative acting on a product".',
+    },
+    {
+      id: 'comm-2',
+      prompt: 'The derivation of the generalised uncertainty relation σ_Aσ_B ≥ ½|⟨[Â,B̂]⟩| uses: (Select all that apply.)',
+      options: [
+        'The Cauchy-Schwarz inequality',
+        'Keeping only the imaginary part of a complex number (discarding the real part)',
+        'The Hermiticity of Â and B̂',
+        'The Schrödinger equation',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The derivation involves no time evolution whatsoever; it holds for any state at any instant.',
+      },
+      explain: 'Hermiticity lets σ² be written as ⟨f|f⟩, Cauchy-Schwarz bounds the product, and dropping the real part trades ⟨f|g⟩ for the expectation of the commutator. Dropping the real part means the bound is usually not the tightest — keeping it yields the stronger Robertson–Schrödinger relation.',
+    },
+    {
+      id: 'comm-3',
+      prompt: 'The necessary and sufficient condition for two Hermitian operators to share a common eigenbasis is:',
+      options: [
+        'They commute',
+        'Their eigenvalues are all real',
+        'They are both invertible',
+        'Their eigenvalues coincide',
+      ],
+      answer: [0],
+      distractors: {
+        1: 'Hermitian operators always have real eigenvalues, so this distinguishes nothing.',
+        2: 'Invertibility is irrelevant here.',
+        3: 'The eigenvalues are in general completely different.',
+      },
+      explain: 'This theorem is the foundation of the CSCO concept. Hydrogen''s four quantum numbers (n,l,m,m_s) arise exactly this way: Ĥ alone is degenerate, and only by adding the pairwise-commuting L̂², L̂_z, Ŝ_z can the states be labelled uniquely.',
+    },
+    {
+      id: 'comm-4',
+      prompt: 'Regarding σ_{L_x}σ_{L_y} ≥ (ħ/2)|⟨L̂_z⟩|, which statement is correct?',
+      options: [
+        'The lower bound depends on the state; when ⟨L̂_z⟩ = 0 this inequality no longer constrains anything',
+        'As with σₓσ_p ≥ ħ/2, the lower bound is a universal constant',
+        'L_x and L_y can never be sharp simultaneously',
+        'The relation holds only in the classical limit',
+      ],
+      answer: 0,
+      distractors: {
+        1: '[L̂_x,L̂_y] = iħL̂_z is an operator, not a constant, so the right-hand side varies with the state.',
+        2: 'On states with ⟨L̂_z⟩ = 0 the inequality permits both to vanish.',
+        3: 'It is an exact quantum relation.',
+      },
+      explain: 'This is exactly what makes the x–p pair special: [x̂,p̂] = iħ is a constant, so σₓσ_p ≥ ħ/2 holds for every state without exception. When the commutator is an operator, the strength of the constraint depends on the state at hand.',
+    },
+  ]}
+/>
+
+## What comes next
+
+By this point, most of chapter 2's "decrees" have turned into conclusions.
+
+The next section compresses the whole theory into five postulates — drawing a clean line between what must be assumed and what can be derived.

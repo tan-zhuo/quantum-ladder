@@ -1,17 +1,288 @@
 ---
-title: 'Degenerate perturbation theory'
-summary: 'With degeneracy you must diagonalise inside the degenerate subspace first.'
+title: Time-independent degenerate perturbation theory
 section: '7.2'
 order: 2
-status: stub
+summary: 'A zero denominator is not a disaster but a hint: diagonalise the perturbation inside the degenerate subspace first, and let the perturbation pick out the "good" zeroth-order states itself.'
+status: done
+prereqs:
+  - 07-approximation/01-nondegenerate-perturbation
+  - 03-formalism/05-hermitian-operators
+objectives:
+  - Explain why degeneracy breaks the previous section's formulas, and what the breakdown really means
+  - Write down the secular equation and solve for the level splitting inside a degenerate subspace
+  - Work out the ±3ea₀ℰ splitting and the corresponding "good" states for the Stark effect of hydrogen at n=2
+  - Use symmetry (parity, conserved quantities) to predict in advance which matrix elements vanish
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the end of the last section we buried a landmine: both the first-order wavefunction and the second-order energy have $E_n^{(0)}-E_m^{(0)}$ in the denominator, and the moment two states are degenerate the formulas divide by zero on the spot. This section defuses the mine.
+
+Start with a real experiment from 1913. Stark placed a hydrogen discharge tube in a strong electric field and found that the Balmer lines (the blue $n=4\to2$ line, for instance) **split into several symmetric components**, with a splitting **proportional** to the field strength. That is actually rather strange: we just said in the last section that the first-order Stark shift of the hydrogen ground state is zero (parity!), so the shift starts at second order and should go as $\mathcal E^2$. Why do the excited states, of all things, respond linearly?
+
+The answer, in one word: degeneracy.
+
+## What the zero denominator is telling us
+
+Four states crowd onto the hydrogen $n=2$ level: $\ket{2s}$, $\ket{2p,m=0}$, $\ket{2p,m=\pm1}$,
+all with exactly the same energy ([section 6.4](/en/ch/06-hydrogen/04-energy-levels/)).
+Now switch on a field $\vec{\mathcal E}=\mathcal E\hat z$; the perturbation is
+
+$$
+\hat H'=e\mathcal E z
+$$
+
+Try the last section's formula: the corrected $\ket{2s}$ wants to mix in $\ket{2p_0}$, with coefficient
+
+$$
+\frac{\bra{2p_0}\hat H'\ket{2s}}{E_{2s}^{(0)}-E_{2p}^{(0)}}=\frac{\text{non-zero}}{0}
+$$
+
+It diverges. But this divergence is not mathematics throwing a tantrum — it is delivering a physical message:
+
+<Callout type="insight" title="What the divergence really means: we picked the wrong zeroth-order states">
+Degeneracy means the zeroth-order problem's solution is **not unique**. Any linear combination
+$\alpha\ket{2s}+\beta\ket{2p_0}$ is a perfectly legal eigenstate of $\hat H_0$, all with the same energy —
+$\hat H_0$ has no opinion whatsoever about "which basis to use".
+
+But the perturbation has an opinion. The instant the field switches on, the four-fold degeneracy breaks, and the true eigenstates tend toward **one particular set of combinations**.
+If you happen to start perturbation theory from that "right" set, all is well;
+start from any other combination, and the perturbation is forced to wrench the state around with infinite coefficients — that is where the zero denominator comes from.
+
+So the fix is not to dodge the division, but to **find the "right" zeroth-order states first**.
+How to find them: let the perturbation choose — diagonalise $\hat H'$ inside the degenerate subspace.
 </Callout>
 
-## Planned contents
+## The secular equation
 
-- The secular equation
-- Choosing good zeroth-order states
-- How symmetry helps you pick the basis
+<Derivation title="The general framework of degenerate perturbation theory" level="基础" minutes={8} open={true}>
+
+Suppose a level $E^{(0)}$ is $g$-fold degenerate, its subspace spanned by the orthonormal states
+$\ket{\phi_1},\dots,\ket{\phi_g}$. A "good" zeroth-order state is some combination of them:
+
+$$
+\ket{\psi^{(0)}}=\sum_{a=1}^{g}c_a\ket{\phi_a}
+$$
+
+**Step 1: write the first-order equation.** Just as in the last section, the $\lambda^1$ order gives
+
+$$
+\hat H_0\ket{\psi^{(1)}}+\hat H'\ket{\psi^{(0)}}
+=E^{(0)}\ket{\psi^{(1)}}+E^{(1)}\ket{\psi^{(0)}}
+$$
+
+**Step 2: project into the degenerate subspace.** Hit both sides with $\bra{\phi_b}$.
+Acting to the left, the Hermitian $\hat H_0$ gives $E^{(0)}\braket{\phi_b}{\psi^{(1)}}$,
+which cancels the first term on the right — exactly the same cancellation as last section, except this time what survives is a **matrix equation**:
+
+$$
+\sum_{a=1}^{g}\bra{\phi_b}\hat H'\ket{\phi_a}\,c_a=E^{(1)}c_b
+$$
+
+The left side is the $g\times g$ matrix $W_{ba}\equiv\bra{\phi_b}\hat H'\ket{\phi_a}$ acting on the column vector of coefficients.
+This is a standard eigenvalue problem:
+
+$$
+W\vec c=E^{(1)}\vec c
+$$
+
+**Step 3: solve the eigenvalue problem.** A non-trivial solution exists only if
+
+$$
+\det\!\left(W-E^{(1)}I\right)=0
+$$
+
+This determinant equation is called the **secular equation** (the name comes from celestial mechanics: the same mathematics was once used to compute the "secular", long-term perturbations of planetary orbits). Its $g$ roots are the $g$ first-order energy shifts — the degeneracy splits into at most $g$ levels —
+and the eigenvector $\vec c$ belonging to each root gives one "good" zeroth-order state.
+
+**Boiled down to an operating manual:**
+1. Identify the degenerate subspace and pick any basis for it;
+2. Compute the $g\times g$ perturbation matrix $W$ in that basis;
+3. Diagonalise $W$: eigenvalues = first-order shifts, eigenvectors = good zeroth-order states.
+
+Note that this step is **not an approximation**: diagonalising within the subspace is exact.
+The "perturbative" approximation lies in neglecting the coupling between the subspace and the levels outside it (that is second-order business).
+
+</Derivation>
+
+## A worked example: the Stark splitting of hydrogen at n=2
+
+Follow the manual. Take the basis $\ket{2s},\ket{2p_0},\ket{2p_{+1}},\ket{2p_{-1}}$;
+we need the $4\times4=16$ matrix elements of $\hat H'=e\mathcal E z$. Sounds intimidating,
+but symmetry will kill nearly all of them for us.
+
+**Parity.** $z$ is an odd function. The $s$ state has even parity, the $p$ states odd,
+so $\bra{2s}z\ket{2s}=0$, and the three $\bra{2p}z\ket{2p'}$ elements all vanish too
+(odd × odd × odd = odd; the integral is zero). **Every diagonal element is dead.**
+
+**Angular momentum.** $z$ does not depend on the azimuthal angle $\varphi$, so $[\hat L_z,z]=0$:
+the perturbation does not change the magnetic quantum number $m$. Hence $z$ can only connect states of equal $m$ —
+$\ket{2p_{\pm1}}$ cannot connect to anyone (there are no other $m=\pm1$ states within $n=2$),
+so they are spectators whose energy does not move at first order.
+
+Only one pair survives: $\bra{2s}z\ket{2p_0}$ and its complex conjugate.
+
+<Derivation title="The matrix element and the splitting" level="进阶" minutes={7}>
+
+Integrate directly with the Chapter 6 hydrogen wavefunctions (radial part × angular part):
+
+$$
+\bra{2s}z\ket{2p_0}
+=\int R_{20}R_{21}\,r^3\dd r\int Y_0^{0*}\cos\theta\,Y_1^0\,\dd\Omega
+=-3a_0
+$$
+
+(No need to memorise the number — just remember the scale is the Bohr radius $a_0$: that is simply how big the $n=2$ orbitals are.)
+So within the $\ket{2s},\ket{2p_0}$ block, the $2\times2$ matrix $W$ is
+
+$$
+W=\begin{pmatrix}0&-3e\mathcal E a_0\\-3e\mathcal E a_0&0\end{pmatrix}
+$$
+
+The secular equation $\det(W-E^{(1)}I)=(E^{(1)})^2-(3e\mathcal E a_0)^2=0$ solves to
+
+$$
+E^{(1)}=\pm3e\mathcal E a_0,\qquad
+\ket{\psi_\mp^{(0)}}=\frac{1}{\sqrt2}\left(\ket{2s}\mp\ket{2p_0}\right)
+$$
+
+$n=2$ splits into three lines: $-3e\mathcal E a_0$, $0$ (doubly: $2p_{\pm1}$), $+3e\mathcal E a_0$ —
+matching the symmetric splitting pattern Stark saw, and **proportional to $\mathcal E$**.
+
+**Plug in numbers**: at $\mathcal E=10^5\ \text{V/cm}=10^7\ \text{V/m}$ (a strong laboratory field),
+
+$$
+3e\mathcal E a_0=3\times(1.6\times10^{-19}\,\text{C})\times10^7\,\text{V/m}\times5.29\times10^{-11}\,\text{m}
+\approx1.6\ \text{meV}
+$$
+
+corresponding to about 13 cm⁻¹ in wavenumbers — easy work for a spectrometer.
+
+**Why is the response linear here?** The "good" states $(\ket{2s}\mp\ket{2p_0})/\sqrt2$
+are superpositions of opposite-parity states — they **carry a built-in electric dipole moment** ($\langle z\rangle=\pm3a_0\neq0$),
+with no need to wait for the field to polarise them. With a ready-made dipole, the energy is naturally proportional to $\mathcal E$;
+the ground state has no degenerate partner to combine with, so it can only be polarised slowly by the field, hence $\mathcal E^2$.
+The linear splitting of the Stark lines is direct evidence that "a ready-made dipole is hiding in the degenerate subspace".
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**The perturbation is the judge; the degenerate states are the contestants.** With no perturbation, everyone in the subspace is equal — any orthogonal basis is a legitimate answer. Once the perturbation enters, the scoring begins: the combinations it selects
+(the eigenvectors of $W$) pass smoothly into the true eigenstates the instant the perturbation switches on;
+every other combination gets violently churned. The "good" in "good zeroth-order wavefunctions"
+means precisely **the set of states that the true eigenstates approach in the limit $\mathcal E\to0$**.
+
+</div>
+<div slot="right">
+
+The criterion for "good" can be stated crisply: if you can find a Hermitian operator $\hat A$ with
+
+$$
+[\hat A,\hat H_0]=0,\qquad[\hat A,\hat H']=0
+$$
+
+and the degenerate states are eigenstates of $\hat A$ with different eigenvalues, then they are automatically good states, and $W$ is already diagonal in that basis.
+In the Stark problem $\hat A=\hat L_z$ does exactly this job: it removes the $m=\pm1$ states up front
+and whittles the $4\times4$ problem down to $2\times2$.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Symmetry is diagonalisation for free">
+Before computing any matrix element, ask two questions: is the perturbation odd or even under parity? Which conserved quantities does it commute with?
+Each answer rules out a whole batch of matrix elements in advance. Above, symmetry chopped 16 matrix elements down to a single independent quantity —
+not a coincidence, but the norm. In atomic physics this manoeuvre has a name: **selection rules**
+(for a $z$-type perturbation, the rules are $\Delta\ell=\pm1$, $\Delta m=0$).
+Prune the matrix with symmetry first, integrate second — that is the standard posture of degenerate perturbation theory.
+</Callout>
+
+<Callout type="warning" title="'Near-degeneracy' is just as dangerous">
+The criterion was never "trouble only at exactly equal energies". The last section's validity condition was that matrix elements be far smaller than level spacings —
+so the moment two levels get **close enough** (spacing comparable to the matrix element), the non-degenerate formulas are already untrustworthy,
+and the near-degenerate levels must be diagonalised together inside one subspace.
+
+Example: hydrogen's 2s and 2p are actually separated by the Lamb shift, about 4 μeV — not strictly degenerate.
+When the field is very weak ($3e\mathcal E a_0\ll4\ \mu\text{eV}$) the response is quadratic;
+once the field grows strong enough that the Stark matrix element swamps the Lamb gap, the linear splitting appears.
+"Which set of formulas to use" depends on which is bigger, the perturbation or the spacing — and that is the soul of every approximation method.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Secular equation', latex: "\\det\\left(W-E^{(1)}I\\right)=0,\\quad W_{ba}=\\bra{\\phi_b}\\hat H'\\ket{\\phi_a}", note: 'g roots = g first-order shifts; eigenvectors = good zeroth-order states' },
+    { name: 'n=2 Stark matrix element', latex: "\\bra{2s}\\,z\\,\\ket{2p_0}=-3a_0", note: 'Parity and Δm=0 kill every other matrix element' },
+    { name: 'Stark splitting', latex: 'E^{(1)}=\\pm3e\\mathcal{E}a_0,\\quad \\ket{\\psi^{(0)}_\\mp}=\\tfrac{1}{\\sqrt2}(\\ket{2s}\\mp\\ket{2p_0})', note: 'Linear response: the good states carry a built-in dipole ∓3ea₀' },
+    { name: 'Criterion for a good basis', latex: "[\\hat A,\\hat H_0]=[\\hat A,\\hat H']=0", note: 'The eigenbasis of a conserved  automatically diagonalises W (selection rules)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'dp-1',
+      prompt: 'Non-degenerate perturbation theory diverges at a degeneracy. The correct reading is:',
+      options: [
+        'The zeroth-order states were chosen wrongly — one must first find the eigencombinations of the perturbation inside the degenerate subspace',
+        'The perturbation is too strong for any method to handle',
+        'Degenerate systems have no well-defined energy levels',
+        'One must keep higher orders to cancel the divergence',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Make the perturbation as weak as you like — the divergence appears regardless. The problem is the starting point, not the strength.',
+        3: 'Higher orders only diverge worse; the way out is to change the starting point, not to pile on orders.',
+      },
+      explain: 'Inside a degenerate subspace the zeroth-order eigenstates are not unique, and H₀ cannot tell you which combinations the true eigenstates approach. Starting from a "wrong" combination, perturbation theory can only correct it with divergent coefficients. Diagonalise the W matrix first, start from the "good" states, and the divergence disappears by itself.',
+    },
+    {
+      id: 'dp-2',
+      prompt: 'Hydrogen at n=2 in a z-direction electric field: how many independent non-zero matrix elements are there in the 4×4 perturbation matrix, and why?',
+      options: [
+        'One: parity kills all the diagonal blocks, Δm=0 kills the coupling to 2p±₁, leaving only ⟨2s|z|2p₀⟩',
+        'Four: the four diagonal elements',
+        'All 16 must be integrated honestly',
+        'Zero: an electric field has no first-order effect on hydrogen',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The diagonal elements ⟨φ|z|φ⟩ all vanish by parity (z is an odd function).',
+        3: 'The ground state indeed has no first-order effect, but n=2 has degenerate partners; the good states carry a built-in dipole and the first-order effect is real.',
+      },
+      explain: 'z is a parity-odd, m-conserving operator: it can only connect states of opposite parity and equal m. Within n=2 the only pair meeting both conditions is 2s and 2p₀, and the problem shrinks from 4×4 to 2×2.',
+    },
+    {
+      id: 'dp-3',
+      prompt: 'Why is the Stark shift of the hydrogen ground state proportional to ℰ², while the n=2 splitting is proportional to ℰ?',
+      options: [
+        'The good states at n=2 are superpositions of 2s and 2p₀ carrying a permanent dipole moment; the ground state has no degenerate partner and can only be polarised by the field',
+        'The ground state sits closer to the nucleus, which screens the field',
+        'The n=2 electron moves faster',
+        'Both are really ℰ² responses; the difference is an artefact of experimental resolution',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Screening has nothing to do with it; the key is whether the state has a ready-made ⟨z⟩ ≠ 0.',
+        3: 'Experiment clearly shows the n=2 splitting proportional to ℰ — that is precisely the historic discovery of the Stark effect.',
+      },
+      explain: 'At first order the shift is proportional to ⟨z⟩. A state of definite parity has ⟨z⟩=0; but degeneracy allows the opposite-parity 2s and 2p₀ to combine into states with ⟨z⟩=∓3a₀, and the field couples directly to that ready-made dipole — hence the linear response.',
+    },
+    {
+      id: 'dp-4',
+      type: 'numeric',
+      prompt: 'In a field ℰ = 10⁷ V/m, the highest and lowest components of the hydrogen n=2 level are separated by 2×3ea₀ℰ. Find this total splitting, in meV. (a₀ = 5.29×10⁻¹¹ m)',
+      answer: 3.18,
+      tolerance: 0.2,
+      unit: 'meV',
+      explain: 'The one-sided shift is 3ea₀ℰ = 3×5.29×10⁻¹¹×10⁷ eV ≈ 1.59 meV, so top and bottom are 2×1.59 ≈ 3.2 meV apart. In between sits the unmoved double line (2p±₁), completing the symmetric three-line pattern.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Both sections of perturbation theory share one premise: the Hamiltonian must contain "a big solvable piece", and the perturbation must be small.
+But look back at helium — the electron repulsion is a third of the main part, and first-order perturbation theory only squeezes the 30 eV error down to 4 eV:
+neither here nor there. What if the system simply has no natural small parameter?
+The variational method of the next section takes an entirely different tack: no expansion at all — just bid on the energy directly.
+Guess a wavefunction; the energy it yields can never dip below the true ground state, and whoever guesses lowest wins.

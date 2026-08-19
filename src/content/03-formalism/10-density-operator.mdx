@@ -2,17 +2,396 @@
 title: 密度算符入门
 section: '3.10'
 order: 10
-summary: 当你不知道体系处于哪个态时怎么办。
-status: stub
+summary: 当你不知道体系处于哪个态，或者它根本没有自己的态时，态矢量就不够用了。密度算符是那个够用的工具。
+status: done
+prereqs:
+  - 03-formalism/09-time-evolution-pictures
+objectives:
+  - 写出纯态与混合态的密度算符，并说出 ρ 的三条基本性质
+  - 用 Tr(ρ²) 判断纯度，并解释它的取值范围
+  - 区分「叠加」与「混合」，说明两者在实验上如何分辨
+  - 说明约化密度算符为什么是必需的
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+前面九节一直默认：体系有一个确定的态矢量 $\ket{\psi}$。
+
+这一节处理两种它不够用的情形——而这两种在真实实验里几乎是常态。
+
+## 两种「不知道」
+
+<DualView>
+<div slot="left">
+
+**情形一：经典的无知**
+
+从炉子里飞出来的银原子，自旋方向完全随机。你知道每一个原子都有确定的自旋态，但不知道是哪个。
+
+这是**经典概率**：50% 是 $\ket{\uparrow}$，50% 是 $\ket{\downarrow}$。
+
+注意这**不是**叠加态 $\frac{1}{\sqrt2}(\ket{\uparrow}+\ket{\downarrow})$——那是一个确定的、沿 $+x$ 方向自旋的态，与「不知道是上还是下」完全不同。下面会说清楚怎么分辨。
+
+</div>
+<div slot="right">
+
+**情形二：它根本没有自己的态**
+
+设两个粒子处于纠缠态
+
+$$
+\ket{\Psi}=\frac{1}{\sqrt2}\big(\ket{\uparrow}_A\ket{\downarrow}_B-\ket{\downarrow}_A\ket{\uparrow}_B\big)
+$$
+
+整体有确定的态。但**粒子 A 单独有什么态？**
+
+答案是：没有。不存在任何 $\ket{\psi}_A$ 使 $\ket{\Psi}=\ket{\psi}_A\otimes\ket{\phi}_B$。
+
+这不是无知的问题——即使你掌握了关于整体的全部信息，A 依然没有自己的态矢量。
+
+</div>
+</DualView>
+
+两种情形都需要同一个新工具。
+
+## 密度算符
+
+**纯态**（知道是 $\ket{\psi}$）：
+
+$$
+\hat\rho=\ket{\psi}\bra{\psi}
+$$
+
+这就是[3.2 节](/ch/03-formalism/02-dirac-notation/)的投影算符。
+
+**混合态**（以概率 $p_i$ 处于 $\ket{\psi_i}$）：
+
+$$
+\hat\rho=\sum_i p_i\ket{\psi_i}\bra{\psi_i},\qquad p_i\ge0,\ \sum_ip_i=1
+$$
+
+<Callout type="insight" title="为什么这个组合是对的">
+关键是期望值必须算对。若以概率 $p_i$ 处于 $\ket{\psi_i}$，则 $\hat A$ 的期望值应当是各个态的期望值再按经典概率加权：
+
+$$
+\langle A\rangle=\sum_ip_i\bra{\psi_i}\hat A\ket{\psi_i}
+$$
+
+而这恰好可以写成一个迹：
+
+$$
+\langle A\rangle=\operatorname{Tr}(\hat\rho\hat A)
+$$
+
+下面这条 Derivation 验证它。
 </Callout>
 
-## 内容规划
+<Derivation title="验证迹公式 ⟨A⟩ = Tr(ρÂ)" level="基础" minutes={3}>
 
-- 纯态的密度算符 ρ = |ψ⟩⟨ψ|
-- ρ 的性质：厄米、迹为 1、半正定
-- Tr(ρ²) 判纯度
+取任意正交归一基 $\{\ket{n}\}$：
 
+$$
+\operatorname{Tr}(\hat\rho\hat A)=\sum_n\bra{n}\hat\rho\hat A\ket{n}
+=\sum_n\sum_ip_i\braket{n}{\psi_i}\bra{\psi_i}\hat A\ket{n}
+$$
+
+把两个数交换位置（它们都是复数，可交换），再对 $n$ 求和用完备性 $\sum_n\ket{n}\bra{n}=\hat 1$：
+
+$$
+=\sum_ip_i\bra{\psi_i}\hat A\Big(\sum_n\ket{n}\bra{n}\Big)\ket{\psi_i}=\sum_ip_i\bra{\psi_i}\hat A\ket{\psi_i}
+$$
+
+正是要求的形式。$\blacksquare$
+
+**注意迹与基的选择无关**，所以这个公式在任何表象里都能用。
+
+</Derivation>
+
+## ρ 的三条性质
+
+<DualView>
+<div slot="left">
+
+**1. 厄米**：$\hat\rho^\dagger=\hat\rho$
+
+因为每个 $\ket{\psi_i}\bra{\psi_i}$ 厄米，$p_i$ 实。
+
+**2. 迹为 1**：$\operatorname{Tr}\hat\rho=1$
+
+$$
+\operatorname{Tr}\hat\rho=\sum_ip_i\braket{\psi_i}{\psi_i}=\sum_ip_i=1
+$$
+
+对应「总概率为 1」。
+
+**3. 半正定**：$\bra{\phi}\hat\rho\ket{\phi}\ge0$
+
+$$
+\bra{\phi}\hat\rho\ket{\phi}=\sum_ip_i|\braket{\phi}{\psi_i}|^2\ge0
+$$
+
+对应「概率非负」。
+
+</div>
+<div slot="right">
+
+**反过来也成立**
+
+任何满足这三条的算符都是某个物理态的密度算符。所以这三条可以直接当作定义：
+
+> 量子态 = 厄米、迹为 1、半正定的算符
+
+这比「归一化的态矢量」更一般，也更接近实验——**你在实验室里能制备的最一般的东西就是一个 $\hat\rho$**。
+
+由厄米性可对角化：
+
+$$
+\hat\rho=\sum_k\lambda_k\ket{k}\bra{k}
+$$
+
+$\lambda_k\ge0$、$\sum_k\lambda_k=1$。这组本征值就是**在本征基下的经典概率分布**。
+
+</div>
+</DualView>
+
+## 纯度：怎么判断是纯态还是混合态
+
+<Callout type="insight" title="Tr(ρ²) 这一个数就够了">
+$$
+\operatorname{Tr}(\hat\rho^2)=\sum_k\lambda_k^2
+$$
+
+**纯态**：只有一个 $\lambda=1$，其余为零，所以
+
+$$
+\operatorname{Tr}(\hat\rho^2)=1
+$$
+
+（也可以直接验证：$\hat\rho^2=\ket{\psi}\braket{\psi}{\psi}\bra{\psi}=\hat\rho$，纯态的 $\hat\rho$ 是投影算符。）
+
+**混合态**：$\sum_k\lambda_k=1$ 但每个都小于 1，平方后更小，所以
+
+$$
+\operatorname{Tr}(\hat\rho^2)<1
+$$
+
+**最大混合态**（$d$ 维空间里所有 $\lambda_k=1/d$）：
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac1d
+$$
+
+对自旋 1/2（$d=2$）就是 $1/2$，这是最低值——对应「完全不知道」。
+
+$$
+\frac1d\le\operatorname{Tr}(\hat\rho^2)\le1
+$$
+
+这个数叫**纯度**。在 Bloch 球上它有直接的几何意义：纯态在球面上，混合态在球内，最大混合态在球心（[9.1 节](/ch/09-quantum-information/01-qubit-bloch-sphere/)）。
+</Callout>
+
+## 叠加与混合：怎么在实验上分辨
+
+这是本节最关键的一点，也是初学最容易混的地方。
+
+<DualView>
+<div slot="left">
+
+**叠加态**（纯态）
+
+$$
+\ket{+}=\frac{1}{\sqrt2}\big(\ket{\uparrow}+\ket{\downarrow}\big)
+$$
+
+$$
+\hat\rho_\text{pure}=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix}
+$$
+
+$\operatorname{Tr}\rho^2=1$。
+
+**混合态**
+
+「50% 上、50% 下」
+
+$$
+\hat\rho_\text{mix}=\frac12\begin{pmatrix}1&0\\0&1\end{pmatrix}
+$$
+
+$\operatorname{Tr}\rho^2=1/2$。
+
+</div>
+<div slot="right">
+
+**沿 z 测量：完全一样**
+
+两者都给出 50% 上、50% 下。**只测 z 永远分不出来。**
+
+**沿 x 测量：立刻分开**
+
+$\hat\rho_\text{pure}$：它就是 $\ket{+_x}$，所以
+
+$$
+P(+_x)=1
+$$
+
+$\hat\rho_\text{mix}$：
+
+$$
+P(+_x)=\operatorname{Tr}(\hat\rho_\text{mix}\ket{+_x}\bra{+_x})=\frac12
+$$
+
+**区别全在非对角元上。** 它们叫**相干项**，是干涉能力的所在。退相干干的事，就是把它们抹掉（[10.5 节](/ch/10-open-systems/05-decoherence/)）。
+
+</div>
+</DualView>
+
+<Callout type="warning" title="同一个 ρ 可以有无穷多种「制备方式」">
+最大混合态可以写成
+
+$$
+\hat\rho=\frac12\ket{\uparrow}\bra{\uparrow}+\frac12\ket{\downarrow}\bra{\downarrow}
+$$
+
+也可以写成
+
+$$
+\hat\rho=\frac12\ket{+_x}\bra{+_x}+\frac12\ket{-_x}\bra{-_x}
+$$
+
+两者是**同一个算符**（都等于 $\frac12\hat 1$）。
+
+所以「这个混合态是由哪些纯态混出来的」这个问题**没有唯一答案**，而且原则上不可通过任何测量区分——因为一切预言都只通过 $\operatorname{Tr}(\hat\rho\hat A)$ 进入，而 $\hat\rho$ 相同。
+
+**这不是缺陷，是特性。** 量子隐形传态与量子密钥分发的安全性正是建立在这一点上：窃听者拿到的约化态与合法用户的完全相同，无法从中提取任何信息（[9.5](/ch/09-quantum-information/05-teleportation/)–[9.6 节](/ch/09-quantum-information/06-superdense-coding/)）。
+</Callout>
+
+## 约化密度算符
+
+回到开头的情形二。
+
+<Derivation title="从纠缠态提取单粒子的态" level="进阶" minutes={6}>
+
+对复合系统 $\hat\rho_{AB}$，把 B 的自由度**追迹掉**：
+
+$$
+\hat\rho_A=\operatorname{Tr}_B\hat\rho_{AB}=\sum_j\bra{j}_B\hat\rho_{AB}\ket{j}_B
+$$
+
+对单态 $\ket{\Psi}=\frac{1}{\sqrt2}(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow})$：
+
+$$
+\hat\rho_{AB}=\frac12\big(\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}\big)\big(\bra{\uparrow\downarrow}-\bra{\downarrow\uparrow}\big)
+$$
+
+对 B 追迹（取 $\ket{j}_B\in\{\ket{\uparrow}_B,\ket{\downarrow}_B\}$）。交叉项含 $\braket{\uparrow}{\downarrow}_B=0$，全部消失，剩下
+
+$$
+\hat\rho_A=\frac12\ket{\uparrow}\bra{\uparrow}+\frac12\ket{\downarrow}\bra{\downarrow}=\frac12\hat 1
+$$
+
+**A 单独看是最大混合态**，$\operatorname{Tr}\rho_A^2=1/2$。
+
+**这件事值得停下来想一想：** 整体 $\ket{\Psi}$ 是纯态（$\operatorname{Tr}\rho_{AB}^2=1$，我们对它掌握了全部信息），可它的每一个部分却处于最大混合态——**对它们一无所知**。
+
+经典世界里这不可能：知道整体就知道部分。量子世界里，信息可以完全存放在**关联**之中，而不在任何一方身上。
+
+这正是纠缠的定义性特征。[9.3 节](/ch/09-quantum-information/03-entanglement-measures/)会用 $\hat\rho_A$ 的冯·诺依曼熵 $S=-\operatorname{Tr}(\rho\ln\rho)$ 把「纠缠了多少」变成一个数。
+
+</Derivation>
+
+<Callout type="insight" title="ρ 的演化：冯·诺依曼方程">
+把 $\hat\rho=\sum_ip_i\ket{\psi_i}\bra{\psi_i}$ 逐项用薛定谔方程求导：
+
+$$
+\ii\hbar\frac{\dd\hat\rho}{\dd t}=[\hat H,\hat\rho]
+$$
+
+注意它与海森堡方程 $\frac{\dd\hat A_H}{\dd t}=\frac{\ii}{\hbar}[\hat H,\hat A_H]$ **差一个负号**——因为 $\hat\rho$ 是态而不是可观测量，它在薛定谔绘景里演化。
+
+由 $\hat\rho(t)=\hat U\hat\rho(0)\hat U^\dagger$ 可知 $\operatorname{Tr}(\rho^2)$ 在幺正演化下**不变**：纯态永远是纯态。
+
+**那退相干怎么把纯态变成混合态？** 因为退相干不是孤立体系的幺正演化——它是「与环境一起幺正演化，然后把环境追迹掉」。追迹这一步不幺正，纯度就是在这里丢掉的。开放系统的演化方程（Lindblad 方程）见[10.4 节](/ch/10-open-systems/04-lindblad/)。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '密度算符', latex: '\\hat\\rho=\\sum_ip_i\\ket{\\psi_i}\\bra{\\psi_i}', note: '纯态是只有一项的特例' },
+    { name: '期望值', latex: '\\langle A\\rangle=\\operatorname{Tr}(\\hat\\rho\\hat A)', note: '迹与表象无关，任何基下都能算' },
+    { name: '三条性质', latex: '\\hat\\rho^\\dagger=\\hat\\rho,\\quad\\operatorname{Tr}\\hat\\rho=1,\\quad\\hat\\rho\\ge0', note: '反过来也成立，可直接当定义' },
+    { name: '纯度', latex: '\\frac1d\\le\\operatorname{Tr}(\\hat\\rho^2)\\le1', note: '= 1 为纯态；= 1/d 为最大混合态' },
+    { name: '约化密度算符', latex: '\\hat\\rho_A=\\operatorname{Tr}_B\\hat\\rho_{AB}', note: '纠缠态的部分必然是混合态' },
+    { name: '冯·诺依曼方程', latex: '\\ii\\hbar\\frac{\\dd\\hat\\rho}{\\dd t}=[\\hat H,\\hat\\rho]', note: '与海森堡方程差一个负号' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'dens-1',
+      prompt: '叠加态 (|↑⟩+|↓⟩)/√2 与「50% |↑⟩、50% |↓⟩」的混合态，如何在实验上分辨？',
+      options: [
+        '沿 x 方向测量：叠加态给出确定结果，混合态给出 50/50',
+        '沿 z 方向测量即可分辨',
+        '两者在任何测量下都相同',
+        '测量能量即可分辨',
+      ],
+      answer: 0,
+      distractors: {
+        1: '沿 z 测量两者都给 50/50，完全无法区分。',
+        2: '它们是不同的物理态，只是需要选对测量方向。',
+        3: '两者能量期望值可以相同。',
+      },
+      explain: '区别全在密度矩阵的非对角元（相干项）上。沿 z 测量只看对角元，所以看不出差别；沿 x 测量把非对角元转到对角位置，差别立刻显现。退相干干的事就是把这些非对角元抹掉。',
+    },
+    {
+      id: 'dens-2',
+      prompt: '关于 Tr(ρ²)，正确的是：（多选）',
+      options: [
+        '纯态时等于 1',
+        '混合态时小于 1',
+        'd 维空间的最大混合态给出 1/d',
+        '它在幺正演化下保持不变',
+      ],
+      answer: [0, 1, 2, 3],
+      explain: '纯态的 ρ 是投影算符，ρ² = ρ，取迹得 1。幺正演化 ρ → UρU† 保持纯度，所以孤立体系的纯态永远是纯态。退相干之所以能降低纯度，是因为它包含「追迹掉环境」这一步——那一步不幺正。',
+    },
+    {
+      id: 'dens-3',
+      prompt: '对纠缠的单态求约化密度算符，得到 ρ_A = ½·1。这说明：',
+      options: [
+        '整体是纯态但每个部分都是最大混合态——信息存放在关联中，不在任何一方身上',
+        '粒子 A 的自旋确实是随机的',
+        '计算出错了',
+        '纠缠态不是合法的量子态',
+      ],
+      answer: 0,
+      distractors: {
+        1: '不是「实际上是某个值只是我们不知道」，A 根本没有自己的态矢量。',
+        2: '这是纠缠态的标准结果。',
+        3: '纠缠态完全合法。',
+      },
+      explain: '经典世界里知道整体就知道部分；量子世界里不成立。这正是纠缠的定义性特征，也是量子隐形传态与量子密钥分发安全性的来源——窃听者拿到的约化态不含任何信息。',
+    },
+    {
+      id: 'dens-4',
+      prompt: '为什么同一个密度算符可以对应多种不同的「制备方式」？',
+      options: [
+        '因为一切预言都只通过 Tr(ρÂ) 进入，ρ 相同则所有预言相同，制备细节原则上不可区分',
+        '因为密度算符的定义不严格',
+        '因为测量精度有限',
+        '因为混合态不是真实的物理态',
+      ],
+      answer: 0,
+      distractors: {
+        1: '定义完全严格。',
+        2: '与精度无关，是原则上的不可区分。',
+        3: '混合态是实验室里最常见的态。',
+      },
+      explain: '½|↑⟩⟨↑| + ½|↓⟩⟨↓| 与 ½|+ₓ⟩⟨+ₓ| + ½|−ₓ⟩⟨−ₓ| 是同一个算符 ½·1。这不是缺陷而是特性：量子密码的安全性正建立在「窃听者无法区分这些制备方式」之上。',
+    },
+  ]}
+/>
+
+## 接下来
+
+第 3 章的工具到此备齐。最后一节做一次结算：把第 2 章那些花了大量篇幅的推导，用新语言重做一遍。
+
+你会看到有些证明从半页缩到三行，有些则从「解偏微分方程」变成了「做代数」。

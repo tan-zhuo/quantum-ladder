@@ -1,24 +1,227 @@
 ---
-title: 'The physical picture of decoherence'
-summary: 'Why macroscopic superpositions are never seen.'
+title: The physical picture of decoherence
 section: '10.5'
 order: 5
-status: stub
-sims: ['decoherence']
+summary: 'The environment is an uninvited measurer: every scattered photon takes a "photograph" of the system. Coherences get erased at an exponential rate, and for macroscopic objects the rate is absurdly fast — this is why Schrödinger''s cat is never seen.'
+status: done
+prereqs:
+  - 10-open-systems/04-lindblad
+objectives:
+  - Use the "environment labels the system" model to derive coherence ∝ the environment-state overlap ⟨E₂|E₁⟩, and explain where the exponential decay comes from
+  - Explain that the pointer basis is decided by the system-environment interaction, and why position is almost always the one selected
+  - Give an order-of-magnitude estimate of the decoherence time for a dust grain, and compare it with the energy relaxation time
+  - State honestly which half of the measurement problem decoherence solves, and which half it does not
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section's Lindblad equation computed the exponential decay of the coherences down to the last detail, but one question got swept under the rug: the jump operator $\hat L$ was **our choice**. Pick $\hat\sigma_z$ and you erase the coherences along $x$ and $y$; pick something else and you erase something else. Who actually decides which basis the environment attacks?
+
+Behind this question stands the oldest cold case in quantum mechanics.
+
+## The phenomenon first: where is the cat
+
+The Schrödinger equation is linear: if an atom can be in a superposition of "decayed + not decayed", then the cat coupled to it should be in a superposition of "dead + alive". Yet no one has ever seen a superposed cat — indeed no one has ever seen so much as a dust grain in a superposition of "here + there". Meanwhile, in the same laboratories, electrons, photons, even molecules tens of thousands of atomic masses heavy interfere perfectly cleanly.
+
+Where is the dividing line? Why can the microscopic superpose and the macroscopic cannot? The old textbooks answered "measurement causes collapse", but that merely renames the problem: there is no goggled observer standing next to the cat — who is measuring it?
+
+The tools of this chapter are now enough for a physical answer: **there is a measurer, and it never takes a day off — the environment itself.**
+
+## The environment is a measurer that never shuts up
+
+The key mechanism in one sentence: the state of the system gets **written into** the state of the environment. A dust grain at position $x_1$: the air molecules and photons bouncing off it fly away in certain directions. The grain at $x_2$: they fly off in **other** directions. Every scattered particle carries a record of "where the grain is" — the environment is photographing the system nonstop, never developing the film, and never pausing.
+
+<Derivation title="Coherence = the overlap of the environment's photographs" level="基础" minutes={8}>
+
+**Step 1: a single scattering event.** The system has two position states $\ket{x_1},\ket{x_2}$; the environment (one photon) starts in $\ket{E_0}$. The interaction writes the system's state into the photon's state (the system is heavy and barely recoils — this kind of "leave a record, change nothing" interaction is precisely the continuous version of chapter 9's CNOT gate):
+
+$$
+\ket{x_1}\ket{E_0}\to\ket{x_1}\ket{E_1},\qquad
+\ket{x_2}\ket{E_0}\to\ket{x_2}\ket{E_2}
+$$
+
+By linearity, a superposition is carried into an entangled state:
+
+$$
+\big(a\ket{x_1}+b\ket{x_2}\big)\ket{E_0}
+\;\to\;
+a\ket{x_1}\ket{E_1}+b\ket{x_2}\ket{E_2}
+$$
+
+**Step 2: look only at the system.** We do not track the departed photon — trace out the environment (the routine of section 3.10; each cross term picks up an environment inner product):
+
+$$
+\hat\rho_S=
+|a|^2\ket{x_1}\bra{x_1}+|b|^2\ket{x_2}\bra{x_2}
++\Big[ab^*\braket{E_2}{E_1}\,\ket{x_1}\bra{x_2}+\text{h.c.}\Big]
+$$
+
+The diagonal is untouched; **the coherences have been multiplied by the factor $\braket{E_2}{E_1}$**. The meaning of this inner product is plain: how hard the two "photographs" are to tell apart.
+
+- $\braket{E_2}{E_1}=1$: the photon never saw where the grain was; the photographs are identical — the coherence is unscathed.
+- $\braket{E_2}{E_1}=0$: the photographs are perfectly distinguishable; the environment "knows" the position — the coherences are wiped to zero, and what remains is exactly the diagonal-only classical mixture of section 10.1.
+
+**Step 3: scattering doesn't happen just once.** Every second, countless photons and molecules strike, each stamping its record independently. After $N$ scatterings,
+
+$$
+\rho_{12}(N)=\rho_{12}(0)\prod_{n=1}^N\braket{E_2^{(n)}}{E_1^{(n)}}
+$$
+
+Suppose each overlap is roughly the same number, with modulus $|\braket{E_2}{E_1}|=1-\epsilon$, and the scattering rate is $R$:
+
+$$
+|\rho_{12}(t)|\approx|\rho_{12}(0)|\,(1-\epsilon)^{Rt}
+=|\rho_{12}(0)|\,\ee^{-t/\tau_{\text{dec}}},
+\qquad
+\frac{1}{\tau_{\text{dec}}}\approx R\,\epsilon
+$$
+
+**The exponential decay is not an assumption — it is the inevitable result of multiplying many independent little labels together.** Even if a single scattering sees almost nothing ($\epsilon\sim10^{-3}$), enough repetitions finish the coherence off regardless — and in the macroscopic world $R$ is unimaginably large.
+
+For an object with a continuous position distribution, the same reasoning gives the standard form of scattering decoherence:
+
+$$
+\rho(x,x';t)=\rho(x,x';0)\,\ee^{-\Lambda t\,(x-x')^2}
+$$
+
+$\Lambda$ is called the localisation rate. The farther apart the superposition ($|x-x'|$ larger), the easier the photographs are to distinguish, and the faster it dies.
+
+</Derivation>
+
+## Who picks the pointer basis: the interaction decides
+
+Now the opening question can be answered. The environment erases coherence between **positions**, rather than (say) between momenta, for a reason that lies not in the system but in **the shape of the interaction**: scattering, collisions, the Coulomb force — almost every coupling acts through **position**. What the environment can distinguish are the states on which the interaction takes different values.
+
+The general rule: the states that (approximately) commute with the interaction Hamiltonian — and are therefore **left almost undisturbed by the environment's relentless photography** — are the ones that can leave stable records. They are called the **preferred basis** or **pointer states** (the name comes from instrument pointers). Every other superposition entangles with the environment immediately and, as a state of the system's own, vanishes forthwith. The jump operator $\hat L$ that "we chose" last section is, physically, chosen by exactly this rule — for macroscopic objects $\hat L$ is almost always a position-type operator, and the cat's pointer states are "dead" and "alive", not their superpositions.
+
+## The numbers are the point: absurdly fast
+
+<DualView>
+<div slot="left">
+
+**A dust grain's report card**
+
+A $10\ \mu\text{m}$ dust grain, superposed over a distance comparable to its own size. The Joos–Zeh scattering model gives decoherence times of order (order-of-magnitude estimates):
+
+- Air at normal pressure: $\tau_{\text{dec}}\sim10^{-31}\ \text{s}$
+- A high-vacuum laboratory: $\sim10^{-17}\ \text{s}$
+- Pump out everything and leave only the cosmic microwave background: $\sim1\ \text{s}$
+
+**Even the afterglow of the Big Bang is enough to kill its superposition within a second.** For a macroscopic object, "isolating it from the environment" is not hard — it has no physically feasible implementation at all.
+
+</div>
+<div slot="right">
+
+**Compared with energy relaxation**
+
+How long would the same environment need to slow the grain down (drain its energy)? The quantum Brownian motion model gives a clean ratio:
+
+$$
+\frac{\tau_{\text{dec}}}{\tau_{\text{rel}}}
+\sim\Big(\frac{\lambda_{\text{th}}}{\Delta x}\Big)^2,
+\qquad
+\lambda_{\text{th}}=\frac{\hbar}{\sqrt{2mk_BT}}
+$$
+
+Substitute $m=1\ \text{g}$, $T=300\ \text{K}$: $\lambda_{\text{th}}\approx3.7\times10^{-23}\ \text{m}$. Take $\Delta x=1\ \text{cm}$:
+
+$$
+\frac{\tau_{\text{dec}}}{\tau_{\text{rel}}}\sim10^{-41}
+$$
+
+Even if friction were so weak that energy relaxation took the age of the universe ($\sim10^{17}\ \text{s}$), the coherence would evaporate within $\sim10^{-24}\ \text{s}$. Last section's $T_2\le2T_1$ said phase is more delicate than energy; for macroscopic objects, more delicate by **forty orders of magnitude**.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The classical world is not an exception to the quantum — it is its limit">
+The dividing line is drawn, and it is not a line of principle — it is a line of **rates**. An electron's $\lambda_{\text{th}}$ is comparable to its own scale, its scattering cross-section is small, the photographs are blurry — its interference survives intact. From dust grains upward, decoherence outruns the resolution of any conceivable observation, and superpositions turn into classical "either-or" within $10^{30}$-ths of the blink of an eye.
+
+So the quantum/classical boundary needs no new physics, and there is no sudden jump at any particular size: it is graded continuously by $\Lambda\,(x-x')^2$. Recent experiments keep pushing the line upward — interference of molecules twenty-five thousand atomic masses heavy, micromechanical oscillators cooled to their quantum ground state — every win bought by **fighting to lower the scattering rate** (low temperature, ultra-high vacuum, short flight times), and not once has quantum mechanics been found to fail at large scales. Schrödinger's cat is not forbidden; it is **instantly executed** by the environment.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="The half that decoherence does not solve">
+Let us be honest. The measurement problem is really two problems:
 
-- The environment as a "measuring device"
-- Estimating decoherence times
-- Its relation to the collapse problem
+1. **Why is no interference seen?** Decoherence answers this cleanly: environmental entanglement erases the coherences, and the system's reduced state becomes a diagonal mixture. This half is pure physics — calculable and experimentally testable.
+2. **Why does a single run of the experiment have one definite outcome?** The diagonal mixture that decoherence delivers still reads "50% here, 50% there". It is a product of tracing out (sometimes called an improper mixture), and it does not say which branch "actually happened". The step from "the whole is still a superposition" to "I saw one particular outcome" is a step decoherence **does not supply**.
 
-## Planned simulations
+The second half belongs to interpretation (many-worlds, decoherent histories, objective collapse…), and no experiment can currently adjudicate. This book's position: compute the first half thoroughly, and stay honest about the second. The next section presents the physical programme that has pushed furthest in the direction of that second half.
+</Callout>
 
-- `decoherence`
+<KeyFormulas
+  items={[
+    { name: 'Environmental labelling', latex: '(a\\ket{x_1}+b\\ket{x_2})\\ket{E_0}\\to a\\ket{x_1}\\ket{E_1}+b\\ket{x_2}\\ket{E_2}', note: 'The interaction writes the system state into the environment — the environment takes photographs' },
+    { name: 'The fate of the coherences', latex: '\\rho_{12}\\to\\rho_{12}\\,\\braket{E_2}{E_1}', note: 'Overlap = how distinguishable the photographs are; orthogonal means coherence hits zero' },
+    { name: 'Exponential decay', latex: '\\rho(x,x^{\\prime};t)=\\rho(x,x^{\\prime};0)\\,\\ee^{-\\Lambda t(x-x^{\\prime})^2}', note: 'The inevitable product of many independent labels; the farther apart, the faster it dies' },
+    { name: 'Decoherence vs relaxation', latex: '\\frac{\\tau_{\\text{dec}}}{\\tau_{\\text{rel}}}\\sim\\Big(\\frac{\\lambda_{\\text{th}}}{\\Delta x}\\Big)^2\\sim10^{-41}\\ (1\\,\\text{g},\\ 1\\,\\text{cm})', note: 'Macroscopic objects lose phase about 40 orders of magnitude faster than energy' },
+  ]}
+/>
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="decoherence" />`.
+<QuizBlock
+  questions={[
+    {
+      id: 'dec-1',
+      prompt: 'After one scattering event the system’s coherence is multiplied by ⟨E₂|E₁⟩. The physical meaning of this factor is:',
+      options: [
+        'The overlap of the environment’s two "photographs": the harder to distinguish, the more coherence survives',
+        'The overlap of the system’s two position states',
+        'The probability that the scattering occurred',
+        'The energy change of the environment',
+      ],
+      answer: 0,
+      distractors: {
+        1: '⟨x₂|x₁⟩ is the system’s inner product; what erases coherence is the inner product of the environment states.',
+        2: 'The scattering probability affects the rate R, but the factor applied per event is the environment-state overlap.',
+        3: 'Decoherence can proceed at full speed while the environment absorbs almost no energy — that is exactly why τ_dec ≪ τ_rel.',
+      },
+      explain: '⟨E₂|E₁⟩ = 1 means the photon saw nothing and carried no information away — coherence unharmed; ⟨E₂|E₁⟩ = 0 means the environment fully "learned" the position — coherence zeroed. Which basis loses its coherence depends on which basis the environment photographs — decided by the shape of the interaction.',
+    },
+    {
+      id: 'dec-2',
+      type: 'numeric',
+      prompt: 'Suppose each scattering multiplies the coherence’s modulus by 0.999 (a single event sees almost nothing). How many scatterings does it take to press the coherence down to 1% of its initial value?',
+      answer: 4603,
+      tolerance: 100,
+      unit: 'scatterings',
+      explain: '0.999^N = 0.01 gives N = ln 0.01 / ln 0.999 ≈ 4600. Sounds like a lot — but a macroscopic dust grain in air suffers about 10¹⁸ molecular collisions per second, so this count is reached on femtosecond timescales. "Almost harmless per event × an astronomical number of events" is precisely why macroscopic decoherence is absurdly fast.',
+    },
+    {
+      id: 'dec-3',
+      prompt: 'Why is the pointer basis almost always (approximately) the position eigenstates?',
+      options: [
+        'Because scattering, collisions and the like couple through position, so position is what the environment distinguishes',
+        'Because the position operator is Hermitian',
+        'Because momentum is not conserved in quantum mechanics',
+        'Because human eyes can only see position',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The momentum operator is just as Hermitian — Hermiticity does not pick a basis.',
+        2: 'Momentum is conserved perfectly well for isolated systems; irrelevant here.',
+        3: 'The order is backwards: it is because the environment has already photographed position countless times that any means of observation — eyes included — reads out position.',
+      },
+      explain: 'The pointer-basis rule: the states that survive the interaction Hamiltonian’s repeated action almost undisturbed and can leave stable records. The interaction is shaped like position, so the pointer states are position states — the cat’s pointer states are dead and alive, not their superpositions.',
+    },
+    {
+      id: 'dec-4',
+      prompt: 'Which statements about decoherence and the measurement problem are correct? (Select all that apply.)',
+      options: [
+        'Decoherence explains why interference of macroscopic superpositions is unobservable',
+        'The diagonal mixture decoherence produces does not specify which outcome "actually happened"',
+        'Decoherence requires adding a new stochastic term beyond the Schrödinger equation',
+        '"Why does a single measurement have a unique outcome" remains an open interpretational question within the decoherence framework',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'Quite the opposite: the entire mechanism of decoherence — entanglement plus tracing out — lies inside standard quantum mechanics, with no new physics. This is also its essential difference from objective-collapse theories.',
+      },
+      explain: 'The two halves of the measurement problem: why interference disappears (decoherence solves it cleanly) and why outcomes are unique (decoherence does not answer). Keeping the two apart is the first step towards an honest understanding of this field.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Decoherence moved the coherence off the system into the system-environment correlations, and picked out the pointer states along the way. But the classical world has one stranger property still unexplained: **objectivity**. Ten people look at the same dust grain and see exactly the same position, and none of them disturbs it — yet quantum mechanics plainly says measurement disturbs the system, and unknown states cannot be cloned. What entitles everyone to "all know"?
+
+The next section is this chapter's outlook: quantum Darwinism — classicality = redundant backup copies of information in the environment.

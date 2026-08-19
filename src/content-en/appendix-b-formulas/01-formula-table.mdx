@@ -1,18 +1,280 @@
 ---
-title: 'Formulae and constants'
-summary: 'The full version of the site-wide formula reference.'
+title: Formula and constant tables
 section: 'B.1'
 order: 1
-status: stub
+summary: 'Chapter-by-chapter quick-reference tables of the core formulas of Chapters 1–12, each entry tagged with its source section, followed by physical constants and unit conversions.'
+status: done
+prereqs: []
+objectives: []
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+This page is the formula dashboard for the whole book: organised by chapter, every formula tagged with where it lives in the main text, so one click takes you back to the scene of the derivation. Each chapter's table opens with a sentence or two naming the through-line of that chapter's formulas. At the end come the standard commutator identities, physical constants, and the unit conversions that make problem-solving painless.
+
+Three ways to use it:
+
+- **While solving problems**: jump to the chapter's table, follow the link back to the main text for the derivation and conditions of validity;
+- **While revising**: read only the "through-line" sentence at the head of each chapter and see whether you can write half the table from memory;
+- **While decoding a symbol**: go straight to the notation table below.
+
+First, the skeleton that holds up the whole book — if you were allowed to memorise only ten formulas, these are the ten:
+
+<KeyFormulas
+  items={[
+    { name: 'Schrödinger equation', latex: '\\ii\\hbar\\,\\partial_t\\Psi=\\hat H\\Psi', note: 'The only equation of motion in the book' },
+    { name: 'Born rule', latex: 'P=|\\braket{a}{\\psi}|^2', note: 'The only bridge between theory and experiment' },
+    { name: 'Canonical commutation relation', latex: '[\\hat x,\\hat p]=\\ii\\hbar', note: 'The algebraic source of quantumness' },
+    { name: 'Uncertainty principle', latex: '\\sigma_x\\sigma_p\\ge\\hbar/2', note: 'Direct corollary of the line above' },
+    { name: 'Stationary-state expansion', latex: '\\Psi(t)=\\sum_n c_n\\,\\ee^{-\\ii E_nt/\\hbar}\\ket{n}', note: 'The standard routine for any evolution problem' },
+    { name: 'Angular-momentum spectrum', latex: '\\hat J^2:\\ j(j+1)\\hbar^2,\\qquad \\hat J_z:\\ m\\hbar', note: 'Derived purely algebraically; shared by orbital and spin' },
+    { name: 'Hydrogen levels', latex: 'E_n=-13.6\\ \\text{eV}/n^2', note: 'The first atom to be fully explained' },
+    { name: 'Exchange symmetry', latex: '\\Psi(1,2)=\\pm\\Psi(2,1)', note: 'Bosons +, fermions −; the periodic table follows' },
+    { name: 'Variational principle', latex: 'E_{\\text{gs}}\\le\\braket{\\psi_T}{\\hat H\\psi_T}', note: 'The lifeline when nothing is exactly solvable' },
+    { name: 'Density-operator evolution', latex: '\\ii\\hbar\\,\\dot{\\hat\\rho}=[\\hat H,\\hat\\rho]', note: 'Isolated-system version; open systems add Lindblad terms' },
+  ]}
+/>
+
+## Notation conventions
+
+The notation used uniformly throughout the book, for cross-chapter reading:
+
+| Symbol | Meaning | Remarks |
+| --- | --- | --- |
+| $\Psi(x,t)$ / $\psi(x)$ | Time-dependent wavefunction / stationary (spatial) wavefunction | Uppercase carries time, lowercase does not |
+| $\ket{\psi}$, $\bra{\phi}$, $\braket{\phi}{\psi}$ | State vector, dual vector, inner product | Dirac notation, see [3.2](/en/ch/03-formalism/02-dirac-notation/) |
+| $\hat A$, $\hat A^\dagger$ | Operator and its Hermitian conjugate | Anything wearing a hat is an operator |
+| $[\hat A,\hat B]$, $\{\hat A,\hat B\}$ | Commutator $\hat A\hat B-\hat B\hat A$, anticommutator $\hat A\hat B+\hat B\hat A$ | Braces occasionally also denote a set — read from context |
+| $\sigma_A$ | Standard deviation (uncertainty) of observable $A$ | $\sigma_A^2=\langle\hat A^2\rangle-\langle\hat A\rangle^2$ |
+| $\sigma_x,\sigma_y,\sigma_z$ | Pauli matrices | Unrelated to the uncertainty σ — convention, alas |
+| $\hbar=h/2\pi$ | Reduced Planck constant | Formulas almost exclusively use $\hbar$ |
+| $\ii$, $\ee$, $\dd$ | Imaginary unit, Euler's number, differential sign | Upright type, distinguishing them from variables $i,e,d$ |
+| $\delta_{mn}$, $\delta(x)$ | Kronecker symbol, Dirac δ function | Subscript version for discrete, function version for continuous, see [A.2](/en/ch/appendix-a-math/02-fourier/) |
+| $\hat\rho$ | Density operator | Distinguished from the probability density $\rho(x)$ by the hat |
+
+## Chapter 1 · The old quantum theory
+
+Through-line: a batch of experiments that classical physics could not explain, each forcing out a formula containing $h$ — not yet a theory, but enough to nail Planck's constant into physics.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $E=h\nu=\hbar\omega$ | Planck's energy quantum; the energy of one lump of light | [1.2](/en/ch/01-history/02-blackbody-planck/) |
+| $\hbar\omega=W+\frac{1}{2}mv_{\max}^2$ | Photoelectric equation, $W$ the work function | [1.3](/en/ch/01-history/03-photoelectric-effect/) |
+| $E_n=-\dfrac{13.6\ \text{eV}}{n^2}$ | Bohr's hydrogen levels | [1.4](/en/ch/01-history/04-bohr-model/) |
+| $L=n\hbar$ | Bohr's angular-momentum quantisation condition | [1.4](/en/ch/01-history/04-bohr-model/) |
+| $\dfrac{1}{\lambda}=R\left(\dfrac{1}{n_1^2}-\dfrac{1}{n_2^2}\right)$ | Rydberg formula for the hydrogen spectrum — the Bohr model's triumph | [1.4](/en/ch/01-history/04-bohr-model/) |
+| $\lambda=\dfrac{h}{p}$ | de Broglie matter-wave wavelength | [1.5](/en/ch/01-history/05-de-broglie/) |
+| $\sigma_x\sigma_p\gtrsim\hbar$ | Heuristic version of the uncertainty relation | [1.7](/en/ch/01-history/07-uncertainty-origins/) |
+
+## Chapter 2 · The wavefunction
+
+Through-line: one equation (Schrödinger's) plus one interpretive rule (Born's), then solved in full across four or five standard potentials.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $P(x,t)=\lvert\Psi(x,t)\rvert^2$ | Born rule: the modulus squared is a probability density | [2.1](/en/ch/02-wavefunction/01-born-rule/) |
+| $j=\dfrac{\hbar}{m}\operatorname{Im}(\Psi^*\partial_x\Psi)$ | Probability current; paired with $\partial_t\lvert\Psi\rvert^2+\partial_x j=0$ | [2.2](/en/ch/02-wavefunction/02-normalization-and-current/) |
+| $\ii\hbar\,\partial_t\Psi=-\dfrac{\hbar^2}{2m}\partial_x^2\Psi+V\Psi$ | Time-dependent Schrödinger equation | [2.4](/en/ch/02-wavefunction/04-time-dependent-schrodinger/) |
+| $-\dfrac{\hbar^2}{2m}\psi''+V\psi=E\psi$ | Stationary (time-independent) Schrödinger equation | [2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/) |
+| $\Psi_n(x,t)=\psi_n(x)\,\ee^{-\ii E_nt/\hbar}$ | A stationary solution only picks up a phase | [2.5](/en/ch/02-wavefunction/05-stationary-states/) |
+| $\langle A\rangle=\displaystyle\int\Psi^*\hat A\,\Psi\,\dd x$ | Expectation value | [2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) |
+| $\sigma_x\sigma_p\ge\dfrac{\hbar}{2}$ | Uncertainty principle (exact version) | [2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) |
+| $E_n=\dfrac{n^2\pi^2\hbar^2}{2mL^2}$, $\psi_n=\sqrt{\dfrac{2}{L}}\sin\dfrac{n\pi x}{L}$ | Infinite square well, $n\ge1$ | [2.7](/en/ch/02-wavefunction/07-infinite-well/) |
+| Even parity: $k\tan\dfrac{kL}{2}=\kappa$; odd parity: $-k\cot\dfrac{kL}{2}=\kappa$ | Level conditions of the finite well (transcendental — solve graphically or numerically) | [2.8](/en/ch/02-wavefunction/08-finite-well/) |
+| $E_n=\left(n+\dfrac12\right)\hbar\omega$ | Harmonic-oscillator levels, $n\ge0$ | [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) |
+| $\psi_0(x)=\left(\dfrac{m\omega}{\pi\hbar}\right)^{1/4}\ee^{-m\omega x^2/2\hbar}$ | Oscillator ground state: a minimum-uncertainty Gaussian | [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) |
+| $\hat a^\dagger\ket{n}=\sqrt{n+1}\ket{n+1}$, $\hat a\ket{n}=\sqrt{n}\ket{n-1}$ | Ladder operators | [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) |
+| $\hat x=\sqrt{\dfrac{\hbar}{2m\omega}}(\hat a+\hat a^\dagger)$, $\hat p=\ii\sqrt{\dfrac{m\hbar\omega}{2}}(\hat a^\dagger-\hat a)$ | The gateway to computing any matrix element with ladder operators | [2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/) |
+| $v_g=\dfrac{\dd\omega}{\dd k}=\dfrac{\hbar k}{m}$ | Wave-packet group velocity = particle velocity | [2.10](/en/ch/02-wavefunction/10-free-particle/) |
+| $\sigma_x(t)=\sigma_0\sqrt{1+\left(\dfrac{\hbar t}{2m\sigma_0^2}\right)^2}$ | Free Gaussian packet spreading: the narrower the packet, the faster it spreads | [2.10](/en/ch/02-wavefunction/10-free-particle/) |
+| $T\approx\ee^{-2\gamma}$, $\gamma=\dfrac{1}{\hbar}\displaystyle\int\sqrt{2m(V-E)}\,\dd x$ | Tunnelling probability (Gamow factor) | [2.11](/en/ch/02-wavefunction/11-tunneling/) |
+
+## Chapter 3 · The formalism
+
+Through-line: upgrade Chapter 2's concrete calculations into an abstract grammar — states are vectors, observables are Hermitian operators, measurement projects along the spectral decomposition, evolution is unitary.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $\displaystyle\sum_n\ket{n}\bra{n}=\hat{\mathbb{1}}$ | Completeness relation (the basis-insertion power tool) | [3.2](/en/ch/03-formalism/02-dirac-notation/) |
+| $\braket{x}{p}=\dfrac{\ee^{\ii px/\hbar}}{\sqrt{2\pi\hbar}}$ | Position–momentum transformation kernel | [3.3](/en/ch/03-formalism/03-hilbert-space/) |
+| $[\hat x,\hat p]=\ii\hbar$ | Canonical commutation relation | [3.6](/en/ch/03-formalism/06-commutators/) |
+| $\sigma_A\sigma_B\ge\dfrac{1}{2}\left\lvert\langle[\hat A,\hat B]\rangle\right\rvert$ | Generalised uncertainty relation | [3.6](/en/ch/03-formalism/06-commutators/) |
+| $\Delta E\,\Delta t\gtrsim\dfrac{\hbar}{2}$ | Energy–time uncertainty: $\Delta t$ is the time an observable needs to change appreciably | [3.9](/en/ch/03-formalism/09-time-evolution-pictures/) |
+| $\hat A=\hat A^\dagger\ \Rightarrow$ real eigenvalues, orthogonal complete eigenstates | Why observables must be Hermitian | [3.5](/en/ch/03-formalism/05-hermitian-operators/) |
+| $p(a_n)=\lvert\braket{a_n}{\psi}\rvert^2$ | Probability of measuring $a_n$; the post-measurement state collapses to $\ket{a_n}$ | [3.8](/en/ch/03-formalism/08-measurement/) |
+| $\ket{\psi}\mapsto\dfrac{\hat P_n\ket{\psi}}{\lVert\hat P_n\ket{\psi}\rVert}$, $\hat P_n=\ket{a_n}\bra{a_n}$ | Projection postulate (with degeneracy, $\hat P_n$ projects onto the subspace) | [3.8](/en/ch/03-formalism/08-measurement/) |
+| $\hat U(t)=\ee^{-\ii\hat Ht/\hbar}$ | Time-evolution operator (time-independent $\hat H$) | [3.9](/en/ch/03-formalism/09-time-evolution-pictures/) |
+| $\dfrac{\dd\langle\hat A\rangle}{\dd t}=\dfrac{1}{\ii\hbar}\langle[\hat A,\hat H]\rangle+\left\langle\partial_t\hat A\right\rangle$ | Ehrenfest theorem | [3.9](/en/ch/03-formalism/09-time-evolution-pictures/) |
+| $\hat\rho=\displaystyle\sum_i p_i\ket{\psi_i}\bra{\psi_i}$, $\langle\hat A\rangle=\operatorname{tr}(\hat\rho\hat A)$ | Density operator and expectation values | [3.10](/en/ch/03-formalism/10-density-operator/) |
+
+## Chapter 4 · One-dimensional problems, advanced
+
+Through-line: symmetry saves you half the work; scattering problems are systematised with transmission/reflection coefficients and the transfer matrix.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $\hat\Pi\psi(x)=\psi(-x)$, eigenvalues $\pm1$ | Parity operator: $\hat\Pi^2=\hat{\mathbb{1}}$ forces exactly two eigenvalues | [4.1](/en/ch/04-1d-problems/01-symmetry-parity/) |
+| $[\hat H,\hat\Pi]=0\ \Rightarrow\ $ eigenstates can be chosen with definite parity | Parity theorem for symmetric potentials | [4.1](/en/ch/04-1d-problems/01-symmetry-parity/) |
+| $T+R=1$ | Transmission plus reflection is conserved | [4.2](/en/ch/04-1d-problems/02-scattering-phase-shift/) |
+| $M_{\text{total}}=M_N\cdots M_2M_1$ | Transfer matrices multiply region by region | [4.3](/en/ch/04-1d-problems/03-transfer-matrix/) |
+| $\psi''\approx\dfrac{\psi_{j+1}-2\psi_j+\psi_{j-1}}{h^2}$ | Three-point finite difference (starting point of numerical solutions) | [4.4](/en/ch/04-1d-problems/04-finite-difference/), [C.1](/en/ch/appendix-c-numerics/01-finite-difference/) |
+
+## Chapter 5 · Angular momentum and spin
+
+Through-line: one set of commutation relations, $[\hat L_i,\hat L_j]=\ii\hbar\,\epsilon_{ijk}\hat L_k$, determines the entire spectral structure — orbital, spin, and their addition are all just different representations of this one algebra.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$ (and cyclic) | The angular-momentum algebra | [5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/) |
+| $\hat L^2\ket{\ell,m}=\ell(\ell+1)\hbar^2\ket{\ell,m}$, $\hat L_z\ket{\ell,m}=m\hbar\ket{\ell,m}$ | Eigenvalue spectrum, $m=-\ell,\dots,\ell$ | [5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/) |
+| $\hat L_\pm\ket{\ell,m}=\hbar\sqrt{\ell(\ell+1)-m(m\pm1)}\ket{\ell,m\pm1}$ | Ladder operators | [5.1](/en/ch/05-angular-momentum/01-orbital-angular-momentum/) |
+| $\hat S_i=\dfrac{\hbar}{2}\sigma_i$ | Spin 1/2 and the Pauli matrices | [5.3](/en/ch/05-angular-momentum/03-spin-half/) |
+| $\sigma_i\sigma_j=\delta_{ij}\hat{\mathbb{1}}+\ii\epsilon_{ijk}\sigma_k$ | Pauli multiplication: one line worth ten | [5.3](/en/ch/05-angular-momentum/03-spin-half/) |
+| $\hat R_{\vec n}(\theta)=\ee^{-\ii\theta\,\vec n\cdot\vec\sigma/2}=\cos\dfrac{\theta}{2}\,\hat{\mathbb{1}}-\ii\sin\dfrac{\theta}{2}\,\vec n\cdot\vec\sigma$ | Spin-1/2 rotation operator; a $2\pi$ turn costs a minus sign | [5.3](/en/ch/05-angular-momentum/03-spin-half/) |
+| $\omega_L=\dfrac{g q B}{2m}$ | Spin-precession (Larmor) frequency in a magnetic field | [5.5](/en/ch/05-angular-momentum/05-spin-precession/) |
+| Singlet $\dfrac{\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}}{\sqrt2}$; triplet $\ket{\uparrow\uparrow},\ \dfrac{\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow}}{\sqrt2},\ \ket{\downarrow\downarrow}$ | Adding two spin 1/2's: $1\oplus0$ | [5.6](/en/ch/05-angular-momentum/06-clebsch-gordan/) |
+| $\lvert j_1-j_2\rvert\le j\le j_1+j_2$ | Allowed range in angular-momentum addition | [5.6](/en/ch/05-angular-momentum/06-clebsch-gordan/) |
+| $\hat{\vec L}\cdot\hat{\vec S}=\dfrac{1}{2}\left(\hat J^2-\hat L^2-\hat S^2\right)$ | The standard treatment of spin–orbit coupling | [5.7](/en/ch/05-angular-momentum/07-spin-orbit/) |
+
+## Chapter 6 · The hydrogen atom
+
+Through-line: separate variables in a central potential; the angular part is universal (spherical harmonics), the radial equation delivers the levels — three quantum numbers $n,\ell,m$, each with its own job.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $u''+\left[\dfrac{2m}{\hbar^2}(E-V)-\dfrac{\ell(\ell+1)}{r^2}\right]u=0$, $u=rR$ | Radial equation (with centrifugal barrier) | [6.2](/en/ch/06-hydrogen/02-radial-equation/) |
+| $E_n=-\dfrac{me^4}{2(4\pi\varepsilon_0)^2\hbar^2}\dfrac{1}{n^2}=-\dfrac{13.6\ \text{eV}}{n^2}$ | Hydrogen levels | [6.4](/en/ch/06-hydrogen/04-energy-levels/) |
+| $a_0=\dfrac{4\pi\varepsilon_0\hbar^2}{me^2}\approx0.529\ \text{Å}$ | Bohr radius | [6.3](/en/ch/06-hydrogen/03-hydrogen-solution/) |
+| $\psi_{100}=\dfrac{1}{\sqrt{\pi a_0^3}}\,\ee^{-r/a_0}$ | Hydrogen ground-state wavefunction | [6.3](/en/ch/06-hydrogen/03-hydrogen-solution/) |
+| Degeneracy $=n^2$ (with spin, $2n^2$) | $\ell=0,\dots,n-1$; $m=-\ell,\dots,\ell$ | [6.4](/en/ch/06-hydrogen/04-energy-levels/) |
+| $\langle T\rangle=-E_n$, $\langle V\rangle=2E_n$ | Virial theorem (Coulomb $\propto1/r$ case) | [6.4](/en/ch/06-hydrogen/04-energy-levels/) |
+| $\Delta E_{\text{fs}}\sim\alpha^2 E_n$, $\alpha\approx\dfrac{1}{137}$ | Order of magnitude of the fine structure | [6.6](/en/ch/06-hydrogen/06-fine-structure/) |
+| $\Delta E_Z=g_J\,\mu_B\,B\,m_J$ | (Weak-field) Zeeman splitting | [6.7](/en/ch/06-hydrogen/07-zeeman-stark/) |
+
+## Chapter 7 · Approximation methods
+
+Through-line: unsolvable problems are the overwhelming majority — perturbation theory, the variational method and WKB each have their domain, while time-dependent perturbation theory leads to the measurable quantity "transition rate".
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $E_n^{(1)}=\braket{n^{(0)}}{\hat H'\,n^{(0)}}$ | First-order energy shift = average of the perturbation in the unperturbed state | [7.1](/en/ch/07-approximation/01-nondegenerate-perturbation/) |
+| $E_n^{(2)}=\displaystyle\sum_{m\ne n}\frac{\lvert\bra{m^{(0)}}\hat H'\ket{n^{(0)}}\rvert^2}{E_n^{(0)}-E_m^{(0)}}$ | Second-order energy shift; the ground state is always pushed down | [7.1](/en/ch/07-approximation/01-nondegenerate-perturbation/) |
+| Diagonalise $\hat H'$ inside the degenerate subspace first | The core move of degenerate perturbation theory | [7.2](/en/ch/07-approximation/02-degenerate-perturbation/) |
+| $E_{\text{gs}}\le\dfrac{\bra{\psi_T}\hat H\ket{\psi_T}}{\braket{\psi_T}{\psi_T}}$ | Variational principle: any trial state upper-bounds the ground-state energy | [7.3](/en/ch/07-approximation/03-variational-method/) |
+| $\ket{n^{(1)}}=\displaystyle\sum_{m\ne n}\frac{\bra{m^{(0)}}\hat H'\ket{n^{(0)}}}{E_n^{(0)}-E_m^{(0)}}\ket{m^{(0)}}$ | First-order wavefunction correction | [7.1](/en/ch/07-approximation/01-nondegenerate-perturbation/) |
+| $\psi\sim\dfrac{1}{\sqrt{p(x)}}\exp\left(\pm\dfrac{\ii}{\hbar}\displaystyle\int p\,\dd x\right)$ | WKB wavefunction | [7.4](/en/ch/07-approximation/04-wkb/) |
+| $\displaystyle\oint p\,\dd x=\left(n+\tfrac12\right)2\pi\hbar$ | WKB quantisation condition (two soft turning points) | [7.4](/en/ch/07-approximation/04-wkb/) |
+| Full two-level flipping on resonance: $P_{i\to f}(t)=\sin^2\dfrac{\omega_1 t}{2}$ | Rabi oscillation ($\omega_1$ proportional to the drive strength) | [7.5](/en/ch/07-approximation/05-time-dependent-perturbation/) |
+| $\Gamma_{i\to f}=\dfrac{2\pi}{\hbar}\lvert\bra{f}\hat H'\ket{i}\rvert^2\rho(E_f)$ | Fermi's golden rule | [7.6](/en/ch/07-approximation/06-fermi-golden-rule/) |
+| Sudden approximation: $P_{i\to f}=\lvert\braket{f_{\text{new}}}{i_{\text{old}}}\rvert^2$ | When the Hamiltonian jumps, the state has no time to move — just project | [7.8](/en/ch/07-approximation/08-sudden-approximation/) |
+| $\gamma_n=\ii\displaystyle\oint\braket{n}{\nabla_{\!R}\,n}\cdot\dd\vec R$ | Berry phase | [7.7](/en/ch/07-approximation/07-berry-phase/) |
+
+## Chapter 8 · Identical particles
+
+Through-line: exchanging identical particles allows only two outcomes — symmetric (bosons) or antisymmetric (fermions) — and every "exchange effect" grows out of that binary choice.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $\Psi(1,2)=\pm\Psi(2,1)$ | Bosons take $+$, fermions take $-$ | [8.2](/en/ch/08-identical-particles/02-bosons-fermions/) |
+| $\Psi=\dfrac{1}{\sqrt{N!}}\det[\psi_i(x_j)]$ | Slater determinant; two equal rows make it vanish ⇒ Pauli exclusion | [8.3](/en/ch/08-identical-particles/03-pauli-exclusion/) |
+| $[\hat a_i,\hat a_j^\dagger]=\delta_{ij}$ (bosons); $\{\hat c_i,\hat c_j^\dagger\}=\delta_{ij}$ (fermions) | Fundamental (anti)commutation relations of second quantisation | [8.5](/en/ch/08-identical-particles/05-second-quantization/) |
+| $E_{\text{singlet/triplet}}=E_0\pm J$ | The exchange integral $J$ splits spin singlet and triplet | [8.4](/en/ch/08-identical-particles/04-exchange-interaction/) |
+| Mean-field self-consistency: each electron solves a one-particle equation in the average potential of the others, iterated to convergence | The Hartree–Fock method in one sentence | [8.6](/en/ch/08-identical-particles/06-hartree-fock/) |
+
+## Chapter 9 · Quantum information
+
+Through-line: treat "two-level system + unitary evolution + measurement" as a computational resource, with entanglement as the crucial new resource among them.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $\ket{\psi}=\cos\dfrac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\dfrac{\theta}{2}\ket{1}$ | Bloch-sphere parametrisation of a qubit | [9.1](/en/ch/09-quantum-information/01-qubit-bloch-sphere/) |
+| $X,Y,Z=\sigma_x,\sigma_y,\sigma_z$; $H=\dfrac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ | Single-qubit gates are the Pauli family; $H$ prepares equal superpositions | [9.2](/en/ch/09-quantum-information/02-quantum-gates/) |
+| No-cloning theorem: no $\hat U\ket{\psi}\ket{0}=\ket{\psi}\ket{\psi}$ exists (for arbitrary $\ket{\psi}$) | Direct corollary of linearity; the foundation of quantum cryptography | [9.2](/en/ch/09-quantum-information/02-quantum-gates/) |
+| $S(\hat\rho_A)=-\operatorname{tr}(\hat\rho_A\log_2\hat\rho_A)$ | Entanglement entropy (the measure of bipartite pure-state entanglement) | [9.3](/en/ch/09-quantum-information/03-entanglement-measures/) |
+| $\lvert\langle\text{CHSH}\rangle\rvert\le2$ (classical) vs $2\sqrt2$ (quantum) | Bell inequality and the Tsirelson bound | [9.4](/en/ch/09-quantum-information/04-bell-chsh/) |
+| 1 Bell pair + 2 classical bits ⇒ teleport 1 qubit | The resource ledger of quantum teleportation | [9.5](/en/ch/09-quantum-information/05-teleportation/) |
+| 1 query decides "constant or balanced" (classical worst case: $2^{n-1}+1$ queries) | Deutsch–Jozsa: the first clean demonstration of quantum parallelism | [9.7](/en/ch/09-quantum-information/07-deutsch-jozsa/) |
+| $O(\sqrt N)$ queries | The quadratic speed-up of Grover search | [9.8](/en/ch/09-quantum-information/08-grover/) |
+
+## Chapter 10 · Open systems
+
+Through-line: once system and environment entangle, looking at the system alone requires a density matrix; its evolution is no longer unitary, and is described by the Lindblad equation.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $\hat\rho_A=\operatorname{tr}_B\,\hat\rho_{AB}$ | Partial trace: the only correct operation when watching a subsystem | [10.1](/en/ch/10-open-systems/01-why-density-matrix/) |
+| $\operatorname{tr}\hat\rho=1$, $\hat\rho^\dagger=\hat\rho$, $\hat\rho\ge0$ | The three density-matrix conditions | [10.2](/en/ch/10-open-systems/02-mixed-states/) |
+| $\operatorname{tr}\hat\rho^2\le1$, equality only for pure states | Purity: telling pure from mixed | [10.2](/en/ch/10-open-systems/02-mixed-states/) |
+| $\hat\rho\mapsto\displaystyle\sum_k\hat K_k\hat\rho\hat K_k^\dagger$, $\sum_k\hat K_k^\dagger\hat K_k=\hat{\mathbb{1}}$ | Kraus representation (CPTP maps) | [10.3](/en/ch/10-open-systems/03-cptp-maps/) |
+| $\dot{\hat\rho}=-\dfrac{\ii}{\hbar}[\hat H,\hat\rho]+\displaystyle\sum_k\left(\hat L_k\hat\rho\hat L_k^\dagger-\dfrac12\{\hat L_k^\dagger\hat L_k,\hat\rho\}\right)$ | Lindblad master equation | [10.4](/en/ch/10-open-systems/04-lindblad/) |
+| Coherence decay: $\rho_{01}(t)=\rho_{01}(0)\,\ee^{-t/T_2}$ | Decoherence kills the off-diagonal elements; $T_2$ is the coherence time | [10.5](/en/ch/10-open-systems/05-decoherence/) |
+
+## Chapter 11 · The path integral
+
+Through-line: the propagator = a sum over all paths, each path weighted by a phase set by its classical action — classical mechanics is the stationary-phase limit.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $K(b,a)=\displaystyle\sum_{\text{all paths}}\ee^{\ii S[x(t)]/\hbar}$ | The core idea of the path integral | [11.1](/en/ch/11-path-integral/01-path-integral-idea/) |
+| $K_0=\sqrt{\dfrac{m}{2\pi\ii\hbar t}}\,\exp\left[\dfrac{\ii m(x_b-x_a)^2}{2\hbar t}\right]$ | Free-particle propagator | [11.2](/en/ch/11-path-integral/02-propagator/) |
+| $\delta S=0\ \Rightarrow$ the classical path dominates | Stationary phase ⇒ the principle of least action | [11.3](/en/ch/11-path-integral/03-to-schrodinger/) |
+
+## Chapter 12 · Relativistic quantum mechanics
+
+Through-line: force $E^2=p^2c^2+m^2c^4$ into quantum mechanics; the price and the prize are both new degrees of freedom — negative-energy solutions, spin, antiparticles.
+
+| Formula | Description | Source |
+| --- | --- | --- |
+| $E^2=p^2c^2+m^2c^4$ | The relativistic energy–momentum relation: everything starts here | [12.1](/en/ch/12-relativistic/01-why-relativistic/) |
+| $\left(\dfrac{1}{c^2}\partial_t^2-\nabla^2+\dfrac{m^2c^2}{\hbar^2}\right)\phi=0$ | Klein–Gordon equation | [12.2](/en/ch/12-relativistic/02-klein-gordon/) |
+| $\ii\hbar\,\partial_t\psi=\left(c\,\vec\alpha\cdot\hat{\vec p}+\beta mc^2\right)\psi$ | Dirac equation | [12.3](/en/ch/12-relativistic/03-dirac-equation/) |
+| $\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}$ | The γ-matrix algebra | [12.3](/en/ch/12-relativistic/03-dirac-equation/) |
+| Four-component spinor = (particle / antiparticle) × (spin up / down) | Reinterpreting the negative-energy solutions: antiparticles | [12.4](/en/ch/12-relativistic/04-antiparticles/) |
+| $g=2$ | The electron g-factor, delivered automatically by the Dirac equation | [12.5](/en/ch/12-relativistic/05-spin-relativity/) |
+
+Chapter 13 is a frontier survey — mostly concept maps with few formulas worth memorising, so it gets no table here; the KeyFormulas blocks inside its sections remain reachable via site search.
+
+<Callout type="check" title="Three dimensional checks before copying a formula">
+1. **Exponents must be dimensionless**: $\ee^{-\ii Et/\hbar}$, $\ee^{-r/a_0}$, $\ee^{-2\gamma}$ — if what sits in an exponent cannot combine into a dimensionless quantity, you copied something wrong.
+2. **A 1D wavefunction has dimensions of $1/\sqrt{\text{length}}$** (because $\int\lvert\psi\rvert^2\dd x=1$); in 3D it is $1/\sqrt{\text{volume}}$. A normalisation constant with the wrong dimensions means a lost square root.
+3. **$\hbar$ has dimensions of energy × time = momentum × length**: the power of $\hbar$ in any formula can be independently verified with this line.
 </Callout>
 
-## Planned contents
+## Standard commutators and operator identities
 
-- Basic equations
-- Exact solutions in one dimension
-- Angular momentum and spin
-- Physical constants and unit conversions
+The "algebraic ammunition depot" scattered across the chapters but used in every one. $\hat A,\hat B,\hat C$ are arbitrary operators.
+
+| Identity | Remarks |
+| --- | --- |
+| $[\hat A,\hat B\hat C]=[\hat A,\hat B]\hat C+\hat B[\hat A,\hat C]$ | Product expansion (Leibniz-like rule); the whole business of unpacking long commutators |
+| $[\hat x,f(\hat p)]=\ii\hbar\,f'(\hat p)$, $[\hat p,g(\hat x)]=-\ii\hbar\,g'(\hat x)$ | Follows order by order from $[\hat x,\hat p]=\ii\hbar$ |
+| $[\hat a,\hat a^\dagger]=1$, $\hat N=\hat a^\dagger\hat a$ | The complete algebraic starting point of the oscillator / second quantisation |
+| $[\hat J_i,\hat J_j]=\ii\hbar\,\epsilon_{ijk}\hat J_k$, $[\hat J^2,\hat J_i]=0$ | Universal for any angular momentum (orbital, spin, total) |
+| $\ee^{\hat A}\hat B\,\ee^{-\hat A}=\hat B+[\hat A,\hat B]+\dfrac{1}{2!}[\hat A,[\hat A,\hat B]]+\cdots$ | Hadamard lemma: the expansion for "moving an operator to a rotating frame" |
+| $\ee^{\hat A}\ee^{\hat B}=\ee^{\hat A+\hat B+\frac12[\hat A,\hat B]}$ (when $[\hat A,\hat B]$ commutes with both) | The usable special case of BCH; coherent states, displacement operators and the [C.2 split-operator method](/en/ch/appendix-c-numerics/02-split-operator/) all run on it |
+| $\operatorname{tr}(\hat A\hat B\hat C)=\operatorname{tr}(\hat B\hat C\hat A)$ | Cyclic invariance of the trace; a daily tool of density-matrix calculations |
+| $(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger$ | Hermitian conjugation reverses the order |
+
+## Physical constants and unit conversions
+
+For problem-solving, the "eV system" of combined constants is strongly recommended — it avoids multiplying numbers of order $10^{-34}$:
+
+| Constant | Value | Usage hint |
+| --- | --- | --- |
+| $\hbar$ | $1.055\times10^{-34}\ \text{J·s}=6.582\times10^{-16}\ \text{eV·s}$ | Frequency ↔ energy |
+| $\hbar c$ | $197.3\ \text{eV·nm}=197.3\ \text{MeV·fm}$ | Length ↔ energy; the most-used combination of all |
+| $m_ec^2$ | $0.511\ \text{MeV}$ | Electron rest energy; pairs with $\hbar c$ in kinetic-energy formulas |
+| $m_pc^2$ | $938.3\ \text{MeV}$ | Proton rest energy |
+| $\alpha=\dfrac{e^2}{4\pi\varepsilon_0\hbar c}$ | $\approx\dfrac{1}{137.04}$ | Fine-structure constant; strength of the electromagnetic interaction |
+| $a_0$ | $0.0529\ \text{nm}$ | Bohr radius $=\hbar c/(\alpha\, m_ec^2)$ |
+| $E_{\text{Ry}}$ | $13.606\ \text{eV}$ | Rydberg energy $=\tfrac12\alpha^2m_ec^2$ |
+| $\mu_B$ | $5.788\times10^{-5}\ \text{eV/T}$ | Bohr magneton, for Zeeman splittings |
+| $k_BT$ (300 K) | $\approx0.0259\ \text{eV}$ | "Room temperature ≈ 26 meV" — for judging whether thermal effects matter |
+| $hc$ | $1240\ \text{eV·nm}$ | Photon energy ↔ wavelength: $E=1240/\lambda(\text{nm})$ eV |
+| $1\ \text{eV}$ | $1.602\times10^{-19}\ \text{J}$ | Needed only when converting to SI; avoid converting if you can |
+| $1\ \text{Å}$ | $0.1\ \text{nm}=10^{-10}\ \text{m}$ | The natural ruler of atomic scales ($a_0\approx0.53$ Å) |
+
+<Callout type="check" title="Quick self-test: three order-of-magnitude intuitions">
+1. A visible-light photon $\approx1240/500\approx2.5$ eV — so eV-scale atomic gaps map to visible/ultraviolet spectra.
+2. Room temperature $k_BT\approx26$ meV — far below atomic gaps (atoms sit in their ground states at room temperature), but comparable to shallow semiconductor levels and molecular rotational levels.
+3. An electron confined to 1 nm has kinetic energy $\sim(\hbar c)^2/(2m_ec^2L^2)\approx0.04$ eV·$(\pi^2\approx10)\approx0.4$ eV — the nanoscale is exactly where quantum effects take the stage.
+</Callout>

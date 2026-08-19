@@ -1,16 +1,228 @@
 ---
-title: 'The postulates of quantum mechanics'
-summary: 'Everything so far, compressed into five statements.'
+title: The postulates of quantum mechanics
 section: '3.7'
 order: 7
-status: stub
+summary: 'Everything so far, compressed into five statements. The value of this section is drawing the line: what must be assumed, and what can be derived.'
+status: done
+prereqs:
+  - 03-formalism/06-commutators
+objectives:
+  - Restate the five postulates in full, with their mathematical formulations
+  - Distinguish which results are postulates and which are corollaries
+  - Name the experimental evidence behind each postulate
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+By now the tools are all in place. This section does a job of tidying up: **compress the entire theory into the fewest possible assumptions.**
+
+It is worth being clear about why this matters. At this point you hold a pile of facts: the Born rule, the Schrödinger equation, operators, eigenvalues, collapse... They do not all have the same standing — some are starting points that must simply be granted, others follow from those starting points. **Fail to draw that line, and you end up memorising derivable results as if they were mysterious decrees.**
+
+## The five postulates
+
+<Callout type="insight" title="Postulate 1: states">
+The state of an isolated physical system is completely described by a normalised vector $\ket{\psi}$ in some Hilbert space $\mathcal H$.
+
+$$
+\ket{\psi}\in\mathcal H,\qquad \braket{\psi}{\psi}=1
+$$
+
+Two vectors differing by a global phase, $\ket{\psi}$ and $\ee^{\ii\alpha}\ket{\psi}$, describe **the same** physical state.
+
+**The words "completely described" carry real content**: they assert that no other, finer description exists — no extra variables hiding underneath. This is not self-evident; it is an assumption that experiment can test, and [the Bell tests of section 9.4](/en/ch/09-quantum-information/04-bell-chsh/) test exactly this.
+
+**Experimental evidence**: every manifestation of the superposition principle, from double-slit interference to quantum computing.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Postulate 2: observables">
+Every measurable physical quantity corresponds to a Hermitian operator $\hat A$ on $\mathcal H$. The possible results of a measurement are only the eigenvalues of $\hat A$.
 
-- States, observables, measurement, evolution, indistinguishability
-- The experimental basis of each postulate
+$$
+\hat A\ket{a_n}=a_n\ket{a_n},\qquad \hat A^\dagger=\hat A
+$$
+
+**Experimental evidence**: measured values of energy levels, angular momentum and spin projections are discrete, and always real. Atomic spectra are the most direct evidence.
+</Callout>
+
+<Callout type="insight" title="Postulate 3: measurement (Born rule + projection)">
+With the system in $\ket{\psi}$, the probability that measuring $\hat A$ yields the eigenvalue $a_n$ is
+
+$$
+P(a_n)=|\braket{a_n}{\psi}|^2
+$$
+
+(In the degenerate case, $P(a_n)=\|\hat P_n\ket{\psi}\|^2$, with $\hat P_n$ the projector onto that eigenspace.)
+
+Immediately after the measurement, the state becomes
+
+$$
+\ket{\psi}\ \longrightarrow\ \frac{\hat P_n\ket{\psi}}{\|\hat P_n\ket{\psi}\|}
+$$
+
+**Experimental evidence**: the randomness of individual measurement outcomes, the convergence of frequencies to $|c_n|^2$ over many repetitions, and the fact that an immediately repeated measurement always returns the same result. [Section 3.8](/en/ch/03-formalism/08-measurement/) is devoted to this postulate.
+</Callout>
+
+<Callout type="insight" title="Postulate 4: evolution">
+When not being measured, the state evolves by the Schrödinger equation:
+
+$$
+\ii\hbar\frac{\dd}{\dd t}\ket{\psi(t)}=\hat H\ket{\psi(t)}
+$$
+
+where $\hat H$ is the system's Hamiltonian operator.
+
+**Experimental evidence**: every time-dependent phenomenon — Rabi oscillations, spin precession, molecular vibrational spectra.
+</Callout>
+
+<Callout type="insight" title="Postulate 5: identical particles">
+Under exchange of identical particles, a many-particle state is either completely symmetric (**bosons**) or completely antisymmetric (**fermions**):
+
+$$
+\hat P_{12}\ket{\psi}=\pm\ket{\psi}
+$$
+
+**Experimental evidence**: the Pauli exclusion principle and the periodic table, Bose-Einstein condensation, the statistics of blackbody radiation. [Chapter 8](/en/ch/08-identical-particles/) develops this.
+</Callout>
+
+## What is a corollary, not a postulate
+
+This list matters just as much as the postulates themselves.
+
+<DualView>
+<div slot="left">
+
+**All of these are derived:**
+
+- **Eigenvalues are real** ← Hermiticity in postulate 2 ([section 3.5](/en/ch/03-formalism/05-hermitian-operators/))
+- **Eigenvectors of distinct eigenvalues are orthogonal** ← same source
+- **Eigenvectors form a complete basis** ← the spectral theorem
+- **$\sum_n|c_n|^2=1$** ← completeness + normalisation
+- **The uncertainty principle** ← postulates 1, 2 + commutation relations ([section 3.6](/en/ch/03-formalism/06-commutators/))
+- **Expectation values in a stationary state are time-independent** ← postulate 4
+- **Probability conservation / the continuity equation** ← postulate 4 + Hermiticity of $\hat H$
+- **Ehrenfest's theorem** ← postulates 3, 4
+
+</div>
+<div slot="right">
+
+**These are genuine assumptions:**
+
+- States are vectors in a Hilbert space (**why complex numbers?**)
+- Observables are Hermitian operators
+- $|\braket{a_n}{\psi}|^2$ is a probability (**why the modulus squared?**)
+- Evolution is generated by $\hat H$
+- Identical particles come with only two exchange symmetries
+
+The two "why"s in parentheses still have no generally accepted derivation from anything more fundamental. There are beautiful partial results — Gleason's theorem proves that in dimension $\ge3$, any probability assignment satisfying basic consistency requirements **must** take the Born-rule form — but it presupposes the Hilbert-space structure itself.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="Do postulates 3 and 4 contradict each other?">
+This is quantum mechanics' most famous fault line, and it pays to see it clearly early.
+
+| | Postulate 4 (evolution) | Postulate 3 (measurement) |
+| --- | --- | --- |
+| Linear? | yes | no (renormalisation required) |
+| Unitary? | yes | no |
+| Reversible? | yes | no |
+| Deterministic? | yes (the state's evolution is fully determined) | no (outcomes are random) |
+| Continuous? | yes | no (an instantaneous jump) |
+
+**The two postulates have exactly opposite properties.** And the theory never says: when do you use which?
+
+"Measurement" enters the postulates as an **undefined primitive**. A measuring apparatus is itself made of atoms and should obey postulate 4. So at which step does the collapse actually happen?
+
+This is the **measurement problem**. It is not a technical difficulty that finer calculation can dissolve, but a seam in the structure of the theory. The disagreements among interpretations of quantum mechanics concentrate almost entirely here:
+
+- **Copenhagen**: accept the seam, treat measurement as primitive, ask no further.
+- **Many-worlds**: delete postulate 3 and keep only postulate 4, at the price of all branches actually existing.
+- **Decoherence**: explains why collapse **appears** to happen ([section 10.5](/en/ch/10-open-systems/05-decoherence/)), but still needs an extra story for why we see only one outcome.
+- **Bohmian mechanics / GRW**: modify the theory itself, each paying its own price.
+
+[Section 3.8](/en/ch/03-formalism/08-measurement/) and [section 13.7](/en/ch/13-frontier/07-foundations/) discuss this in more detail. **What to remember here: this is not something you failed to understand — this is simply where the subject stands.**
+</Callout>
+
+<Callout type="check" title="A common puzzle: where did the wavefunction go?">
+A frequent question at this point: how come the five postulates never mention the wavefunction?
+
+Because the wavefunction is **derived**. By postulate 1 the state is $\ket{\psi}$; by postulate 2 position is an observable $\hat x$ with a set of (generalised) eigenstates $\{\ket{x}\}$; hence
+
+$$
+\psi(x)\equiv\braket{x}{\psi}
+$$
+
+**The wavefunction is just the state's components in the position basis** — nothing more. Chapter 2 started from it because it is concrete and can be drawn; but in the logical structure it is not a fundamental object.
+
+Likewise, Schrödinger's partial differential equation is postulate 4 written out in the position basis:
+
+$$
+\ii\hbar\frac{\partial}{\partial t}\braket{x}{\psi}=\bra{x}\hat H\ket{\psi}
+=-\frac{\hbar^2}{2m}\frac{\partial^2\psi}{\partial x^2}+V(x)\psi
+$$
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Postulate 1: states', latex: '\\ket{\\psi}\\in\\mathcal H,\\quad\\braket{\\psi}{\\psi}=1', note: 'Global phase has no physical meaning; "completely described" rules out hidden variables' },
+    { name: 'Postulate 2: observables', latex: '\\hat A^\\dagger=\\hat A,\\quad\\text{measured values}\\in\\{a_n\\}', note: 'Realness and orthogonality are corollaries, not extra assumptions' },
+    { name: 'Postulate 3: Born rule', latex: 'P(a_n)=|\\braket{a_n}{\\psi}|^2', note: 'Why the modulus squared — no accepted deeper reason to this day' },
+    { name: 'Postulate 3: projection', latex: '\\ket{\\psi}\\to\\hat P_n\\ket{\\psi}/\\|\\hat P_n\\ket{\\psi}\\|', note: 'Nonlinear, non-unitary, irreversible' },
+    { name: 'Postulate 4: evolution', latex: '\\ii\\hbar\\frac{\\dd}{\\dd t}\\ket{\\psi}=\\hat H\\ket{\\psi}', note: 'Linear, unitary, reversible, deterministic' },
+    { name: 'Postulate 5: identity', latex: '\\hat P_{12}\\ket{\\psi}=\\pm\\ket{\\psi}', note: '+ for bosons, − for fermions' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'post-1',
+      prompt: 'Which of the following are conclusions derived from the postulates, rather than postulates themselves? (Select all that apply.)',
+      options: [
+        'Hermitian operators have real eigenvalues',
+        'Eigenvectors of distinct eigenvalues are orthogonal',
+        'The uncertainty principle σ_Aσ_B ≥ ½|⟨[Â,B̂]⟩|',
+        'The probability of measuring aₙ is |⟨aₙ|ψ⟩|²',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The Born rule is the content of postulate 3 — a genuine assumption. Why it should be the modulus squared, of all things, still has no accepted derivation from more basic principles.',
+      },
+      explain: 'The first three all follow from "observables are Hermitian operators" plus the structure of the state space. Keeping postulates and corollaries apart is what saves you from memorising derivable results as mysterious decrees.',
+    },
+    {
+      id: 'post-2',
+      prompt: 'The tension between postulate 3 (measurement) and postulate 4 (evolution) shows up as: (Select all that apply.)',
+      options: [
+        'Evolution is linear, unitary, reversible and deterministic; measurement is none of these',
+        'The theory never says when to use which postulate',
+        '"Measurement" enters the postulates as an undefined primitive',
+        'The two postulates make contradictory experimental predictions',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'In practice there is no conflict of predictions — follow "use postulate 3 when a measurement is made" and the results always come out right. The problem lies in the theory''s structure, not its predictions.',
+      },
+      explain: 'This is the measurement problem. A measuring apparatus is itself made of atoms and should obey postulate 4, yet the theory demands a switch to postulate 3 somewhere — without saying where. The disagreements among interpretations concentrate almost entirely on this seam.',
+    },
+    {
+      id: 'post-3',
+      prompt: 'Why does the wavefunction not appear among the five postulates?',
+      options: [
+        'ψ(x) = ⟨x|ψ⟩ is the state''s components in the position basis — a corollary, not a fundamental object',
+        'Because the wavefunction is only useful in one-dimensional problems',
+        'Because the wavefunction has been proved not to exist',
+        'Because the postulates only address discrete spectra',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A wavefunction can be defined in any number of dimensions.',
+        2: 'The wavefunction certainly exists — it is just not fundamental.',
+        3: 'The postulates apply equally to continuous spectra.',
+      },
+      explain: 'Chapter 2 started from the wavefunction because it is concrete and drawable — pedagogically the right call. But in the logical structure the fundamental object is |ψ⟩, and the wavefunction is just its list of components in one particular basis — switch basis and it becomes φ(p) or cₙ.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Of the five postulates, the most unruly is the third. The next section takes it apart on its own: what the projection postulate actually says, what it does not say, and why it sparked seventy years of debate.

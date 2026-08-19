@@ -1,17 +1,301 @@
 ---
-title: 'Non-degenerate perturbation theory'
-summary: 'Split an intractable Hamiltonian into "solvable plus small".'
+title: Time-independent non-degenerate perturbation theory
 section: '7.1'
 order: 1
-status: stub
+summary: 'Split an unsolvable Hamiltonian into "solvable + small", then let the solvable part approximate the true answer order by order.'
+status: done
+prereqs:
+  - 03-formalism/05-hermitian-operators
+  - 06-hydrogen/04-energy-levels
+objectives:
+  - Write down the first-order corrections to energy and wavefunction, and the second-order energy correction
+  - Compute the explicit first- and second-order energy shifts for "infinite well + tilted ramp"
+  - State when the perturbation series can be trusted and when it fails (the criterion is the ratio of matrix element to level spacing)
+  - Explain why the second-order correction to the ground state is always negative
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+By the end of Chapter 6 we owned the complete solution of the hydrogen atom — but it is time to confess something: **hydrogen is very nearly the last system that can be solved exactly.** The harmonic oscillator, the infinite square well, the hydrogen atom — and the list is essentially over. Take one step beyond it and trouble arrives immediately.
+
+Helium, for instance. It has just one more electron than hydrogen, yet its Hamiltonian becomes
+
+$$
+\hat H=\underbrace{-\frac{\hbar^2}{2m}\nabla_1^2-\frac{2e^2}{4\pi\varepsilon_0 r_1}}_{\text{electron 1 and nucleus}}
+\underbrace{-\frac{\hbar^2}{2m}\nabla_2^2-\frac{2e^2}{4\pi\varepsilon_0 r_2}}_{\text{electron 2 and nucleus}}
++\underbrace{\frac{e^2}{4\pi\varepsilon_0 r_{12}}}_{\text{electron repulsion}}
+$$
+
+The first two blocks are each a hydrogen problem (with nuclear charge $2e$), and those we can solve. All the bad news is in the last term: $r_{12}=|\vec r_1-\vec r_2|$ tangles the two electrons' coordinates together, and the equation no longer separates. More than a century on, nobody has written down an analytic solution for helium.
+
+If we simply throw the repulsion term away, each electron sits in a $Z=2$ hydrogen-like ground state and the energy comes out to
+$2\times(-4\times13.6)=-108.8\ \text{eV}$; the experimental value is $-79.0\ \text{eV}$.
+That is a 30 eV miss — throwing it away is not an option. But notice a ratio: the repulsion term contributes about 34 eV, only a third of the main part's roughly 109 eV. **It cannot be neglected, but it is smaller than the main part.**
+
+This is exactly where perturbation theory earns its keep: split the Hamiltonian into "a big piece we can solve" plus "a small tail we cannot", then let the small tail correct the big piece's answer one order at a time.
+
+## The basic setup
+
+Write the Hamiltonian as
+
+$$
+\hat H=\hat H_0+\lambda\hat H'
+$$
+
+$\hat H_0$ is the part we have **already solved**: its eigenstates $\ket{n^{(0)}}$ and eigenvalues $E_n^{(0)}$ are all known, and they form a complete orthonormal basis ([section 3.5](/en/ch/03-formalism/05-hermitian-operators/)).
+$\hat H'$ is the "small" term added on top, and $\lambda$ is a bookkeeping parameter introduced by hand:
+it tags "which order of smallness this term is", and we set $\lambda=1$ at the end.
+
+"Non-degenerate" means: the level $E_n^{(0)}$ we care about **has its state all to itself** — no other state shares its energy. The degenerate case needs a different treatment, and that is the subject of the next section.
+
+The strategy is to assume that both the true energy and the true state can be expanded as power series in $\lambda$:
+
+$$
+E_n=E_n^{(0)}+\lambda E_n^{(1)}+\lambda^2 E_n^{(2)}+\cdots,\qquad
+\ket{n}=\ket{n^{(0)}}+\lambda\ket{n^{(1)}}+\lambda^2\ket{n^{(2)}}+\cdots
+$$
+
+Substitute back into the eigenvalue equation and balance order by order — that is the entire machinery of the method.
+
+<Derivation title="Balancing order by order: the first- and second-order corrections" level="基础" minutes={10} open={true}>
+
+**Step 1: substitute and sort by powers of $\lambda$.**
+
+Insert both expansions into $(\hat H_0+\lambda\hat H')\ket{n}=E_n\ket{n}$ and sort the two sides by powers of $\lambda$:
+
+$$
+\begin{aligned}
+\lambda^0:&\quad \hat H_0\ket{n^{(0)}}=E_n^{(0)}\ket{n^{(0)}}\\
+\lambda^1:&\quad \hat H_0\ket{n^{(1)}}+\hat H'\ket{n^{(0)}}
+=E_n^{(0)}\ket{n^{(1)}}+E_n^{(1)}\ket{n^{(0)}}\\
+\lambda^2:&\quad \hat H_0\ket{n^{(2)}}+\hat H'\ket{n^{(1)}}
+=E_n^{(0)}\ket{n^{(2)}}+E_n^{(1)}\ket{n^{(1)}}+E_n^{(2)}\ket{n^{(0)}}
+\end{aligned}
+$$
+
+Zeroth order is just the original problem — no new information. The information lives in first and second order.
+
+**Step 2: hit the first-order equation with $\bra{n^{(0)}}$.**
+
+Take the inner product of the $\lambda^1$ line with $\bra{n^{(0)}}$. The first term on the left is
+$\braket{n^{(0)}}{\hat H_0 n^{(1)}}$; since $\hat H_0$ is Hermitian we can let it act to the left,
+giving $E_n^{(0)}\braket{n^{(0)}}{n^{(1)}}$ — which cancels the first term on the right exactly. What survives is
+
+$$
+E_n^{(1)}=\bra{n^{(0)}}\hat H'\ket{n^{(0)}}\equiv H'_{nn}
+$$
+
+**The first-order energy shift is just the average of the perturbation in the unperturbed state.** This is one of the most heavily used formulas in all of quantum mechanics: no new equation to solve — take the old wavefunction, compute one expectation value, done.
+
+**Step 3: hit the first-order equation with $\bra{m^{(0)}}$ ($m\neq n$).**
+
+Repeat the same move projecting in a different direction. The cancellation no longer happens, and we get
+
+$$
+\braket{m^{(0)}}{n^{(1)}}=\frac{H'_{mn}}{E_n^{(0)}-E_m^{(0)}},
+\qquad H'_{mn}\equiv\bra{m^{(0)}}\hat H'\ket{n^{(0)}}
+$$
+
+This gives every component of the first-order correction in the old basis ($\braket{n^{(0)}}{n^{(1)}}$ may be set to zero, which amounts to choosing a normalisation convention):
+
+$$
+\ket{n^{(1)}}=\sum_{m\neq n}\frac{H'_{mn}}{E_n^{(0)}-E_m^{(0)}}\ket{m^{(0)}}
+$$
+
+Read it like this: **the perturbation "mixes" other states in, and how much of each depends on two factors** — the matrix element $H'_{mn}$ (can the perturbation connect the two states at all?) and the energy difference (the farther away, the less gets mixed in).
+
+**Step 4: the second-order energy.**
+
+Take the inner product of the $\lambda^2$ line with $\bra{n^{(0)}}$. After the same cancellation what remains is
+$E_n^{(2)}=\bra{n^{(0)}}\hat H'\ket{n^{(1)}}$. Insert the $\ket{n^{(1)}}$ from above:
+
+$$
+E_n^{(2)}=\sum_{m\neq n}\frac{|H'_{mn}|^2}{E_n^{(0)}-E_m^{(0)}}
+$$
+
+The numerator is a modulus squared, never negative; the sign is decided entirely by the denominator.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Levels push each other apart.** The second-order formula says: whenever states $n$ and $m$ are connected by a non-zero matrix element, they "repel" each other — the lower one gets pushed lower, the higher one gets lifted higher (for terms with $E_n^{(0)}$ below $E_m^{(0)}$ the denominator is negative and drags $E_n$ down; the other way round, it pushes up). This is **level repulsion**, a phenomenon you meet everywhere in spectroscopy.
+
+An immediate corollary: **the second-order correction to the ground state is always less than or equal to zero.** There are no states below the ground state, so every denominator is negative and every term presses downward.
+
+</div>
+<div slot="right">
+
+$$
+E_n\approx E_n^{(0)}+H'_{nn}+\sum_{m\neq n}\frac{|H'_{mn}|^2}{E_n^{(0)}-E_m^{(0)}}
+$$
+
+For the ground state $n=1$: $E_1^{(0)}-E_m^{(0)}$ is always negative, so
+
+$$
+E_1^{(2)}=\sum_{m\ge2}\frac{|H'_{m1}|^2}{E_1^{(0)}-E_m^{(0)}}\le 0
+$$
+
+with equality only if every $H'_{m1}=0$.
+
+</div>
+</DualView>
+
+## A worked example: a ramp inside the well
+
+Let us practise on the system we know best: an infinite square well of width $L$ ([section 2.7](/en/ch/02-wavefunction/07-infinite-well/)) holding a charged particle. Now apply a weak uniform electric field along the well — put the well inside a capacitor, say. The potential picks up a linear ramp:
+
+$$
+\hat H'=V_0\,\frac{x}{L},\qquad 0<x<L
+$$
+
+$V_0$ is the drop of the ramp across the well, assumed far smaller than the level spacing.
+
+<Derivation title="First- and second-order energy shifts for the ramp" level="进阶" minutes={8}>
+
+**First order.** Average with $\psi_n=\sqrt{2/L}\sin(n\pi x/L)$:
+
+$$
+E_n^{(1)}=\frac{V_0}{L}\langle x\rangle_n=\frac{V_0}{L}\cdot\frac{L}{2}=\frac{V_0}{2}
+$$
+
+($|\psi_n|^2$ is symmetric about the centre of the well, so $\langle x\rangle=L/2$ for every $n$.) **Every level rises by the same $V_0/2$** — equivalent to shifting the zero of potential energy up by half the drop, with the level spacings completely untouched. At first order the correction here is a mere "translation"; the real physics sits at second order.
+
+**Second order.** We need the off-diagonal matrix elements. The $x$ matrix element of the infinite well is a standard integral (integrate by parts twice, or look it up):
+
+$$
+\bra{m}x\ket{n}=-\frac{8L}{\pi^2}\,\frac{mn}{(m^2-n^2)^2}
+\quad(m+n\ \text{odd}),\qquad
+\bra{m}x\ket{n}=0\quad(m+n\ \text{even},\ m\neq n)
+$$
+
+Half the matrix elements vanish outright — parity doing us a favour: $x-L/2$ is odd about the centre of the well, so it can only connect states of opposite symmetry. For the ground state, the nearest non-zero term is $m=2$:
+
+$$
+\bra{2}x\ket{1}=-\frac{8L}{\pi^2}\cdot\frac{2}{9}=-\frac{16L}{9\pi^2}
+$$
+
+Insert into the second-order formula (with $E_m^{(0)}=m^2E_1^{(0)}$):
+
+$$
+E_1^{(2)}=\frac{V_0^2}{L^2}\sum_{m=2,4,6\dots}
+\frac{|\bra{m}x\ket{1}|^2}{E_1^{(0)}(1-m^2)}
+$$
+
+The $m=2$ term gives $\dfrac{V_0^2}{E_1^{(0)}}\cdot\dfrac{(16/9\pi^2)^2}{1-4}\approx-0.01082\,\dfrac{V_0^2}{E_1^{(0)}}$.
+Adding up all of $m=4,6,\dots$ (a numerical sum):
+
+$$
+E_1^{(2)}\approx-0.01083\,\frac{V_0^2}{E_1^{(0)}}
+$$
+
+**The first term alone accounts for 99.9%.** The $1-m^2$ in the denominator together with the $(m^2-1)^{-4}$ decay in the numerator makes the series converge ferociously fast — "distant states mix in less", now in actual numbers.
+
+Plug in numbers: an electron in a well of $L=1.0\ \text{nm}$ ($E_1^{(0)}=0.376\ \text{eV}$, computed back in section 2.7), with a ramp of $V_0=0.1\ \text{eV}$. First order lifts everything by $0.05\ \text{eV}$; second order presses down by $0.01083\times0.01/0.376\approx2.9\times10^{-4}\ \text{eV}$. Second order is two orders of magnitude below first — the series looks perfectly healthy.
+
+</Derivation>
+
+<Callout type="insight" title="The second-order shift is 'polarisation'">
+The ramp wants to push the particle toward the low-potential side. First order uses only the old wavefunction — no deformation yet — so all it feels is the average potential ($V_0/2$). At second order the wavefunction begins to deform:
+$\ket{2^{(0)}}$ gets mixed in and the probability density leans toward the low side — the system lowers its energy by deforming,
+which is why the second-order correction is negative.
+
+A hydrogen atom in an electric field is the same story: the first-order Stark shift vanishes (the ground state has definite parity, $\langle z\rangle=0$), and second order gives $\Delta E=-\tfrac12\alpha\mathcal E^2$, where $\alpha=4.5\times4\pi\varepsilon_0 a_0^3$ is the polarisability of hydrogen. The correspondence "second-order perturbation = polarisation energy" is useful all over atomic and molecular physics.
 </Callout>
 
-## Planned contents
+## When it works, and when it crashes
 
-- First-order corrections to energy and wavefunction
-- The second-order energy correction
-- When the perturbation series converges
+The condition for trusting the perturbation series can be read straight off the expansion. The mixing coefficient
+$H'_{mn}/(E_n^{(0)}-E_m^{(0)})$ must be small:
+
+$$
+\left|\frac{H'_{mn}}{E_n^{(0)}-E_m^{(0)}}\right|\ll1
+\qquad\text{for all } m\neq n
+$$
+
+**"Small" is not the perturbation's own call — it is measured against the level spacing.** The very same perturbation is tiny when acting on a system with sparse levels, and a disaster on one with dense levels.
+
+<Callout type="warning" title="The two classic ways to crash">
+**1. Degeneracy: a zero denominator.** If some $E_m^{(0)}=E_n^{(0)}$ with $H'_{mn}\neq0$, the first-order wavefunction correction divides by zero outright. This is not a technical blemish — the method has genuinely broken down. The four $n=2$ states of hydrogen slam straight into it, and the next section is devoted to the repair.
+
+**2. The series does not converge at all.** Even when every term is computable, the series may be an **asymptotic series**: the first few orders get more and more accurate, and beyond some order things get steadily worse. The Stark series of hydrogen is exactly like this — and the reason hides in the physics: as long as the field is non-zero, the electron can always tunnel out through the barrier (the potential $-e\mathcal E z$ is infinitely deep far away), so strictly speaking no true bound state exists. The series is "pretending" that a bound state exists, and of course it cannot converge to an answer that is not there. The practical attitude: at weak fields keep the first order or two and the results are excellent; just do not expect infinitely many orders to hand you an exact solution.
+</Callout>
+
+Back to helium: the repulsion term is about $1/3$ of the main part — not exactly small — and first-order perturbation theory gives
+$E\approx-108.8+34.0=-74.8\ \text{eV}$, about 4 eV away from the experimental $-79.0\ \text{eV}$ —
+the right direction, but mediocre accuracy. To do better, either grind out higher orders or switch to a method that does not depend on a "small parameter". The latter is the variational method of [section 7.3](/en/ch/07-approximation/03-variational-method/).
+
+<KeyFormulas
+  items={[
+    { name: 'First-order energy shift', latex: "E_n^{(1)}=\\bra{n^{(0)}}\\hat H'\\ket{n^{(0)}}", note: 'The average of the perturbation in the old state — no new equation to solve' },
+    { name: 'First-order wavefunction', latex: "\\ket{n^{(1)}}=\\sum_{m\\neq n}\\frac{H'_{mn}}{E_n^{(0)}-E_m^{(0)}}\\ket{m^{(0)}}", note: 'Mixing = matrix element ÷ energy difference' },
+    { name: 'Second-order energy shift', latex: "E_n^{(2)}=\\sum_{m\\neq n}\\frac{|H'_{mn}|^2}{E_n^{(0)}-E_m^{(0)}}", note: 'Level repulsion; the ground-state correction is always ≤ 0' },
+    { name: 'Validity criterion', latex: "\\left|\\frac{H'_{mn}}{E_n^{(0)}-E_m^{(0)}}\\right|\\ll1", note: '"Small" is relative to the level spacing; fails at degeneracy' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'ndp-1',
+      prompt: 'The first-order energy correction E⁽¹⁾ = ⟨n⁽⁰⁾|H′|n⁽⁰⁾⟩ uses which wavefunction?',
+      options: [
+        'The old, unperturbed wavefunction — so no new equation needs solving',
+        'The new, corrected wavefunction',
+        'Half old and half new',
+        'The eigenfunctions of the perturbation operator itself',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'If computing the energy required the new wavefunction, perturbation theory would defeat its own purpose — the deformation of the wavefunction only starts to matter at second order in the energy.',
+        3: 'H′ generally need not have nice eigenfunction properties of its own; it is just one piece of the Hamiltonian.',
+      },
+      explain: 'The first-order shift is just the perturbation averaged in the old state. The first-order deformation |n⁽¹⁾⟩ exists, but its contribution to the energy only shows up at second order — which is exactly why perturbation theory is so cheap.',
+    },
+    {
+      id: 'ndp-2',
+      prompt: 'Why is the second-order energy correction to the ground state never positive?',
+      options: [
+        'Because every denominator E₁⁽⁰⁾−Eₘ⁽⁰⁾ in the sum is negative while the numerator |H′ₘ₁|² is non-negative',
+        'Because perturbations are always attractive',
+        'Because the ground-state wavefunction has no nodes',
+        'The claim is false — the second-order correction can have either sign',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The sign of the perturbation is irrelevant — the numerator is a modulus squared; all the sign information of the perturbation lives at first order.',
+        3: 'For excited states it can indeed go either way (states above push down, states below push up) — but the ground state has nothing below it.',
+      },
+      explain: 'The ground state is the lowest state, so every m≠1 has Eₘ⁽⁰⁾ above E₁⁽⁰⁾ and every term presses the ground state down. Physical picture: by deforming its wavefunction (polarising), the system can always shave off a little energy.',
+    },
+    {
+      id: 'ndp-3',
+      prompt: 'The correct criterion for whether perturbation theory applies is:',
+      options: [
+        'The ratio of the matrix element H′ₘₙ to the level spacing Eₙ⁽⁰⁾−Eₘ⁽⁰⁾ is much less than 1',
+        'H′ is numerically small in absolute terms (say, below 1 eV)',
+        'H′ commutes with H₀',
+        'The system has an analytic solution',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'There is no absolute standard of "small": a 1 meV perturbation acting on levels spaced 1 μeV apart is enormous.',
+        2: 'If H′ commutes with H₀ the two can be diagonalised simultaneously and the problem is exactly solvable — no perturbation theory needed.',
+      },
+      explain: 'The mixing coefficient H′ₘₙ/(Eₙ⁽⁰⁾−Eₘ⁽⁰⁾) is the actual expansion parameter of the series. It must be small for every m — degeneracy (a zero denominator) is the most extreme failure.',
+    },
+    {
+      id: 'ndp-4',
+      type: 'numeric',
+      prompt: 'An electron sits in an infinite well of L = 1.0 nm (E₁⁽⁰⁾ = 0.376 eV), with a linear ramp H′ = V₀x/L of drop V₀ = 0.10 eV added. Find the first-order correction to the ground-state energy, in eV.',
+      answer: 0.05,
+      tolerance: 0.005,
+      unit: 'eV',
+      explain: 'E⁽¹⁾ = (V₀/L)⟨x⟩ = V₀/2 = 0.05 eV. |ψₙ|² is symmetric about the centre of the well, so ⟨x⟩ = L/2 for every n and the first-order correction is a uniform shift. What actually changes the level spacings and leans the wavefunction to one side is the second-order effect (about −2.9×10⁻⁴ eV).',
+    },
+  ]}
+/>
+
+## What comes next
+
+There is a landmine buried in the derivation: both the first-order wavefunction and the second-order energy have $E_n^{(0)}-E_m^{(0)}$ in the denominator. The 2s and the three 2p states of hydrogen at $n=2$ have exactly the same energy — the denominator is strictly zero, and every formula above blows up on the spot. And this is precisely the most common situation: the more symmetric the system, the more degeneracy it has. The next section repairs perturbation theory so that it works inside a degenerate subspace.

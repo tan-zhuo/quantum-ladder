@@ -1,17 +1,274 @@
 ---
-title: 'The variational method'
-summary: 'An approximation that needs no small parameter.'
+title: The variational method
 section: '7.3'
 order: 3
-status: stub
+summary: 'An approximation that needs no small parameter: guess any wavefunction you like — the energy it gives can never break below the true ground state, so the better the guess, the tighter the squeeze.'
+status: done
+prereqs:
+  - 07-approximation/01-nondegenerate-perturbation
+  - 03-formalism/07-postulates
+objectives:
+  - Prove the variational principle — the energy expectation of any normalised trial state is an upper bound on the ground-state energy
+  - Construct parametrised trial wavefunctions and minimise over the parameters
+  - Carry out the screened variational calculation for the helium ground state, obtaining −77.5 eV against the experimental −79.0 eV
+  - State the method's strength (ground-state energies) and its blind spots (wavefunction detail, excited states, no error bar)
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the end of the last section, helium still owed us money: the electron repulsion is a third of the main part — hardly "small" — and first-order perturbation theory gives $-74.8\ \text{eV}$, 4 eV away from the experimental $-79.0\ \text{eV}$. To do better, grinding out second order means summing over infinitely many intermediate states — sheer misery. The root difficulty: **perturbation theory needs a small parameter, and helium has none.**
+
+This section takes a completely different road. It makes no expansion whatsoever and asks nothing about the size of the perturbation. Its only weapon is a single inequality — and it is an inequality we already know how to prove.
+
+## The variational principle
+
+<Derivation title="Why no guess can break below the ground state" level="基础" minutes={5} open={true}>
+
+Let the true eigenstates of $\hat H$ be $\ket{n}$ with eigenvalues $E_0\le E_1\le E_2\le\cdots$. Take any normalised "trial state" $\ket{\psi}$ — a pure guess, not required to be any eigenstate. Since the eigenstates are complete ([section 3.7](/en/ch/03-formalism/07-postulates/)), it can always be expanded:
+
+$$
+\ket{\psi}=\sum_n c_n\ket{n},\qquad \sum_n|c_n|^2=1
+$$
+
+Compute the energy expectation:
+
+$$
+\braket{\psi}{\hat H\psi}=\sum_n|c_n|^2E_n
+\ \ge\ \sum_n|c_n|^2E_0=E_0
+$$
+
+The middle step uses only $E_n\ge E_0$: replacing each $E_n$ by the smaller $E_0$ can only shrink the sum. Hence
+
+$$
+\boxed{\ \braket{\psi}{\hat H\psi}\ \ge\ E_0\ }
+$$
+
+valid for **any** normalised state, with equality exactly when $\ket{\psi}$ is the ground state itself.
+
+In plain words: the energy expectation is the average of the eigenenergies weighted by $|c_n|^2$, and **an average can never dip below the minimum**. That is all there is to it.
+
+(If the trial state is not normalised, use $\braket{\psi}{\hat H\psi}/\braket{\psi}{\psi}\ge E_0$ — same content.)
+
+</Derivation>
+
+This inequality instantly becomes a machine for computing energies:
+
+1. Guess a family of parametrised wavefunctions $\psi_\alpha$ ($\alpha$ can be one or several parameters);
+2. Compute $E(\alpha)=\braket{\psi_\alpha}{\hat H\psi_\alpha}$;
+3. Minimise over $\alpha$.
+
+The minimum is still an upper bound — but it is the **tightest** upper bound in that family of guesses. The smarter the family, the closer the answer gets to the truth. This is the **variational method**: we "vary" over a family of wavefunctions to minimise the energy functional.
+
+<Callout type="insight" title="Why the method is surprisingly robust: the energy error is second-order small">
+Suppose the trial state misses the true ground state by a little: $\ket{\psi}=\ket{0}+\epsilon\ket{\delta}$ (with $\ket{\delta}\perp\ket{0}$). Expand the energy expectation, and you find the first-order-in-$\epsilon$ term is proportional to $\bra{0}\hat H\ket{\delta}=E_0\braket{0}{\delta}=0$ — it vanishes automatically:
+
+$$
+E(\psi)=E_0+O(\epsilon^2)
+$$
+
+**Err in the wavefunction at first order, and the energy errs only at second order.** Even a sloppy guess for the wavefunction can deliver quite a good energy — this is the deep reason the variational method runs riot across physics and chemistry. Today's quantum chemistry packages and ab initio materials codes are, at heart, variational calculations on a colossal scale.
 </Callout>
 
-## Planned contents
+## Warm-up: deliberately guessing the wrong shape
 
-- The variational principle and the upper bound on the ground state
-- Constructing trial wavefunctions
-- A variational calculation for the helium ground state
+First, test the blade somewhere the exact answer is known, to see "what happens when the guess is wrong". For hydrogen (true ground state: the exponential $\ee^{-r/a_0}$, $E_0=-13.6\ \text{eV}$), deliberately pick the **wrong shape** as a trial — a Gaussian:
+
+$$
+\psi_b(r)\propto\ee^{-br^2}
+$$
+
+with $b$ the variational parameter. Work out the kinetic and potential expectation values (both standard Gaussian integrals),
+
+$$
+E(b)=\frac{3\hbar^2b}{2m}-\frac{e^2}{4\pi\varepsilon_0}\,2\sqrt{\frac{2b}{\pi}}
+$$
+
+Set the derivative in $b$ to zero and substitute back:
+
+$$
+E_{\min}=-\frac{4}{3\pi}\,\frac{me^4}{(4\pi\varepsilon_0)^2\hbar^2}
+\approx-11.5\ \text{eV}
+$$
+
+The true value is $-13.6\ \text{eV}$. Two observations: the upper-bound promise held ($-11.5$ really is above $-13.6$); and although the shape was completely wrong (a Gaussian is too flat at the origin and falls off too fast at large $r$), the energy still captured 85%. That is the power of the "error is second-order small" theorem — and also its trap: **an accurate energy does not mean an accurate wavefunction**;
+$\psi_b$ is badly wrong both near the origin and far away.
+
+## The main course: the helium ground state
+
+Time to settle the debt owed for two sections. The craft of building a trial wavefunction is **writing your physical intuition into the parameters**:
+
+Each electron, besides being pulled by the nucleus ($Z=2$), is pushed away by the other electron. Seen from one electron's viewpoint, the other's cloud of negative charge "shades" part of the nucleus — the effective nuclear charge it feels should be **less than 2, greater than 1** (the other electron is sometimes inside it and sometimes outside, so the shading is imperfect). This effect is called **screening**.
+
+So guess: each electron sits in a hydrogen-like ground state of nuclear charge $Z_e$, with $Z_e$ the variational parameter,
+
+$$
+\psi_{Z_e}(\vec r_1,\vec r_2)=\frac{Z_e^3}{\pi a_0^3}\,
+\ee^{-Z_e(r_1+r_2)/a_0}
+$$
+
+and let energy minimisation decide "how much screening" for us.
+
+<Derivation title="The screened variational calculation: from E(Zₑ) to −77.5 eV" level="进阶" minutes={12}>
+
+Keep the books in units of $e^2/(4\pi\varepsilon_0 a_0)=27.2\ \text{eV}$ (twice the Rydberg). The Hamiltonian splits into three pieces.
+
+**Kinetic energy.** The trial state is a hydrogen-like ground state at charge $Z_e$, so the one-electron kinetic energy follows from the hydrogen-like virial theorem:
+$\langle T\rangle=+Z_e^2/2$ (in the units above). Two electrons:
+
+$$
+\langle T_1+T_2\rangle=Z_e^2
+$$
+
+**Nuclear attraction.** The hydrogen-like ground state has $\langle1/r\rangle=Z_e/a_0$. The true nuclear charge is $Z=2$ (not $Z_e$!), so
+
+$$
+\left\langle-\frac{Z}{r_1}-\frac{Z}{r_2}\right\rangle=-2ZZ_e
+$$
+
+**Electron repulsion.** This is the only integral that genuinely has to be computed — the electrostatic interaction energy of two exponential charge clouds of charge $Z_e$ — and the result is a famous number:
+
+$$
+\left\langle\frac{1}{r_{12}}\right\rangle=\frac{5}{8}Z_e
+$$
+
+(Method: expand $1/r_{12}$ in spherical harmonics; only the spherically symmetric term survives, and what remains is elementary.
+The 34 eV used in the first-order calculation of section 7.1 is just this at $Z_e=2$: $\tfrac58\times2\times27.2=34.0\ \text{eV}$.)
+
+**Total:**
+
+$$
+E(Z_e)=\left[Z_e^2-2ZZ_e+\frac58Z_e\right]\times27.2\ \text{eV}
+$$
+
+Sanity check: set $Z_e=Z=2$ (no screening) and get $(4-8+1.25)\times27.2=-74.8\ \text{eV}$ — exactly the first-order perturbation result. **First-order perturbation theory = the variational method with its parameter left unoptimised**; the two roads meet right here.
+
+**Minimise.** $\dd E/\dd Z_e=2Z_e-2Z+\tfrac58=0$:
+
+$$
+Z_e=Z-\frac{5}{16}=\frac{27}{16}=1.6875
+$$
+
+The screening is $5/16\approx0.31$: on average the other electron shades about a third of one nuclear charge — squarely in the intuitively expected "between 0 and 1, on the small side" range. Substituting back (the bracket at the minimum equals exactly $-Z_e^2$):
+
+$$
+E_{\min}=-\left(\frac{27}{16}\right)^2\times27.2\ \text{eV}=-77.5\ \text{eV}
+$$
+
+**The scoreboard:**
+
+| Method | Result | Gap to experiment |
+| --- | --- | --- |
+| Ignore repulsion entirely | $-108.8$ eV | 29.8 eV |
+| First-order perturbation (section 7.1) | $-74.8$ eV | 4.2 eV |
+| One-parameter variation | $-77.5$ eV | 1.5 eV |
+| Experiment | $-79.0$ eV | — |
+
+One parameter, one page of algebra, and the error drops to 2%. And this road has no end: in 1929 Hylleraas wrote $r_{12}$ explicitly into the trial function and reached 0.01 eV with a handful of parameters; modern variational calculations pin the helium ground state to a dozen-plus significant figures. **The accuracy is limited only by how much imagination you are willing to pack into the trial function** — a promise perturbation theory can never make.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**The variational method is an auction.** The true ground-state energy is a reserve price hidden under the floor; every trial wavefunction is a bid, and the rules guarantee each bid stays above the reserve. You cannot know how far above the reserve you are, but any two bids can be compared: **lower is better**. So the method is iterative by nature — add a parameter and the energy can only drop or stay put, never get worse.
+
+</div>
+<div slot="right">
+
+Nested parameter families tighten the bound monotonically: if family $A\subset B$ ($B$ contains all the functions of $A$), then
+
+$$
+E_0\ \le\ \min_{\psi\in B}\frac{\braket{\psi}{\hat H\psi}}{\braket{\psi}{\psi}}\ \le\ \min_{\psi\in A}(\cdots)
+$$
+
+Limiting case: expand the family to all of Hilbert space and the minimum equals $E_0$ exactly — the variational principle itself is **exact**; the approximation comes only from the finiteness of the family.
+
+</div>
+</DualView>
+
+## When to use it, and where to be careful
+
+The variational method applies startlingly widely: no small perturbation required, no nearby solvable model required — only the ability to compute $\braket{\psi}{\hat H\psi}$. But its blind spots are just as sharp.
+
+<Callout type="warning" title="The four blind spots of the variational method">
+**1. No error bar.** The upper bound is the entire promise — you know the truth lies below, not how far below. (The Gaussian trial for hydrogen missed by 15%, the screened trial for helium by 2%, and neither was knowable in advance.)
+
+**2. Accurate energy ≠ accurate wavefunction.** The second-order-error theorem is a double-edged sword: the energy is insensitive to wavefunction mistakes, which conversely means a good energy guarantees nothing about wavefunction detail. For quantities sensitive to the wavefunction (probability density at the origin, dipole moments), the variational wavefunction can be badly off.
+
+**3. Directly applicable only to the ground state.** The proof used "$E_0$ is the minimum". To do variational excited states, the trial state must stay **orthogonal** to every lower state; otherwise a ground-state component leaking into the trial state drags the energy below the excited level, and the upper-bound property fails for it. The reliable trick is symmetry: in hydrogen, vary over $\ell=1$ trial functions — automatically orthogonal to the $\ell=0$ ground state — and what you get is an upper bound on the $2p$ energy.
+
+**4. Few parameters can mean bias.** Minimisation optimises exactly one number, the energy; any prejudice built into the trial family (forced spherical symmetry, say) stays in the answer untouched.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Variational principle', latex: '\\frac{\\braket{\\psi}{\\hat H\\psi}}{\\braket{\\psi}{\\psi}}\\ \\ge\\ E_0', note: 'Holds for any trial state; equality iff ψ is the ground state' },
+    { name: 'Order of the error', latex: '\\ket{\\psi}=\\ket{0}+\\epsilon\\ket{\\delta}\\ \\Rightarrow\\ E(\\psi)=E_0+O(\\epsilon^2)', note: 'Err in the wavefunction at first order, in the energy only at second' },
+    { name: 'Helium: energy functional', latex: 'E(Z_e)=\\left[Z_e^2-2ZZ_e+\\tfrac{5}{8}Z_e\\right]\\frac{e^2}{4\\pi\\varepsilon_0 a_0}', note: 'At Zₑ=Z it reduces to first-order perturbation, −74.8 eV' },
+    { name: 'Helium: the minimum', latex: 'Z_e=Z-\\tfrac{5}{16}=1.6875,\\quad E_{\\min}=-77.5\\ \\text{eV}', note: 'Experiment −79.0 eV; screening ≈ 1/3 of a charge' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'var-1',
+      prompt: 'The fundamental reason the variational principle ⟨ψ|H|ψ⟩ ≥ E₀ holds is:',
+      options: [
+        'The energy expectation is a weighted average of the eigenvalues with weights |cₙ|², and an average cannot dip below the minimum',
+        'The trial wavefunction must be close to the true ground state',
+        'The Hamiltonian is a positive-definite operator',
+        'The uncertainty principle forbids energies that are too low',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The proof holds for any normalised state, even one bearing no resemblance to the ground state — that is precisely the method’s power.',
+        2: 'H is generally not positive-definite (bound-state energies can be negative); all the proof uses is "a lowest eigenvalue exists".',
+      },
+      explain: 'Expand the trial state in eigenstates: ⟨H⟩ = Σ|cₙ|²Eₙ. Every Eₙ ≥ E₀, the weights are non-negative and sum to 1, so the weighted average ≥ E₀. One line of inequality props up half of computational physics.',
+    },
+    {
+      id: 'var-2',
+      prompt: 'In the helium variational calculation, the physical meaning of Zₑ = 27/16 ≈ 1.69 is:',
+      options: [
+        'Each electron, on average, has about 1/3 of a nuclear charge shaded away by the other electron’s charge cloud',
+        'The true charge of the helium nucleus is not actually 2',
+        'The electron’s effective mass has changed',
+        'It is an artefact of mathematical optimisation with no physical meaning',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The nuclear charge is always 2; what changes is the effective charge the electron "feels".',
+        3: 'Quite the opposite — screening is a real physical effect, and the variational parameter quantifies it as 5/16 ≈ 0.31.',
+      },
+      explain: 'Part of the other electron’s probability cloud sits inside, partially cancelling the nuclear attraction. Minimisation tells us the optimal "effective nuclear charge" is 2 − 5/16: the physical intuition (screening between 0 and 1, on the small side) is cashed out exactly by the calculation.',
+    },
+    {
+      id: 'var-3',
+      prompt: 'Which of the following statements about the limitations of the variational method are correct? (Select all that apply.)',
+      options: [
+        'It gives only an upper bound, with no error range',
+        'Even when the energy is very accurate, the wavefunction’s details can still be poor',
+        'Applied directly to excited states, the upper-bound property fails if the trial state contains a ground-state component',
+        'It requires the Hamiltonian to contain a small parameter',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Needing no small parameter is exactly the variational method’s biggest advantage over perturbation theory — helium’s repulsion term is not small, and the method works regardless.',
+      },
+      explain: 'The first three are the method’s genuine blind spots: no error bar, energy insensitive to wavefunction error at second order (a double-edged sword), and excited states needing orthogonality protection (usually secured by symmetry). The fourth is a requirement of perturbation theory that the variational method is precisely free of.',
+    },
+    {
+      id: 'var-4',
+      type: 'numeric',
+      prompt: 'Using E(Zₑ) = [Zₑ² − 4Zₑ + (5/8)Zₑ] × 27.2 eV with Zₑ = 27/16, compute the variational ground-state energy of helium, in eV (mind the sign).',
+      answer: -77.5,
+      tolerance: 0.5,
+      unit: 'eV',
+      explain: 'At the minimum the bracket equals −Zₑ², so E = −(27/16)² × 27.2 = −2.848 × 27.2 ≈ −77.5 eV. That is about 1.5 eV (2%) from the experimental −79.0 eV — a big step past first-order perturbation theory’s −74.8 eV.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Perturbation theory and the variational method both answer the same kind of question: **where are the energy levels?** But some questions are not about levels at all — how does an alpha particle escape the nucleus? How does an electron cross a barrier it could classically never climb? The protagonist of those questions is **the wavefunction under the barrier**, and there the wavefunction decays exponentially — no polynomial-style correction can keep up with it. The WKB approximation of the next section is built for exactly this "semiclassical" situation: when the potential varies slowly enough, the wavefunction is locally a plane wave at every point — and with that we will compute a tunnelling probability for the first time, and explain the lifetime law in nuclear physics that spans thirty orders of magnitude.

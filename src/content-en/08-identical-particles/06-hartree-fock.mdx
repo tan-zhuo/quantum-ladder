@@ -1,17 +1,245 @@
 ---
-title: 'The Hartree–Fock idea'
-summary: 'A mean-field approximation for the many-body problem.'
+title: The Hartree-Fock idea
 section: '8.6'
 order: 6
-status: stub
+summary: 'When the 3N-dimensional Schrödinger equation won''t budge, let each electron move alone in the "mean field" of the others — then let field and orbitals feed each other, iterating to self-consistency. Hartree–Fock is the many-body problem''s first computable answer, and the foundation of quantum chemistry.'
+status: done
+prereqs:
+  - 08-identical-particles/02-bosons-fermions
+  - 08-identical-particles/04-exchange-interaction
+  - 07-approximation/03-variational-method
+objectives:
+  - Use an order-of-magnitude storage estimate to show why the many-electron Schrödinger equation cannot be solved directly
+  - Explain the mean-field idea and the self-consistent-field loop, and recount every step of the SCF algorithm
+  - Write down the Hartree-Fock equations and identify the origin and meaning of the Coulomb and exchange terms
+  - Define the correlation energy, and use real helium data to gauge HF's accuracy and limits
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The variational method of chapter 7 can pin down the helium ground state to decent accuracy — that was 2 electrons and 6 spatial dimensions. Now face the depth of the periodic table honestly: an iron atom has 26 electrons, and its wavefunction is a function of 78 coordinates
+
+$$
+\Psi(\vec{r}_1,\vec{r}_2,\dots,\vec{r}_{26})
+$$
+
+## First, size up the enemy
+
+Try to store this function in a computer: even a mere 10 grid points per coordinate axis (absurdly coarse) requires $10^{78}$ numbers — more than the number of atoms in the observable universe (of order $10^{80}$). This is not "insufficient computing power"; **the object itself does not fit inside the physical universe**. Cutting to 5 grid points does not help: $5^{78}\sim3\times10^{54}$. The exponential wall does not negotiate.
+
+There is only one way out: stop solving for the whole $\Psi$ and ask a far cheaper question. Twenty-six single-electron orbitals $\phi_i(\vec{r})$, at $10^3$ grid points each, cost only $2.6\times10^4$ numbers in total. **If** the many-electron state can be approximately assembled from single-electron orbitals — and we happen to have a ready-made assembly: the Slater determinant of [section 8.2](/en/ch/08-identical-particles/02-bosons-fermions/).
+
+So the strategy takes shape:
+
+> **Within the subset "single Slater determinants", find the one of lowest energy.**
+
+This is exactly the variational routine of chapter 7 — except the trial wavefunction is no longer a function with one or two parameters, but the enormous parameter space of "any choice of N orthogonal orbitals".
+
+## The mean field: what does each electron see?
+
+Before any formulas, set up the physical picture. Single out electron $i$. It feels the nuclear attraction, plus the Coulomb repulsion of the other $N-1$ electrons. The trouble is that the latter depends on where the other electrons are, and where they are depends on the fields they each feel... everyone's motion is tangled with everyone else's.
+
+The **mean-field approximation** cuts this knot with one stroke: replace "the other electrons" with their **average charge cloud**
+
+$$
+\rho_{\text{rest}}(\vec{r}\,')=\sum_{j\ne i}|\phi_j(\vec{r}\,')|^2
+$$
+
+Electron $i$ then moves in an ordinary single-particle effective potential — solving one three-dimensional Schrödinger equation suffices. $N$ electrons mean $N$ three-dimensional equations: the exponential wall collapses into a linear staircase.
+
+There is a price, of course: real electrons **dodge each other as they move** (when you approach, I step aside — this is called correlation), while the mean field smears the other electron into a fixed haze that cannot be dodged. That bill is settled later.
+
+## The self-consistent-field loop
+
+There is also a chicken-and-egg problem: writing electron $i$'s effective potential requires knowing the other orbitals $\phi_j$, and the $\phi_j$ are precisely the unknowns. The answer is iteration — guess a set of orbitals and compute the field; solve for new orbitals in that field, compute the new field; loop until input and output agree. The procedure is called the **self-consistent field** (SCF):
+
+```text
+Input: nuclear charge Z, electron number N
+1  Guess an initial set of orbitals {φ_1, ..., φ_N}   # e.g. hydrogen-like orbitals
+2  repeat:
+3      Compute the mean field from the current orbitals:
+4          Coulomb potential  J[φ](r)   ← the charge clouds of all orbitals
+5          Exchange potential K[φ](r)   ← the antisymmetry correction (see below)
+6      For each i, solve the single-particle equation:
+7          [ -ħ²∇²/2m - Ze²/4πε₀r + J - K ] φ_i' = ε_i φ_i'
+8      Keep the N lowest-energy new orbitals {φ_i'}
+9      if max|φ_i' - φ_i| < tolerance: break   # input = output, self-consistent
+10     {φ_i} ← {φ_i'}                          # (in practice, mixing helps convergence)
+11 Output: orbitals, orbital energies ε_i, total energy E_HF
+```
+
+"Guess → compute field → solve → compare → repeat", typically converging in a dozen to a few dozen rounds. In the 1930s, Hartree and his father iterated atomic orbitals on a hand-cranked calculator, months per atom; today your laptop does the same for an iron atom in under a second.
+
+## The Hartree-Fock equations
+
+Now carry out "determinant + variation" rigorously, and watch the mean field grow out of the mathematics by itself — with one more term than the naive picture.
+
+<Derivation title="The energy of a determinant and the HF equations" level="进阶" minutes={12}>
+
+**Step 1: write the energy functional.** Let the trial state be a Slater determinant $\ket{\Phi}$ of $N$ orthonormal spin-orbitals. Using the determinant's orthogonality properties (or, fastest, the second quantization of section 8.5), one finds
+
+$$
+E[\Phi]=\braket{\Phi}{\hat H\,\Phi}
+=\sum_{i=1}^N h_{ii}+\frac12\sum_{i,j=1}^N\bigl(J_{ij}-K_{ij}\bigr)
+$$
+
+where $h_{ii}$ is orbital $i$'s kinetic plus nuclear-attraction energy, and
+
+$$
+J_{ij}=\int|\phi_i(\vec{r})|^2\,\frac{e^2}{4\pi\epsilon_0|\vec{r}-\vec{r}\,'|}\,|\phi_j(\vec{r}\,')|^2\,\dd^3r\,\dd^3r'
+$$
+
+$$
+K_{ij}=\int\phi_i^*(\vec{r})\phi_j^*(\vec{r}\,')\,\frac{e^2}{4\pi\epsilon_0|\vec{r}-\vec{r}\,'|}\,\phi_j(\vec{r})\phi_i(\vec{r}\,')\,\dd^3r\,\dd^3r'
+$$
+
+These are exactly the **direct** and **exchange integrals** of [section 8.4](/en/ch/08-identical-particles/04-exchange-interaction/), now summed over all orbital pairs. ($K_{ij}$ is non-zero only when $i,j$ have the same spin; for $i=j$, $J_{ii}=K_{ii}$ cancel automatically, so an electron does not repel itself — the bookkeeping is clean.)
+
+**Step 2: vary.** Minimising $E[\Phi]$ under the constraint that the orbitals stay orthonormal (handled with Lagrange multipliers, chapter 7's standard trick) gives, for each $\phi_i$, the condition
+
+$$
+\Bigl[-\frac{\hbar^2}{2m}\nabla^2-\frac{Ze^2}{4\pi\epsilon_0 r}
++\hat J-\hat K\Bigr]\phi_i(\vec{r})=\varepsilon_i\,\phi_i(\vec{r})
+$$
+
+These are the **Hartree-Fock equations**. Two new operators:
+
+The **Coulomb operator** (a multiplicative operator — the very charge cloud of the mean-field picture):
+
+$$
+\hat J\,\phi_i(\vec{r})=\Bigl[\sum_j\int\frac{e^2\,|\phi_j(\vec{r}\,')|^2}{4\pi\epsilon_0|\vec{r}-\vec{r}\,'|}\,\dd^3r'\Bigr]\phi_i(\vec{r})
+$$
+
+The **exchange operator** (a non-local operator — its output depends on the values of $\phi_i$ **elsewhere**):
+
+$$
+\hat K\,\phi_i(\vec{r})=\sum_j\phi_j(\vec{r})\int\frac{e^2\,\phi_j^*(\vec{r}\,')\,\phi_i(\vec{r}\,')}{4\pi\epsilon_0|\vec{r}-\vec{r}\,'|}\,\dd^3r'
+$$
+
+**Step 3: read the structure.** $\hat J$ is Hartree's naive mean field of 1928; $\hat K$ is the antisymmetry correction added by Fock and Slater in 1930 — the naive picture **could not have guessed it**; the determinant variation delivers it free of charge. $\hat K$ lowers the repulsion energy of same-spin electron pairs (the Fermi hole: same-spin electrons already avoid each other and pay a smaller Coulomb bill) — the whole-system version of the exchange effect of section 8.4.
+
+The operator on the left-hand side (the **Fock operator** $\hat F$) depends on the full set of solutions $\{\phi_j\}$, so this is a system of non-linear equations — it must be solved with the SCF loop above.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**What the orbital energies mean.** The eigenvalues $\varepsilon_i$ are not arbitrary bookkeeping: **Koopmans' theorem** says $-\varepsilon_i$ is approximately the energy needed to ionise an electron out of orbital $i$ (assuming the other orbitals do not relax). The "HOMO level" and "ionisation energy" on every chemist's lips have their theoretical home right here.
+
+A related pitfall: $E_{\text{HF}}\ne\sum_i\varepsilon_i$. Each $\varepsilon_i$ already includes the repulsion with all other electrons, so a straight sum counts every pair twice; one must subtract $\frac12\sum(J_{ij}-K_{ij})$.
+
+</div>
+<div slot="right">
+
+**The report card: helium.**
+
+| Method | Ground-state energy |
+| --- | --- |
+| Neglect electron repulsion | $-108.8$ eV |
+| First-order perturbation | $-74.8$ eV |
+| Variational (effective nuclear charge) | $-77.5$ eV |
+| **Hartree-Fock limit** | $-77.87$ eV |
+| Experiment/exact | $-79.01$ eV |
+
+HF captures 98.6% of the total energy. The remaining $1.14$ eV cannot be recovered — no matter how perfectly the orbitals are optimised, the single determinant's ceiling sits right there.
+
+</div>
+</DualView>
+
+## The part that cannot be recovered: correlation energy
+
+Define the **correlation energy** as the gap between the exact value and the HF limit:
+
+$$
+E_{\text{corr}}=E_{\text{exact}}-E_{\text{HF}}
+$$
+
+For helium, $E_{\text{corr}}\approx-1.14$ eV. Its source is exactly the bill foreshadowed at the start: real electrons dodge each other instant by instant, so configurations like "you left, me right" carry extra weight; in a single determinant each electron sees only the other's **average** cloud, and this pas de deux cannot be described. In the language of chapter 3: the true ground state is a superposition of **many** determinants, and we kept only one.
+
+<Callout type="warning" title="Why a 1.4% error cannot be ignored">
+"Capturing 98.6%" sounds nearly perfect, but chemistry does not run on total energies — it runs on **energy differences**. A chemical bond is typically worth only 2-5 eV, the same order as the correlation energy; reaction barriers are smaller still. HF gives a qualitatively wrong dissociation limit for H₂ (forcing in ionic components), and the van der Waals attraction between molecules (the dispersion force) is **exactly zero** in HF — it is a correlation effect through and through.
+
+Modern computation therefore works as "HF for the base coat, correlation billed separately": configuration interaction, coupled cluster, and perturbation expansions (MP2) follow the "add more determinants" route; density functional theory (DFT) takes a different road, packaging exchange and correlation into a functional of the density. The 1998 Nobel Prize in Chemistry (Kohn and Pople) honoured precisely this road of computational chemistry that sets out from HF.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Mean field: an idea that runs through physics">
+The territory of "replace complicated interactions with a self-consistent mean field" reaches far beyond atoms: the Curie–Weiss theory of magnetism (each spin feels its neighbours' average magnetisation), the BCS theory of superconductivity (electron pairs feel an average pairing field), the nuclear shell model (nucleons move in an average nuclear potential), even galactic dynamics — all the same move. The universal price is also the same: fluctuations and correlations get erased. Knowing where mean field fails (low dimensions, strong correlation, near phase transitions) is one of the central concerns of modern condensed-matter physics.
+</Callout>
 
-- The idea of a self-consistent field
-- The Hartree–Fock equations
-- Correlation energy and the limits of HF
+<KeyFormulas
+  items={[
+    { name: 'Determinant energy', latex: 'E=\\sum_i h_{ii}+\\frac12\\sum_{ij}(J_{ij}-K_{ij})', note: 'J direct, K exchange; i = j cancels automatically' },
+    { name: 'HF equations', latex: '\\bigl[\\hat h+\\hat J-\\hat K\\bigr]\\phi_i=\\varepsilon_i\\phi_i', note: 'Non-linear: the operator depends on the solutions, so SCF iteration is required' },
+    { name: 'Koopmans'' theorem', latex: 'I_i\\approx-\\varepsilon_i', note: 'Orbital energy ≈ minus the ionisation energy (frozen-orbital approximation)' },
+    { name: 'Correlation energy', latex: 'E_{\\text{corr}}=E_{\\text{exact}}-E_{\\text{HF}}', note: 'The single determinant''s ceiling; −1.14 eV for helium' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'hf-1',
+      prompt: 'Why not just solve the iron atom''s 78-dimensional Schrödinger equation numerically on a computer?',
+      options: [
+        'The number of values needed to store the wavefunction grows exponentially with dimension: 10 grid points per dimension already means 10⁷⁸ numbers, physically impossible',
+        'Because the equation is non-linear',
+        'Because numerical methods only work for one-dimensional problems',
+        'Because the wavefunction is complex-valued and computers cannot store it',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The many-electron Schrödinger equation itself is linear; non-linearity only appears after the HF approximation.',
+        2: 'Numerically solving three-dimensional single-particle problems has been routine since chapter 4; the problem is the 78 dimensions.',
+        3: 'Complex storage merely doubles the count — no obstacle.',
+      },
+      explain: 'The exponential wall: k grid points per coordinate and d dimensions cost k^d numbers. 10⁷⁸ approaches the atom count of the observable universe. HF''s entire motivation is trading "one 3N-dimensional function" for "N three-dimensional functions".',
+    },
+    {
+      id: 'hf-2',
+      prompt: 'Which statements about the self-consistent-field (SCF) loop are correct? (Select all that apply.)',
+      options: [
+        'Iteration is needed because each electron''s effective potential depends on the other electrons'' orbitals, which are themselves unknowns',
+        'The convergence criterion is that the newly solved orbitals (or field/energy) agree with the previous round',
+        'The iteration always decreases monotonically and converges to the global optimum',
+        'The Fock operator depends on the solutions themselves, making the HF equations a non-linear problem',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'In practice SCF can oscillate, diverge, or converge to a non-optimal solution, and needs tricks like mixing and damping — that is what the comment on line 10 of the pseudocode is for.',
+      },
+      explain: 'The circular dependence "field makes orbitals, orbitals make field" is the signature of a non-linear problem. Iterating until input matches output is "self-consistency"; but convergence carries no general guarantee — a genuine numerical difficulty.',
+    },
+    {
+      id: 'hf-3',
+      type: 'numeric',
+      prompt: 'Helium''s HF-limit energy is −2.8617 hartree and the exact value is −2.9037 hartree. Find the magnitude of the correlation energy (absolute value) in eV. (1 hartree = 27.211 eV)',
+      answer: 1.14,
+      tolerance: 0.05,
+      unit: 'eV',
+      explain: '|E_corr| = (2.9037 − 2.8617) × 27.211 ≈ 0.0420 × 27.211 ≈ 1.14 eV. Only 1.4% of the total energy, yet the same order as a chemical bond — which is why quantum chemistry remains an entire discipline beyond HF.',
+    },
+    {
+      id: 'hf-4',
+      prompt: 'Where does the exchange operator K̂ in the HF equations come from?',
+      options: [
+        'From taking the trial wavefunction to be a Slater determinant — the variation generates this term automatically from antisymmetry; the naive "charge-cloud mean field" cannot produce it',
+        'From an exchange magnetic field between electron magnetic moments',
+        'It is a correction inserted by hand to fit experimental data',
+        'From relativistic effects',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Nothing magnetic about it — K̂ is a Coulomb integral, merely carrying the exchange structure (recall section 8.4).',
+        2: 'HF is derived from first principles, with no fitted parameters whatsoever.',
+        3: 'Relativistic corrections are a different ledger (chapter 12).',
+      },
+      explain: 'Hartree''s original 1928 scheme had only the Coulomb term Ĵ; vary an antisymmetric determinant and K̂ grows out on its own (Fock, Slater, 1930). It lowers the repulsion of same-spin pairs — the Fermi hole incarnated in an equation.',
+    },
+  ]}
+/>
+
+## What comes next
+
+HF's residue now has a name (correlation energy), but we still lack a **ruler**: how do we quantify "the behaviour of two electrons cannot be split into two independent behaviours"?
+
+The end of chapter 3 actually planted the clue: describe a subsystem of an entangled whole and you get a mixed state. The next section picks up that thread — partial trace and the reduced density matrix — and, for the first time, attaches a number to "how much entanglement".

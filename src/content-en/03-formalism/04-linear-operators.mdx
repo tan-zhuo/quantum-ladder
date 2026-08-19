@@ -1,17 +1,269 @@
 ---
-title: 'Linear operators and eigenvalue problems'
-summary: 'An operator is a machine that maps states to states.'
+title: Linear operators and the eigenvalue problem
 section: '3.4'
 order: 4
-status: stub
+summary: 'An operator is a machine that maps states to states. In a given basis it is just a matrix, and the eigenvalue problem is the hunt for the directions that get stretched but never turned.'
+status: done
+prereqs:
+  - 03-formalism/03-hilbert-space
+objectives:
+  - Write down the matrix representation of an operator in a given basis, and explain how the matrix changes when the basis does
+  - Solve finite-dimensional eigenvalue problems, and explain what degeneracy corresponds to
+  - Explain the concept of an eigenspace, and why degeneracy always travels with symmetry
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section settled where the states live. This section asks: **what can be done on that space?**
+
+## An operator = a map from states to states
+
+A **linear operator** $\hat A$ sends each ket to another ket:
+
+$$
+\hat A\ket{\psi}=\ket{\phi}
+$$
+
+Linearity means
+
+$$
+\hat A\big(a\ket{\psi_1}+b\ket{\psi_2}\big)=a\hat A\ket{\psi_1}+b\hat A\ket{\psi_2}
+$$
+
+<Callout type="insight" title="Why only linear operators">
+Because the Schrödinger equation is linear.
+
+If $\ket{\psi_1}$ and $\ket{\psi_2}$ evolve into $\ket{\psi_1(t)}$ and $\ket{\psi_2(t)}$ respectively, the superposition $a\ket{\psi_1}+b\ket{\psi_2}$ must evolve into $a\ket{\psi_1(t)}+b\ket{\psi_2(t)}$. Only a linear operator can do that.
+
+Introduce a nonlinear term and the superposition principle collapses — and the superposition principle is the entire source of double-slit interference and of quantum computing's parallelism. **Every experiment to date is consistent with strict linearity** — dedicated high-precision tests have been run (searching, for instance, for a logarithmic nonlinearity in the Schrödinger equation), and the bounds are extremely tight.
 </Callout>
 
-## Planned contents
+## In a basis, an operator is a matrix
 
-- Matrix representation of an operator
-- The eigenvalue equation
-- Degeneracy and eigensubspaces
+Take an orthonormal complete basis $\{\ket{n}\}$ and define
+
+$$
+A_{mn}=\bra{m}\hat A\ket{n}
+$$
+
+Arrange these numbers into a matrix. It determines everything about $\hat A$:
+
+<Derivation title="Derivation: how the matrix elements fix the operator's action" level="基础" minutes={4}>
+
+Let $\ket{\psi}=\sum_n c_n\ket{n}$ and $\ket{\phi}=\hat A\ket{\psi}=\sum_m d_m\ket{m}$. To find $d_m$:
+
+$$
+d_m=\braket{m}{\phi}=\bra{m}\hat A\ket{\psi}
+$$
+
+Insert a completeness relation $\sum_n\ket{n}\bra{n}=\hat 1$ to the right of $\hat A$:
+
+$$
+d_m=\sum_n\bra{m}\hat A\ket{n}\braket{n}{\psi}=\sum_n A_{mn}c_n
+$$
+
+$$
+\boxed{\ d_m=\sum_n A_{mn}c_n\ }
+$$
+
+**This is exactly a matrix multiplying a column vector.** An operator acting on a state is, in component language, matrix multiplication.
+
+Likewise, a product of two operators corresponds to a product of matrices:
+
+$$
+(AB)_{mn}=\bra{m}\hat A\hat B\ket{n}=\sum_k A_{mk}B_{kn}
+$$
+
+(again by inserting a $\hat 1$).
+
+</Derivation>
+
+<Callout type="warning" title="The matrix depends on the basis; the operator does not">
+Switch to another basis and the matrix of the same $\hat A$ looks completely different.
+
+This is the arrow of two sections ago all over again: $\hat A$ is the geometric object, and the matrix is its bookkeeping in one particular set of coordinates.
+
+Only **basis-independent quantities** carry physical meaning. The two most used are the **trace** $\operatorname{Tr}\hat A=\sum_n A_{nn}$ and the **eigenvalues** — the same in every basis. That is also why the next step is to find the eigenvalues.
+</Callout>
+
+## The eigenvalue problem
+
+$$
+\hat A\ket{a}=a\ket{a}
+$$
+
+$\ket{a}$ is called an **eigenvector**, and $a$ an **eigenvalue**.
+
+The geometric meaning is intuitive: most vectors, when hit by $\hat A$, change both length and direction; **the eigenvectors are the special directions that only get rescaled, never turned**.
+
+<DualView>
+<div slot="left">
+
+**How to solve it (finite dimensions)**
+
+Write the equation as $(\hat A-a\hat 1)\ket{a}=0$. For a non-zero solution the matrix must be singular:
+
+$$
+\det(A-a I)=0
+$$
+
+This is a degree-$N$ polynomial in $a$ (the **characteristic equation**) with $N$ roots (counted with multiplicity). Substitute each root back and solve the homogeneous system for the eigenvectors.
+
+</div>
+<div slot="right">
+
+**Example: the x component of spin**
+
+$$
+\hat S_x=\frac{\hbar}{2}\begin{pmatrix}0&1\\1&0\end{pmatrix}
+$$
+
+Characteristic equation $a^2-(\hbar/2)^2=0$, eigenvalues $a=\pm\hbar/2$.
+
+Substituting back gives the eigenvectors
+
+$$
+\ket{\pm_x}=\frac{1}{\sqrt2}\begin{pmatrix}1\\ \pm1\end{pmatrix}
+$$
+
+In the $\ket{\pm_z}$ basis, these are precisely the states "spin up/down along x". [Chapter 5](/en/ch/05-angular-momentum/) will use them, and these are the very directions the Bloch-sphere scene draws.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Chapter 2's equations were eigenvalue problems all along">
+The time-independent Schrödinger equation
+
+$$
+-\frac{\hbar^2}{2m}\frac{\dd^2\psi}{\dd x^2}+V\psi=E\psi
+$$
+
+reads, in the new language,
+
+$$
+\hat H\ket{\psi}=E\ket{\psi}
+$$
+
+**Energy levels = eigenvalues of the Hamiltonian; stationary states = its eigenvectors.**
+
+What [section 2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/) phrased as "only special values of $E$ admit normalisable solutions" here reads "the eigenvalues are discrete". And the discreteness comes from restricting the operator to $L^2$ (the boundary conditions) — automatic for a finite matrix (an $N\times N$ matrix has at most $N$ eigenvalues), but something that must be proved in infinite dimensions.
+</Callout>
+
+## Degeneracy
+
+If a single eigenvalue $a$ corresponds to several linearly independent eigenvectors, the eigenvalue is called **degenerate**, and the degeneracy is the dimension of the space those eigenvectors span.
+
+<DualView>
+<div slot="left">
+
+**Eigenspaces**
+
+Suppose $\ket{a_1},\dots,\ket{a_g}$ all belong to the eigenvalue $a$. Any linear combination of them is again an eigenvector:
+
+$$
+\hat A\big(\textstyle\sum_i c_i\ket{a_i}\big)=a\big(\textstyle\sum_i c_i\ket{a_i}\big)
+$$
+
+So they span a $g$-dimensional subspace $\mathcal H_a$, called the **eigenspace**.
+
+**Note**: with degeneracy, "the eigenvector belonging to $a$" is not unique — there is not even a natural way to choose one. You are free to pick any basis inside $\mathcal H_a$. That freedom becomes crucial in perturbation theory ([section 7.2](/en/ch/07-approximation/02-degenerate-perturbation/)).
+
+</div>
+<div slot="right">
+
+**Degeneracy always travels with symmetry**
+
+The $n=2$ level of hydrogen holds 4 states ($2s$ and three $2p$), all with the same energy.
+
+Why? Because the Hamiltonian has symmetries:
+
+- spherical symmetry → degeneracy in $m$ ($2p_x,2p_y,2p_z$ share one energy)
+- an extra symmetry peculiar to the Coulomb potential → degeneracy in $l$ ($2s$ and $2p$ share one energy)
+
+The second is unique to the Coulomb potential; swap in any other central potential (say the screened potential in a many-electron atom) and the $l$ degeneracy breaks — which is precisely where the structure of the periodic table comes from. See [section 6.4](/en/ch/06-hydrogen/04-energy-levels/).
+
+**Break the symmetry and the degeneracy lifts**: a magnetic field breaks spherical symmetry, the $m$ degeneracy lifts, spectral lines split — the Zeeman effect.
+</div>
+</DualView>
+
+<Callout type="check" title="A small result worth verifying yourself">
+If $\hat A\ket{a}=a\ket{a}$, then $\ket{a}$ is also an eigenvector of $\hat A^2$, $\hat A^3$ and $\ee^{\hat A}$, with eigenvalues $a^2$, $a^3$ and $\ee^{a}$.
+
+The proof is one line: $\hat A^2\ket{a}=\hat A(a\ket{a})=a\hat A\ket{a}=a^2\ket{a}$.
+
+**Corollary**: any function $f(\hat A)$ of $\hat A$ shares its eigenvectors, with eigenvalues $f(a)$. [Section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/) uses this directly to construct $\ee^{-\ii\hat Ht/\hbar}$ — the time-evolution operator shares eigenstates with the Hamiltonian, which is why stationary states "hold still".
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Matrix elements', latex: 'A_{mn}=\\bra{m}\\hat A\\ket{n}', note: 'The operator''s bookkeeping in one basis; changes when the basis does' },
+    { name: 'Operator action = matrix multiplication', latex: 'd_m=\\sum_n A_{mn}c_n', note: 'Derived by inserting a single completeness relation' },
+    { name: 'Eigenvalue equation', latex: '\\hat A\\ket{a}=a\\ket{a}', note: 'Eigenvectors = directions that get rescaled, never turned' },
+    { name: 'Characteristic equation', latex: '\\det(A-aI)=0', note: 'The standard route to eigenvalues in finite dimensions' },
+    { name: 'Eigenvalues of a function', latex: 'f(\\hat A)\\ket{a}=f(a)\\ket{a}', note: 'Used directly to build e^{−iHt/ħ}' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'op-1',
+      prompt: 'Why does quantum mechanics consider only linear operators?',
+      options: [
+        'Because the Schrödinger equation is linear, so a superposition must evolve into the same superposition of the evolved components',
+        'Because nonlinear operators do not exist mathematically',
+        'Because linear operators are easier to compute with',
+        'Because the eigenvalues of linear operators are always real',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Nonlinear operators certainly exist — they just do not describe quantum evolution.',
+        2: 'Simplicity is not the reason.',
+        3: 'Real eigenvalues require Hermiticity; linearity alone is not enough.',
+      },
+      explain: 'The superposition principle demands linear evolution. Were it to fail, double-slit interference and quantum computing''s parallelism would both be off the table. Dedicated experiments have hunted for nonlinear terms in the Schrödinger equation, and the bounds are extremely tight.',
+    },
+    {
+      id: 'op-2',
+      prompt: 'The same operator has different matrices in different bases. Which quantities are independent of the choice of basis? (Select all that apply.)',
+      options: ['The eigenvalues', 'The trace Tr Â', 'The matrix element A₁₂', 'The determinant det A'],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'An individual matrix element depends entirely on which basis you picked.',
+      },
+      explain: 'Eigenvalues, trace and determinant are invariant under similarity transformations, which is what qualifies them to represent physical quantities. Matrix elements are bookkeeping detail. It is the same story as a 3D vector: length invariant, components basis-dependent.',
+    },
+    {
+      id: 'op-3',
+      prompt: 'What does a degenerate eigenvalue mean?',
+      options: [
+        'One eigenvalue corresponds to several linearly independent eigenvectors, which span an eigenspace',
+        'The eigenvalue appears twice but the eigenvector is unique',
+        'The operator cannot be diagonalised',
+        'The eigenvalue is complex',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The whole point of degeneracy is that the eigenvector is not unique.',
+        2: 'A Hermitian operator can always be diagonalised, degenerate or not.',
+        3: 'Degeneracy has nothing to do with whether the eigenvalue is real.',
+      },
+      explain: 'With degeneracy you may pick any basis inside the eigenspace — there is no natural choice — and that freedom must be handled with care in degenerate perturbation theory. Degeneracy is almost always the signature of a symmetry: break the symmetry and the degeneracy lifts, as in the Zeeman effect.',
+    },
+    {
+      id: 'op-4',
+      prompt: 'If Â|a⟩ = a|a⟩, then e^{Â}|a⟩ equals:',
+      options: ['e^a |a⟩', 'a e^{Â}|a⟩', 'e^{Â}|a⟩ is unrelated to |a⟩', '0'],
+      answer: 0,
+      distractors: {
+        1: 'Operators cannot be shuffled around like that.',
+        2: 'An eigenvector remains an eigenvector under any function of the operator.',
+      },
+      explain: 'Expand e^{Â} as a power series: each term gives Âⁿ|a⟩ = aⁿ|a⟩, and the sum is e^a|a⟩. This property underpins the time-evolution operator e^{−iĤt/ħ}: it shares eigenstates with Ĥ, so a stationary state picks up nothing but a phase.',
+    },
+  ]}
+/>
+
+## What comes next
+
+There are infinitely many kinds of linear operator, but an observable can only belong to a very small class — it must guarantee real measurement results, and distinct results must be distinguishable.
+
+The next section pins down exactly which class that is — and, along the way, redoes in three lines the proof that took [section 2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/) the better part of a page.

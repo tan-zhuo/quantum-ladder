@@ -1,25 +1,318 @@
 ---
-title: 'The adiabatic theorem and the Berry phase'
-summary: 'The geometric mark left behind by slow evolution.'
+title: The adiabatic theorem and the Berry phase
 section: '7.7'
 order: 7
-status: stub
-sims: ['berry-phase']
+summary: 'Change things slowly enough and the system tracks the instantaneous eigenstate the whole way — but after one closed loop, the wavefunction returns wearing a phase set purely by the geometry of the path.'
+status: done
+prereqs:
+  - 03-formalism/09-time-evolution-pictures
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - State the adiabatic theorem and its quantitative condition (rate of change vs energy gap)
+  - Distinguish the dynamical from the geometric phase, and derive the path-integral expression for the Berry phase
+  - Show that a spin 1/2 in a slowly rotating magnetic field acquires a Berry phase equal to minus half the solid angle
+  - Recognise the Aharonov-Bohm effect as a geometric phase, and say when the adiabatic approximation fails
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The light field of the last section oscillates $10^{15}$ times a second — an "extremely fast" disturbance. This section twists the dial the other way:
+what happens when the Hamiltonian changes **extremely slowly**?
+
+Start with an experiment within arm's reach. Put a spin-1/2 particle in a magnetic field; its two levels are
+the "aligned" and "anti-aligned" states along the field ([section 5.3](/en/ch/05-angular-momentum/03-spin-half/)).
+Now change the field direction **gently** — sweep it once around a cone, say, taking a few seconds.
+What happens to a spin in the "aligned" state?
+
+Intuition says: the field turns far more slowly than the spin precesses, so the spin should trail it like a dog on a leash,
+hugging the field direction throughout and coming home after one full turn. That intuition is essentially right — this is the **adiabatic theorem**.
+But in 1984 Michael Berry noticed that "coming home" misses one detail:
+after the full turn, the wavefunction carries an extra phase — a phase that is neither the dynamical phase of accumulated energy
+nor removable by redefining phase conventions. It depends only on **the solid angle the field direction sweeps out on the sphere** —
+a purely geometric quantity, indifferent to how slowly you turned or how high the levels sat.
+
+Why should something that is "just a phase" cause a fuss? Because phases interfere.
+This geometric phase turned out to have been hiding all along in chemistry (the sign puzzle of molecular wavefunctions),
+in optics (polarisation rotation in optical fibres), and in the Aharonov–Bohm effect;
+today its generalisations (Berry curvature, Chern numbers) are the grammar of the entire field of topological matter.
+
+## The adiabatic theorem
+
+**Statement**: if the Hamiltonian $\hat H(t)$ changes slowly enough with time, and the system starts in
+an instantaneous eigenstate $\ket{n(0)}$ (where $\hat H(t)\ket{n(t)}=E_n(t)\ket{n(t)}$,
+and that level never crosses any other), then the system tracks the instantaneous eigenstate $\ket{n(t)}$ throughout,
+with vanishing probability of jumping to any other level.
+
+"Slowly enough" compared with what? With the **energy gap**. The quantitative condition is
+
+$$
+\frac{\hbar\,\bigl|\bra{m}\partial_t\hat H\ket{n}\bigr|}{(E_n-E_m)^2}\ll1
+\qquad\text{for all } m\neq n
+$$
+
+The numerator is the Hamiltonian's rate of change (converted to energy per second); the denominator is the gap squared.
+How to read it: the system has an intrinsic beat $\hbar/(E_n-E_m)$ (the quantum beat period of neighbouring levels);
+as long as the Hamiltonian's change within one beat is far smaller than the gap, the system "does not feel" the change happening
+and has time to adjust itself continuously. An analogy: carry a bowl of water and turn around slowly — the surface stays level,
+provided the turning period is far longer than the water's sloshing period.
+
+<Callout type="warning" title="The gap is adiabaticity's lifeline">
+In the condition the gap enters the denominator **squared**: shrink the gap tenfold and the allowed rate of change must slow a hundredfold.
+As the gap tends to zero (a level crossing or near-crossing), no finite speed remains adiabatic —
+the system "takes a shortcut" at the crossing and jumps to the other level (a Landau–Zener transition).
+
+This is not a pedantic footnote but a present-day engineering problem: the runtime of adiabatic quantum computing / quantum annealing
+is priced by the **smallest gap** along the evolution path, $T\propto1/\Delta_{\min}^2$;
+and in chemistry, the near-crossings of electronic states (conical intersections) are photochemistry's most violent channels.
+Wherever the adiabatic approximation fails, that is where the physics is liveliest.
 </Callout>
 
-## Planned contents
+## Tracking along — with two phases in tow
 
-- Statement and conditions of the adiabatic theorem
-- Dynamical versus geometric phase
-- Berry connection and curvature
-- The Aharonov–Bohm effect
+The adiabatic theorem says "the system follows $\ket{n(t)}$", but quantum states can differ by a phase. What phase does the tracking carry?
 
-## Planned simulations
+<Derivation title="The phases of adiabatic evolution: dynamical + geometric" level="进阶" minutes={12} open={true}>
 
-- `berry-phase`
+Let the Hamiltonian depend on time through a set of external parameters $\vec R(t)$ (field direction, internuclear distance, …):
+$\hat H(t)=\hat H(\vec R(t))$. Expand the state in instantaneous eigenstates, **peeling off the energy phase in advance**:
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="berry-phase" />`.
+$$
+\ket{\Psi(t)}=\sum_n c_n(t)\,
+\exp\!\left[-\frac{\ii}{\hbar}\int_0^tE_n(t')\,\dd t'\right]\ket{n(t)}
+$$
+
+The exponential factor is the **dynamical phase** $\theta_n=-\frac1\hbar\int E_n\dd t$ —
+the natural generalisation of the stationary phase $-E_nt/\hbar$ to slowly varying energies; nothing new there. The news is in the $c_n$.
+
+**Step 1: substitute into the Schrödinger equation.**
+
+Completely parallel to section 7.5, the energy terms cancel term by term — but now **the basis vectors themselves are moving**,
+and $\partial_t\ket{n(t)}$ contributes new terms. Projecting onto $\bra{m}$:
+
+$$
+\dot c_m=-c_m\braket{m}{\dot m}
+-\sum_{n\neq m}c_n\,\frac{\bra{m}\partial_t\hat H\ket{n}}{E_n-E_m}\,
+\ee^{\ii(\theta_n-\theta_m)}
+$$
+
+(The second line uses the identity
+$\bra{m}\dot n\rangle=\bra{m}\partial_t\hat H\ket{n}/(E_n-E_m)$, obtained by differentiating $\hat H\ket{n}=E_n\ket{n}$.)
+
+**Step 2: the adiabatic limit.**
+
+The summed terms have slowly varying numerators multiplying the rapidly oscillating phase difference $\ee^{\ii(\theta_n-\theta_m)}$ —
+a slow envelope times a fast oscillation integrates to approximately zero (this is exactly where the adiabatic condition above comes from). Drop them:
+
+$$
+\dot c_n=-c_n\braket{n}{\dot n}
+\quad\Longrightarrow\quad
+c_n(t)=c_n(0)\,\ee^{\ii\gamma_n(t)},
+\qquad
+\gamma_n(t)=\ii\int_0^t\braket{n}{\dot n}\,\dd t'
+$$
+
+($\braket{n}{\dot n}$ is pure imaginary — differentiate $\braket{n}{n}=1$ to see it — so $\gamma_n$ is real
+and $|c_n|$ is constant: the system really does stay on level $n$, and the adiabatic theorem is proved.)
+
+**Step 3: see that it is geometric.**
+
+Use the chain rule to trade the time derivative for a parameter derivative: $\ket{\dot n}=\dot{\vec R}\cdot\nabla_{\vec R}\ket{n}$, so
+
+$$
+\gamma_n=\ii\int_{\vec R(0)}^{\vec R(t)}
+\braket{n}{\nabla_{\vec R}\,n}\cdot\dd\vec R
+$$
+
+**Time has vanished.** The integral runs only along the path through parameter space: take one second or one year to walk it,
+$\gamma_n$ comes out identical to the last digit. It is a property of the path, not of the process — hence **geometric phase**.
+
+**Step 4: why it was overlooked for half a century.**
+
+The phase of an instantaneous eigenstate was always our arbitrary convention: change conventions,
+$\ket{n}\to\ee^{\ii\chi(\vec R)}\ket{n}$, and $\gamma_n$ shifts by $\chi(\vec R(0))-\chi(\vec R(t))$.
+For an **open path** you can always choose the convention to absorb $\gamma_n$ entirely — it is "not physical",
+and textbooks threw it away for fifty years on that basis. But for a **closed loop** ($\vec R(T)=\vec R(0)$),
+the endpoint corrections from any change of convention cancel, and what remains,
+
+$$
+\gamma_n(C)=\ii\oint_C\braket{n}{\nabla_{\vec R}\,n}\cdot\dd\vec R
+$$
+
+is **independent of the phase convention** — a measurable physical quantity. This is the **Berry phase**.
+Berry's contribution was not the integral itself, but seeing that "on a closed loop it cannot be dodged".
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**The misalignment angle of parallel transport.** On a globe, carry an arrow around a closed route "translating it without ever rotating it":
+start at the north pole, go down a meridian to the equator, walk a quarter of the way around the equator, return up a meridian to the pole —
+the arrow comes back **rotated by 90°**, even though you never turned it at any step. The rotation angle equals exactly the solid angle the route encloses.
+Parallel transport on a curved surface fails to return to itself around a closed loop, with a misalignment depending only on the enclosed area — this is called "holonomy".
+
+The Berry phase is the holonomy of a quantum state in parameter space: the eigenstate is adiabatically "parallel-transported",
+and after one loop its direction (phase) no longer matches its former self. The deflection of a Foucault pendulum's swing plane after a day
+is the same geometry's incarnation in classical mechanics.
+
+</div>
+<div slot="right">
+
+Give the integrand a name — the **Berry connection** (a "vector potential" defined on parameter space):
+
+$$
+\vec A_n(\vec R)=\ii\braket{n}{\nabla_{\vec R}\,n},
+\qquad
+\gamma_n(C)=\oint_C\vec A_n\cdot\dd\vec R
+$$
+
+It changes with the phase convention ($\vec A_n\to\vec A_n-\nabla\chi$), just as the electromagnetic vector potential changes with gauge;
+but its "magnetic field" — the **Berry curvature** $\vec\Omega_n=\nabla\times\vec A_n$ — is gauge-independent.
+Stokes' theorem writes the loop phase as a flux of curvature:
+
+$$
+\gamma_n(C)=\iint_S\vec\Omega_n\cdot\dd\vec S
+$$
+
+completely isomorphic to "phase = loop integral of the vector potential = magnetic flux". That is not a figure of speech: below we will see
+that the electromagnetic AB phase is precisely a special case of this structure.
+
+</div>
+</DualView>
+
+## A worked example: spin 1/2 in a slowly turning field
+
+The parameter space is the sphere of field directions. For a spin 1/2 in a field $\vec B=B\hat n$,
+the Berry connection of the "aligned" state $\ket{+;\hat n}$ can be computed explicitly from the spin states of section 5.3
+(write $\ket{+;\hat n}$ in spherical coordinates $\theta,\varphi$, take the gradient in the parameters, do the loop integral).
+The result is remarkably clean:
+
+$$
+\gamma_\pm(C)=\mp\frac{\Omega_C}{2}
+$$
+
+where $\Omega_C$ is **the solid angle enclosed** on the direction sphere by the loop $C$ the field direction traces out.
+In equivalent curvature language: the spin's Berry curvature is a "monopole field" radiating outward from the centre of the sphere
+($B=0$ — the degeneracy point!), $\vec\Omega_\pm=\mp\hat R/2R^2$ —
+the degeneracy point is a magnetic monopole in parameter space, and the Berry phase is its flux.
+
+**Plug in a number**: sweep the field once around a cone of half-angle $60^\circ$. The cone encloses a solid angle
+
+$$
+\Omega=2\pi(1-\cos60^\circ)=\pi
+$$
+
+so the "aligned" state collects $\gamma_+=-\pi/2$. To measure it: prepare the spin in a superposition of aligned and anti-aligned;
+the two branches acquire geometric phases differing by $\Omega=\pi$, so after one turn the superposition's interference fringes shift bodily by half a period —
+nuclear magnetic resonance experiments saw this shift in 1987, independent of the turning speed, answering only to the solid angle.
+
+**A famous corollary**: sweep the field direction around a full great circle (half-angle $90^\circ$): $\Omega=2\pi$,
+$\gamma=-\pi$ — the spin wavefunction **changes sign**. A sign flip under a 360° rotation — this is precisely
+the geometric-phase version of section 5.3's "a spin 1/2 needs 720° to come back to itself".
+
+## Aharonov–Bohm: a Berry phase twenty-five years early
+
+In 1959 Aharonov and Bohm pointed out something strange: split an electron beam in two
+and route the branches around the **two sides** of a long thin solenoid before recombining them. Outside the solenoid the magnetic field is strictly zero;
+the electrons travel entirely through the region where $\vec B=0$ — as far as classical mechanics is concerned, the solenoid does not exist.
+Yet when the two branches reunite they carry a phase difference
+
+$$
+\Delta\phi=\frac{q}{\hbar}\oint\vec A\cdot\dd\vec l=\frac{q\Phi}{\hbar}
+$$
+
+where $\Phi$ is the flux **inside** the tube. The interference fringes shift with $\Phi$ — even though the electrons never touched the field.
+In 1986 Akira Tonomura ran the experiment with the flux completely shielded inside a superconducting ring; the fringes shifted exactly as predicted.
+
+Seen through this section's eyes: the electron's position is the parameter, the vector potential $q\vec A/\hbar$ plays exactly the role of the Berry connection,
+and the flux is the enclosed "Berry curvature flux". The AB phase is the geometric phase's special case in electromagnetism —
+and it tells us the vector potential is not mere mathematical scaffolding: **where the local field is zero, geometry (topology) is still doing work**.
+
+<Callout type="insight" title="From one phase to a whole discipline">
+Replace "parameter space" by a crystal's momentum space: every energy band is an instantaneous eigenstate of $\vec k$,
+each with its own Berry curvature. The curvature's flux over the whole Brillouin zone must be quantised to an integer (the Chern number) —
+an integer that cannot change continuously under impurities or deformation: it is the band's **topological fingerprint**.
+The quantum Hall conductance plateaus, accurate to $10^{-9}$, and the protected edge states of topological insulators
+are that integer showing itself in experiment. The 1984 observation that was "just a phase"
+is, forty years later, half the real estate of condensed-matter physics — probably the best advertisement ever for "taking a small oddity seriously".
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Adiabatic condition', latex: '\\frac{\\hbar\\,|\\bra{m}\\partial_t\\hat H\\ket{n}|}{(E_n-E_m)^2}\\ll1', note: 'Priced by the gap squared; adiabaticity must fail where the gap closes (Landau-Zener)' },
+    { name: 'The two phases', latex: '\\ket{\\Psi(t)}=\\ee^{\\ii\\gamma_n}\\,\\ee^{-\\frac{\\ii}{\\hbar}\\int E_n\\dd t}\\,\\ket{n(t)}', note: 'The dynamical phase logs energy × time; γₙ logs only the path' },
+    { name: 'Berry phase', latex: '\\gamma_n(C)=\\ii\\oint_C\\braket{n}{\\nabla_{\\vec R}\\,n}\\cdot\\dd\\vec R', note: 'Gauge-independent and measurable on closed loops; absorbable by convention on open paths' },
+    { name: 'Spin 1/2', latex: '\\gamma_\\pm=\\mp\\frac{\\Omega_C}{2}', note: 'Ω is the solid angle swept by the field direction; degeneracy point = monopole in parameter space' },
+    { name: 'AB phase', latex: '\\Delta\\phi=\\frac{q\\Phi}{\\hbar}', note: 'A geometric phase where the local B=0; the vector potential’s loop integral is measurable' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bp-1',
+      prompt: 'The adiabatic theorem’s "slowly enough" — slow compared with what?',
+      options: [
+        'Compared with the intrinsic beat set by the gap: the Hamiltonian’s change within a time ħ/ΔE must be far smaller than the gap',
+        'Compared with the speed of light',
+        'Compared with the response time of the measuring apparatus',
+        'There is a universal absolute standard of slowness',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Adiabaticity is a comparison internal to the system, with nothing to do with relativity.',
+        3: 'There is no absolute standard: the same turning speed is adiabatic for a large-gap system and a sudden jolt for a small-gap one — the gap enters the condition squared.',
+      },
+      explain: 'The quantitative condition is ħ|⟨m|∂ₜH|n⟩|/(Eₙ−Eₘ)² ≪ 1. The gap sets the shortest timescale on which the system can "notice" change; if the change within that timescale is small enough, the system has time to adjust continuously. As the gap tends to zero, no speed is adiabatic.',
+    },
+    {
+      id: 'bp-2',
+      prompt: 'The essential difference between the Berry phase and the dynamical phase is:',
+      options: [
+        'The Berry phase depends only on the path through parameter space, not on how long the path took to traverse',
+        'The Berry phase is smaller',
+        'The dynamical phase cannot be measured',
+        'The Berry phase exists only in magnetic-field problems',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Dynamical phase differences are perfectly measurable (the basis of every interference experiment); the distinction is that they accumulate with time and energy, while the geometric phase does not answer to the clock.',
+        3: 'Any system driven by several slowly varying parameters has a Berry phase: molecular vibrations, fibre-optic polarisation, band electrons.',
+      },
+      explain: 'In step 3 of the derivation, time drops out of the integral: γₙ = i∮⟨n|∇_R n⟩·dR is a pure path integral. Walk the same loop fast or slow — the dynamical phases differ enormously, the geometric phase not at all. That is the fingerprint experiments use to identify it.',
+    },
+    {
+      id: 'bp-3',
+      prompt: 'Why does the geometric phase "not count" on an open path but become a physical quantity on a closed loop?',
+      options: [
+        'The eigenstates’ phase convention is arbitrary: on an open path γ can be absorbed entirely by convention, while on a closed loop the endpoint corrections cancel and γ is gauge-independent',
+        'On an open path the system does not return to its origin, so the wavefunction is meaningless',
+        'On a closed loop the dynamical phase is zero',
+        'It is a limitation of experimental precision',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The state on an open path is perfectly meaningful; it is just that its geometric phase can be redefined away and is not convention-independent.',
+        2: 'The dynamical phase accumulates on a closed loop as usual; experiments must subtract it (by giving both branches the same energy, say) before the geometric part shows.',
+      },
+      explain: 'Changing convention |n⟩→e^{iχ(R)}|n⟩ shifts γ by χ(start)−χ(end). An open path has distinct endpoints, so χ can always be chosen to cancel γ; on a closed loop the start is the end and the correction vanishes. This one observation is both why Berry was fifty years late and why he is right.',
+    },
+    {
+      id: 'bp-4',
+      type: 'numeric',
+      prompt: 'The field direction is swept slowly once around a cone of half-angle θ = 60°, with the spin in the "aligned" state. Find the magnitude |γ| of the Berry phase it acquires, in units of π. (γ = Ω/2, Ω = 2π(1−cosθ))',
+      answer: 0.5,
+      tolerance: 0.05,
+      unit: 'π',
+      explain: 'Ω = 2π(1−cos60°) = 2π×0.5 = π, so |γ| = Ω/2 = π/2 = 0.5π. Independent of the turning speed — one second or one year gives the same answer, which is precisely the geometric phase’s signature. The aligned and anti-aligned states differ by Ω = π, readable directly as a half-period shift of the interference fringes.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The adiabatic approximation holds down the "infinitely slow" end of the scale. The other end — the Hamiltonian **switching instantaneously** —
+turns out to be even simpler: the change is so fast that the wavefunction has no time to react at all, and the old wavefunction is
+"frozen" untouched into the new Hamiltonian. The next section uses this "sudden approximation" on a beautiful real problem:
+at the instant a tritium nucleus beta-decays, the nuclear charge jumps from 1 to 2 — where does its electron land?
+It is also the final section of this chapter — after which we face head-on a fact the whole chapter has been dodging:
+the two electrons of helium are not "electron 1" and "electron 2"; they are indistinguishable identical particles.

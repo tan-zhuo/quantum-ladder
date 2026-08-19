@@ -1,17 +1,239 @@
 ---
-title: 'The Lindblad master equation'
-summary: 'The equation of motion for an open system.'
+title: The Lindblad master equation
 section: '10.4'
 order: 4
-status: stub
+summary: 'Slice a quantum channel into infinitesimal slabs of time and you get the equation of motion for open systems. Use it to solve the damped two-level atom in full, and read off T₁, T₂ and the famous inequality T₂ ≤ 2T₁.'
+status: done
+prereqs:
+  - 10-open-systems/03-cptp-maps
+objectives:
+  - State the physical meaning of every term of the Lindblad equation, and its relation to the von Neumann equation
+  - Explain in plain words what the Born-Markov approximation assumes and when it fails
+  - Solve the damped two-level atom in full, and read T₁ and T₂ off the solution
+  - Explain where T₂ ≤ 2T₁ comes from — losing energy necessarily loses phase, but not the other way round
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The quantum channel of the last section answered "what a single evolution can do to $\hat\rho$". But it is a snapshot: a state goes in, a state comes out, and time is flattened into the map.
+
+The questions in the lab, however, are continuous.
+
+## The phenomenon first: two time constants
+
+To interrogate a superconducting qubit, the standard procedure is two experiments.
+
+**Experiment one**: excite it to $\ket{1}$, wait a time $t$, and measure whether it is still in $\ket{1}$. The result is a clean exponential decay, $P_1(t)=\ee^{-t/T_1}$. This $T_1$ is called the **energy relaxation time**.
+
+**Experiment two**: prepare it in the superposition $\frac{1}{\sqrt2}(\ket{0}+\ket{1})$, wait a time $t$, and then measure its interference fringes (a Ramsey experiment). The fringe contrast also decays exponentially, with a time constant written $T_2$, called the **coherence time**.
+
+Two experiments, two constants — and experiment finds $T_2\le2T_1$ **every single time**, with no exception on record. The von Neumann equation of chapter 3, $\ii\hbar\,\dd\hat\rho/\dd t=[\hat H,\hat\rho]$, explains neither: it is unitary, purity is conserved, nothing decays. Last section's channels can describe decay, but only as a discrete one-shot deal — they cannot say "what happens each microsecond".
+
+What we need is: **a differential equation, every small step of which is a legitimate quantum channel.**
+
+## From channel to equation: one extra assumption required
+
+Slice the evolution into slabs of time: $\hat\rho(t+\dd t)=\mathcal{E}_{\dd t}\big(\hat\rho(t)\big)$. For this sentence to become a differential equation, a non-trivial assumption is hiding inside — $\mathcal{E}_{\dd t}$ must depend **only on the current $\hat\rho(t)$**, not on the history.
+
+This is the **Markov approximation**. In plain words: **the environment forgets**. The information the system leaks into the environment (that escaped photon, that carried-away phonon) is gone for good; the environment does not hand it back, and does not hold a grudge to settle later. The condition for this to hold is an environment that is "big and fast": its own correlation time is far shorter than the system's relaxation time, so at every instant the system faces a freshly "laundered" environment. Add the requirement that the system-environment coupling is weak (treatable as a perturbation — the Born approximation), and together they are the **Born–Markov approximation** — the only approximation in this section, and the only place things could go wrong.
+
+Under these two assumptions, ask "what is the most general Markovian equation preserving the three properties of a density matrix", and the answer is a theorem (Gorini–Kossakowski–Sudarshan–Lindblad, 1976; we state it without a rigorous derivation):
+
+$$
+\boxed{\;
+\frac{\dd\hat\rho}{\dd t}
+=-\frac{\ii}{\hbar}[\hat H,\hat\rho]
++\sum_k\gamma_k\Big(\hat L_k\hat\rho\hat L_k^\dagger
+-\tfrac12\big\{\hat L_k^\dagger\hat L_k,\hat\rho\big\}\Big)
+\;}
+$$
+
+<DualView>
+<div slot="left">
+
+**Term by term**
+
+- First term: an old friend, the von Neumann equation. Switch the environment off ($\gamma_k=0$) and we are back to an isolated system.
+- $\hat L_k$: the **jump operators** — the $k$-th thing the environment does to the system (sucking away a photon, kicking the phase…), at rate $\gamma_k\ge0$.
+- $\hat L_k\hat\rho\hat L_k^\dagger$: the branch "the jump really happened" — recognise it? It is last section's Kraus sandwich.
+- The curly braces are the anticommutator $\{\hat A,\hat B\}=\hat A\hat B+\hat B\hat A$: the correction to the state from the branch "the jump did **not** happen". No news is also news (last section's amplitude-damping $\hat E_0$), and this term balances the total probability.
+
+</div>
+<div slot="right">
+
+**Structural checks**
+
+Trace preservation: take the trace of the dissipator and use cyclic invariance,
+
+$$
+\operatorname{Tr}\big(\hat L\hat\rho\hat L^\dagger\big)
+=\operatorname{Tr}\big(\hat L^\dagger\hat L\hat\rho\big)
+$$
+
+which exactly cancels the trace of the anticommutator term, $\operatorname{Tr}(\hat L^\dagger\hat L\hat\rho)$ — the coefficient $\tfrac12$ and the shape of the anticommutator are **designed for precisely this**.
+
+Hermiticity: verify term by term that conjugation leaves everything unchanged. Positivity: each slab $\hat\rho\to\hat\rho+\dd t\,(\cdots)$ can be written in Kraus form ($\hat E_0\approx\hat 1-\ii\hat H\dd t/\hbar-\tfrac12\sum_k\gamma_k\hat L_k^\dagger\hat L_k\dd t$, $\hat E_k=\sqrt{\gamma_k\dd t}\,\hat L_k$), so it is a legitimate channel.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="The Lindblad equation in one sentence">
+**Lindblad equation = von Neumann equation + a continuous weak measurement by the environment whose results are never read out.**
+
+The two halves of each dissipator are exactly the two branches of a measurement: "jumped" ($\hat L\hat\rho\hat L^\dagger$) and "didn't jump" (the anticommutator term). You don't know which branch the environment recorded, so you mix them by probability — the differential version of last section's "Kraus = the environment secretly measures and doesn't tell you".
 </Callout>
 
-## Planned contents
+## A full worked example: the damped two-level atom
 
-- The Born–Markov approximation
-- The Lindblad form
-- Comparison with unitary evolution
+A two-level atom ($\ket{0}$ ground, $\ket{1}$ excited, gap $\hbar\omega_0$) sits in vacuum and emits spontaneously. The environment does exactly one thing: pull the atom from $\ket{1}$ down to $\ket{0}$. The jump operator is just the lowering operator
+
+$$
+\hat L=\hat\sigma_-=\ket{0}\bra{1},\qquad \text{rate}\ \gamma
+$$
+
+<Derivation title="Solving the damped atom: from equation to T₁ and T₂" level="基础" minutes={9}>
+
+**Step 1: write the matrix-element equations.** Take $\hat H=\hbar\omega_0\ket{1}\bra{1}$ and compute term by term.
+
+The jump term: $\hat\sigma_-\hat\rho\,\hat\sigma_+=\ket{0}\bra{1}\hat\rho\ket{1}\bra{0}=\rho_{11}\ket{0}\bra{0}$ — it moves the excited-state population into the ground state.
+
+The anticommutator term: $\hat\sigma_+\hat\sigma_-=\ket{1}\bra{1}$, so
+
+$$
+\tfrac12\{\ket{1}\bra{1},\hat\rho\}
+=\begin{pmatrix}0&\tfrac12\rho_{01}\\ \tfrac12\rho_{10}&\rho_{11}\end{pmatrix}
+$$
+
+The Hamiltonian term merely gives the off-diagonal a rotating phase $+\ii\omega_0\rho_{01}$. Assembling, the equations for the four matrix elements:
+
+$$
+\dot\rho_{11}=-\gamma\rho_{11},\qquad
+\dot\rho_{00}=+\gamma\rho_{11},\qquad
+\dot\rho_{01}=\Big(\ii\omega_0-\frac{\gamma}{2}\Big)\rho_{01}
+$$
+
+($\rho_{10}=\rho_{01}^*$ needs no separate solution.) Notice the equations have already decoupled — integrate directly.
+
+**Step 2: read the populations.**
+
+$$
+\rho_{11}(t)=\rho_{11}(0)\,\ee^{-\gamma t}
+\qquad\Longrightarrow\qquad
+T_1=\frac{1}{\gamma}
+$$
+
+The excited state decays exponentially — exactly the curve of "experiment one". $\rho_{00}$ grows to match; the total trace is conserved.
+
+**Step 3: read the coherences.**
+
+$$
+\rho_{01}(t)=\rho_{01}(0)\,\ee^{\ii\omega_0t}\,\ee^{-\gamma t/2}
+\qquad\Longrightarrow\qquad
+T_2=\frac{2}{\gamma}=2T_1
+$$
+
+The coherence rotates at $\omega_0$ (the Ramsey fringes themselves) while decaying at $\gamma/2$ (the falling fringe contrast).
+
+**Why exactly half the decay rate?** $\rho_{11}\propto|c_1|^2$ is the square of an amplitude, while $\rho_{01}\propto c_0c_1^*$ contains the amplitude only to the first power — the amplitude decays at $\gamma/2$, so its square naturally decays at $\gamma$. The relation between $1-\gamma$ and $\sqrt{1-\gamma}$ in last section's amplitude damping reappears here in differential form.
+
+**Step 4: add pure dephasing, and get the general relation.** A real environment does more than absorb energy — it also **kicks the phase alone**: low-frequency noise jitters $\omega_0$ at random, no energy is lost, and the phase cannot be kept. This corresponds to a second jump operator $\hat L'=\hat\sigma_z$ with rate $\gamma_\varphi/2$. Since $\hat\sigma_z^2=\hat 1$, this dissipator simplifies to $\tfrac{\gamma_\varphi}{2}(\hat\sigma_z\hat\rho\hat\sigma_z-\hat\rho)$: the diagonal does not move at all, while the off-diagonal decays by an extra $\gamma_\varphi$. Hence
+
+$$
+\frac{1}{T_2}=\frac{\gamma}{2}+\gamma_\varphi=\frac{1}{2T_1}+\frac{1}{T_\varphi}
+$$
+
+$T_\varphi\equiv1/\gamma_\varphi$ is called the pure dephasing time. From $\gamma_\varphi\ge0$ it follows at once that
+
+$$
+T_2\le 2T_1
+$$
+
+**Losing energy necessarily costs coherence (even if that is the only thing the environment does, $T_2$ is at most $2T_1$), while losing coherence need not cost any energy at all.** Phase is the more delicate commodity — that sentence is the trailer for the entire decoherence story.
+
+</Derivation>
+
+<Callout type="warning" title="When Born-Markov fails">
+The Lindblad equation is not a new axiom of quantum mechanics; it is an **approximation**, and its two assumptions fail in different ways:
+
+- **The environment has memory** (non-Markovian): when the environment's correlation time is not short compared with the system's relaxation time, leaked information partly flows back, and coherence can "revive". The classic example: an atom inside a high-quality optical cavity — the photon bounces off the mirrors and gets reabsorbed, so the populations oscillate instead of decaying monotonically.
+- **The coupling is too strong** (Born fails): system and environment hybridise strongly, and the very notion of "the system's own $\hat\rho$" starts to blur.
+
+The rule of thumb: if the environment is "big, fast, and forgetful", Lindblad is reliable; if it is "small, slow, and grudge-holding", non-Markovian methods are needed. Superconducting qubits and atomic spontaneous emission mostly belong to the former, and this book stops there.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Lindblad equation', latex: '\\frac{\\dd\\hat\\rho}{\\dd t}=-\\frac{\\ii}{\\hbar}[\\hat H,\\hat\\rho]+\\sum_k\\gamma_k\\Big(\\hat L_k\\hat\\rho\\hat L_k^\\dagger-\\tfrac12\\{\\hat L_k^\\dagger\\hat L_k,\\hat\\rho\\}\\Big)', note: 'The most general Markovian equation preserving the three properties of a density matrix' },
+    { name: 'Solution for the damped atom', latex: '\\rho_{11}(t)=\\rho_{11}(0)\\ee^{-\\gamma t},\\quad \\rho_{01}(t)=\\rho_{01}(0)\\ee^{\\ii\\omega_0 t-\\gamma t/2}', note: 'Populations decay at γ, coherences at γ/2 — an amplitude versus its square' },
+    { name: 'The two time constants', latex: 'T_1=\\frac1\\gamma,\\qquad \\frac{1}{T_2}=\\frac{1}{2T_1}+\\frac{1}{T_\\varphi}', note: 'T₁ energy relaxation; T₂ coherence time; T_φ pure dephasing' },
+    { name: 'The famous inequality', latex: 'T_2\\le 2T_1', note: 'Losing energy costs coherence; losing coherence need not cost energy; equality = no pure dephasing' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'lind-1',
+      prompt: 'The physical role of the anticommutator term −½{L†L, ρ} in the Lindblad equation is:',
+      options: [
+        'To describe the correction from the "no jump occurred" branch, and, together with the jump term, keep the total trace intact',
+        'To describe the environment giving energy back to the system',
+        'Pure mathematical bookkeeping with no physical meaning',
+        'To describe measurement collapse',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A Markovian environment does not pay anything back; energy backflow is a non-Markovian effect, absent from the Lindblad framework.',
+        2: 'It has a definite physical meaning: "no jump observed" is itself information and updates the state (last section’s amplitude-damping E₀).',
+        3: 'No result is read out or recorded anywhere — this is continuous weak measurement without readout, not projective collapse.',
+      },
+      explain: 'Under the trace, Tr(LρL†) and Tr(L†Lρ) cancel exactly — the coefficient ½ and the shape of the anticommutator are designed precisely for trace preservation. The two branches together are last section’s Kraus channel written as what happens per second.',
+    },
+    {
+      id: 'lind-2',
+      prompt: 'For a damped atom with spontaneous emission only (jump operator σ₋, rate γ), why do the coherences decay at half the rate of the populations?',
+      options: [
+        'Populations ∝ amplitude squared, coherences ∝ amplitude to the first power; the amplitude decays at γ/2',
+        'Because there are two coherences (ρ₀₁ and ρ₁₀), which split the decay between them',
+        'It is an artefact of the Born-Markov approximation',
+        'Because the Hamiltonian term cancels half of the decay',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'ρ₁₀ = ρ₀₁* is not an independent degree of freedom, and there is no such "splitting".',
+        2: 'The same result holds in exact treatments of spontaneous emission; it has nothing to do with the approximation.',
+        3: 'The Hamiltonian only contributes the rotating phase e^{iω₀t}; it does not change the modulus.',
+      },
+      explain: 'ρ₁₁ ∝ |c₁|², ρ₀₁ ∝ c₀c₁*. The excited-state amplitude decays at γ/2, so its square decays at γ. The relation between (1−γ) and √(1−γ) in last section’s amplitude damping is the one-step version of the same fact.',
+    },
+    {
+      id: 'lind-3',
+      type: 'numeric',
+      prompt: 'A qubit has T₁ = 30 μs and pure dephasing time T_φ = 60 μs. Find T₂ (in μs).',
+      answer: 30,
+      tolerance: 1,
+      unit: 'μs',
+      explain: '1/T₂ = 1/(2T₁) + 1/T_φ = 1/60 + 1/60 = 1/30, so T₂ = 30 μs. Note that it is both below 2T₁ = 60 μs and exactly equal to T₁ — the two channels contribute half each here.',
+    },
+    {
+      id: 'lind-4',
+      prompt: 'Which statements about T₂ ≤ 2T₁ are correct? (Select all that apply.)',
+      options: [
+        'Equality holds if and only if there is no pure dephasing (T_φ → ∞)',
+        'A measured T₂ = 2.5 T₁ could only be a measurement error (within the Markovian framework)',
+        'Pure dephasing loses coherence but no energy, so it lowers T₂ without touching T₁',
+        'If T₁ is infinite, then T₂ must be infinite too',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Backwards: energy can be perfectly conserved (T₁ → ∞) while the phase still gets kicked (T₂ = T_φ finite). Losing coherence does not require losing energy.',
+      },
+      explain: '1/T₂ = 1/(2T₁) + 1/T_φ with γ_φ ≥ 0, hence T₂ ≤ 2T₁. Phase is more delicate than energy: this is the quantitative trailer for next section’s decoherence story — macroscopic objects lose phase tens of orders of magnitude faster than they lose energy.',
+    },
+  ]}
+/>
+
+## What comes next
+
+We can solve the equation now, but the most important physical question is still hanging: what entitles the environment to **go straight for the coherences**? Why is it precisely the phase between $\ket{0}+\ket{1}$ that gets wiped, and not something else? Who decreed the "preferred" basis?
+
+The next section returns to the original question — why Schrödinger's cat is never seen — gives decoherence a physical picture, and works out a few astonishing numbers.

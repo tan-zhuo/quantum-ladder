@@ -1,16 +1,225 @@
 ---
-title: 'From wavefunctions to state vectors'
-summary: 'Read ψ(x) as the components of a vector in the position basis.'
+title: From wavefunction to state vector
 section: '3.1'
 order: 1
-status: stub
+summary: 'ψ(x) is not the state itself — it is only the state''s components in one particular basis. Once you see that, the rest of this chapter falls into place on its own.'
+status: done
+prereqs:
+  - 02-wavefunction/10-free-particle
+objectives:
+  - Explain why Ψ(x) and φ(k) are two sets of components of one and the same state
+  - Develop the analogy between a function and an infinite-dimensional vector, and pin down exactly where it holds
+  - Distinguish a state from a representation, and explain why the choice of representation is free
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Chapter 2 ended with three questions left hanging: why do observables correspond to operators? What actually happens during a measurement? And what entitles $|c_n|^2$ to be a probability?
+
+Answering them requires switching to a new language. This section explains **why the switch is unavoidable**.
+
+## A clue we have already met
+
+In [section 2.10](/en/ch/02-wavefunction/10-free-particle/) we described one and the same free particle with two functions:
+
+$$
+\Psi(x)\quad\text{and}\quad \phi(k)=\frac{1}{\sqrt{2\pi}}\int\Psi(x)\ee^{-\ii kx}\dd x
+$$
+
+The two carry **exactly the same** information: knowing either one lets you compute the other, and normalisation holds on both sides (Parseval's theorem).
+
+<Callout type="check" title="Pause and think about what this means">
+If $\Psi(x)$ and $\phi(k)$ hold the same thing, then **neither of them is that thing itself**.
+
+They are more like two ways of writing down a single object. What is that object?
 </Callout>
 
-## Planned contents
+## A finite-dimensional analogy
 
-- A function as an infinite-dimensional vector
-- Choosing a basis; representations
+Step back first to a situation you already know well.
+
+<DualView>
+<div slot="left">
+
+**An arrow in three-dimensional space.** In Cartesian coordinates it reads $(3,4,0)$; rotate the axes by $53°$ about the $z$ axis and the same arrow becomes $(5,0,0)$.
+
+The three numbers changed. **The arrow did not.** Neither did its length $|\vec v|=5$.
+
+"$(3,4,0)$" is not the vector — it is **the vector's components in one particular basis**. The vector itself is the geometric object.
+
+</div>
+<div slot="right">
+
+$$
+\vec v=\sum_{i=1}^{3}v_i\,\hat e_i,\qquad v_i=\hat e_i\cdot\vec v
+$$
+
+Switch to a basis $\{\hat e_i'\}$ and the components become $v_i'=\hat e_i'\cdot\vec v$, but
+
+$$
+\vec v=\sum_i v_i\hat e_i=\sum_i v_i'\hat e_i'
+$$
+
+**Same $\vec v$, two sets of books.**
+
+</div>
+</DualView>
+
+Now carry this picture over to quantum mechanics:
+
+$$
+\underbrace{\Psi(x)}_{\text{components in the position basis}}
+\qquad
+\underbrace{\phi(k)}_{\text{components in the momentum basis}}
+\qquad
+\underbrace{c_n}_{\text{components in the energy basis}}
+$$
+
+Three sets of numbers, one state.
+
+<Callout type="insight" title="Read x as an index">
+What makes the analogy really land is the following change of reading.
+
+A vector's components are written $v_i$, with $i$ running over 1, 2, 3. A function's values are written $\Psi(x)$, with $x$ running over all real numbers.
+
+**Read $x$ as a continuous index**, and $\Psi$ becomes a vector with "infinitely many components":
+
+$$
+v_i \longleftrightarrow \Psi(x)
+$$
+
+$$
+\sum_i \longleftrightarrow \int\dd x
+$$
+
+$$
+\vec u\cdot\vec v=\sum_i u_i^*v_i \longleftrightarrow \int\Phi^*(x)\Psi(x)\,\dd x
+$$
+
+Every one of those integrals from chapter 2 can now be read as an inner product. **The normalisation condition $\int|\Psi|^2\dd x=1$ says simply that the state vector has length 1.**
+</Callout>
+
+## The energy basis: components become a list of numbers
+
+The position and momentum bases are both continuous — the index runs over the whole real line. But bound-state problems come with a more convenient basis.
+
+In [section 2.7](/en/ch/02-wavefunction/07-infinite-well/) we expanded an arbitrary initial state in eigenstates:
+
+$$
+\Psi(x)=\sum_{n=1}^{\infty}c_n\psi_n(x),\qquad c_n=\int\psi_n^*(x)\Psi(x)\,\dd x
+$$
+
+Compare with the vector expansion $\vec v=\sum_i v_i\hat e_i$, $v_i=\hat e_i\cdot\vec v$ — **the form is identical**.
+
+So in the energy basis, the components of the same state are a list of numbers $(c_1,c_2,c_3,\dots)$.
+
+<DualView>
+<div slot="left">
+
+**Three sets of components, one state**
+
+| Basis | Components | Index |
+| --- | --- | --- |
+| Position $\{\ket{x}\}$ | $\Psi(x)$ | continuous |
+| Momentum $\{\ket{p}\}$ | $\phi(k)$ | continuous |
+| Energy $\{\ket{n}\}$ | $c_n$ | discrete |
+
+No set is more "real" than any other. Which one to pick depends only on **which makes the current problem easiest**: the energy basis for bound states, the momentum basis for free propagation, the position basis for plotting probability distributions.
+
+</div>
+<div slot="right">
+
+**Normalisation looks the same in all three sets of books**
+
+$$
+\int|\Psi(x)|^2\dd x=\int|\phi(k)|^2\dd k=\sum_n|c_n|^2=1
+$$
+
+That is no coincidence: all three are one and the same sentence — **the state vector has length 1** — written out in different bases.
+
+A vector's length does not depend on the coordinate system, so the three equations must hold together.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="What the new language buys you">
+This point of view is not for show. It delivers at least three concrete benefits:
+
+1. **Formulas get shorter.** Proving that energy eigenvalues are real took [section 2.3](/en/ch/02-wavefunction/03-time-independent-schrodinger/) half a page of integrals and integration by parts. In the new language it reads "eigenvalues of a Hermitian operator are real" — three lines, as [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) will show.
+2. **It handles systems that have no wavefunction.** Electron spin has only two states; no $\psi(x)$ of any kind can describe it. But it has a two-dimensional state vector, and $2\times2$ matrices are all you need. [Chapter 5](/en/ch/05-angular-momentum/) runs entirely on this.
+3. **It exposes structure.** In wavefunction language, "observables correspond to operators" looks like a bare decree; in vector language it becomes "observables correspond to a special class of linear transformations" — and which class that is can be derived.
+</Callout>
+
+<Callout type="warning" title="Where the analogy needs care">
+Treating functions as vectors is safe most of the time, but two spots demand caution:
+
+**1. Infinite-dimensional is not "finite-dimensional with a very large N".** Results like "at most $N$ linearly independent vectors" break down, and convergence becomes a genuine issue. What $\sum_n c_n\psi_n$ converges to, and in what sense, takes extra mathematics. [Section 3.3](/en/ch/03-formalism/03-hilbert-space/) fills this in.
+
+**2. The "basis vectors" of a continuous basis are not legitimate states.** The "wavefunction" corresponding to $\ket{x}$ is $\delta(x-x_0)$, and $\int|\delta|^2$ diverges — it cannot be normalised. The same goes for $\ket{p}$ (which is exactly why the plane waves of [section 2.10](/en/ch/02-wavefunction/10-free-particle/) are unnormalisable).
+
+They are useful bookkeeping devices, but they represent no physical state. This too is left for section 3.3.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Components ↔ function values', latex: 'v_i\\ \\longleftrightarrow\\ \\Psi(x)', note: 'Read x as a continuous index' },
+    { name: 'Sum ↔ integral', latex: '\\sum_i\\ \\longleftrightarrow\\ \\int\\dd x', note: 'Every integral in chapter 2 is an inner product' },
+    { name: 'Inner product', latex: '\\vec u\\cdot\\vec v=\\sum_i u_i^*v_i\\ \\longleftrightarrow\\ \\int\\Phi^*\\Psi\\,\\dd x', note: 'Normalisation = length 1' },
+    { name: 'Three sets of components of one state', latex: '\\int|\\Psi|^2\\dd x=\\int|\\phi|^2\\dd k=\\sum_n|c_n|^2=1', note: 'Length is independent of the choice of basis' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'vec-1',
+      prompt: 'The most accurate description of the relation between Ψ(x) and φ(k) is:',
+      options: [
+        'They are two sets of components of the same state vector, in the position and momentum bases',
+        'Ψ(x) is the real state; φ(k) is merely a mathematical transform',
+        'They describe two different physical states',
+        'φ(k) contains more information than Ψ(x)',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The two stand on exactly equal footing — neither is more "real" than the other.',
+        2: 'Either one fully reconstructs the other; it is one and the same state.',
+        3: 'The Fourier transform is invertible, so the information content is identical.',
+      },
+      explain: 'Just like a 3D vector having two sets of components in two coordinate systems. Parseval''s theorem guarantees the two sets have the same "length" — the very hallmark of "one and the same vector".',
+    },
+    {
+      id: 'vec-2',
+      prompt: 'When a function is viewed as an infinite-dimensional vector, which correspondences are correct? (Select all that apply.)',
+      options: [
+        'Continuous index x ↔ component subscript i',
+        '∫dx ↔ Σᵢ',
+        '∫Φ*Ψ dx ↔ the inner product Σᵢuᵢ*vᵢ',
+        'The normalisation condition ↔ the vector having length 1',
+      ],
+      answer: [0, 1, 2, 3],
+      explain: 'These four lines together make up the entire analogy. Once you recognise them, the long integral derivations of chapter 2 can all be rewritten as a few lines of vector algebra — [section 3.11](/en/ch/03-formalism/11-rewrite-exercises/) does exactly that.',
+    },
+    {
+      id: 'vec-3',
+      prompt: 'Why do we say the choice of representation is free?',
+      options: [
+        'Because the state vector itself is independent of the basis; changing basis only changes the components',
+        'Because different representations give different physical predictions, so you can pick the right one',
+        'Because the position representation is always the most convenient',
+        'Because quantum mechanics allows arbitrary modification of the wavefunction',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'All representations give exactly the same physical predictions — which is precisely why the choice is free.',
+        2: 'For bound states the energy basis is often far more convenient.',
+        3: 'The wavefunction cannot be modified at will; it is fixed by the physics.',
+      },
+      explain: 'It is like choosing a coordinate system in 3D space: the physics does not depend on the choice, but a good choice can make the calculation simpler by orders of magnitude. Solving the harmonic oscillator with ladder operators (the energy basis) takes a dozen lines; grinding through the differential equation takes pages.',
+    },
+  ]}
+/>
+
+## What comes next
+
+If we are going to speak the language of "vectors, bases, components, inner products" for the long haul, we need matching notation — ideally something much shorter to write than $\int\Phi^*(x)\Psi(x)\dd x$.
+
+The notation Dirac designed for the job is one of the most successful notational inventions in all of physics.

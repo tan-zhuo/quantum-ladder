@@ -1,24 +1,238 @@
 ---
-title: 'Mixed states and the shrinking Bloch sphere'
-summary: 'Mixed states live inside the sphere, pure states on it.'
+title: Mixed states and the shrinking Bloch sphere
 section: '10.2'
 order: 2
-status: stub
-sims: ['density-matrix']
+summary: 'Every state of a qubit lives inside one unit ball: pure states on the surface, mixed states in the interior, and "complete ignorance" at the centre. Unitary evolution is rotation; the environment''s damage is contraction.'
+status: done
+prereqs:
+  - 10-open-systems/01-why-density-matrix
+  - 09-quantum-information/01-qubit-bloch-sphere
+objectives:
+  - Write any qubit's ρ in Bloch-vector form, and recover the Bloch vector from the matrix
+  - Compute purity from the length of the Bloch vector, and explain what the surface, the interior, and the centre each correspond to
+  - Write down the probability formula P = (1 + r·n)/2 for measurement along an arbitrary direction
+  - Describe the geometric pictures of unitary evolution and decoherence on the Bloch sphere — rotation vs contraction
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The conclusion of the last section: a qubit in the lab must be described by a density matrix, and its "going bad" is a process of falling purity. But a $2\times2$ complex matrix is not exactly intuitive — four complex numbers, three constraints; it is hard to see at a glance "how mixed" a state is.
+
+Fortunately the qubit enjoys a luxury: its **entire** state space can be drawn in three-dimensional space.
+
+## The phenomenon first: three numbers are enough
+
+[Section 9.1](/en/ch/09-quantum-information/01-qubit-bloch-sphere/) already placed the **pure states** on the Bloch sphere: $\ket{\psi}=\cos\frac\theta2\ket{0}+\ee^{\ii\phi}\sin\frac\theta2\ket{1}$ corresponds to the unit vector in direction $(\theta,\phi)$. But the sphere is only a skin. Where do the mixed states live?
+
+Count degrees of freedom. A $2\times2$ matrix has 4 complex numbers, 8 real parameters; Hermiticity cuts 4, $\operatorname{Tr}\hat\rho=1$ cuts one more, leaving **3 real parameters**. Three real numbers are exactly a three-dimensional vector — and that is no coincidence, it is the following expansion:
+
+<Derivation title="From 2×2 matrix to Bloch vector" level="基础" minutes={6}>
+
+**Step 1: choose a basis.** The Pauli matrices plus the identity, $\{\hat 1,\hat\sigma_x,\hat\sigma_y,\hat\sigma_z\}$, form a complete basis for $2\times2$ Hermitian matrices (4 linearly independent Hermitian matrices — exactly enough to span). Any Hermitian $\hat\rho$ can be expanded as
+
+$$
+\hat\rho=a_0\hat 1+a_x\hat\sigma_x+a_y\hat\sigma_y+a_z\hat\sigma_z,
+\qquad a_\mu\in\mathbb{R}
+$$
+
+**Step 2: fix the coefficients with traces.** The Pauli matrices are traceless and $\operatorname{Tr}(\hat\sigma_i\hat\sigma_j)=2\delta_{ij}$, so
+
+$$
+\operatorname{Tr}\hat\rho=2a_0=1\;\Rightarrow\;a_0=\tfrac12,
+\qquad
+a_i=\tfrac12\operatorname{Tr}(\hat\rho\,\hat\sigma_i)=\tfrac12\langle\sigma_i\rangle
+$$
+
+The second equality used last section's ledger formula $\langle A\rangle=\operatorname{Tr}(\hat\rho\hat A)$. Define the **Bloch vector** $\vec r\equiv(\langle\sigma_x\rangle,\langle\sigma_y\rangle,\langle\sigma_z\rangle)$; then
+
+$$
+\hat\rho=\frac{\hat 1+\vec r\cdot\hat{\vec\sigma}}{2}
+=\frac12\begin{pmatrix}1+r_z&r_x-\ii r_y\\ r_x+\ii r_y&1-r_z\end{pmatrix}
+$$
+
+**The Bloch vector is simply the three spin expectation values** — not an abstract parameter; every component is directly measurable.
+
+**Step 3: positivity gives the ball.** The eigenvalues of $\hat\rho$ can be computed outright: $\hat\rho-\frac12\hat 1=\frac12\vec r\cdot\hat{\vec\sigma}$, and $(\vec r\cdot\hat{\vec\sigma})^2=r^2\hat 1$ (the signature algebra of the Pauli matrices), so the eigenvalues of $\vec r\cdot\hat{\vec\sigma}$ are $\pm r$ and those of $\hat\rho$ are
+
+$$
+\lambda_\pm=\frac{1\pm r}{2},\qquad r\equiv|\vec r|
+$$
+
+Positive semi-definiteness requires $\lambda_-\ge0$, i.e.
+
+$$
+r\le1
+$$
+
+**The complete set of legitimate qubit states = the solid unit ball.** On the surface ($r=1$), $\lambda_-=0$ and only one eigenstate survives — a pure state; in the interior ($r<1$) both eigenvalues are non-zero — a mixed state.
+
+**Step 4: purity.** Using $\operatorname{Tr}(\hat\rho^2)=\lambda_+^2+\lambda_-^2$:
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac{(1+r)^2+(1-r)^2}{4}=\frac{1+r^2}{2}
+$$
+
+$r=1$ gives purity 1; $r=0$ gives $\tfrac12$ — precisely the maximally mixed state $\frac12\hat 1$ of section 3.10, which lives at the **centre of the ball**.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**A map of states**
+
+- **Surface**: pure states. You know as much about the system as quantum mechanics permits.
+- **Interior**: mixed states. The farther from the surface, the more mixed.
+- **Centre**: the maximally mixed state $\frac12\hat 1$. Every direction measures 50/50 — a coin, through and through.
+
+The **direction** of the vector tells you "which way to measure with most confidence"; its **length** tells you "how much confidence that is". $r$ is the state's "health index", the whole quantum state compressed into one number.
+
+</div>
+<div slot="right">
+
+**The matching formulas**
+
+$$
+\hat\rho=\frac{\hat 1+\vec r\cdot\hat{\vec\sigma}}{2},\qquad 0\le r\le1
+$$
+
+$$
+\operatorname{Tr}(\hat\rho^2)=\frac{1+r^2}{2}
+$$
+
+Measuring the spin along the unit direction $\vec n$, the probability of getting $+1$:
+
+$$
+P(+\vec n)=\operatorname{Tr}\!\Big(\hat\rho\,\frac{\hat 1+\vec n\cdot\hat{\vec\sigma}}{2}\Big)
+=\frac{1+\vec r\cdot\vec n}{2}
+$$
+
+(The second step used $\operatorname{Tr}(\sigma_i\sigma_j)=2\delta_{ij}$.) The outcome depends only on the **projection** of $\vec r$ onto $\vec n$.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Last section's example, now with a picture">
+Take the two states from section 10.1 that "cannot be told apart along $z$" and compute a Bloch vector for each:
+
+- The superposition $\sqrt{0.7}\ket{\uparrow}+\sqrt{0.3}\ket{\downarrow}$: $\vec r=(2\sqrt{0.21},\,0,\,0.4)$, with length $r=\sqrt{0.84+0.16}=1$ — on the surface, just not at the north pole.
+- The ensemble "70% up, 30% down": $\vec r=(0,0,0.4)$, length $0.4$ — on the $z$ axis, **deep inside the ball**.
+
+Their $z$ components agree (which is why a $z$ measurement cannot distinguish them), but one is on the surface and one is on the axis. "Wiping out the coherences" is, on the map, **squashing the vector perpendicularly onto the $z$ axis** — the transverse components gone, the length shrunk from 1 to 0.4.
+
+That is a spoiler for the geometric through-line of this chapter: **losing coherence = the Bloch vector getting shorter**.
 </Callout>
 
-## Planned contents
+## Rotation versus contraction: the watershed between two kinds of evolution
 
-- Bloch vector length and purity
-- The maximally mixed state
-- How decoherence shortens the Bloch vector
+Now for dynamics. How do states move inside the ball?
 
-## Planned simulations
+<Derivation title="Unitary evolution = rigid rotation" level="进阶" minutes={5}>
 
-- `density-matrix`
+What does unitary evolution $\hat\rho\to\hat U\hat\rho\hat U^\dagger$ do to the Bloch vector? Take rotation about the $z$ axis, $\hat U=\ee^{-\ii\phi\hat\sigma_z/2}$, as the example. Using the Pauli algebra $\hat U^\dagger\hat\sigma_x\hat U=\cos\phi\,\hat\sigma_x-\sin\phi\,\hat\sigma_y$ (verifiable by term-by-term expansion),
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="density-matrix" />`.
+$$
+r_x\to r_x\cos\phi+r_y\sin\phi,\quad
+r_y\to -r_x\sin\phi+r_y\cos\phi,\quad
+r_z\to r_z
+$$
+
+which is exactly a three-dimensional rotation by angle $\phi$ about the $z$ axis. The general result: any $2\times2$ unitary (up to an unobservable global phase) corresponds to a **rigid rotation** of the Bloch sphere, with axis and angle given by the $\vec n$ and $\theta$ in $\hat U=\ee^{-\ii\theta\,\vec n\cdot\hat{\vec\sigma}/2}$.
+
+Rotations preserve length: $r$ is unchanged, and the purity $\frac{1+r^2}{2}$ is unchanged. **This is the geometric version of "unitary evolution preserves purity" from section 3.10** — an isolated system's state can only circle around inside the ball, and can never reach the centre.
+
+The corollary follows immediately: since qubits in the lab **do** slide from the surface into the interior, what they undergo cannot be unitary evolution. What does a map that shortens the vector look like? That is exactly the protagonist of the next section.
+
+</Derivation>
+
+First, a concrete preview. Suppose the environment's action is "with probability $p$, scramble the state completely into $\frac12\hat 1$; with probability $1-p$, do nothing":
+
+$$
+\hat\rho\to(1-p)\,\hat\rho+p\,\frac{\hat 1}{2}
+\qquad\Longleftrightarrow\qquad
+\vec r\to(1-p)\,\vec r
+$$
+
+The whole Bloch ball **shrinks uniformly** into a ball of radius $1-p$ — this is called the depolarising channel. Other environments squash only the transverse components (losing phase but not energy), and others drag the whole ball towards the north pole (an atom spontaneously emitting, falling to the ground state). The next section works out all three "deformations"; on the map they are, respectively, uniform shrinking, squashing into an olive, and "pulling towards a point".
+
+<Callout type="warning" title="No such nice map in higher dimensions">
+The solid Bloch ball is a privilege of the qubit ($d=2$). For $d\ge3$ you can still expand $\hat\rho$ in coefficients of the generalised Gell-Mann matrices, but the set of legitimate states is **no longer** a nice solid ball — it is a more complicated convex body: "vector length below some bound" is no longer equivalent to positive semi-definiteness. The qualitative intuition (pure states on the boundary, mixed states inside, unitary evolution preserving the "distance from the centre") still holds, but do not carry over the geometric details. This chapter uses the qubit to make the mechanisms clear; the operator-level conclusions (Kraus, Lindblad) hold in any dimension.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Bloch representation', latex: '\\hat\\rho=\\frac{\\hat 1+\\vec r\\cdot\\hat{\\vec\\sigma}}{2},\\qquad r_i=\\langle\\sigma_i\\rangle', note: 'Bloch vector = the three spin expectation values, each component measurable' },
+    { name: 'Eigenvalues and the legal domain', latex: '\\lambda_\\pm=\\frac{1\\pm r}{2},\\qquad r\\le1', note: 'Positive semi-definite ⇔ vector inside the unit ball; r = 1 pure, r < 1 mixed' },
+    { name: 'Purity', latex: '\\operatorname{Tr}(\\hat\\rho^2)=\\frac{1+r^2}{2}', note: '1 on the surface, 1/2 at the centre (maximally mixed state)' },
+    { name: 'Measurement along any direction', latex: 'P(+\\vec n)=\\frac{1+\\vec r\\cdot\\vec n}{2}', note: 'Depends only on the projection of the Bloch vector onto the measurement direction' },
+    { name: 'Two kinds of evolution', latex: '\\hat U\\hat\\rho\\hat U^\\dagger\\ \\Leftrightarrow\\ \\text{rotation};\\qquad \\vec r\\to(1-p)\\vec r\\ \\Leftrightarrow\\ \\text{contraction}', note: 'Unitaries preserve length; open-system evolution shortens the vector' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'bloch-mix-1',
+      prompt: 'A qubit has Bloch vector of length r = 0. This state is:',
+      options: [
+        'The maximally mixed state ½·1: measurement along any direction gives 50/50',
+        'The pure state |0⟩',
+        'Not a legitimate state',
+        'A state that gives |0⟩ with probability 1 when measured along z',
+      ],
+      answer: 0,
+      distractors: {
+        1: '|0⟩ sits at the north pole, with r = 1.',
+        2: 'r = 0 satisfies r ≤ 1 and is perfectly legitimate — it is the "most thoroughly mixed" state.',
+        3: 'P(+z) = (1 + r_z)/2 = 1/2, not 1.',
+      },
+      explain: 'At r = 0, ρ = ½·1 and P(+n) = 1/2 for every n. It is the centre of the ball, equally far from every pure state — "complete ignorance" made geometric.',
+    },
+    {
+      id: 'bloch-mix-2',
+      type: 'numeric',
+      prompt: 'A qubit has Bloch vector of length r = 0.6. What is its purity Tr(ρ²)?',
+      answer: 0.68,
+      tolerance: 0.005,
+      unit: '',
+      explain: 'Tr(ρ²) = (1 + r²)/2 = (1 + 0.36)/2 = 0.68. Check via the eigenvalues too: λ± = (1±0.6)/2 = 0.8 and 0.2, and 0.8² + 0.2² = 0.68.',
+    },
+    {
+      id: 'bloch-mix-3',
+      prompt: 'Which statements about the action of unitary evolution on the Bloch sphere are correct? (Select all that apply.)',
+      options: [
+        'It corresponds to a rigid rotation about some axis',
+        'The length of the Bloch vector is unchanged, and so is the purity',
+        'An isolated qubit’s state can never reach the centre of the ball',
+        'A suitable unitary operation can turn a mixed state back into a pure state',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Rotations do not change length: a state with r < 1 stays at r < 1 wherever it is rotated. Raising purity requires a non-unitary route (post-selection on a measurement, or re-initialisation by contact with a cold environment).',
+      },
+      explain: 'Any single-qubit unitary = rotation by θ about some axis n (global phase aside). Rotations preserve length, so purity is an invariant of unitary evolution — which is the geometric argument that whatever mixes lab qubits cannot be unitary.',
+    },
+    {
+      id: 'bloch-mix-4',
+      prompt: 'On the Bloch sphere, the state √0.7|↑⟩ + √0.3|↓⟩ and the ensemble "70% |↑⟩, 30% |↓⟩" sit, respectively:',
+      options: [
+        'The former on the surface (r = 1), the latter on the z axis at r = 0.4',
+        'Both on the surface, just pointing in different directions',
+        'The former at the north pole, the latter at the south pole',
+        'At the same place, since z measurements give identical results',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The mixed state has r = √(0² + 0² + 0.4²) = 0.4 < 1 — not on the surface.',
+        2: 'Both have z component 0.4; neither is at a pole.',
+        3: 'Identical z results only mean identical z components; the x and y components (the coherences) differ, so the positions differ.',
+      },
+      explain: 'The superposition has r = (2√0.21, 0, 0.4), of length exactly 1; the ensemble has r = (0, 0, 0.4). Squashing the former perpendicularly onto the z axis is precisely the geometric picture of erasing the coherences — the next section and 10.5 will show that this is exactly what the environment does.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The map is drawn: unitary evolution circles around inside the ball, while real qubits fall inward. What kind of mathematical object can send states from the surface into the interior without violating the three iron laws — a density matrix must stay Hermitian, unit-trace, and positive semi-definite?
+
+The answer is called a quantum channel. Starting from "system and environment evolve unitarily together, then look only at the system", the next section constructs the most general legitimate evolution — the CPTP map — step by step.

@@ -2,17 +2,269 @@
 title: 纠缠的定量描述
 section: '9.3'
 order: 3
-summary: 纠缠不是「有或没有」，是可以量的。
-status: stub
+summary: 给纠缠装刻度尺：约化密度矩阵越混、纠缠越深，von Neumann 熵和 concurrence 把「有没有纠缠」升级成「纠缠几分」。
+status: done
+prereqs:
+  - 09-quantum-information/02-quantum-gates
+  - 03-formalism/10-density-operator
+objectives:
+  - 判断一个两比特纯态是可分离还是纠缠，并用 Schmidt 分解说明依据
+  - 对给定纯态求约化密度矩阵，算出纠缠熵
+  - 用 concurrence 公式 C = 2|αδ − βγ| 快速估算两比特纯态的纠缠量
+  - 解释「整体纯、局部混」为什么是纠缠的本质签名
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节的 CNOT 造出了 Bell 态 $\frac{\ket{00}+\ket{11}}{\sqrt2}$，
+我们证明了它写不成乘积。但「写不成乘积」只是一句定性判决。
+把参数稍微拧一下：
+
+$$
+\ket{\psi_1}=\frac{\ket{00}+\ket{11}}{\sqrt2},\qquad
+\ket{\psi_2}=0.99\ket{00}+\sqrt{1-0.99^2}\,\ket{11}
+$$
+
+两个都写不成乘积，都是纠缠态。可 $\ket{\psi_2}$ 几乎就是 $\ket{00}$——
+直觉说它的纠缠「淡得多」。直觉需要变成数字：
+9.4 节的 Bell 实验、9.5 节的隐形传态都要消耗纠缠，
+**消耗多少、够不够用，必须可计算**。
+
+## 先把地基打牢：可分离与纠缠
+
+两比特纯态的一般形式是
+
+$$
+\ket{\psi}=\alpha\ket{00}+\beta\ket{01}+\gamma\ket{10}+\delta\ket{11}
+$$
+
+若它能写成 $\ket{a}\otimes\ket{b}$，称为**可分离态**（各过各的日子）；
+否则称为**纠缠态**。判据其实一行就够：乘积态的系数矩阵
+$\begin{pmatrix}\alpha&\beta\\\gamma&\delta\end{pmatrix}$ 秩为 1，即
+
+$$
+\alpha\delta-\beta\gamma=0
+\quad\Longleftrightarrow\quad \text{可分离}
+$$
+
+这个行列式不为零就是纠缠——它甚至暗示了「纠缠量」应该和 $|\alpha\delta-\beta\gamma|$
+的大小有关。我们最后会回到这一点。
+
+## 旧工具哪里不够：波函数「局部读数」失灵
+
+第 3 章的态矢量描述整个系统。但纠缠态里，**单独一个 qubit 根本没有自己的态矢量**——
+你找不到任何 $\ket{a}$ 能正确预言只测 A 粒子的所有实验。
+这正是 [3.10 节](/ch/03-formalism/10-density-operator/)引入密度算符的动机：
+局部的一切都装在**约化密度矩阵**里，
+
+$$
+\rho_A=\mathrm{Tr}_B\,\ket{\psi}\bra{\psi}
+$$
+
+（对 B 求偏迹 = 把 B 的所有可能结果加权平均掉。）关键的观察是：
+
+<Derivation title="Bell 态的约化密度矩阵：整体纯、局部最混" level="基础" minutes={6} open={true}>
+
+**目标**：对 $\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}$ 求 $\rho_A$。
+
+**第一步：写出整体密度算符。**
+
+$$
+\ket{\Phi^+}\bra{\Phi^+}
+=\frac12\Big(\ket{00}\bra{00}+\ket{00}\bra{11}+\ket{11}\bra{00}+\ket{11}\bra{11}\Big)
+$$
+
+**第二步：对 B 求偏迹。** 规则：$\mathrm{Tr}_B$ 只保留 B 侧「左右标签相同」的项——
+$\ket{i}_A\ket{j}_B\bra{k}_A\bra{l}_B$ 的偏迹是 $\delta_{jl}\ket{i}_A\bra{k}_A$。逐项看：
+
+- $\ket{00}\bra{00}$：B 侧是 $\ket{0}\bra{0}$，迹为 1，留下 $\ket{0}\bra{0}_A$；
+- $\ket{00}\bra{11}$：B 侧是 $\ket{0}\bra{1}$，迹为 0，**整项消失**；
+- $\ket{11}\bra{00}$：同理消失；
+- $\ket{11}\bra{11}$：留下 $\ket{1}\bra{1}_A$。
+
+$$
+\rho_A=\frac12\ket{0}\bra{0}+\frac12\ket{1}\bra{1}=\frac{I}{2}
+$$
+
+**第三步：读出物理。** $\rho_A=I/2$ 是**最大混合态**——上一节 Bloch 球的球心。
+只看 A 粒子，沿任何轴测都是五五开，与「一枚被抛过但没看的硬币」在统计上无法区分。
+交叉项（相干项）恰好在偏迹中被 B 侧的正交性杀掉了：
+**整体的相干搬进了关联里，局部只剩下噪声。**
+
+对比可分离态 $\ket{a}\otimes\ket{b}$：偏迹直接给 $\rho_A=\ket{a}\bra{a}$，仍是纯态。
+
+</Derivation>
+
+<Callout type="insight" title="纠缠的本质签名：整体纯、局部混">
+经典世界里，整体确定则部分必然确定：知道整副扑克的排列，就知道每张牌。
+量子纠缠把这条常识打断：$\ket{\Phi^+}$ 作为整体是完全确定的纯态（熵为零），
+它的每一半却是**最大不确定**的混合态。
+信息不在 A 也不在 B，而在「A 与 B 怎么关联」里。
+于是量纠缠的思路水到渠成：**局部有多混，纠缠就有多深。**
 </Callout>
 
-## 内容规划
+## 给「混」定量：Schmidt 分解与纠缠熵
 
-- 可分离态与纠缠态
-- Concurrence
-- von Neumann 熵
+任何两体纯态都能通过奇异值分解写成**Schmidt 形式**：
 
+$$
+\ket{\psi}=\sum_k \sqrt{\lambda_k}\,\ket{u_k}_A\ket{v_k}_B,
+\qquad \lambda_k\ge0,\ \sum_k\lambda_k=1
+$$
+
+其中 $\ket{u_k}$、$\ket{v_k}$ 各是 A、B 侧的一组正交基。对两比特，$k$ 至多取 2。
+好处立竿见影：
+
+$$
+\rho_A=\sum_k\lambda_k\ket{u_k}\bra{u_k},\qquad
+\rho_B=\sum_k\lambda_k\ket{v_k}\bra{v_k}
+$$
+
+**两侧约化密度矩阵的本征值相同**，都是 Schmidt 系数 $\lambda_k$。
+只有一个非零 $\lambda$ ⇔ 乘积态；两个非零 $\lambda$ ⇔ 纠缠。
+把混合程度用第 3 章的 von Neumann 熵来称重：
+
+$$
+E(\psi)\equiv S(\rho_A)=-\mathrm{Tr}\,\rho_A\log_2\rho_A
+=-\sum_k\lambda_k\log_2\lambda_k
+$$
+
+这就是**纠缠熵**（以 2 为底，单位是比特）。三个基准点：
+
+| 态 | Schmidt 系数 | $E$ |
+| --- | --- | --- |
+| 乘积态 $\ket{a}\otimes\ket{b}$ | $1,\ 0$ | $0$ |
+| $\cos\chi\ket{00}+\sin\chi\ket{11}$ | $\cos^2\chi,\ \sin^2\chi$ | $0<E<1$ |
+| Bell 态 | $\tfrac12,\ \tfrac12$ | $1$（最大） |
+
+纠缠熵为 1 的态叫**最大纠缠态**，说「消耗 1 个 ebit」就是指用掉一对这样的态——
+9.5、9.6 节的协议记账时全用这个单位。
+
+<DualView>
+<div slot="left">
+
+**为什么熵是「对」的量尺？** 因为它不是随手挑的：可以证明，
+两地只靠本地操作加打电话（LOCC）**造不出新纠缠、也提不高纠缠熵**——
+它像能量一样是笔守恒的资源账。
+而且它可操作：$n$ 对纠缠熵为 $E$ 的态，可以（渐近地）蒸馏出约 $nE$ 对 Bell 态，
+反过来也能用 $nE$ 对 Bell 态稀释制备它们。
+「熵 = 可兑换的 Bell 对数目」，这才配叫度量。
+
+</div>
+<div slot="right">
+
+对 $\ket{\psi_2}=0.99\ket{00}+0.141\ket{11}$：
+
+$$
+\lambda_1=0.9801,\quad\lambda_2=0.0199
+$$
+
+$$
+E=-0.9801\log_2 0.9801-0.0199\log_2 0.0199\approx 0.141
+$$
+
+不到 Bell 态的 15%——「淡纠缠」的直觉有了数字。
+要蒸馏出 1 对 Bell 态，平均得消耗约 7 对这样的态。
+
+</div>
+</DualView>
+
+## 快捷公式：concurrence
+
+熵要先求偏迹再对角化，对两比特有条捷径。开头那个判据行列式
+$\alpha\delta-\beta\gamma$ 正好给出 **concurrence**（一致度）：
+
+$$
+C=2\,|\alpha\delta-\beta\gamma|,\qquad 0\le C\le 1
+$$
+
+$C=0$ 可分离，$C=1$ 最大纠缠。它与 Schmidt 系数的关系是
+$C=2\sqrt{\lambda_1\lambda_2}$，与熵单调对应：
+
+$$
+E=h\!\left(\frac{1+\sqrt{1-C^2}}{2}\right),\qquad
+h(p)\equiv-p\log_2 p-(1-p)\log_2(1-p)
+$$
+
+验证一下：$\ket{\Phi^+}$ 有 $\alpha=\delta=\tfrac{1}{\sqrt2}$、$\beta=\gamma=0$，
+$C=2\cdot\tfrac12=1$；态 $\cos\chi\ket{00}+\sin\chi\ket{11}$ 给 $C=\sin 2\chi$——
+$\chi$ 从 0 转到 45°，纠缠从 0 平滑爬到 1。
+
+<Callout type="warning" title="两个常见误会">
+1. **「纠缠 = 相关」？不止。** 经典硬币对（同抛同看）也有完美相关，
+   但那对应可分离的混合态。纠缠的独特之处在于**每个测量轴上都相关**：
+   Bell 态沿 $z$ 测完全相关，沿 $x$ 测还是完全相关——经典关联做不到双轴通吃，
+   这正是下一节 Bell 不等式要开采的矿脉。
+2. **混合态的纠缠没这么简单。** 本节的熵和 concurrence 公式只对**纯态**成立。
+   混合态先天带经典噪声，「混」不再等于「纠缠」，
+   需要 Wootters 公式等更重的工具（本书不展开）。
+   判断混合态是否纠缠在一般维度甚至是 NP 难问题。
+</Callout>
+
+要「看见」这些关联，可以去[实验室模块 08：纠缠与 Bell 非定域性](/lab/08-entanglement/)，
+两个粒子各自读数完全随机、合起来却严格相关的景象就在那里。
+
+<KeyFormulas
+  items={[
+    { name: '可分离判据（纯态）', latex: '\\alpha\\delta-\\beta\\gamma=0\\ \\Leftrightarrow\\ \\ket{\\psi}=\\ket{a}\\otimes\\ket{b}', note: '系数矩阵秩 1；不为零即纠缠' },
+    { name: 'Schmidt 分解', latex: '\\ket{\\psi}=\\sum_k\\sqrt{\\lambda_k}\\ket{u_k}_A\\ket{v_k}_B', note: '两侧 ρ 的本征谱相同，均为 {λ_k}' },
+    { name: '纠缠熵', latex: 'E=S(\\rho_A)=-\\sum_k\\lambda_k\\log_2\\lambda_k', note: '乘积态 0，Bell 态 1（单位：ebit）' },
+    { name: 'Concurrence', latex: 'C=2|\\alpha\\delta-\\beta\\gamma|=2\\sqrt{\\lambda_1\\lambda_2}', note: '两比特纯态专用捷径，与 E 单调对应' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'em-1',
+      prompt: '态 (∣00⟩ + ∣01⟩ + ∣10⟩ + ∣11⟩)/2 的纠缠熵是多少？',
+      options: ['0，它是乘积态 ∣+⟩⊗∣+⟩', '1，它是最大纠缠态', '1/2', '2'],
+      answer: 0,
+      distractors: {
+        1: '四个系数相等不代表纠缠：检查 αδ − βγ = (1/2)(1/2) − (1/2)(1/2) = 0。',
+      },
+      explain: '系数 α=β=γ=δ=1/2，行列式为零，可分离：它就是 ∣+⟩⊗∣+⟩。「叠加项多」不等于「纠缠深」，判据永远是 αδ − βγ 或约化密度矩阵。',
+    },
+    {
+      id: 'em-2',
+      prompt: '对 Bell 态 ∣Φ⁺⟩ 只测 A 粒子（沿任意轴），能观察到什么？',
+      options: [
+        '完全随机的 ±1，各 50%，与测量轴无关',
+        '沿 z 轴测得确定结果，沿 x 轴随机',
+        '结果依赖于 B 粒子是否已被测量，因此可用于超光速通信',
+        '总是得到 +1',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'ρ_A = I/2 是各向同性的球心：任何轴都五五开。',
+        2: 'B 侧无论做什么，A 的局部统计都由 ρ_A = I/2 完全决定，纹丝不动——所以恰恰不能用来通信（9.5 节细讲）。',
+      },
+      explain: 'ρ_A = I/2 位于 Bloch 球心，对一切测量轴给出 50/50。纠缠只在「对比双方记录」时现形，单看一边永远是白噪声——这是无信号原理的微观机制。',
+    },
+    {
+      id: 'em-3',
+      type: 'numeric',
+      prompt: '态 cos30°∣00⟩ + sin30°∣11⟩ 的 concurrence C 是多少？（保留三位小数）',
+      answer: 0.866,
+      tolerance: 0.01,
+      explain: 'C = 2|αδ| = 2·cos30°·sin30° = sin60° = √3/2 ≈ 0.866。一般地 C = sin2χ：权重只要不是严格 0 或 1，纠缠就不为零，且在等权处（χ=45°）达到最大。',
+    },
+    {
+      id: 'em-4',
+      type: 'numeric',
+      prompt: '态 √0.9∣00⟩ + √0.1∣11⟩ 的纠缠熵 E 是多少 ebit？（保留两位小数）',
+      answer: 0.47,
+      tolerance: 0.03,
+      unit: 'ebit',
+      explain: 'λ = 0.9, 0.1，E = −0.9log₂0.9 − 0.1log₂0.1 ≈ 0.137 + 0.332 ≈ 0.47 ebit。权重九一开，纠缠还不到半个 ebit——这个数字就是它能兑换 Bell 态的汇率。',
+    },
+  ]}
+/>
+
+## 接下来
+
+我们已经能给纠缠称重，但还欠一个更根本的交代。
+爱因斯坦当年的质疑并没有被「熵等于 1」回答：
+也许两个粒子在分开前就偷偷商量好了所有答案——所谓相关，
+不过是各自揣着同一张小抄？这个「局域隐变量」假说听起来无懈可击，
+却能被推上实验的审判席。下一节：Bell 不等式，
+以及量子力学如何在 2015 年拿到无漏洞的终审判决。

@@ -1,17 +1,251 @@
 ---
-title: 'Reducing the central-force problem'
-summary: 'Two bodies reduced to one, three dimensions reduced to one.'
+title: Reducing the central-force problem
 section: '6.1'
 order: 1
-status: stub
+summary: 'Two preparatory moves before we storm the hydrogen atom: turn the "electron plus proton" two-body problem into a one-body problem, then use spherical symmetry to split the 3D equation into radial times angular. After these two steps, all that remains is a single one-dimensional equation.'
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - 05-angular-momentum/02-spherical-harmonics
+objectives:
+  - Use centre-of-mass and relative coordinates to split the two-body Schrödinger equation exactly into two one-body equations
+  - Compute the reduced mass and explain how the spectral-line shift it causes is detected experimentally
+  - Write down the separated form ψ = R(r)Y_lm for an arbitrary central potential and explain why the angular part is universal
+  - State precisely which single equation the whole problem boils down to
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Since [Chapter 1](/en/ch/01-history/04-bohr-model/) we have been carrying a debt: Bohr used two unjustified postulates to get $E_n=-13.6\ \text{eV}/n^2$, matching the spectrum to four significant figures — yet his picture was wrong through and through. The circular orbits he drew do not exist. In this chapter we solve the hydrogen atom completely, with real quantum mechanics, and see which results Bohr "happened" to get right, why he could, and what the things he could never see (degeneracy, orbital shapes, fine structure) actually look like.
+
+Chapter 5 has just finished polishing the last tool we need: angular momentum. The eigenfunctions of $\hat L^2$ and $\hat L_z$ are the spherical harmonics $Y_l^m(\theta,\phi)$, with eigenvalues $l(l+1)\hbar^2$ and $m\hbar$ — see [section 5.2](/en/ch/05-angular-momentum/02-spherical-harmonics/). In this section you will watch that entire angular machine get carried into the hydrogen atom without re-deriving a single line.
+
+## First, an experimental fact: the nucleus is not nailed down
+
+Asked to write the hydrogen Hamiltonian, most people's first instinct is "an electron moving in the Coulomb field of a fixed proton":
+
+$$
+\hat H \overset{?}{=} \frac{\hat p^2}{2m_e} - \frac{e^2}{4\pi\varepsilon_0 r}
+$$
+
+The "proton doesn't move" approximation looks unimpeachable — the proton is 1836 times heavier than the electron. But spectroscopy is too precise to tolerate it.
+
+In 1932, Harold Urey slowly evaporated and concentrated liquid hydrogen, photographed its spectrum, and found that every Balmer line had a faint companion beside it: an extra line 0.18 nm away from $\mathrm H\alpha$ (656.28 nm). It was not a new element — it was **deuterium, the heavy isotope of hydrogen**, whose nucleus is a proton plus a neutron, doubling the mass. Why should a heavier nucleus shift the spectral lines? Because **the nucleus moves too**: electron and nucleus orbit their common centre of mass, and the heavier the nucleus, the closer the centre of mass sits to it, nudging the energy levels by just a whisker. That 0.18 nm shift is exactly the whisker — and it won Urey the 1934 Nobel Prize in Chemistry.
+
+So the honest starting point must be the **two-body problem**:
+
+$$
+\hat H=\frac{\hat p_e^2}{2m_e}+\frac{\hat p_p^2}{2m_p}
+-\frac{e^2}{4\pi\varepsilon_0\,\lvert\vec r_e-\vec r_p\rvert}
+$$
+
+Six coordinates (three for the electron, three for the proton) — bigger than any problem we have solved. Fortunately there is a surgical move, already familiar from classical mechanics, that slices it cleanly in two.
+
+## Step one: two bodies become one
+
+<Derivation title="Centre-of-mass + relative coordinates: an exact separation" level="基础" minutes={7} open={true}>
+
+**Step 1: change coordinates.** Define the centre-of-mass and relative coordinates:
+
+$$
+\vec R=\frac{m_e\vec r_e+m_p\vec r_p}{m_e+m_p},\qquad
+\vec r=\vec r_e-\vec r_p
+$$
+
+The potential energy depends only on $\vec r$ — that is the root of the separability. Rewriting the kinetic energy in the new coordinates (differentiate through the coordinate change directly, or copy the classical-mechanics result — at the operator level it is identical):
+
+$$
+\frac{\hat p_e^2}{2m_e}+\frac{\hat p_p^2}{2m_p}
+=\frac{\hat P^2}{2M}+\frac{\hat p^2}{2\mu}
+$$
+
+where $M=m_e+m_p$ is the total mass, and
+
+$$
+\mu\equiv\frac{m_em_p}{m_e+m_p}
+$$
+
+is called the **reduced mass** — in plain words, "the mass you should assign to a single particle orbiting a fixed centre, if it is to stand in for two particles that are both moving". It is always a little lighter than the lighter of the two: $1/\mu=1/m_e+1/m_p$.
+
+**Step 2: the Hamiltonian splits in half.**
+
+$$
+\hat H=\underbrace{\frac{\hat P^2}{2M}}_{\hat H_\text{cm}}
++\underbrace{\frac{\hat p^2}{2\mu}-\frac{e^2}{4\pi\varepsilon_0 r}}_{\hat H_\text{rel}}
+$$
+
+$\hat H_\text{cm}$ contains only centre-of-mass variables, $\hat H_\text{rel}$ only relative variables, and the two halves commute. So the solution can be written as a product $\Psi(\vec R,\vec r)=\chi(\vec R)\,\psi(\vec r)$, with the total energy the sum of the two.
+
+**Step 3: read off the physics.** The centre-of-mass half is a free particle — the atom drifting through space as a whole, irrelevant to its internal structure, so from now on we simply drop it. What remains is the problem we actually need to solve:
+
+$$
+\left[-\frac{\hbar^2}{2\mu}\nabla^2-\frac{e^2}{4\pi\varepsilon_0 r}\right]\psi(\vec r)=E\,\psi(\vec r)
+$$
+
+**A single particle of mass $\mu$ moving in a fixed Coulomb potential.** The two-body problem is gone, and the entire price was swapping $m_e$ for $\mu$.
+
+</Derivation>
+
+<Callout type="insight" title="The reduced mass is not pedantry — it is measurable">
+For hydrogen, $\mu=m_e/(1+m_e/m_p)=0.999456\,m_e$ — a difference of just five parts in ten thousand. But the energy levels go as $E_n\propto\mu$, so every spectral line shifts bodily by those five parts in ten thousand, and a spectrometer resolves that at a glance.
+
+Three immediate consequences:
+
+1. **The discovery of deuterium.** The deuteron's mass is doubled, $\mu$ moves closer to $m_e$, and the lines shift **blueward** relative to hydrogen by 0.18 nm (for $\mathrm H\alpha$). That companion line is exactly how Urey found deuterium.
+2. **How the Rydberg constant is written.** The tabulated $R_\infty=1.0973731\times10^7\ \text{m}^{-1}$ carries the subscript $\infty$ meaning "infinitely heavy nucleus"; hydrogen's actual value $R_{\mathrm H}=R_\infty\mu/m_e$ is smaller by five parts in ten thousand.
+3. **Positronium.** Replace the proton with a positron (same mass as the electron): $\mu=m_e/2$, and every level is halved — ground state $-6.8$ eV. This "half a hydrogen atom" is a standard proving ground for QED.
+
+One formula, three different systems, changing nothing but $\mu$ — the first instance of "solve once, use everywhere".
 </Callout>
 
-## Planned contents
+## Step two: three dimensions become one
 
-- Separating centre-of-mass and relative coordinates
-- Reduced mass
-- The universal solution of the angular part
+We now face a three-dimensional partial differential equation. The way in is the symmetry of the potential: $V=V(r)$ depends only on distance, not direction. Such a potential is called a **central potential** (in plain words: a field that looks the same from every direction).
+
+<DualView>
+<div slot="left">
+
+**Symmetry dictates the angular part.** The potential is spherically symmetric, so rotating the whole system changes no physics — the Hamiltonian commutes with the angular momentum operators:
+
+$$
+[\hat H,\hat L^2]=0,\qquad[\hat H,\hat L_z]=0
+$$
+
+The three operators can share common eigenstates. And the eigenfunctions of $\hat L^2$ and $\hat L_z$ were catalogued completely in [Chapter 5](/en/ch/05-angular-momentum/02-spherical-harmonics/): the spherical harmonics $Y_l^m$.
+
+So every energy eigenstate must take the form **radial part times angular part**, with the angular part entirely independent of the specific shape of $V(r)$. Coulomb potential, 3D harmonic oscillator, a nuclear potential well — the angular answer is always $Y_l^m$. What actually distinguishes different systems is only the radial half.
+
+</div>
+<div slot="right">
+
+In spherical coordinates the Laplacian splits into a radial term plus an angular term, and the angular term is precisely $\hat L^2$:
+
+$$
+\nabla^2=\frac{1}{r^2}\frac{\partial}{\partial r}\!\left(r^2\frac{\partial}{\partial r}\right)
+-\frac{\hat L^2}{\hbar^2 r^2}
+$$
+
+(No coincidence: $\hat L=\hat{\vec r}\times\hat{\vec p}$ contains only angular derivatives, and the "rotational share" of the kinetic energy is naturally carried by angular momentum — in classical mechanics, $T=p_r^2/2\mu+L^2/2\mu r^2$ says the same thing.)
+
+Substitute into the stationary equation and set
+
+$$
+\psi(r,\theta,\phi)=R(r)\,Y_l^m(\theta,\phi)
+$$
+
+Using $\hat L^2Y_l^m=l(l+1)\hbar^2Y_l^m$, the angular part cancels wholesale.
+
+</div>
+</DualView>
+
+<Derivation title="Separation of variables: the radial equation" level="基础" minutes={5}>
+
+Substitute $\psi=R\,Y_l^m$ into
+
+$$
+-\frac{\hbar^2}{2\mu}\left[\frac{1}{r^2}\frac{\dd}{\dd r}\!\left(r^2\frac{\dd R}{\dd r}\right)Y_l^m
+-\frac{R\,\hat L^2Y_l^m}{\hbar^2r^2}\right]+V(r)\,R\,Y_l^m=E\,R\,Y_l^m
+$$
+
+Use $\hat L^2Y_l^m=l(l+1)\hbar^2Y_l^m$ and divide through by $Y_l^m$:
+
+$$
+-\frac{\hbar^2}{2\mu}\frac{1}{r^2}\frac{\dd}{\dd r}\!\left(r^2\frac{\dd R}{\dd r}\right)
++\left[V(r)+\frac{l(l+1)\hbar^2}{2\mu r^2}\right]R=ER
+$$
+
+Every angular variable is gone — **an ordinary differential equation in the single variable $r$**. Notice two things:
+
+1. $m$ does not appear. For a given $l$, all $2l+1$ values of $m$ share the same radial equation and the same energy — a degeneracy forced by isotropy (with no external field, space has no preferred direction, and it cannot matter along which axis you measure $\hat L_z$).
+2. $l$ appears in a new term, $l(l+1)\hbar^2/2\mu r^2$. It was carved out of the kinetic energy, yet it stands alongside the potential — in the next section it takes centre stage.
+
+</Derivation>
+
+<Callout type="warning" title="Two masses that are easy to confuse">
+From now on, the mass in every hydrogen formula is the reduced mass $\mu$, not the electron mass $m_e$. In rough estimates the two differ by five parts in ten thousand and can be used interchangeably; but the moment you discuss precision spectroscopy (the theme of the second half of this chapter — fine structure, isotope shifts), this difference is larger than many of the effects being measured, and the two must be kept apart.
+
+One more caution: the $\mu$ of this chapter is the reduced mass. It has nothing to do with the magnetic-moment symbol $\vec\mu$ or the Bohr magneton $\mu_B$ appearing later in the Zeeman effect — read the symbol by its context.
+</Callout>
+
+## Taking stock
+
+A two-body partial differential equation in six coordinates, after two purely structural "splits":
+
+- **Two bodies → one body**: the freely moving centre of mass is discarded, leaving one particle of mass $\mu$;
+- **Three dimensions → one**: the angular part is solved universally by $Y_l^m$, leaving an ordinary differential equation for $R(r)$.
+
+No approximation was made anywhere — both steps are exact. Every remaining difficulty has been compressed into that one radial equation.
+
+<KeyFormulas
+  items={[
+    { name: 'Reduced mass', latex: '\\mu=\\frac{m_em_p}{m_e+m_p}=\\frac{m_e}{1+m_e/m_p}\\approx0.999456\\,m_e', note: 'The entire price of two-bodies-to-one; levels ∝ μ, whence the isotope shift' },
+    { name: 'Relative-motion equation', latex: '\\left[-\\frac{\\hbar^2}{2\\mu}\\nabla^2+V(r)\\right]\\psi=E\\psi', note: 'Centre-of-mass translation separated off and discarded' },
+    { name: 'Separated form', latex: '\\psi(r,\\theta,\\phi)=R(r)\\,Y_l^m(\\theta,\\phi)', note: 'Angular part universal for every central potential; m does not enter the energy' },
+    { name: 'Radial equation', latex: '-\\frac{\\hbar^2}{2\\mu r^2}\\frac{\\dd}{\\dd r}\\!\\left(r^2\\frac{\\dd R}{\\dd r}\\right)+\\left[V+\\frac{l(l+1)\\hbar^2}{2\\mu r^2}\\right]R=ER', note: 'Every remaining difficulty lives here; the next section tidies it up' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'cf-1',
+      prompt: 'The two-body problem separates exactly into centre-of-mass motion plus relative motion. What is the key prerequisite?',
+      options: [
+        'The potential energy depends only on the relative position of the two particles',
+        'One particle is much heavier than the other',
+        'The potential must be a Coulomb potential',
+        'The two particles have equal masses',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A large mass ratio only makes μ ≈ the lighter mass; the separation itself is exact for any mass ratio — positronium has two equal-mass particles and separates just the same.',
+        2: 'Any V(r_e − r_p) works; the separation has nothing to do with the specific shape of the potential.',
+      },
+      explain: 'V contains only the relative coordinate, so after switching to centre-of-mass + relative coordinates the Hamiltonian is a sum of two mutually independent pieces, each solved on its own. No approximation is involved.',
+    },
+    {
+      id: 'cf-2',
+      prompt: 'Why is the angular part of the wavefunction the same family of spherical harmonics for every central potential?',
+      options: [
+        'Spherical symmetry makes H commute with L² and L_z, and the angular part of their common eigenstates is fixed by angular momentum alone',
+        'Because the Coulomb potential happens to have this special property',
+        'Because spherical harmonics are the only functions defined on a sphere',
+        'Because the angular kinetic energy is negligible',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite: it has nothing to do with the specific potential — a harmonic oscillator or a square well behaves identically as long as it is spherically symmetric.',
+        2: 'There are plenty of functions on a sphere; what makes the Y_lm special is that they are eigenfunctions of the angular momentum operators and form a complete basis.',
+      },
+      explain: 'The angular part of the Laplacian is exactly −L²/ħ²r², and V(r) never touches the angles. So the angular eigenvalue problem is always one and the same — solved once in Chapter 5, settled forever.',
+    },
+    {
+      id: 'cf-3',
+      prompt: 'The radial equation contains no magnetic quantum number m. What does that imply?',
+      options: [
+        'States with different m under the same (n, l) share the same energy — a (2l+1)-fold degeneracy forced by isotropy',
+        'm has no effect on the wavefunction',
+        'm can only be zero',
+        'The energy is completely independent of angular momentum',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'm fixes the shape of the angular function Y_lm and the value of L_z — it just never enters the energy.',
+        3: 'l enters the radial equation through the centrifugal term and generally does affect the energy; only m is absent.',
+      },
+      explain: 'With no external field, space has no preferred direction, so the axis onto which you project the angular momentum cannot change the energy. In section 6.7, switching on a magnetic field (which does pick out a direction) breaks this degeneracy — that is precisely the Zeeman effect.',
+    },
+    {
+      id: 'cf-4',
+      type: 'numeric',
+      prompt: 'Positronium consists of an electron and a positron (equal masses). Using a reduced-mass argument, what is its ground-state binding energy in eV? (Take 13.6 eV for hydrogen.)',
+      answer: 6.8,
+      tolerance: 0.2,
+      unit: 'eV',
+      explain: 'μ = m·m/(m+m) = m/2, and E₁ ∝ μ, so 13.6/2 = 6.8 eV. Incidentally the "Bohr radius" a ∝ 1/μ doubles: positronium is a size larger than hydrogen. It lives only nanoseconds (electron and positron annihilate), yet it is a key system for precision tests of QED.',
+    },
+  ]}
+/>
+
+## What comes next
+
+A new face has appeared in the radial equation: $l(l+1)\hbar^2/2\mu r^2$. It plainly comes from the kinetic energy, yet it looks like a potential barrier — and it diverges as $r\to0$. Plot it together with the Coulomb attraction as a single "effective potential" curve, and everything becomes visible at once: where the bound states live, why larger $l$ pushes the electron farther from the nucleus, and even why an s-state electron can "touch" the nucleus.

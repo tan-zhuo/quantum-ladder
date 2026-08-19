@@ -1,17 +1,229 @@
 ---
-title: 'Finite differences for stationary states'
-summary: 'Turning the Schrödinger equation into a matrix eigenvalue problem.'
+title: Finite differences for stationary states
 section: 'C.1'
 order: 1
-status: stub
+summary: 'Discretise the stationary Schrödinger equation into a tridiagonal eigenvalue problem — 30 lines of numpy solve the levels and wavefunctions of any 1D potential, with convergence checks and the usual traps.'
+status: done
+prereqs:
+  - 02-wavefunction/03-time-independent-schrodinger
+  - appendix-a-math/01-linear-algebra
+objectives:
+  - Derive the three-point difference scheme and state its error order
+  - Write a program from scratch that finds the lowest levels of an arbitrary 1D potential
+  - Verify the convergence order via "refine the grid → watch the error ratio"
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The potentials that can be solved exactly in the main text can be counted on one hand. But with a computer, the bound states of **any** one-dimensional potential can be solved in under a second — the method is to turn the differential equation into a matrix eigenvalue problem and hand it to a mature diagonalisation routine. [Section 4.4](/en/ch/04-1d-problems/04-finite-difference/) and the [custom-potential solver of section 4.5](/en/ch/04-1d-problems/05-custom-potential-solver/) run on exactly this algorithm; here we give the full derivation, code and checks.
+
+## The idea: functions become vectors, operators become matrices
+
+The stationary equation (natural units $\hbar=m=1$, used consistently in the code):
+
+$$
+-\frac{1}{2}\psi''(x)+V(x)\psi(x)=E\psi(x)
+$$
+
+**Discretisation**: chop the continuous interval into $N$ grid points $x_j$ with spacing $h$. The wavefunction $\psi(x)$ becomes an $N$-dimensional vector $(\psi_1,\dots,\psi_N)$ — the literal realisation of [Chapter 3](/en/ch/03-formalism/01-from-wavefunction-to-vector/)'s "a function is an infinite-dimensional vector", except the dimension is now finite.
+
+The remaining question: how do you express the second derivative $\psi''$ using grid values?
+
+<Derivation title="The three-point scheme and its error order" level="基础" minutes={5} open={true}>
+
+Taylor-expand $\psi(x_j\pm h)$ about $x_j$:
+
+$$
+\psi_{j\pm1}=\psi_j\pm h\psi_j'+\frac{h^2}{2}\psi_j''\pm\frac{h^3}{6}\psi_j'''+\frac{h^4}{24}\psi_j^{(4)}+\cdots
+$$
+
+**Add** the two: the odd-order terms ($\psi'$, $\psi'''$) cancel in pairs,
+
+$$
+\psi_{j+1}+\psi_{j-1}=2\psi_j+h^2\psi_j''+\frac{h^4}{12}\psi_j^{(4)}+\cdots
+$$
+
+Rearranging gives the **three-point difference scheme**:
+
+$$
+\psi_j''=\frac{\psi_{j+1}-2\psi_j+\psi_{j-1}}{h^2}-\frac{h^2}{12}\psi_j^{(4)}+\cdots
+$$
+
+The leading error term is $\propto h^2$: halve the spacing and the error drops to a quarter. This is called **second-order accuracy**, and in a moment we will verify that "factor of 4" directly by numerical experiment.
+
+</Derivation>
+
+Substituting into the stationary equation, row $j$ becomes an algebraic equation connecting only neighbouring grid points:
+
+$$
+-\frac{1}{2h^2}\psi_{j-1}+\left(\frac{1}{h^2}+V_j\right)\psi_j-\frac{1}{2h^2}\psi_{j+1}=E\psi_j
+$$
+
+In matrix form, $H$ is a **tridiagonal matrix**: main diagonal $1/h^2+V_j$, both off-diagonals uniformly $-1/2h^2$. **Boundary conditions**: take a box large enough and demand $\psi_0=\psi_{N+1}=0$ (Dirichlet boundaries — equivalent to wrapping everything in an infinite well). As long as the box is much larger than the range over which the wavefunction decays, this artificial wall has no effect.
+
+## Complete code
+
+Solve the harmonic oscillator $V=x^2/2$ and compare with the exact levels $E_n=n+\tfrac12$:
+
+```python
+import numpy as np
+from scipy.linalg import eigh_tridiagonal
+
+# ---- Parameters (natural units hbar = m = 1) ----
+L = 16.0          # solution interval [-L/2, L/2]
+N = 2000          # number of interior grid points
+x = np.linspace(-L/2, L/2, N + 2)[1:-1]   # drop the two boundary points
+h = x[1] - x[0]
+
+# ---- Potential: harmonic oscillator V = x^2 / 2 (change only this line for another potential) ----
+V = 0.5 * x**2
+
+# ---- Hamiltonian matrix: tridiagonal ----
+diag = 1.0 / h**2 + V                     # main diagonal
+off  = -0.5 / h**2 * np.ones(N - 1)       # off-diagonals
+
+# ---- Diagonalise (only the lowest few eigenvalues are needed) ----
+E, psi = eigh_tridiagonal(diag, off, select='i', select_range=(0, 5))
+
+# ---- Normalisation: eigh returns vectors with sum(psi^2)=1; convert to integral normalisation ----
+psi /= np.sqrt(h)
+
+print("  n   numerical E_n   exact E_n   error")
+for n in range(6):
+    exact = n + 0.5
+    print(f"  {n}   {E[n]:.8f}      {exact:.1f}         {abs(E[n]-exact):.2e}")
+```
+
+Output (measured):
+
+```text
+  n   numerical E_n   exact E_n   error
+  0   0.49999800      0.5         2.00e-06
+  1   1.49999001      1.5         9.99e-06
+  2   2.49997403      2.5         2.60e-05
+  3   3.49995005      3.5         5.00e-05
+  4   4.49991808      4.5         8.19e-05
+  5   5.49987812      5.5         1.22e-04
+```
+
+Six significant figures, in under a second. The key lines, one by one:
+
+- `np.linspace(...)[1:-1]`: generate the $N+2$ points including both ends, then **throw the ends away**. On the boundary $\psi=0$ is known — it should not be an unknown; the matrix then naturally excludes those points. That is the entire implementation of Dirichlet boundaries.
+- `eigh_tridiagonal`: a diagonalisation routine that eats tridiagonal matrices exclusively, at far lower cost than brute-forcing the full matrix (`select_range=(0, 5)` asks for only the six lowest eigenpairs, indices 0 to 5 — faster still).
+- `psi /= np.sqrt(h)`: the numerical routine normalises by the vector inner product $\sum_j\psi_j^2=1$, while physics wants $\int\psi^2\dd x\approx h\sum_j\psi_j^2=1$ — a factor of $\sqrt h$ apart.
+- Note that the error grows with the level: higher excited states oscillate faster, and the same grid spacing strains harder to resolve them.
+
+## Convergence check: seeing the h² law with your own eyes
+
+**Every numerical result deserves this step**: double the grid density and watch by what factor the error shrinks.
+
+```python
+import numpy as np
+from scipy.linalg import eigh_tridiagonal
+
+def ground_energy(N, L=16.0):
+    x = np.linspace(-L/2, L/2, N + 2)[1:-1]
+    h = x[1] - x[0]
+    diag = 1.0 / h**2 + 0.5 * x**2
+    off = -0.5 / h**2 * np.ones(N - 1)
+    E, _ = eigh_tridiagonal(diag, off, select='i', select_range=(0, 0))
+    return E[0], h
+
+print("   N        h        |E0 - 0.5|    ratio")
+prev = None
+for N in [125, 250, 500, 1000, 2000]:
+    E0, h = ground_energy(N)
+    err = abs(E0 - 0.5)
+    ratio = f"{prev/err:.2f}" if prev else "  --"
+    print(f"{N:5d}   {h:.4f}   {err:.3e}   {ratio}")
+    prev = err
+```
+
+Measured output:
+
+```text
+   N        h        |E0 - 0.5|    ratio
+  125   0.1270   5.044e-04     --
+  250   0.0637   1.270e-04   3.97
+  500   0.0319   3.187e-05   3.98
+ 1000   0.0160   7.984e-06   3.99
+ 2000   0.0080   1.998e-06   4.00
+```
+
+The ratio converges cleanly to 4 — exactly the $O(h^2)$ the derivation predicted. If your program yields a ratio that is not 4 (say 2, or something erratic), another error source is interfering — most often one of the traps below.
+
+<Callout type="warning" title="Three common traps">
+1. **Box too small.** The error has two sources: the grid spacing $h$ (polynomial decay) and the box truncation $L$ (exponential decay, but with a sensitive coefficient). If the wavefunction has not decayed to machine-precision levels at the boundary, refining the grid achieves nothing — the error ratio drifts away from 4. The check: double $L$; if the levels move, the box was too small.
+2. **High excited states are untrustworthy.** States with wavelength near $2h$ are unresolved by the grid; the mass of high-energy solutions at the tail of the eigenvalue list is pure discretisation artefact. Rule of thumb: trust only the low-lying eigenstates whose wavelength is $\gg h$ and whose wavefunction has vanished before the boundary.
+3. **Singular potentials need care.** The hydrogen-like $-1/r$ or a δ potential diverges or is undefined at grid points; they need softening (e.g. $-1/\sqrt{r^2+a^2}$) or special treatment — plugging them in raw gives grid-dependent nonsense.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Want another order of magnitude: the Numerov method">
+The three-point scheme uses the Taylor expansion only to $h^2$. The Numerov method uses the Schrödinger equation itself to eliminate the $h^4$ term, reaching $O(h^6)$ accuracy with the same three points, at the mere cost of slightly messier matrix elements (a generalised eigenvalue problem). For coursework the three-point scheme is plenty; move up to Numerov when you need table-grade precision.
+</Callout>
 
-- The three-point scheme and its error
-- Handling boundary conditions
-- Convergence checks
+## Try another potential
+
+Swap out the single line `V = 0.5 * x**2` in the code. A few worth trying:
+
+| Potential | Code | What to look for |
+| --- | --- | --- |
+| Quartic oscillator $x^4$ | `V = x**4` | No exact solution! Level spacing widens with $n$ (contrast the evenly spaced oscillator) |
+| Double well | `V = (x**2 - 4)**2 / 8` | The lowest two levels are nearly degenerate — tunnelling splitting, connecting to [11.4 Instantons](/en/ch/11-path-integral/04-instantons/) |
+| Finite well | `V = np.where(abs(x) < 2, -1.0, 0.0)` | Finitely many bound states; compare [section 2.8](/en/ch/02-wavefunction/08-finite-well/) |
+| Linear potential $\lvert x\rvert$ | `V = np.abs(x)` | A toy model of quark confinement; levels given by zeros of the Airy function |
+
+<KeyFormulas
+  items={[
+    { name: 'Three-point difference', latex: "\\psi_j''=\\frac{\\psi_{j+1}-2\\psi_j+\\psi_{j-1}}{h^2}+O(h^2)", note: 'Add the Taylor expansions; odd orders cancel automatically' },
+    { name: 'Discrete Hamiltonian', latex: 'H_{jj}=\\frac{1}{h^2}+V_j,\\qquad H_{j,j\\pm1}=-\\frac{1}{2h^2}', note: 'Tridiagonal matrix; Dirichlet boundary = simply drop the boundary unknowns' },
+    { name: 'Convergence criterion', latex: '\\frac{\\text{err}(h)}{\\text{err}(h/2)}\\to 4', note: 'The fingerprint of a second-order method; a wrong ratio means another error source' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apc1-1',
+      prompt: 'Shrink the grid spacing h to 1/3 of its value. The discretisation error of the three-point scheme becomes roughly:',
+      options: ['1/9', '1/3', '1/27', 'unchanged'],
+      answer: 0,
+      distractors: {
+        1: 'That is first-order behaviour; the leading error of the three-point scheme is proportional to h².',
+        2: '1/27 corresponds to third-order accuracy, which the centred three-point formula does not reach.',
+      },
+      explain: 'Error ∝ h², so h → h/3 sends the error to 1/9. This is the generalisation of the "double the density, ratio 4" rule in the convergence table.',
+    },
+    {
+      id: 'apc1-2',
+      prompt: 'Solving the oscillator numerically, you find the grid is already very fine, yet the ground-state energy still deviates from 0.5 and no longer improves with N. The most likely cause is:',
+      options: [
+        'The box length L is too small — the wavefunction is squeezed by the artificial wall',
+        "scipy's diagonalisation routine lacks precision",
+        'The harmonic oscillator has no exact solution anyway',
+        'The wavefunction was never normalised',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The LAPACK routines are accurate to the 1e-13 level, far better than the deviation here.',
+        3: 'Normalisation only rescales the wavefunction; it does not touch the eigenvalues.',
+      },
+      explain: 'Error = grid-spacing error + box-truncation error. The former improves with N, the latter only with L. A saturating error plateau is the classic signal that "the other error source has taken over" — double L and try again.',
+    },
+    {
+      id: 'apc1-3',
+      prompt: 'Diagonalising the N = 2000 Hamiltonian yields 2000 eigenvalues. The trustworthy ones are:',
+      options: [
+        'The low-lying bound states whose wavelength is much larger than h and which decay to zero before the boundary',
+        'All of them — they are exact eigenvalues of the matrix',
+        'Only the ground state',
+        'The high-lying ones, since high-energy states care less about the details of the potential',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'They are indeed exact eigenvalues of the matrix, but the matrix is only an approximation of the original equation — the high-lying eigenvalues are discretisation artefacts corresponding to no physical state.',
+        3: 'Quite the opposite: higher energy means shorter wavelength, which the grid resolves ever more poorly.',
+      },
+      explain: 'Two criteria: wavelength ≫ h (else the grid cannot see the oscillation), and the wavefunction has decayed before reaching the wall (else you are solving a hybrid of "the potential + an artificial infinite well").',
+    },
+  ]}
+/>

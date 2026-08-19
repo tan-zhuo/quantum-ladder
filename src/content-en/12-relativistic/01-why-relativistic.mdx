@@ -1,16 +1,191 @@
 ---
-title: 'Why relativistic quantum mechanics is needed'
-summary: 'The Schrödinger equation treats space and time asymmetrically.'
+title: Why we need relativistic quantum mechanics
 section: '12.1'
 order: 1
-status: stub
+summary: 'Why is gold golden? Why is mercury liquid? Because their inner electrons move at sixty percent of the speed of light. The Schrödinger equation is first order in time and second order in space — congenitally at odds with relativity. This chapter rebuilds the equation.'
+status: done
+prereqs:
+  - 02-wavefunction/04-time-dependent-schrodinger
+  - 06-hydrogen/06-fine-structure
+objectives:
+  - Estimate inner-electron speeds with v/c ≈ Zα and judge which systems demand relativistic treatment
+  - Explain relativistic effects in chemistry through the colour of gold and the liquidity of mercury
+  - 'Identify the two levels of conflict between the Schrödinger equation and relativity: mismatched derivative orders in space and time, and a non-relativistic dispersion relation'
+  - Explain why particle-number non-conservation at high energy shakes the "single-particle wavefunction" framework itself
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+At the end of the last chapter we said: the entire edifice of quantum mechanics stands on the non-relativistic foundation $E=p^2/2m$. This section starts with a practical question — **when does that foundation give way?** The answer is much closer to home than most people expect: no collider required, the gold ring on your hand contains electrons moving at nearly the speed of light.
+
+## Opening with a phenomenon: why is gold golden?
+
+In the periodic table, silver is white, copper is red, gold is yellow. Silver and gold sit in the same group with the same electron configuration pattern ($d^{10}s^1$) — so why do their colours differ so much?
+
+A metal's colour is set by "which light the electrons absorb". Gold's yellow comes from the $5d\to6s$ transition: that gap happens to fall at the blue-violet end of the visible spectrum (about 2.4 eV), so blue light is absorbed and the reflected light leans yellow. Silver's corresponding gap sits in the ultraviolet (about 3.7 eV), all visible light is reflected, and so it gleams white.
+
+The trouble is: **a non-relativistic Schrödinger calculation puts gold's gap in the ultraviolet too** — computed gold comes out silvery white. Where is the discrepancy?
+
+It lies in gold's nucleus of 79 protons. Estimate the speed of the innermost (1s) electron with the Bohr model (for a hydrogen-like 1s orbit around $Z$ protons, $v=Z\alpha c$, with $\alpha\approx1/137$ the fine-structure constant):
+
+$$
+\frac{v}{c}\approx Z\alpha=\frac{79}{137}\approx0.58
+$$
+
+**Sixty percent of the speed of light.** At that speed, relativistic effects are no longer corrections in the decimal places: the mass-increase factor is $\gamma=1/\sqrt{1-0.58^2}\approx1.22$, i.e. the "moving mass" is 22% heavier. A heavier electron means an orbital radius $\propto1/m$ that contracts, and the $s$ orbitals (largest probability near the nucleus, feeling the effect most strongly) contract hardest; $6s$ is pulled down, $5d$ is pushed up by the altered inner screening — the gap shrinks and drops from the ultraviolet right into the blue end of the visible. **The colour of gold is a relativistic effect visible to the naked eye.**
+
+The same mechanism explains mercury: its $6s^2$ closed shell is relativistically contracted so low and tight that it barely shares electrons with its neighbours, the interatomic bonding is anomalously weak — and so mercury is the only metal that is liquid at room temperature. Without relativity, mercury would be a solid at room temperature.
+
+<Callout type="insight" title="A quick slide rule for relativistic chemistry">
+To judge whether a system "needs relativity", one number suffices: **the inner electrons' $v/c\approx Z\alpha$**.
+
+- Hydrogen ($Z=1$): $v/c\approx0.007$, corrections $\sim(v/c)^2\sim10^{-4}$ — exactly the scale of the fine structure in [section 6.6](/en/ch/06-hydrogen/06-fine-structure/): small, but visible to a spectrometer.
+- Gold, mercury, lead ($Z\approx80$): $v/c\approx0.6$, corrections of **tens of percent** — the chemistry gets rewritten wholesale.
+- Heavier superheavy elements: in predicting their chemistry, relativistic calculation is the only trustworthy starting point.
+
+The fine structure was originally handled by "hand-stitching patches onto the Schrödinger equation" (relativistic kinetic-energy correction, spin-orbit coupling, the Darwin term). The patches work, but no one could say **where they came from**. This chapter goes looking for the single source.
 </Callout>
 
-## Planned contents
+## The formal level: how the Schrödinger equation offends relativity
 
-- First-order in time versus second-order in space
-- Experimental evidence from fast electrons
+Phenomena done, now the structure. The heart of special relativity is that **time and space stand on equal footing**: Lorentz transformations mix $t$ and $x$, so a covariant equation must treat them alike. Now lay out the Schrödinger equation:
+
+$$
+\ii\hbar\,\frac{\partial\Psi}{\partial t}
+=-\frac{\hbar^2}{2m}\nabla^2\Psi+V\Psi
+$$
+
+<DualView>
+<div slot="left">
+
+**An asymmetry you can see at a glance.** The left side takes a **first** derivative in time, the right a **second** derivative in space. Boost to a uniformly moving frame and the Lorentz transformation mixes time derivatives into space derivatives — the first-versus-second structure falls apart at once. The equation looks different in different inertial frames, in direct violation of the principle of relativity.
+
+Its "ancestry" tells the same story: the structure comes from translating the classical relation $E=\frac{p^2}{2m}$ into operators via $E\to\ii\hbar\partial_t$, $\vec p\to-\ii\hbar\nabla$. First power of $E$, second power of $p$ — the mismatch in derivative orders is rooted in this **non-relativistic** dispersion relation.
+
+</div>
+<div slot="right">
+
+Relativity's energy-momentum relation is
+
+$$
+E^2=p^2c^2+m^2c^4
+$$
+
+Expanding in the low-speed limit ($p\ll mc$):
+
+$$
+E=mc^2\sqrt{1+\frac{p^2}{m^2c^2}}
+=mc^2+\frac{p^2}{2m}-\frac{p^4}{8m^3c^2}+\cdots
+$$
+
+The $p^2/2m$ of the Schrödinger equation is only the second term: it discards the constant rest energy $mc^2$ (which contributes only an overall phase) and also drops $-p^4/8m^3c^2$ and everything beyond — and the first discarded piece is exactly the "relativistic kinetic-energy correction" patch of the fine structure in section 6.6.
+
+</div>
+</DualView>
+
+<Derivation title="Estimate: when the corrections stop being negligible" level="基础" minutes={6}>
+
+Take the ratio of the correction to the leading term as the criterion:
+
+$$
+\frac{p^4/8m^3c^2}{p^2/2m}=\frac{p^2}{4m^2c^2}=\frac14\Bigl(\frac vc\Bigr)^2
+$$
+
+**Inner electron of a hydrogen-like atom.** In the first Bohr orbit, Coulomb attraction supplies the centripetal force: $\frac{Ze^2}{4\pi\epsilon_0 r^2}=\frac{mv^2}{r}$, and combined with angular-momentum quantisation $mvr=\hbar$, dividing the two equations gives
+
+$$
+v=\frac{Ze^2}{4\pi\epsilon_0\hbar}=Z\alpha c,\qquad
+\alpha\equiv\frac{e^2}{4\pi\epsilon_0\hbar c}\approx\frac1{137}
+$$
+
+- Hydrogen: $(v/c)^2\approx5\times10^{-5}$ → corrections of order $10^{-5}$, which times the Rydberg energy 13.6 eV is $10^{-4}$ eV — precisely the measured size of the fine structure. **Consistent.**
+- Gold: $(v/c)^2\approx0.33$ → the "correction" reaches 8%, with higher orders crowding right behind — patching order by order loses its meaning, and a relativistic equation is needed in one stroke.
+
+**Another road to the same conclusion.** To localise an electron within a scale $\Delta x$, the uncertainty principle demands $\Delta p\gtrsim\hbar/\Delta x$, giving an energy fluctuation $\sim\Delta p\,c\gtrsim\hbar c/\Delta x$. Once $\Delta x$ shrinks to
+
+$$
+\lambda_C\equiv\frac{\hbar}{mc}\approx3.9\times10^{-13}\ \text{m (electron)}
+$$
+
+(called the **Compton wavelength**), the fluctuation energy reaches the order of $mc^2$ — enough to conjure particle-antiparticle pairs out of nothing. On scales below the Compton wavelength, the very concept of "the wavefunction of one particle" begins to fail.
+
+</Derivation>
+
+<Callout type="warning" title="The real abyss: particle number is not conserved">
+Mismatched spacetime derivatives are only a "grammar error" — a different equation might fix them. The deeper difficulty is **physical**: relativity allows energy and mass to interconvert. Once the energy exceeds $2mc^2$, electron-positron pairs can be created; conversely, particles can annihilate into photons. Yet our entire formalism — one wavefunction $\Psi(x,t)$ normalised to 1, probability conservation (the continuity equation of [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/)) — assumes in its bones that **the particle number is always 1**.
+
+So "relativistic quantum mechanics" is destined to be a transitional theory: the two equations of this chapter (Klein-Gordon and Dirac) will each expose their own cracks under the single-particle interpretation, and every crack points to the same exit — quantum field theory. Seeing exactly where the cracks are is this chapter's task.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Relativistic dispersion relation', latex: 'E^2=p^2c^2+m^2c^4', note: 'Low-speed expansion: mc² + p²/2m − p⁴/8m³c² + …; Schrödinger kept only the second term' },
+    { name: 'Inner-electron speed', latex: '\\frac{v}{c}\\approx Z\\alpha,\\qquad \\alpha\\approx\\frac1{137}', note: 'Hydrogen 0.7%; gold 58% — the relativistic dividing line in chemistry' },
+    { name: 'Size of relativistic corrections', latex: '\\frac{\\Delta E}{E}\\sim\\Bigl(\\frac vc\\Bigr)^2\\sim(Z\\alpha)^2', note: 'This is where hydrogen’s ∼10⁻⁴ eV fine structure comes from' },
+    { name: 'Compton wavelength', latex: '\\lambda_C=\\frac{\\hbar}{mc}\\approx3.9\\times10^{-13}\\ \\text{m}', note: 'Localise below this scale → energy fluctuations ≳ 2mc² → the single-particle picture fails' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel1-1',
+      prompt: 'The direct structural conflict between the Schrödinger equation and special relativity is:',
+      options: [
+        'The time derivative is first order while the space derivative is second order, so the form is not preserved under Lorentz transformations',
+        'The imaginary unit i appears in the equation',
+        'The equation contains a potential term V(x)',
+        'The wavefunction is complex while relativity requires real fields',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Complex numbers and the imaginary unit conflict with relativity not at all — next section’s Klein-Gordon equation is complex just the same.',
+        2: 'An equation with a given potential simply describes a particle in an external field; the covariance problem lies in the derivative structure, not in whether V is present.',
+      },
+      explain: 'Lorentz transformations linearly mix time and space derivatives, so the "first order versus second order" mismatch cannot keep the same form in all inertial frames. Its root is the translation from the non-relativistic relation E=p²/2m (first power of E, second power of p).',
+    },
+    {
+      id: 'rel1-2',
+      prompt: 'Gold being golden and mercury being liquid share which microscopic origin?',
+      options: [
+        'Heavy nuclei drive inner electrons to Zα·c ≈ 0.6c; the relativistic mass increase contracts the s orbitals markedly and shifts the levels',
+        'The nuclei of gold and mercury undergo weak radioactive decay',
+        'Electrons in heavy atoms have larger spin',
+        'Coulomb repulsion between electrons is stronger in heavy atoms',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'Electron spin is always 1/2, independent of atomic number.',
+        3: 'Electron-electron repulsion is fully included in the non-relativistic calculation already; on its own it cannot produce gold’s visible-light absorption.',
+      },
+      explain: 'Relativistic contraction pulls gold’s 6s down, dropping the 5d→6s gap from the ultraviolet to blue light (about 2.4 eV); blue is absorbed, so the reflection leans yellow. Mercury’s 6s² contracts into a standoffish closed shell whose bonding is so weak it is liquid at room temperature.',
+    },
+    {
+      id: 'rel1-3',
+      prompt: 'Why does the high-energy regime shake not merely the Schrödinger equation but the "single-particle wavefunction" framework itself? (Select all that apply.)',
+      options: [
+        'Above 2mc² particle-antiparticle pairs can be created, so the particle number is no longer fixed',
+        'The normalisation ∫|Ψ|²=1 and probability conservation assume, at their core, that the particle number is always 1',
+        'Localising a particle below its Compton wavelength gives energy fluctuations large enough to create new particles',
+        'At high energy the position operator ceases to be Hermitian',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Hermiticity of the position operator is not the issue; the issue is that the Hilbert space itself must be enlarged to indefinite particle number (Fock space).',
+      },
+      explain: 'Relativity permits energy-mass interconversion, so particles can be created and annihilated; yet every postulate of the wavefunction framework presupposes "this one particle". That is the root reason both equations of this chapter ultimately point to quantum field theory.',
+    },
+    {
+      id: 'rel1-4',
+      type: 'numeric',
+      prompt: 'Use v/c ≈ Zα to estimate the ratio of the 1s electron speed to the speed of light in gold (Z=79). (α=1/137.0)',
+      answer: 0.58,
+      tolerance: 0.02,
+      unit: '',
+      explain: 'v/c = 79/137.0 ≈ 0.577. The corresponding γ = 1/√(1−0.58²) ≈ 1.22 makes the electron 22% "heavier", contracting the 1s radius by about 18%. That contraction propagates shell by shell out to 6s and ends up rewriting the colour of gold.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Diagnosis complete — time to write the prescription. The most direct idea: since the disease is $E=p^2/2m$, swap in the genuine article $E^2=p^2c^2+m^2c^4$ and build a new equation by the same translation rules. That equation is the Klein-Gordon equation — it cures the covariance, and instantly detonates something stranger: **probabilities can go negative**.

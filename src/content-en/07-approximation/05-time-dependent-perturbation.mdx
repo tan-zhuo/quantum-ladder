@@ -1,17 +1,259 @@
 ---
-title: 'Time-dependent perturbation theory'
-summary: 'How to compute a transition probability.'
+title: Time-dependent perturbation theory
 section: '7.5'
 order: 5
-status: stub
+summary: 'When the Hamiltonian oscillates in time, stationary states are no longer eternal — first-order perturbation theory yields transition probabilities, and the resonance condition explains why atoms absorb only particular colours of light.'
+status: done
+prereqs:
+  - 07-approximation/01-nondegenerate-perturbation
+  - 03-formalism/09-time-evolution-pictures
+objectives:
+  - Recast the time-dependent problem as equations for the coefficients, and expand to first order in the interaction picture
+  - Write down the first-order transition amplitude and explain the reading "the perturbation's spectrum is sampled at the transition frequency"
+  - Derive the resonance condition and the sinc²-shaped transition probability for a periodic perturbation
+  - State the first-order result's expiry date — the probability must stay far below 1, beyond which Rabi oscillations take over
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Up to now, every Hamiltonian in this chapter has been independent of time. That makes for an excessively quiet world:
+as [section 2.5](/en/ch/02-wavefunction/05-stationary-states/) told us, a stationary state only spins its phase in place,
+its probability distribution frozen solid. An electron that moves into $\ket{2p}$ ought to live there forever.
+
+Reality objects at once: put sodium vapour in white light and it precisely devours the two yellow lines near 589 nm —
+not a bit more, not a bit less; and a sodium lamp, conversely, glows with the very same pair of yellow lines.
+The atom **jumps back and forth** between two levels, and it is fussy about the light's frequency to a punishing degree.
+
+Where is the contradiction? In "the Hamiltonian does not depend on time". Light is an electromagnetic wave; when it strikes the atom,
+the electron feels an electric field oscillating in time, and the Hamiltonian picks up a time-dependent piece:
+
+$$
+\hat H(t)=\hat H_0+\hat V(t),
+\qquad \hat V(t)=e\mathcal E z\cos\omega t
+$$
+
+$\hat H_0$ is the isolated atom (whose levels $E_n$ and eigenstates $\ket{n}$ we have already solved),
+and $\hat V(t)$ is the light field's shoving. The moment the Hamiltonian depends on time, the very concept of an "energy eigenstate" loses its footing —
+there are no stationary states to solve for, and every static method of the last four sections is out of a job. We must return to the equation of motion itself.
+
+## Moving the problem into the coefficients
+
+The idea: the eigenstates of $\hat H_0$ still form a complete basis at every instant, so any state can be expanded.
+We cannot solve the time-dependent Schrödinger equation outright, but we can squeeze all the time dependence into the **expansion coefficients**:
+
+$$
+\ket{\Psi(t)}=\sum_n c_n(t)\,\ee^{-\ii E_nt/\hbar}\,\ket{n}
+$$
+
+Note that we write the "boring" phase $\ee^{-\ii E_nt/\hbar}$ out explicitly — with no perturbation it is the whole of the evolution,
+and the $c_n$ are constants. This bookkeeping is precisely the **interaction picture** of
+[section 3.9](/en/ch/03-formalism/09-time-evolution-pictures/): let $\hat H_0$'s evolution spin its own phases, while $c_n(t)$ records only **the changes caused by the perturbation**.
+$|c_n(t)|^2$ is then the probability of finding the system in $\ket{n}$ at time $t$.
+
+<Derivation title="The coefficient equations and the first-order transition amplitude" level="基础" minutes={10} open={true}>
+
+**Step 1: substitute into the Schrödinger equation.**
+
+Insert the expansion into $\ii\hbar\,\partial_t\ket{\Psi}=(\hat H_0+\hat V)\ket{\Psi}$.
+Differentiating the left side in $t$ produces two kinds of terms: $\dot c_n$ terms and $E_nc_n$ terms;
+the latter cancel term by term against the $\hat H_0$ contribution on the right — exactly the payoff for writing the phase factor explicitly. What remains is
+
+$$
+\ii\hbar\sum_n\dot c_n\,\ee^{-\ii E_nt/\hbar}\ket{n}
+=\sum_n c_n\,\ee^{-\ii E_nt/\hbar}\,\hat V(t)\ket{n}
+$$
+
+**Step 2: project.**
+
+Multiply from the left by $\bra{f}$ and use orthogonality:
+
+$$
+\dot c_f=-\frac{\ii}{\hbar}\sum_n c_n(t)\,V_{fn}(t)\,\ee^{\ii\omega_{fn}t},
+\qquad
+V_{fn}\equiv\bra{f}\hat V(t)\ket{n},\quad
+\omega_{fn}\equiv\frac{E_f-E_n}{\hbar}
+$$
+
+Everything so far is **still exact** — we have merely rewritten one partial differential equation as infinitely many coupled ordinary ones.
+The trouble has not vanished, only changed address: the rate of change of each coefficient depends on all the others.
+
+**Step 3: the first-order approximation.**
+
+Suppose at $t=0$ the system is in the initial state $\ket{i}$: $c_i(0)=1$, all others zero. For a weak perturbation and not too long a time,
+the coefficients have not had time to run far: in the sum on the right keep $c_i\approx1$ and set the rest to zero —
+**replace the evolved values by the initial values**, the same spirit as time-independent perturbation theory's "average with the old wavefunction". Hence
+
+$$
+c_f(t)\approx-\frac{\ii}{\hbar}\int_0^t V_{fi}(t')\,\ee^{\ii\omega_{fi}t'}\,\dd t'
+\qquad(f\neq i)
+$$
+
+**The first-order transition amplitude: the perturbation matrix element, dressed with a phase factor, integrated over history.** This one line is the master plan for this section and the next.
+
+**How to read it**: the integral is exactly the Fourier transform of $V_{fi}(t')$ evaluated at the frequency $\omega_{fi}$.
+In other words, **the system uses the transition frequency as its radio tuning dial and listens to only that one station in the perturbation's spectrum**.
+If the perturbation contains a component at frequency $\omega_{fi}$, the transition happens; if not, the system barely stirs.
+The atom's fussiness about colour — laid bare in a single line.
+
+</Derivation>
+
+## Periodic perturbations and resonance
+
+Insert the light field: $\hat V(t)=\hat V\cos\omega t=\frac{\hat V}{2}(\ee^{\ii\omega t}+\ee^{-\ii\omega t})$.
+The integral is elementary:
+
+$$
+c_f(t)=-\frac{\ii V_{fi}}{2\hbar}
+\left[\frac{\ee^{\ii(\omega_{fi}+\omega)t}-1}{\ii(\omega_{fi}+\omega)}
++\frac{\ee^{\ii(\omega_{fi}-\omega)t}-1}{\ii(\omega_{fi}-\omega)}\right]
+$$
+
+The two denominators become small at $\omega=-\omega_{fi}$ and $\omega=+\omega_{fi}$ respectively.
+Take $E_f$ above $E_i$ (absorption); then near $\omega\approx\omega_{fi}$ the second term stands alone,
+and we drop the first (the **rotating-wave approximation**: the non-resonant term oscillates rapidly and averages to zero). Take the modulus squared:
+
+$$
+P_{i\to f}(t)=\frac{|V_{fi}|^2}{\hbar^2}\,
+\frac{\sin^2\!\left[(\omega_{fi}-\omega)t/2\right]}{(\omega_{fi}-\omega)^2}
+$$
+
+<DualView>
+<div slot="left">
+
+**Pushing a swing.** Think of $\omega_{fi}$ as the swing's natural frequency, and the perturbation as your pushing.
+Push in rhythm with the swing ($\omega=\omega_{fi}$) and every shove does positive work — the amplitude grows steadily;
+get the rhythm slightly off, and the pushes help one moment and sabotage the next, cancelling each other once enough has accumulated —
+the greater the detuning, the sooner the cancellation, and the swing never gets high.
+
+Plotted against $\omega$, the transition probability is a sharp peak: centred at $\omega_{fi}$, ringing and decaying on both sides.
+The peak's **width narrows with time** (roughly $2\pi/t$): the longer the illumination, the pickier the atom about frequency.
+This is the energy–time uncertainty relation showing its concrete face in the transition problem —
+for an interaction lasting a time $t$, the energy match need only be good to $\hbar/t$.
+
+</div>
+<div slot="right">
+
+At fixed $t$, as a function of the detuning $\Delta\equiv\omega_{fi}-\omega$:
+
+$$
+P(\Delta)=\frac{|V_{fi}|^2}{\hbar^2}\cdot\frac{t^2}{4}\,
+\mathrm{sinc}^2\!\left(\frac{\Delta t}{2}\right)
+$$
+
+- Peak value ($\Delta=0$): $P=\dfrac{|V_{fi}|^2t^2}{4\hbar^2}$, growing as $t^2$;
+- First zero: $\Delta=2\pi/t$, main-peak width $\sim2\pi/t$;
+- Peak height $\times$ peak width $\propto t$: the total "amount" of transition grows linearly in time — the seed that sprouts into a rate next section.
+
+</div>
+</DualView>
+
+**Plug in numbers**: sodium's $3s\to3p$ transition sits at 589 nm,
+$\omega_{fi}=2\pi c/\lambda\approx3.2\times10^{15}\ \text{rad/s}$ (photon energy 2.1 eV).
+If the atom interacts with the light for $1\ \mu\text{s}$ (flying through a laser beam, say),
+the main-peak width is $2\pi/t\approx6\times10^6\ \text{rad/s}$ —
+a relative width of order $10^{-9}$. Atoms really are punishing listeners;
+atomic clocks push this punishing taste to the limit: the longer the interaction time, the more precisely the frequency is recognised.
+
+<Callout type="warning" title="The first-order formula's expiry date">
+At resonance $P\propto t^2$, and left to grow it will sooner or later **exceed 1** — a probability above 1 is of course absurd.
+The absurdity is not quantum mechanics but our approximation: the derivation replaced the true $c_i(t)$ by $c_i\approx1$,
+and once the initial state is visibly drained, that step no longer stands. **The first-order result is valid only while $P\ll1$.**
+
+At resonance the full answer can in fact be found exactly (ignore every state except the two levels — the two-state problem is solvable):
+
+$$
+P_{i\to f}(t)=\sin^2\!\left(\frac{\Omega t}{2}\right),\qquad
+\Omega=\frac{|V_{fi}|}{\hbar}
+$$
+
+The probability **oscillates back and forth** between 0 and 1 — Rabi oscillations, the physical basis of laser control, nuclear magnetic resonance, and the single-qubit gates of quantum computers. First-order perturbation theory is exactly its parabolic opening at $\Omega t\ll1$:
+$\sin^2(\Omega t/2)\approx\Omega^2t^2/4$, dovetailing perfectly with the peak formula above.
+So the criterion can be stated concretely: use first order for $t\ll1/\Omega$; at $t\sim1/\Omega$ you must use Rabi.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Stimulated emission: the other half of the same formula">
+Look back at the term we threw away: it resonates at $\omega=-\omega_{fi}$, i.e. at $E_f=E_i-\hbar\omega$ —
+the system **gives up** an energy $\hbar\omega$ and drops to the lower level, and it is the incoming light that "coaxes" it down.
+This is **stimulated emission**, the process Einstein predicted in 1917 from a thermal-equilibrium argument, and the working principle of the laser.
+Time-dependent perturbation theory hands out absorption and stimulated emission even-handedly — same matrix element, same rate —
+and that symmetry is precisely the microscopic origin of the equality of Einstein's B coefficients.
+</Callout>
 
-- Perturbative expansion in the interaction picture
-- The first-order transition amplitude
-- Periodic perturbations and resonance
+<KeyFormulas
+  items={[
+    { name: 'Coefficient equations (exact)', latex: "\\dot c_f=-\\frac{\\ii}{\\hbar}\\sum_n c_n V_{fn}(t)\\,\\ee^{\\ii\\omega_{fn}t}", note: 'Interaction picture: phases go to H₀, changes are logged in the coefficients' },
+    { name: 'First-order transition amplitude', latex: "c_f(t)=-\\frac{\\ii}{\\hbar}\\int_0^t V_{fi}(t')\\,\\ee^{\\ii\\omega_{fi}t'}\\dd t'", note: 'The perturbation spectrum sampled at the transition frequency ω_fi' },
+    { name: 'Periodic perturbation', latex: 'P_{i\\to f}=\\frac{|V_{fi}|^2}{\\hbar^2}\\frac{\\sin^2[(\\omega_{fi}-\\omega)t/2]}{(\\omega_{fi}-\\omega)^2}', note: 'Resonance peak width ~2π/t: the longer the illumination, the stricter the selection' },
+    { name: 'Rabi oscillations', latex: 'P=\\sin^2\\!\\left(\\tfrac{\\Omega t}{2}\\right),\\quad\\Omega=|V_{fi}|/\\hbar', note: 'The exact solution at resonance; first order is its opening at Ωt≪1' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'tdp-1',
+      prompt: 'The best reading of the first-order transition amplitude c_f(t) ∝ ∫V_fi(t′)e^(iω_fi t′)dt′ is:',
+      options: [
+        'The Fourier spectrum of the perturbation evaluated at the transition frequency ω_fi — a transition needs that frequency component to be present',
+        'The time average of the perturbation',
+        'The perturbation energy divided by the level spacing',
+        'The overlap integral of the initial and final wavefunctions',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The time average corresponds to the zero-frequency component of the spectrum, relevant only when ω_fi=0 (degenerate transitions).',
+        3: 'The initial and final states are orthogonal to begin with — zero overlap; what connects them is the perturbation operator’s matrix element times the frequency match.',
+      },
+      explain: 'The integral is exactly the Fourier transform of V_fi(t) taken at ω_fi. The system is a radio locked to a single channel: if the perturbation spectrum contains a component at ω_fi, the transition happens; if not, almost nothing moves. The "picky eating" of atomic spectra comes from here.',
+    },
+    {
+      id: 'tdp-2',
+      prompt: 'As the periodic perturbation acts for a longer time t, the resonance peak of the transition probability versus frequency will:',
+      options: [
+        'Get narrower and narrower (width about 2π/t), with ever better frequency selectivity',
+        'Get wider and wider, because more disturbance has accumulated',
+        'Keep the same width, with only the peak height growing',
+        'Split into two peaks',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Accumulation raises the peak, but the phase cancellation of the detuned terms accumulates even faster — the peak narrows instead.',
+        2: 'The height grows as t² and the width shrinks as 1/t — both are changing.',
+      },
+      explain: 'The first zero of the sinc² main peak sits at detuning = 2π/t. This is the energy–time uncertainty relation at work: over an interaction of duration t, energy conservation need only hold to ħ/t. Atomic clocks trade long interaction times for extreme frequency resolution.',
+    },
+    {
+      id: 'tdp-3',
+      prompt: 'At resonance, first-order theory gives P ∝ t², which will eventually exceed 1. The correct handling is:',
+      options: [
+        'Accept that the first-order result is valid only while P ≪ 1; the long-time behaviour at resonance is described by Rabi oscillations, P = sin²(Ωt/2)',
+        'Clip the probability at 1',
+        'Conclude that quantum mechanics fails in strong fields',
+        'Adding the second-order correction fixes it',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A hard cutoff has no physical basis — the true answer is that the probability comes back down, oscillating between 0 and 1.',
+        3: 'Any finite order of perturbation theory is a polynomial in t and sooner or later overflows; the resonance problem needs the non-perturbative exact two-state solution.',
+      },
+      explain: 'The derivation used c_i ≈ 1; once the initial state is visibly drained, that assumption dies. The exact solution in the two-level approximation is the Rabi oscillation, and first-order theory is precisely its parabolic opening at Ωt ≪ 1. Criterion: perturbation theory for t ≪ 1/Ω, Rabi otherwise.',
+    },
+    {
+      id: 'tdp-4',
+      type: 'numeric',
+      prompt: 'The sodium 3s→3p transition has wavelength 589 nm. Find the transition angular frequency ω_fi, in units of 10¹⁵ rad/s. (c = 3.0×10⁸ m/s)',
+      answer: 3.2,
+      tolerance: 0.2,
+      unit: '×10¹⁵ rad/s',
+      explain: 'ω = 2πc/λ = 2π×3.0×10⁸/(589×10⁻⁹) ≈ 3.2×10¹⁵ rad/s, corresponding to a photon energy ħω ≈ 2.1 eV. Only light whose spectrum contains this component can drive the transition — the quantitative statement of sodium’s "picky appetite" for 589 nm yellow light.',
+    },
+  ]}
+/>
+
+## What comes next
+
+For a **single** discrete final state, the first-order formula predicts either oscillation or $t^2$ growth —
+yet what experiments actually measure is different behaviour altogether: excited atoms decay at a constant **rate**,
+their number falling off as $\ee^{-t/\tau}$, with each 2p hydrogen atom living 1.6 nanoseconds on average.
+Where does a constant rate come from? The key is that when an atom emits light, the photon may fly in any direction with any polarisation —
+the final state is not one state but **a whole continuum**. Sum the sinc² peak over that continuum,
+and the oscillations vanish as if by magic, leaving one clean rate formula: Fermi's golden rule.

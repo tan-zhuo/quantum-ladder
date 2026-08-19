@@ -1,17 +1,228 @@
 ---
-title: 'Fine structure'
-summary: 'Relativistic correction + spin–orbit coupling + the Darwin term.'
+title: Fine structure
 section: '6.6'
 order: 6
-status: stub
+summary: 'Turn the spectrometer up one notch and Hα splits in two — a 0.016 nm gap the Coulomb model cannot produce. Three corrections of order α² (relativistic kinetic energy, spin–orbit coupling, the Darwin term) join forces to reshuffle the levels by j, and 1/137 steps to centre stage.'
+status: done
+prereqs:
+  - 06-hydrogen/04-energy-levels
+  - 05-angular-momentum/07-spin-orbit
+objectives:
+  - Use order-of-magnitude estimates to show why all three fine-structure corrections land at the relative size α² ≈ 5×10⁻⁵
+  - Explain the physical picture of spin–orbit coupling and estimate the internal magnetic field the electron feels
+  - Use the fine-structure formula to show how levels reorganise by (n, j), and which degeneracies survive or break
+  - Rank the energy ladder of Bohr levels, fine structure, the Lamb shift, and hyperfine structure
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The end of the last section planted a landmine: in 1887 Michelson turned the interferometer that would later test the aether onto $\mathrm H\alpha$ (656.3 nm) and found it to be a **doublet** — two lines squeezed into about 0.016 nm. That was 39 years before the Schrödinger equation; and when the equation delivered $E_n=-13.6/n^2$ eV in 1926, this beautiful answer **still could not produce the doublet**: the energy depends only on $n$, so $3\to2$ should be a single line.
+
+The same symptom was long familiar elsewhere: sodium's yellow D line is a doublet at 589.0 and 589.6 nm, resolvable by eye. Spectral lines keep coming in pairs, as if every level were being gently snapped in two by something.
+
+Every force needed to snap them, we have already met in Chapter 5 — all that remains is to settle the accounts.
+
+## First, the order of magnitude: why α²
+
+There are three corrections. Before any details, let us get the ruler out.
+
+<Derivation title="Order-of-magnitude estimate: how big is v/c" level="基础" minutes={5} open={true}>
+
+**How fast does the electron move?** By the virial theorem (it appeared in the derivation of [section 1.4](/en/ch/01-history/04-bohr-model/): in a Coulomb field, kinetic energy = magnitude of the binding energy), the ground-state kinetic energy is 13.6 eV, so
+
+$$
+\frac12\mu v^2=13.6\ \text{eV}
+\quad\Longrightarrow\quad
+\frac{v}{c}=\sqrt{\frac{2\times13.6}{511000}}=\frac{1}{137}
+$$
+
+The 511000 eV in the denominator is the electron rest energy $\mu c^2$. And this ratio is none other than the **fine-structure constant**:
+
+$$
+\alpha\equiv\frac{e^2}{4\pi\varepsilon_0\hbar c}\approx\frac{1}{137.036}
+$$
+
+In plain words: $\alpha$ measures the strength of the electromagnetic interaction, and "ground-state electron speed = $\alpha c$" is its most tangible incarnation in the hydrogen atom. In fact the entire Bohr spectrum can be rewritten in terms of it:
+
+$$
+E_n=-\frac{\alpha^2}{2n^2}\,\mu c^2
+$$
+
+— the binding energy is $\alpha^2/2n^2$ of the rest energy.
+
+**How big is the relativistic correction?** The next order in the kinetic-energy expansion is smaller than the leading one by $(v/c)^2$:
+
+$$
+\frac{\Delta E_\text{rel}}{E_n}\sim\left(\frac{v}{c}\right)^2=\alpha^2\approx5.3\times10^{-5}
+$$
+
+That is of order $10^{-4}$ eV — matching the doublet's relative splitting $0.016\ \text{nm}/656\ \text{nm}\approx2.4\times10^{-5}$ nicely. The ruler fits: **fine structure = Bohr levels × $\alpha^2$**. And that is where the name "fine-structure constant" comes from — it was born for precisely these narrow gaps.
+
+</Derivation>
+
+## The three corrections
+
+**First: relativistic kinetic energy.** Expand $E=\sqrt{p^2c^2+\mu^2c^4}-\mu c^2$:
+
+$$
+E=\frac{p^2}{2\mu}-\frac{p^4}{8\mu^3c^2}+\cdots
+$$
+
+The second term is the correction Hamiltonian $\hat H_\text{rel}=-\hat p^4/8\mu^3c^2$. It always pushes energies down, and pushes hardest on the low-$l$ states that hug the nucleus and move fast.
+
+**Second: spin–orbit coupling.** The protagonist of [section 5.7](/en/ch/05-angular-momentum/07-spin-orbit/). Jump into the electron's instantaneous rest frame: the proton circles the electron, and that loop of positive charge produces a magnetic field at the centre; the electron carries its own magnetic moment (spin), and a moment in a field has an orientation energy.
+
+<Derivation title="How strong is the internal field" level="进阶" minutes={6}>
+
+Order of magnitude for a current loop's field: $B\sim\frac{\mu_0}{4\pi}\frac{ev}{r^2}$. Insert typical 2p numbers, $v\approx\alpha c/2\approx1.1\times10^6$ m/s and $r\approx4a_0\approx2.1\times10^{-10}$ m:
+
+$$
+B\sim10^{-7}\times\frac{(1.6\times10^{-19})(1.1\times10^6)}{(2.1\times10^{-10})^2}\approx0.4\ \text{T}
+$$
+
+**The electron builds itself a magnet of a few tenths of a tesla** — a hundred times stronger than a fridge magnet, the same league as a hospital MRI. The orientation energy $\sim\mu_B B\approx5.8\times10^{-5}\times0.4\approx2\times10^{-5}$ eV — again landing in the $\alpha^2$ bracket.
+
+The proper form (with the Coulomb field made explicit):
+
+$$
+\hat H_\text{SO}=\frac{e^2}{8\pi\varepsilon_0\,\mu^2c^2r^3}\,\hat{\vec S}\cdot\hat{\vec L}
+$$
+
+There is a famous trap here: the naive "change of frame" derivation comes out too large by a factor of two. The electron's rest frame is not inertial (it is accelerating), and the frame itself precesses — **Thomas precession** — contributing exactly the factor $1/2$. The formula above already includes it.
+
+The eigenvalues of $\hat{\vec S}\cdot\hat{\vec L}$ follow at once from Chapter 5's angular-momentum addition: with total angular momentum $\hat{\vec J}=\hat{\vec L}+\hat{\vec S}$, squaring gives
+
+$$
+\hat{\vec S}\cdot\hat{\vec L}=\frac{\hbar^2}{2}\left[j(j+1)-l(l+1)-s(s+1)\right]
+$$
+
+For $l\ge1$ there are two values $j=l\pm\frac12$, making $\hat{\vec S}\cdot\hat{\vec L}$ once positive and once negative — **every level with $l\ge1$ is snapped in two**. The mechanism of the doublets, found.
+
+</Derivation>
+
+**Third: the Darwin term.** It acts only on $l=0$ states. Relativistic quantum theory (the Dirac equation of Chapter 12) shows that the electron's position has an intrinsic "jitter" on the scale of the Compton wavelength $\hbar/\mu c=386\ \text{fm}=\alpha\,a_0$: what the electron actually feels is the Coulomb potential averaged over that little ball. For a $1/r$ potential, such smearing matters only at the origin where the potential is sharpest — so the correction is proportional to $\lvert\psi(0)\rvert^2$, and as the last section noted, **only s states are non-zero on the nucleus**. The magnitude is again $\alpha^2$.
+
+<Callout type="insight" title="Three forces braided into one rope: energy sees only j">
+Each of the three corrections depends on $l$, and their shapes all differ — the relativistic term favours low $l$, spin–orbit splits $l\ge1$, Darwin touches only $l=0$. Yet add them up (the calculation is a standard exercise in Chapter 7's perturbation theory; here is the result):
+
+$$
+E_{nj}=-\frac{13.6\ \text{eV}}{n^2}\left[1+\frac{\alpha^2}{n^2}\left(\frac{n}{j+\frac12}-\frac34\right)\right]
+$$
+
+**$l$ has vanished from the formula — the energy depends only on $n$ and $j$.** Three unrelated pieces of physics, whose splitting patterns dovetail seamlessly into a form that recognises nothing but total angular momentum — no coincidence, but a hint of relativistic symmetry: in the Dirac equation (Chapter 12) this formula needs no "three-part assembly" and appears in a single stroke. The conserved quantities retreat from $\vec L$ and $\vec S$ separately to $\vec J$ alone, and the good quantum numbers change from $(n,l,m_l,m_s)$ to $(n,l,j,m_j)$ — Chapter 5's angular-momentum addition reporting for real duty for the first time.
 </Callout>
 
-## Planned contents
+## The splitting diagram: n = 2 as the example
 
-- The size of each of the three corrections
-- Where the fine-structure constant α appears
-- The level-splitting diagram
+Notation: $n\mathrm L_j$, so $2\mathrm p_{3/2}$ means $n=2$, $l=1$, $j=3/2$.
+
+| Level | $j$ | Shift relative to the unperturbed level | Degeneracy $2j+1$ |
+| --- | --- | --- | --- |
+| $2\mathrm p_{3/2}$ | $3/2$ | $-1.13\times10^{-5}$ eV | 4 |
+| $2\mathrm s_{1/2}$ and $2\mathrm p_{1/2}$ | $1/2$ | $-5.66\times10^{-5}$ eV | 2 + 2 |
+
+Three sentences to read the table:
+
+1. Every level is **pushed down** (the overall $\alpha^2$ correction is negative);
+2. larger $j$ sinks less: $2\mathrm p_{3/2}$ and $2\mathrm p_{1/2}$ are pulled apart by $4.5\times10^{-5}$ eV (about 10.9 GHz) — the main source of the $\mathrm H\alpha$ doublet, exactly what Michelson saw in 1887;
+3. $2\mathrm s_{1/2}$ and $2\mathrm p_{1/2}$ **remain degenerate** (same $j$) — the surviving remnant of the Coulomb potential's accidental degeneracy.
+
+<DualView>
+<div slot="left">
+
+**The fate of the residual degeneracy.** In 1947, Willis Lamb used microwave techniques to measure the $2\mathrm s_{1/2}$–$2\mathrm p_{1/2}$ interval directly — by the formula above it should be zero. Result: not zero. $2\mathrm s_{1/2}$ sits higher by 1057 MHz (about $4.4\times10^{-6}$ eV).
+
+This is the **Lamb shift**. It comes from the vacuum itself: quantum fluctuations of the electromagnetic field nudge the electron, giving it a little extra spread of the Darwin-term kind, and s states bear the brunt. This measurement directly triggered the renormalisation revolution of quantum electrodynamics (QED) — in the narrow gaps of the hydrogen spectrum hides the starting point of all of modern field theory.
+
+</div>
+<div slot="right">
+
+**The energy ladder** (each rung roughly three orders of magnitude below the last):
+
+| Structure | Scaling | Typical size |
+| --- | --- | --- |
+| Bohr levels | $\alpha^2\mu c^2$ | $\sim10\ \text{eV}$ |
+| Fine structure | $\alpha^4\mu c^2$ | $\sim10^{-4}\ \text{eV}$ |
+| Lamb shift | $\alpha^5\mu c^2$ | $\sim10^{-6}\ \text{eV}$ |
+| Hyperfine structure | $\alpha^4\mu c^2\cdot\frac{m_e}{m_p}$ | $\sim10^{-6}\ \text{eV}$ |
+
+**Hyperfine structure**: the proton also has spin and a magnetic moment (smaller by a factor of $m_e/m_p$), which couples to the electron's moment and splits $1\mathrm s_{1/2}$ once more into two, separated by $5.9\times10^{-6}$ eV — 1420 MHz, wavelength **21 cm**. The 21 cm radiation of neutral cosmic hydrogen is radio astronomy's number-one tool for tracing the Milky Way's spiral arms and mapping hydrogen across the universe.
+
+</div>
+</DualView>
+
+<Callout type="warning" title='"Fine" is said with hydrogen in mind'>
+Hidden inside the $\alpha^2$ suppression factor is the nuclear charge: for a hydrogen-like ion of charge number $Z$, $v/c\sim Z\alpha$, and fine structure grows like $Z^4$. Hydrogen-like iron ($Z=26$) already has fine structure at the eV scale; heavier still, the "correction" grows too large for perturbation theory and you must go straight to the Dirac equation. By the same token, the relativistic effects in the chemistry of heavy atoms — gold, mercury, lead — are anything but "fine": the colour of gold and the liquidity of mercury both live here. The small tail on light atoms is the main character in heavy elements.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Fine-structure constant', latex: '\\alpha=\\frac{e^2}{4\\pi\\varepsilon_0\\hbar c}\\approx\\frac{1}{137.036}', note: 'Ground-state electron v/c = α; the dimensionless measure of electromagnetic strength' },
+    { name: 'The three corrections', latex: '\\hat H\'=-\\frac{\\hat p^4}{8\\mu^3c^2}+\\frac{e^2}{8\\pi\\varepsilon_0\\mu^2c^2r^3}\\hat{\\vec S}\\cdot\\hat{\\vec L}+\\hat H_{\\text{Darwin}}', note: 'Relativistic kinetic + spin–orbit (with the Thomas factor 1/2) + Darwin (s states only)' },
+    { name: 'Fine-structure levels', latex: 'E_{nj}=-\\frac{13.6\\ \\text{eV}}{n^2}\\left[1+\\frac{\\alpha^2}{n^2}\\left(\\frac{n}{j+1/2}-\\frac34\\right)\\right]', note: 'Depends only on n and j; 2s_{1/2} and 2p_{1/2} still degenerate (later broken by the Lamb shift)' },
+    { name: 'Eigenvalues of S·L', latex: '\\hat{\\vec S}\\cdot\\hat{\\vec L}=\\frac{\\hbar^2}{2}\\left[j(j+1)-l(l+1)-s(s+1)\\right]', note: 'j = l ± 1/2, one positive and one negative: every l ≥ 1 level splits in two' },
+    { name: 'The 21 cm line', latex: '\\Delta E_{\\text{hf}}(1\\mathrm s)=5.9\\times10^{-6}\\ \\text{eV}\\;\\Leftrightarrow\\;1420\\ \\text{MHz}', note: 'Hyperfine structure; radio astronomy\'s premier line for mapping cosmic hydrogen' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'fs-1',
+      prompt: 'The fine-structure corrections have relative size about α² ≈ 5×10⁻⁵. The most direct physical reason is:',
+      options: [
+        'In hydrogen the electron\'s v/c ≈ α, and relativistic effects enter as (v/c)²',
+        'Planck\'s constant is very small',
+        'The proton is much heavier than the electron',
+        'The speed of light is infinite',
+      ],
+      answer: 0,
+      distractors: {
+        2: 'The mass ratio controls the reduced-mass correction and hyperfine structure, not fine structure.',
+      },
+      explain: 'By the virial theorem, a ground-state kinetic energy of 13.6 eV corresponds to v/c = √(27.2/511000) = 1/137 = α. The three corrections (relativistic kinetic, spin–orbit, Darwin) differ in mechanism but are all priced at (v/c)², so all land in the α² bracket.',
+    },
+    {
+      id: 'fs-2',
+      prompt: 'Which statements about spin–orbit coupling are correct? (Select all that apply.)',
+      options: [
+        'In the electron\'s rest frame the proton\'s circulation produces a field of order 0.1–1 T acting on the electron\'s spin moment',
+        'Thomas precession contributes a factor of 1/2; the naive frame-change derivation is too large by a factor of two',
+        'It splits every l ≥ 1 level in two, by j = l ± 1/2',
+        's states (l = 0) have the largest spin–orbit splitting',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'For l = 0, S·L is identically zero — s states have no spin–orbit splitting; their α² correction comes from the relativistic kinetic term and the Darwin term.',
+      },
+      explain: 'The internal field can be estimated as B ∼ (μ₀/4π)ev/r² ≈ 0.4 T (for 2p). The S·L eigenvalue ∝ j(j+1)−l(l+1)−3/4 takes one positive and one negative value for j = l±1/2 — precisely the mechanism of the sodium D doublet and the Hα doublet.',
+    },
+    {
+      id: 'fs-3',
+      prompt: 'The fine-structure formula says 2s_{1/2} and 2p_{1/2} are exactly degenerate, yet experiment finds a 1057 MHz interval. Its source is:',
+      options: [
+        'Vacuum fluctuations of the electromagnetic field perturbing the electron (the Lamb shift), a QED effect',
+        'The coupling of the proton\'s spin to the electron\'s spin',
+        'Experimental error',
+        'An applied magnetic field',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is hyperfine structure, which splits by the relative orientation of the two spins within one level (as in the 21 cm line) — a different mechanism.',
+      },
+      explain: 'Lamb\'s 1947 microwave measurement showed that even the Dirac theory is incomplete: the vacuum is not empty, and the field\'s zero-point fluctuations "jitter" an s-state electron into a little extra energy. Explaining it launched QED and renormalisation.',
+    },
+    {
+      id: 'fs-4',
+      type: 'numeric',
+      prompt: 'Use the fine-structure formula to compute the energy interval between 2p_{3/2} and 2p_{1/2}, in units of 10⁻⁵ eV. (Hint: ΔE = (13.6/4)·(α²/4)·[2/1 − 2/2] eV, α = 1/137.04)',
+      answer: 4.5,
+      tolerance: 0.3,
+      unit: '×10⁻⁵ eV',
+      explain: 'ΔE = (13.6/4)(α²/4)(2−1) = 3.4×5.33×10⁻⁵/4 = 4.5×10⁻⁵ eV, corresponding to 10.9 GHz and a doublet spacing of about 0.016 nm on Hα — exactly the narrow gap Michelson saw in his interferometer in 1887.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Fine structure is the splitting the atom **carries built-in**. In the next section we intervene from outside: apply a magnetic field, or an electric field, and watch the levels crack open on command. This is more than two extra effects — the field strength is a knob, the splitting pattern deforms continuously as you turn it, and it is the best training ground for the perturbative idea of "the bigger term calls the tune" — the final stepping stone to Chapter 7.

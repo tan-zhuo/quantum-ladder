@@ -1,17 +1,236 @@
 ---
-title: 'Exact diagonalisation and Monte Carlo'
-summary: 'Two numerical routes into the many-body problem.'
+title: Exact diagonalisation and Monte Carlo
 section: 'C.3'
 order: 3
-status: stub
+summary: 'Two numerical routes into the many-body problem: brute-force the ground state of a Heisenberg chain with sparse matrices plus Lanczos, or replace integration by sampling with variational Monte Carlo — full code included, plus an honest confession about the sign problem.'
+status: done
+prereqs:
+  - appendix-a-math/01-linear-algebra
+  - 07-approximation/03-variational-method
+  - 08-identical-particles/05-second-quantization
+objectives:
+  - Assemble a many-spin Hamiltonian as a sparse matrix via tensor products, and explain why the dimension explodes exponentially
+  - State the core ideas of the power method and Lanczos, and call eigsh for the ground state
+  - Write a minimal variational Monte Carlo program, understanding Metropolis sampling and the local energy
+  - Know what the sign problem is and why it blocks fermionic Monte Carlo
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The single-particle problem was settled once and for all in [C.1](/en/ch/appendix-c-numerics/01-finite-difference/). The real difficulty is the **many-body** problem: the state space of $N$ spin-1/2 particles is $2^N$-dimensional ([A.1 tensor products](/en/ch/appendix-a-math/01-linear-algebra/): dimensions multiply). $N=40$ already means a trillion dimensions — you cannot even store one state vector. That is the "exponential wall" of quantum many-body physics, and also [why quantum computing carries such hopes](/en/ch/13-frontier/04-quantum-simulation/).
+
+At the foot of the wall run two classic routes: **exact diagonalisation** (brute force, but only up to $N\sim20$-odd) and **Monte Carlo** (sampling, which scales to large systems but has an Achilles heel). This section gives one minimal runnable example of each.
+
+## Route one: exact diagonalisation
+
+### Assembling the Hamiltonian: tensor products, translated literally
+
+Take the one-dimensional antiferromagnetic Heisenberg chain — neighbouring spins coupled pairwise:
+
+$$
+\hat H=J\sum_{i=1}^{N}\hat{\vec S}_i\cdot\hat{\vec S}_{i+1},\qquad J>0
+$$
+
+"$\hat S^x$ on site $i$" is written, by the rules of [A.1](/en/ch/appendix-a-math/01-linear-algebra/), as
+$\hat{\mathbb{1}}\otimes\cdots\otimes\hat S^x\otimes\cdots\otimes\hat{\mathbb{1}}$.
+The overwhelming majority of the matrix entries are zero, so **sparse matrices** (storing only the non-zeros) are mandatory.
+
+### Only the ground state needed: the power method and Lanczos
+
+At $2^{12}=4096$ dimensions you can still diagonalise the whole thing; beyond that you cannot. But usually we only want the lowest few states — and then full diagonalisation is unnecessary:
+
+- **Power method**: multiply a random vector by $\hat H$ over and over. Expanded in the eigenbasis, the eigencomponent with the largest modulus is amplified most on every multiplication, and it is the one left standing at the end. All it needs is the ability to "multiply a matrix by a vector" — never the inverse or a factorisation of the whole matrix.
+- The **Lanczos method** is the power method's clever cousin: instead of keeping only the last vector, it exploits the whole subspace spanned by the successive products (the Krylov space $\{v,\hat Hv,\hat H^2v,\dots\}$) and diagonalises a small tridiagonal matrix inside it. Convergence is far faster — typically a few dozen matrix–vector products converge the ground-state energy to ten significant figures. scipy's `eigsh` wraps algorithms of this family.
+
+```python
+import numpy as np
+from scipy.sparse import identity, kron, csr_matrix
+from scipy.sparse.linalg import eigsh
+
+# ---- The three operators of a single spin-1/2 (sparse matrices, units hbar = 1) ----
+sx = csr_matrix(np.array([[0, 1], [1, 0]], dtype=float) / 2)
+sy = csr_matrix(np.array([[0, -1j], [1j, 0]]) / 2)
+sz = csr_matrix(np.array([[1, 0], [0, -1]], dtype=float) / 2)
+one = identity(2, format='csr')
+
+def site_op(op, i, N):
+    """Place the single-site operator op on site i: 1 ⊗ … ⊗ op ⊗ … ⊗ 1"""
+    out = identity(1, format='csr')
+    for j in range(N):
+        out = kron(out, op if j == i else one, format='csr')
+    return out
+
+def heisenberg(N, J=1.0, periodic=True):
+    """Antiferromagnetic Heisenberg chain: H = J Σ S_i · S_{i+1}"""
+    dim = 2**N
+    H = csr_matrix((dim, dim), dtype=complex)
+    bonds = N if periodic else N - 1
+    for i in range(bonds):
+        j = (i + 1) % N
+        for s in (sx, sy, sz):
+            H = H + J * site_op(s, i, N) @ site_op(s, j, N)
+    return H
+
+for N in [8, 10, 12]:
+    H = heisenberg(N)
+    # Lanczos: only the single lowest eigenvalue, which='SA' = smallest algebraic
+    E0 = eigsh(H, k=1, which='SA', return_eigenvectors=False)[0]
+    print(f"N = {N:2d}   dim {2**N:5d}   ground energy per site = {E0.real/N:.6f}")
+
+# Bethe-ansatz exact result (N → ∞): e0 = 1/4 − ln2 ≈ −0.443147
+print(f"thermodynamic-limit exact value  e0 = {0.25 - np.log(2):.6f}")
+```
+
+Measured output:
+
+```text
+N =  8   dim   256   ground energy per site = -0.456387
+N = 10   dim  1024   ground energy per site = -0.451545
+N = 12   dim  4096   ground energy per site = -0.448949
+thermodynamic-limit exact value  e0 = -0.443147
+```
+
+As $N$ grows, the ground-state energy per site approaches the exact Bethe-ansatz value monotonically — the remaining gap is finite-size effects, and extrapolating in $1/N^2$ matches it even more closely.
+
+<Callout type="warning" title="The ceiling of exact diagonalisation, and how to raise it">
+Memory is the hard constraint: storing one $2^N$-dimensional complex vector takes 16 GB at $N=30$ and 16 TB at $N=40$. Three practical life-extenders: **block by symmetry** (conservation of total $S^z$ chops the matrix into blocks, the largest only $\binom{N}{N/2}$-dimensional); **never store the matrix explicitly** — feed Lanczos a function that applies "$\hat H$ times a vector"; **switch to a low-entanglement algorithm** — one-dimensional problems handed to DMRG/matrix-product states reach thousands of sites. Even so, large two-dimensional systems remain inside the exponential wall.
 </Callout>
 
-## Planned contents
+## Route two: variational Monte Carlo
 
-- The Lanczos method
-- Variational Monte Carlo
-- The sign problem
+Change tack: instead of solving the equation, **guess a parametrised wavefunction, estimate its energy by sampling, then tune the parameters to push the energy down**. The theoretical licence is the [variational principle](/en/ch/07-approximation/03-variational-method/): the energy expectation of any trial state is never below the true ground-state energy.
+
+The key rewrite — the energy expectation becomes "an average sampled from $\lvert\psi\rvert^2$":
+
+$$
+\langle E\rangle
+=\frac{\displaystyle\int \lvert\psi_a(x)\rvert^2\,E_{\text{loc}}(x)\,\dd x}{\displaystyle\int\lvert\psi_a(x)\rvert^2\,\dd x},
+\qquad
+E_{\text{loc}}(x)\equiv\frac{\hat H\psi_a(x)}{\psi_a(x)}
+$$
+
+$E_{\text{loc}}$ is called the **local energy** — at a specific configuration $x$, the ratio of the Hamiltonian's action to the wavefunction itself. High-dimensional integrals are intractable, but **sampling** is tractable: the Metropolis algorithm decides acceptance using only the wavefunction ratio $\lvert\psi(x')/\psi(x)\rvert^2$, so the normalisation constant is never needed — which is exactly why Monte Carlo scales to high dimensions.
+
+Here is the smallest complete example that can be written down: harmonic oscillator + Gaussian trial wavefunction $\psi_a(x)=\ee^{-ax^2}$ (local energy by hand: $E_{\text{loc}}=a+(\tfrac12-2a^2)x^2$):
+
+```python
+import numpy as np
+
+rng = np.random.default_rng(42)
+
+def local_energy(x, a):
+    """Local energy of the trial wavefunction ψ_a(x) = exp(−a x²) (oscillator, hbar = m = ω = 1)
+    E_loc = −ψ''/2ψ + V = a + (1/2 − 2a²) x²
+    """
+    return a + (0.5 - 2 * a**2) * x**2
+
+def vmc_energy(a, n_samples=200_000, step=1.0):
+    """Metropolis-sample |ψ_a|², return ⟨E_loc⟩ and its statistical error"""
+    x = 0.0
+    samples = np.empty(n_samples)
+    for i in range(n_samples):
+        x_new = x + step * rng.uniform(-1, 1)
+        # acceptance ratio = |ψ(x_new)/ψ(x)|² = exp(−2a(x_new² − x²))
+        if rng.uniform() < np.exp(-2 * a * (x_new**2 - x**2)):
+            x = x_new
+        samples[i] = local_energy(x, a)
+    burn = n_samples // 10                # discard the first 10%: burn-in
+    E = samples[burn:]
+    return E.mean(), E.std() / np.sqrt(len(E))
+
+print("   a      ⟨E⟩        stat. error")
+for a in [0.3, 0.4, 0.5, 0.6, 0.7]:
+    E, err = vmc_energy(a)
+    print(f"  {a:.1f}   {E:.5f}   ±{err:.5f}" + ("   ← exact" if a == 0.5 else ""))
+```
+
+Measured output:
+
+```text
+   a      ⟨E⟩        stat. error
+  0.3   0.56864   ±0.00088
+  0.4   0.51155   ±0.00037
+  0.5   0.50000   ±0.00000   ← exact
+  0.6   0.50938   ±0.00030
+  0.7   0.52600   ±0.00059
+```
+
+The energy takes its minimum of $0.5$ at $a=0.5$ — precisely the oscillator ground state. Three details worth chewing on:
+
+- **The statistical error at $a=0.5$ is exactly zero**: when the trial function hits the exact ground state, $\hat H\psi=E\psi$, the local energy equals the constant $E$ everywhere and the variance vanishes. This "zero-variance principle" is an important gauge of wavefunction quality in practical VMC.
+- **Burn-in**: the chain starts at an arbitrary point and needs time to "forget" its starting position and reach the target distribution; those samples get discarded.
+- The statistical error goes as $1/\sqrt{\text{sample count}}$, and neighbouring samples are correlated; the rigorous treatment estimates the error with blocking over the correlation length.
+
+In practice, replace $x$ by the configuration of $N$ particles $(\vec r_1,\dots,\vec r_N)$ and the trial function by a Slater determinant times a correlation factor (Slater–Jastrow) — the workflow is identical. Growing the dimension costs only linearly: that is Monte Carlo's victory over the exponential wall.
+
+## The sign problem: an honest confession
+
+Monte Carlo's Achilles heel in one sentence: **it needs an everywhere-non-negative "probability" to sample from**. Bosonic ground-state wavefunctions can be chosen positive — all is well; but [fermionic wavefunctions must be antisymmetric](/en/ch/08-identical-particles/02-bosons-fermions/) — positive in places, negative in others. In more general quantum Monte Carlo (sampling the path integral), the sampled weights turn negative or even complex, and the only recourse is to shove the sign into the quantity being averaged. The price: the effective signal is the cancellation of huge positive and negative terms,
+
+$$
+\langle\text{sign}\rangle\sim\ee^{-cN\beta}
+$$
+
+decaying **exponentially** in particle number $N$ and inverse temperature $\beta$ — so the statistical error blows up exponentially in return. This is the famous **fermion sign problem**, proved NP-hard in the worst case, with no general solution in existence. VMC dodges it with approximations such as fixed nodes (at the price of a systematic error) — and this is precisely the class of problem where quantum computers may deliver a genuine breakthrough.
+
+<KeyFormulas
+  items={[
+    { name: 'The exponential wall', latex: '\\dim\\mathcal{H}=2^N', note: 'N = 40 is already a trillion dimensions; the root difficulty of many-body problems' },
+    { name: 'Site operator', latex: '\\hat S_i^x=\\hat{\\mathbb{1}}\\otimes\\cdots\\otimes\\hat S^x\\otimes\\cdots\\otimes\\hat{\\mathbb{1}}', note: 'The literal translation into sparse-matrix kron' },
+    { name: 'The Lanczos idea', latex: '\\mathcal{K}=\\operatorname{span}\\{v,\\hat Hv,\\hat H^2v,\\dots\\}', note: 'Diagonalise a small tridiagonal matrix inside the Krylov space; needs only "matrix times vector"' },
+    { name: 'Local energy', latex: 'E_{\\text{loc}}(x)=\\frac{\\hat H\\psi_a(x)}{\\psi_a(x)},\\qquad \\langle E\\rangle=\\langle E_{\\text{loc}}\\rangle_{|\\psi_a|^2}', note: 'Zero variance when the trial state hits an eigenstate' },
+    { name: 'The sign problem', latex: '\\langle\\text{sign}\\rangle\\sim\\ee^{-cN\\beta}', note: 'Fermionic weights cancel between signs; statistical error explodes exponentially; NP-hard in the worst case' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apc3-1',
+      prompt: 'For a chain of 20 spin-1/2 particles, what is the dimension of the Hamiltonian matrix — and why is the computation still feasible?',
+      options: [
+        'About 10⁶ dimensions; the matrix is extremely sparse, and Lanczos only needs repeated matrix–vector products',
+        'About 10⁶ dimensions; modern computers can fully diagonalise any million-dimensional matrix directly',
+        '400 dimensions; the dimension grows as the square of the particle number',
+        '40 dimensions; the dimension grows linearly with the particle number',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Fully diagonalising a dense million-dimensional matrix takes ~8 TB just to store the matrix — infeasible; what works is sparse storage + iterative methods.',
+        2: 'Tensor-product dimensions multiply, they do not add: 2²⁰ ≈ 10⁶.',
+      },
+      explain: '2²⁰ = 1 048 576 dimensions. Each row of the Heisenberg-chain H has only O(N) non-zeros; sparse storage + Lanczos (a few dozen matrix–vector products) extracts the ground state with no full diagonalisation needed.',
+    },
+    {
+      id: 'apc3-2',
+      prompt: 'In a VMC run, you find that for some parameter set the variance of the local energy is nearly zero. What does that tell you?',
+      options: [
+        'The trial wavefunction is very close to an eigenstate of the Hamiltonian',
+        'There is a bug — the variance can never be zero',
+        'Not enough samples, so the variance is underestimated',
+        'The system has undergone a phase transition',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The zero-variance principle is an exact result: when Hψ = Eψ, E_loc(x) ≡ E independent of configuration.',
+        2: 'Too few samples make the variance poorly estimated, but do not systematically crush it to zero.',
+      },
+      explain: 'If ψ is exactly an eigenstate, E_loc = Hψ/ψ = E is a constant — every sample returns the same number. The variance is therefore a gauge of trial-wavefunction quality: the smaller, the closer to an eigenstate.',
+    },
+    {
+      id: 'apc3-3',
+      prompt: 'The root of the sign problem is:',
+      options: [
+        'Fermionic wavefunctions are antisymmetric, so Monte Carlo weights carry both signs, and the average survives only by exponential cancellation',
+        'Fermionic Hamiltonians are not Hermitian',
+        'Computer floating point cannot represent negative probabilities',
+        'Too many fermions to fit in memory',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Fermionic Hamiltonians are perfectly Hermitian; the problem sits in the sign of the sampling weight, not in the operator.',
+        3: 'Monte Carlo precisely avoids storing the whole state space — memory is not its bottleneck, variance is.',
+      },
+      explain: 'Monte Carlo turns integrals into sampling from a non-negative distribution. Antisymmetry makes the natural weight change sign, so the sign must be moved into the averaged quantity — but ⟨sign⟩ ~ e^{−cNβ} decays exponentially and the statistical error inflates exponentially with it. Proved NP-hard in the worst case, and exactly where quantum simulation is hoped to help.',
+    },
+  ]}
+/>

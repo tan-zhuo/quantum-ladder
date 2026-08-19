@@ -2,17 +2,270 @@
 title: 精确对角化与蒙特卡洛
 section: 'C.3'
 order: 3
-summary: 多体问题的两条数值路线。
-status: stub
+summary: 多体问题的两条数值路线：用稀疏矩阵加 Lanczos 硬算 Heisenberg 链的基态，用变分蒙特卡洛「抽样代替积分」——附完整代码与符号问题的坦白交代。
+status: done
+prereqs:
+  - appendix-a-math/01-linear-algebra
+  - 07-approximation/03-variational-method
+  - 08-identical-particles/05-second-quantization
+objectives:
+  - 用张量积把多自旋哈密顿量组装成稀疏矩阵，并解释维数为何指数爆炸
+  - 说出幂法与 Lanczos 的核心思想，会调用 eigsh 求基态
+  - 写出最简的变分蒙特卡洛程序，理解 Metropolis 采样与局域能量
+  - 知道符号问题是什么、为什么它挡住了费米子蒙特卡洛
+sims: []
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+单粒子问题在 [C.1](/ch/appendix-c-numerics/01-finite-difference/) 里已经被彻底解决。
+真正的困难是**多体**：$N$ 个自旋 1/2 的态空间是 $2^N$ 维
+（[A.1 张量积](/ch/appendix-a-math/01-linear-algebra/)：维数相乘）。
+$N=40$ 就是一万亿维——存一个态矢都存不下，这就是量子多体问题的「指数墙」，
+也是[量子计算被寄予厚望](/ch/13-frontier/04-quantum-simulation/)的原因。
+
+墙下有两条经典路线：**精确对角化**（硬算，但只到 $N\sim20$ 多）
+和**蒙特卡洛**（抽样，能到很大规模，但有软肋）。这一节各给一个能跑的最小例子。
+
+## 路线一：精确对角化
+
+### 组装哈密顿量：张量积的直接翻译
+
+以一维反铁磁 Heisenberg 链为例——相邻自旋两两耦合：
+
+$$
+\hat H=J\sum_{i=1}^{N}\hat{\vec S}_i\cdot\hat{\vec S}_{i+1},\qquad J>0
+$$
+
+「第 $i$ 个格点上的 $\hat S^x$」按 [A.1](/ch/appendix-a-math/01-linear-algebra/) 的规则写成
+$\hat{\mathbb{1}}\otimes\cdots\otimes\hat S^x\otimes\cdots\otimes\hat{\mathbb{1}}$。
+矩阵绝大多数元素是零，所以必须用**稀疏矩阵**（只存非零元）。
+
+### 只要基态：幂法与 Lanczos
+
+$2^{12}=4096$ 维还能整个对角化，再大就不行了。但我们通常只要最低几个态——
+这时不需要完整对角化：
+
+- **幂法**：随机向量反复乘 $\hat H$，展开到本征基看，
+  模最大的本征分量每乘一次被放大得最多，最后活下来的就是它。
+  只需要「会做矩阵乘向量」，从不需要存整个矩阵的逆或分解。
+- **Lanczos 方法**是幂法的聪明版：不只保留最后一个向量，
+  而是把历次乘积张出的整个子空间（Krylov 空间
+  $\{v,\hat Hv,\hat H^2v,\dots\}$）都利用起来，在其中对角化一个小三对角矩阵。
+  收敛快得多——通常几十次矩阵乘向量就把基态能收敛到十位有效数字。
+  scipy 的 `eigsh` 封装的就是这类算法。
+
+```python
+import numpy as np
+from scipy.sparse import identity, kron, csr_matrix
+from scipy.sparse.linalg import eigsh
+
+# ---- 单个自旋-1/2 的三个算符（稀疏矩阵，单位 hbar = 1）----
+sx = csr_matrix(np.array([[0, 1], [1, 0]], dtype=float) / 2)
+sy = csr_matrix(np.array([[0, -1j], [1j, 0]]) / 2)
+sz = csr_matrix(np.array([[1, 0], [0, -1]], dtype=float) / 2)
+one = identity(2, format='csr')
+
+def site_op(op, i, N):
+    """把单点算符 op 放到第 i 个格点：1 ⊗ … ⊗ op ⊗ … ⊗ 1"""
+    out = identity(1, format='csr')
+    for j in range(N):
+        out = kron(out, op if j == i else one, format='csr')
+    return out
+
+def heisenberg(N, J=1.0, periodic=True):
+    """反铁磁 Heisenberg 链：H = J Σ S_i · S_{i+1}"""
+    dim = 2**N
+    H = csr_matrix((dim, dim), dtype=complex)
+    bonds = N if periodic else N - 1
+    for i in range(bonds):
+        j = (i + 1) % N
+        for s in (sx, sy, sz):
+            H = H + J * site_op(s, i, N) @ site_op(s, j, N)
+    return H
+
+for N in [8, 10, 12]:
+    H = heisenberg(N)
+    # Lanczos：只求最低 1 个本征值，which='SA' = smallest algebraic
+    E0 = eigsh(H, k=1, which='SA', return_eigenvectors=False)[0]
+    print(f"N = {N:2d}   维数 {2**N:5d}   基态能/格点 = {E0.real/N:.6f}")
+
+# Bethe ansatz 严格解（N → ∞）：e0 = 1/4 − ln2 ≈ −0.443147
+print(f"热力学极限严格值        e0 = {0.25 - np.log(2):.6f}")
+```
+
+实测输出：
+
+```text
+N =  8   维数   256   基态能/格点 = -0.456387
+N = 10   维数  1024   基态能/格点 = -0.451545
+N = 12   维数  4096   基态能/格点 = -0.448949
+热力学极限严格值        e0 = -0.443147
+```
+
+随 $N$ 增大，每格点基态能单调逼近 Bethe ansatz 的严格值——
+剩下的差距是有限尺寸效应，按 $1/N^2$ 外推可以对得更准。
+
+<Callout type="warning" title="精确对角化的天花板与延寿术">
+内存是硬约束：存一个 $2^N$ 维复向量，$N=30$ 要 16 GB，$N=40$ 要 16 TB。
+实战三招延寿：**利用对称性分块**（总 $S^z$ 守恒把矩阵切成小块，最大块只有
+$\binom{N}{N/2}$ 维）；**不显式存矩阵**，只写「$\hat H$ 乘向量」的函数喂给 Lanczos；
+**换低熵算法**——一维问题交给 DMRG/矩阵乘积态可以算到成千上万个格点。
+即便如此，二维大系统仍在指数墙内。
 </Callout>
 
-## 内容规划
+## 路线二：变分蒙特卡洛
 
-- Lanczos 方法
-- 变分蒙特卡洛
-- 符号问题
+换一个思路：不解方程，**猜一个带参数的波函数，用抽样估计它的能量，再调参数把能量压低**。
+理论依据是[变分原理](/ch/07-approximation/03-variational-method/)：
+任何试探态的能量期望都不低于真实基态能。
 
+关键改写——能量期望可以写成「按 $\lvert\psi\rvert^2$ 抽样的平均值」：
+
+$$
+\langle E\rangle
+=\frac{\displaystyle\int \lvert\psi_a(x)\rvert^2\,E_{\text{loc}}(x)\,\dd x}{\displaystyle\int\lvert\psi_a(x)\rvert^2\,\dd x},
+\qquad
+E_{\text{loc}}(x)\equiv\frac{\hat H\psi_a(x)}{\psi_a(x)}
+$$
+
+$E_{\text{loc}}$ 叫**局域能量**——在一个具体位形 $x$ 处，哈密顿量作用效果与波函数的比值。
+高维积分做不动，但**抽样**做得动：Metropolis 算法只用波函数的比值
+$\lvert\psi(x')/\psi(x)\rvert^2$ 决定接受与否，归一化常数根本不需要——
+这正是蒙特卡洛能上高维的原因。
+
+下面是能写出来的最小完整例子：谐振子 + 高斯试探波函数
+$\psi_a(x)=\ee^{-ax^2}$（手算局域能量 $E_{\text{loc}}=a+(\tfrac12-2a^2)x^2$）：
+
+```python
+import numpy as np
+
+rng = np.random.default_rng(42)
+
+def local_energy(x, a):
+    """试探波函数 ψ_a(x) = exp(−a x²) 的局域能量（谐振子，hbar = m = ω = 1）
+    E_loc = −ψ''/2ψ + V = a + (1/2 − 2a²) x²
+    """
+    return a + (0.5 - 2 * a**2) * x**2
+
+def vmc_energy(a, n_samples=200_000, step=1.0):
+    """Metropolis 采样 |ψ_a|²，返回 ⟨E_loc⟩ 及其统计误差"""
+    x = 0.0
+    samples = np.empty(n_samples)
+    for i in range(n_samples):
+        x_new = x + step * rng.uniform(-1, 1)
+        # 接受率 = |ψ(x_new)/ψ(x)|² = exp(−2a(x_new² − x²))
+        if rng.uniform() < np.exp(-2 * a * (x_new**2 - x**2)):
+            x = x_new
+        samples[i] = local_energy(x, a)
+    burn = n_samples // 10                # 丢掉前 10%：热化阶段
+    E = samples[burn:]
+    return E.mean(), E.std() / np.sqrt(len(E))
+
+print("   a      ⟨E⟩        统计误差")
+for a in [0.3, 0.4, 0.5, 0.6, 0.7]:
+    E, err = vmc_energy(a)
+    print(f"  {a:.1f}   {E:.5f}   ±{err:.5f}" + ("   ← 精确解" if a == 0.5 else ""))
+```
+
+实测输出：
+
+```text
+   a      ⟨E⟩        统计误差
+  0.3   0.56864   ±0.00088
+  0.4   0.51155   ±0.00037
+  0.5   0.50000   ±0.00000   ← 精确解
+  0.6   0.50938   ±0.00030
+  0.7   0.52600   ±0.00059
+```
+
+能量在 $a=0.5$ 处取最小值 $0.5$——正是谐振子基态。三个值得咀嚼的细节：
+
+- **$a=0.5$ 处统计误差恰好为零**：试探函数命中精确基态时
+  $\hat H\psi=E\psi$，局域能量处处等于常数 $E$，方差为零。
+  这条「零方差原理」是实战 VMC 判断波函数质量的重要仪表。
+- **热化（burn-in）**：链从任意点出发，需要一段时间才「忘掉」初始位置、
+  达到目标分布，这段样本要扔掉。
+- 统计误差 $\propto1/\sqrt{\text{样本数}}$，且相邻样本有关联，
+  严谨做法要按关联长度分块（blocking）估计误差。
+
+实战中把 $x$ 换成 $N$ 个粒子的位形 $(\vec r_1,\dots,\vec r_N)$、
+试探函数换成 Slater 行列式乘关联因子（Slater–Jastrow），流程一模一样——
+维数增长只带来线性的代价，这是蒙特卡洛对指数墙的胜利。
+
+## 符号问题：坦白交代
+
+蒙特卡洛的软肋一句话：**它需要一个处处非负的「概率」来抽样**。
+玻色子基态波函数可以取正，万事大吉；但[费米子波函数必须反对称](/ch/08-identical-particles/02-bosons-fermions/)——有正有负。
+更一般的量子蒙特卡洛（对路径积分抽样）里，被抽样的权重会出现负数甚至复数，
+只能把符号挪进被平均的量里硬算。代价：有效信号是大量正负项的相消，
+
+$$
+\langle\text{sign}\rangle\sim\ee^{-cN\beta}
+$$
+
+随粒子数 $N$ 与逆温度 $\beta$ **指数**衰减——统计误差反过来指数爆炸。
+这就是著名的**费米子符号问题**，已被证明在最坏情形属于 NP 难，
+不存在通用解法。VMC 用固定节点等近似绕开它（代价是引入系统误差），
+而这恰是量子计算机可能真正带来突破的问题类型。
+
+<KeyFormulas
+  items={[
+    { name: '指数墙', latex: '\\dim\\mathcal{H}=2^N', note: 'N = 40 即万亿维；多体问题的根本困难' },
+    { name: '格点算符', latex: '\\hat S_i^x=\\hat{\\mathbb{1}}\\otimes\\cdots\\otimes\\hat S^x\\otimes\\cdots\\otimes\\hat{\\mathbb{1}}', note: '稀疏矩阵 kron 的直接翻译' },
+    { name: 'Lanczos 思想', latex: '\\mathcal{K}=\\operatorname{span}\\{v,\\hat Hv,\\hat H^2v,\\dots\\}', note: '在 Krylov 子空间里对角化小三对角矩阵；只需「矩阵乘向量」' },
+    { name: '局域能量', latex: 'E_{\\text{loc}}(x)=\\frac{\\hat H\\psi_a(x)}{\\psi_a(x)},\\qquad \\langle E\\rangle=\\langle E_{\\text{loc}}\\rangle_{|\\psi_a|^2}', note: '试探态命中本征态时方差为零' },
+    { name: '符号问题', latex: '\\langle\\text{sign}\\rangle\\sim\\ee^{-cN\\beta}', note: '费米子权重正负相消，统计误差指数爆炸；最坏情形 NP 难' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'apc3-1',
+      prompt: '20 个自旋 1/2 的链，哈密顿矩阵的维数是多少？为什么实际计算还做得动？',
+      options: [
+        '约 10⁶ 维；矩阵极稀疏，Lanczos 只需反复做矩阵乘向量',
+        '约 10⁶ 维；现代电脑能直接完整对角化任何百万维矩阵',
+        '400 维；维数随粒子数平方增长',
+        '40 维；维数随粒子数线性增长',
+      ],
+      answer: 0,
+      distractors: {
+        1: '完整对角化百万维稠密矩阵需要 ~8 TB 内存存矩阵本身，做不到；可行的是稀疏矩阵 + 迭代法。',
+        2: '张量积维数是相乘不是相加：2²⁰ ≈ 10⁶。',
+      },
+      explain: '2²⁰ = 1 048 576 维。Heisenberg 链的 H 每行只有 O(N) 个非零元，稀疏存储 + Lanczos（几十次矩阵乘向量）即可取出基态，无需完整对角化。',
+    },
+    {
+      id: 'apc3-2',
+      prompt: 'VMC 计算中发现某组参数下局域能量的方差几乎为零，这说明什么？',
+      options: [
+        '试探波函数非常接近哈密顿量的一个本征态',
+        '程序出了 bug，方差不可能为零',
+        '样本数不够，方差被低估',
+        '系统发生了相变',
+      ],
+      answer: 0,
+      distractors: {
+        1: '零方差原理是严格结论：Hψ = Eψ 时 E_loc(x) ≡ E，与位形无关。',
+        2: '样本不足会让方差「估不准」，但不会系统性地把方差压到零。',
+      },
+      explain: '若 ψ 恰为本征态，E_loc = Hψ/ψ = E 是常数，抽多少样本都是同一个数。方差因此是衡量试探波函数质量的仪表：越小越接近本征态。',
+    },
+    {
+      id: 'apc3-3',
+      prompt: '符号问题的根源是？',
+      options: [
+        '费米子波函数反对称，蒙特卡洛的权重有正有负，平均值靠指数级相消',
+        '费米子的哈密顿矩阵不是厄米的',
+        '计算机浮点数不能表示负数概率',
+        '费米子数目太多，内存放不下',
+      ],
+      answer: 0,
+      distractors: {
+        1: '费米子哈密顿量照样厄米；问题出在抽样权重的符号，不在算符本身。',
+        3: '蒙特卡洛恰恰不需要存整个态空间——内存不是它的瓶颈，方差才是。',
+      },
+      explain: '蒙特卡洛把积分变成对非负分布的抽样。反对称性使自然的权重变号，只能把符号挪进被平均量，而 ⟨sign⟩ ~ e^{−cNβ} 指数衰减，统计误差随之指数放大。最坏情形已证明 NP 难，也是量子模拟被寄望之处。',
+    },
+  ]}
+/>

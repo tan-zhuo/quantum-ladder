@@ -2,17 +2,278 @@
 title: 厄米算符与可观测量
 section: '3.5'
 order: 5
-summary: 为什么可观测量必须是厄米的。
-status: stub
+summary: 「可观测量对应算符」在第 2 章是一条硬规定。这一节把它变成结论：能当可观测量的，只能是厄米算符。
+status: done
+prereqs:
+  - 03-formalism/04-linear-operators
+objectives:
+  - 写出厄米共轭的定义，并判断给定算符是否厄米
+  - 证明厄米算符的本征值为实、不同本征值的本征矢正交
+  - 用谱定理说明为什么厄米算符的本征矢构成完备基
+  - 说清「可观测量必须厄米」的物理理由
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节说线性算符有无穷多种。这一节问：**哪一类配得上「可观测量」这个身份？**
+
+## 从物理要求倒推
+
+先不看数学，只列物理上非有不可的三条：
+
+<DualView>
+<div slot="left">
+
+**要求一：测量结果是实数。**
+
+测长度、测能量、测自旋，读数都是实数。所以 $\hat A$ 的本征值必须是实的。
+
+**要求二：不同结果可以分辨。**
+
+若测得 $a_1$，态就应当落在「$a_1$ 对应的那些态」里，且这与「$a_2$ 对应的那些态」互不重叠。数学上就是：不同本征值的本征矢正交。
+
+**要求三：任何态都能被这个测量分解。**
+
+$\sum_n|c_n|^2=1$ 要成立，就要求本征矢构成完备基，任何态都能展开。
+
+</div>
+<div slot="right">
+
+**答案：厄米算符**
+
+三条要求合起来，恰好挑出一类算符。定义 $\hat A$ 的**厄米共轭** $\hat A^\dagger$ 为满足
+
+$$
+\bra{\phi}\hat A^\dagger\ket{\psi}=\bra{\psi}\hat A\ket{\phi}^*
+$$
+
+的算符。若
+
+$$
+\hat A^\dagger=\hat A
+$$
+
+就称 $\hat A$ 是**厄米的**（自伴的）。
+
+在矩阵语言里：$A^\dagger=(A^{\mathsf T})^*$，厄米即 $A_{mn}=A_{nm}^*$——**转置再取共轭等于自己**。对角元因此必须是实数。
+
+</div>
+</DualView>
+
+## 三条要求逐一兑现
+
+<Derivation title="证明一：厄米算符的本征值为实数" level="基础" minutes={3} open={true}>
+
+设 $\hat A\ket{a}=a\ket{a}$，$\braket{a}{a}=1$。左乘 $\bra{a}$：
+
+$$
+\bra{a}\hat A\ket{a}=a
+$$
+
+对这个式子取复共轭，并用厄米性 $\hat A^\dagger=\hat A$：
+
+$$
+a^*=\bra{a}\hat A\ket{a}^*=\bra{a}\hat A^\dagger\ket{a}=\bra{a}\hat A\ket{a}=a
+$$
+
+所以 $a=a^*$，本征值是实数。$\blacksquare$
+
+**对照一下**：[2.3 节](/ch/02-wavefunction/03-time-independent-schrodinger/)证明同一件事用了半页——取复共轭、相减、凑成全导数、分部积分、用归一化让边界项消失。
+
+那半页并没有白费：它其实是在**具体地验证** $\hat H$ 的厄米性（分部积分把导数从一边搬到另一边，边界项为零，正是 $\bra{\phi}\hat H\ket{\psi}=\bra{\hat H\phi}\ket{\psi}$ 的内容）。
+
+**换语言不是变魔术，是把那半页的内容一次性抽象出来，从此不必重复。**
+
+</Derivation>
+
+<Derivation title="证明二：不同本征值的本征矢正交" level="基础" minutes={4}>
+
+设 $\hat A\ket{a_1}=a_1\ket{a_1}$，$\hat A\ket{a_2}=a_2\ket{a_2}$，且 $a_1\ne a_2$。
+
+考察 $\bra{a_1}\hat A\ket{a_2}$，两种算法：
+
+**往右作用**：$\bra{a_1}\hat A\ket{a_2}=a_2\braket{a_1}{a_2}$
+
+**往左作用**：由厄米性，$\hat A$ 作用到左边的 bra 上给出 $a_1^*=a_1$（已证为实），所以 $=a_1\braket{a_1}{a_2}$
+
+两式相减：
+
+$$
+(a_1-a_2)\braket{a_1}{a_2}=0
+$$
+
+由 $a_1\ne a_2$ 得 $\braket{a_1}{a_2}=0$。$\blacksquare$
+
+**简并的情形**：若 $a_1=a_2$，上式恒成立，推不出正交。但本征子空间内部可以用 Gram-Schmidt 正交化人为造一组正交基。所以**总是可以选到一组正交归一的本征矢**。
+
+</Derivation>
+
+<Callout type="insight" title="谱定理：第三条要求">
+第三条（完备性）比前两条深，它是**谱定理**的内容：
+
+> 在有限维空间里，任何厄米算符都可以对角化，其本征矢构成一组正交归一完备基。
+
+无穷维的版本需要更多条件（有界性、自伴性），但对物理上常见的可观测量都成立。
+
+写成 Dirac 记号，谱定理说的是**谱分解**：
+
+$$
+\hat A=\sum_n a_n\ket{a_n}\bra{a_n}
+$$
+
+同时
+
+$$
+\sum_n\ket{a_n}\bra{a_n}=\hat 1
+$$
+
+**第二式就是[3.2 节](/ch/03-formalism/02-dirac-notation/)那个完备性关系。** 我们当时是当作已知用的，现在知道了它的出处：任何可观测量的本征矢都自动构成一组基。
+
+第 2 章那句「$\{\psi_n\}$ 完备，所以任何态都能展开」，理由就在这里。
 </Callout>
 
-## 内容规划
+## 一些例子
 
-- 厄米性的定义
-- 本征值为实、本征矢正交
-- 谱定理
+<DualView>
+<div slot="left">
 
+**是厄米的**
+
+- $\hat x$（位置）：在位置基下是乘以实数 $x$
+- $\hat p=-\ii\hbar\partial_x$：$\ii$ 与求导各贡献一个负号，正好抵消
+- $\hat H=\hat p^2/2m+V(\hat x)$（$V$ 实）
+- 投影算符 $\ket{\psi}\bra{\psi}$
+- 泡利矩阵 $\sigma_x,\sigma_y,\sigma_z$
+
+**不是厄米的**
+
+- $\hat a_\pm$（升降算符）：$\hat a_+^\dagger=\hat a_-$，两者互为共轭而非各自自共轭
+- $\hat x\hat p$：见右栏
+- $\partial_x$ 本身（少了那个 $\ii$）
+
+</div>
+<div slot="right">
+
+**为什么 $\hat p$ 里必须有 $\ii$**
+
+$$
+\bra{\phi}\partial_x\ket{\psi}=\int\phi^*\psi'\,\dd x
+=-\int\phi'^*\psi\,\dd x=-\bra{\partial_x\phi}\ket{\psi}
+$$
+
+（分部积分，边界项因归一化而消失。）所以 $\partial_x^\dagger=-\partial_x$——**反厄米**。
+
+乘上 $-\ii\hbar$ 之后，共轭时 $\ii\to-\ii$ 再贡献一个负号，两个负号抵消：
+
+$$
+\hat p^\dagger=(-\ii\hbar\partial_x)^\dagger=(+\ii\hbar)(-\partial_x)=-\ii\hbar\partial_x=\hat p
+$$
+
+[2.6 节](/ch/02-wavefunction/06-expectation-and-uncertainty/)里说「那个 $\ii$ 保证 $\hat p$ 厄米」，这就是完整的验证。
+
+</div>
+</DualView>
+
+<Callout type="warning" title="两个厄米算符的乘积一般不厄米">
+设 $\hat A^\dagger=\hat A$，$\hat B^\dagger=\hat B$。共轭有反序性质：
+
+$$
+(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger=\hat B\hat A
+$$
+
+只有当 $\hat A\hat B=\hat B\hat A$（对易）时才等于 $\hat A\hat B$。
+
+**所以 $\hat x\hat p$ 不是可观测量**，因为 $\hat x$ 与 $\hat p$ 不对易。要构造对应的可观测量，得取对称化组合
+
+$$
+\frac{\hat x\hat p+\hat p\hat x}{2}
+$$
+
+这一步在经典量含 $xp$ 时是必需的，叫**排序问题**——经典力学里 $xp=px$，量子化时却要人为选一个顺序。这是「量子化」这个过程本身固有的歧义，不是技术困难。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '厄米共轭', latex: '\\bra{\\phi}\\hat A^\\dagger\\ket{\\psi}=\\bra{\\psi}\\hat A\\ket{\\phi}^*', note: '矩阵语言：转置再取复共轭' },
+    { name: '厄米算符', latex: '\\hat A^\\dagger=\\hat A\\ \\Longleftrightarrow\\ A_{mn}=A_{nm}^*', note: '对角元必为实数' },
+    { name: '本征值为实', latex: 'a=\\bra{a}\\hat A\\ket{a}=a^*', note: '三行；第 2 章用了半页积分' },
+    { name: '本征矢正交', latex: '(a_1-a_2)\\braket{a_1}{a_2}=0', note: '不同本征值 ⟹ 正交；简并可正交化' },
+    { name: '谱分解', latex: '\\hat A=\\sum_n a_n\\ket{a_n}\\bra{a_n},\\quad\\sum_n\\ket{a_n}\\bra{a_n}=\\hat 1', note: '完备性关系的出处' },
+    { name: '共轭的反序性', latex: '(\\hat A\\hat B)^\\dagger=\\hat B^\\dagger\\hat A^\\dagger', note: '两个厄米算符之积一般不厄米' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'herm-1',
+      prompt: '为什么可观测量必须由厄米算符表示？（多选）',
+      options: [
+        '厄米算符的本征值为实数，与测量读数是实数相符',
+        '不同本征值的本征矢正交，保证不同测量结果可分辨',
+        '其本征矢构成完备基，保证任何态都能展开、概率之和为 1',
+        '厄米算符一定可逆',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: '厄米算符可以有零本征值，此时不可逆。投影算符就是例子。',
+      },
+      explain: '这三条正是从物理要求倒推出来的。「可观测量对应算符」在第 2 章是硬规定，在这里成了结论：满足这三条的算符恰好就是厄米算符。',
+    },
+    {
+      id: 'herm-2',
+      prompt: '为什么动量算符是 −iħ∂/∂x 而不是 ħ∂/∂x？',
+      options: [
+        '因为 ∂/∂x 是反厄米的（分部积分给出一个负号），乘上 i 之后才变成厄米',
+        '因为需要与 de Broglie 关系一致',
+        '因为习惯如此',
+        '因为要让波函数是复数',
+      ],
+      answer: 0,
+      distractors: {
+        1: '与 p = ħk 一致是结果，不是厄米性的理由。',
+        2: '这不是约定，去掉 i 会得到纯虚的本征值。',
+        3: '波函数是复数由薛定谔方程决定。',
+      },
+      explain: '分部积分给出 ∂ₓ† = −∂ₓ。共轭时 i → −i 再贡献一个负号，两个负号抵消，(−iħ∂ₓ)† = −iħ∂ₓ。去掉那个 i，本征值会变成纯虚数，不能作为动量的测量值。',
+    },
+    {
+      id: 'herm-3',
+      prompt: 'Â 与 B̂ 都是厄米算符，则 ÂB̂：',
+      options: [
+        '一般不厄米，除非 Â 与 B̂ 对易',
+        '一定厄米',
+        '一定反厄米',
+        '一定不厄米',
+      ],
+      answer: 0,
+      distractors: {
+        1: '共轭有反序性质，(ÂB̂)† = B̂Â。',
+        2: '对易时它就是厄米的。',
+        3: '同上。',
+      },
+      explain: '(ÂB̂)† = B̂†Â† = B̂Â，只有对易时才等于 ÂB̂。这就是为什么 x̂p̂ 不是可观测量，而要用对称化的 (x̂p̂ + p̂x̂)/2——经典力学里 xp = px，量子化时却必须人为选一个顺序。',
+    },
+    {
+      id: 'herm-4',
+      prompt: '谱定理在物理上的直接后果是：',
+      options: [
+        '任何可观测量的本征矢构成一组完备基，因此任何态都能按测量结果展开',
+        '所有算符都可以对角化',
+        '本征值一定是离散的',
+        '测量一定会改变态',
+      ],
+      answer: 0,
+      distractors: {
+        1: '只有厄米（更一般地，正规）算符才保证可对角化。',
+        2: '连续谱同样存在，比如位置和动量。',
+        3: '测量改变态是投影公设的内容，不来自谱定理。',
+      },
+      explain: '这就是 Σ|aₙ⟩⟨aₙ| = 1 的出处。第 2 章直接用了「{ψₙ} 完备」这个事实，理由到这里才补齐：它不是每个具体问题的巧合，而是厄米性的普遍后果。',
+    },
+  ]}
+/>
+
+## 接下来
+
+厄米算符可以有很多个：$\hat x$、$\hat p$、$\hat H$、$\hat L_z$……
+
+一个自然的问题是：**能不能同时测准两个可观测量？** 答案取决于它们乘起来换不换顺序。下一节把不确定性原理从「傅里叶分析的推论」升级成一条对任意一对可观测量都成立的定理。

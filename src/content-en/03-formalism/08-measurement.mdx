@@ -1,17 +1,294 @@
 ---
-title: 'Measurement and the projection postulate'
-summary: 'Wave-packet collapse: one postulate, decades of argument.'
+title: Measurement and the projection postulate
 section: '3.8'
 order: 8
-status: stub
+summary: 'One postulate, decades of argument. First sort out what it says from what it does not say — then see exactly where the argument gets stuck.'
+status: done
+prereqs:
+  - 03-formalism/07-postulates
+objectives:
+  - Write down measurement probabilities and post-measurement states with projection operators, including the degenerate case
+  - Explain repeatability of successive measurements, and why it demands projection
+  - Locate the measurement problem precisely, and distinguish what each interpretation gives up
+  - Explain what decoherence solves and what it does not
+sims: ['infinite-well']
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section laid the measurement postulate on the table. This section takes it apart.
+
+## What the postulate says
+
+Let the observable $\hat A$ have the spectral decomposition $\hat A=\sum_n a_n\hat P_n$, where $\hat P_n$ projects onto the eigenspace of the eigenvalue $a_n$.
+
+<DualView>
+<div slot="left">
+
+**Two things, happening at once**
+
+**(1) Outcome and probability**
+
+$$
+P(a_n)=\bra{\psi}\hat P_n\ket{\psi}=\big\|\hat P_n\ket{\psi}\big\|^2
+$$
+
+In the non-degenerate case $\hat P_n=\ket{a_n}\bra{a_n}$, and this reduces to the familiar $P=|\braket{a_n}{\psi}|^2$.
+
+**(2) The post-measurement state**
+
+$$
+\ket{\psi'}=\frac{\hat P_n\ket{\psi}}{\big\|\hat P_n\ket{\psi}\big\|}
+$$
+
+The denominator is just renormalisation.
+
+</div>
+<div slot="right">
+
+**The probabilities sum to 1 automatically**
+
+$$
+\sum_n P(a_n)=\bra{\psi}\Big(\sum_n\hat P_n\Big)\ket{\psi}=\braket{\psi}{\psi}=1
+$$
+
+using completeness, $\sum_n\hat P_n=\hat 1$.
+
+**No coincidence**: it is a direct consequence of the spectral theorem of [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) — probability normalisation comes free with "observables must be Hermitian".
+</div>
+</DualView>
+
+<Callout type="insight" title="Repeatability: why the projection step is indispensable">
+With only the Born rule and no projection step, the theory would clash with a very basic experimental fact.
+
+**The fact**: repeat the same measurement immediately and you always get the same result. Find the electron in $[a,b]$, measure again at once, and it is still in $[a,b]$.
+
+With projection this is automatic: after the first measurement the state is already $\ket{a_n}$, and
+
+$$
+P(a_n\ \text{again}) = |\braket{a_n}{a_n}|^2 = 1
+$$
+
+**That is the precise experimental meaning of "collapse"** — not some mysterious event, but the testable statement "a second measurement must return the same result".
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="But mind the word ''immediately''">
+Only when $[\hat A,\hat H]=0$ does the post-measurement state remain an eigenstate of $\hat A$. Otherwise it evolves away under the Schrödinger equation, and a later measurement no longer guarantees the same result.
 
-- Projective measurement and eigenvalue probabilities
-- Repeatability of measurement
-- The collapse problem and where interpretations diverge
+Example: the electron is found in $[a,b]$ (a position measurement), but $[\hat x,\hat H]\ne0$, so the wave packet starts spreading at once. A few multiples of $\tau=2m\sigma^2/\hbar$ later, it may well be elsewhere.
+
+**Conserved quantities (observables commuting with $\hat H$) are the exception**: energy and total angular momentum, once measured, stay put.
+</Callout>
+
+## See it with your own hands
+
+<Sim name="infinite-well" />
+
+Switch the mode to "superposition" and make both $c_1$ and $c_2$ non-zero. By postulate 3, measuring the energy now:
+
+- gives $E_1$ with probability $|c_1|^2$ and $E_2$ with probability $|c_2|^2$;
+- once $E_1$ is obtained, the state instantly becomes pure $\psi_1$ — **the probability density stops sloshing**.
+
+That is exactly what "dragging $c_2$ to 0" does in the simulation. The difference: you drag by hand, whereas the measurement happens at random — but once it happens, the outcome is the same.
+
+<Callout type="check" title="A point worth thinking through">
+Before the measurement, $\langle E\rangle=|c_1|^2E_1+|c_2|^2E_2$ — a number somewhere between $E_1$ and $E_2$.
+
+But **no single measurement ever returns that number** — only $E_1$ or $E_2$.
+
+$\langle E\rangle$ is the average over many repeated measurements, and in general it equals no eigenvalue at all. The misconception card at the start of [section 2.6](/en/ch/02-wavefunction/06-expectation-and-uncertainty/) — "the expectation value is not the most likely result" — was about exactly this.
+</Callout>
+
+## What the postulate does **not** say
+
+This may be the most important part of the section.
+
+<Callout type="misconception" title="Questions the projection postulate leaves unanswered">
+**1. At which step does the collapse happen?**
+
+The postulate only says "after the measurement" — without defining what counts as a measurement. When the particle hits the detector? When the current is amplified? When the data are written to disk? When somebody looks at the screen?
+
+On this the postulate is **entirely silent**.
+
+**2. How long does the collapse take?**
+
+The postulate says "immediately". But real measurement processes take time. The theory gives no dynamics of collapse — because it is not a dynamical process at all; it is a substitution written into a postulate.
+
+**3. Why this outcome and not that one?**
+
+The postulate gives only probabilities. As for why this particular run gave $E_1$, the theory says: there is no reason.
+
+This is **fundamental randomness**, not "we just don't know". Bell experiments ([section 9.4](/en/ch/09-quantum-information/04-bell-chsh/)) have ruled out, at extremely high confidence, local hidden-variable stories of the kind "the answer was there all along, we simply had not looked".
+</Callout>
+
+<Callout type="misconception" title="Three widely circulated wrong claims">
+**"Consciousness causes collapse."** Wigner once took this seriously, and later abandoned it himself. It has no experimental support whatsoever, and it faces an awkward question: before conscious observers existed, did any collapse ever happen in the universe? Mainstream physics does not adopt this view.
+
+**"Measurement disturbs because the detector gives the particle a knock."** Sometimes true, but not the essence. The quarter-wave-plate scheme of [section 1.6](/en/ch/01-history/06-double-slit/) exchanges no momentum, yet still wipes out the interference. What does the work is **the recording of information**, not the exchange of momentum.
+
+**"Collapse is faster than light, so it violates relativity."** The collapse of an entangled state is indeed "nonlocal", but **it cannot be used to send signals**. Alice's outcomes look completely random to Bob; the statistics in his hands do not change no matter what Alice does. Only by comparing records over a classical channel can the correlations be seen — and classical channels are not faster than light. This is the **no-communication theorem**, worked out in [section 9.5](/en/ch/09-quantum-information/05-teleportation/).
+</Callout>
+
+## The precise location of the measurement problem
+
+<DualView>
+<div slot="left">
+
+**Treat the apparatus as a quantum system too**
+
+Let the measured system start in $\ket{\psi}=c_1\ket{a_1}+c_2\ket{a_2}$ and the apparatus in $\ket{M_0}$.
+
+By postulate 4 (unitary evolution), a suitable interaction gives
+
+$$
+\ket{\psi}\ket{M_0}\longrightarrow c_1\ket{a_1}\ket{M_1}+c_2\ket{a_2}\ket{M_2}
+$$
+
+The apparatus has faithfully recorded the result — **but what it recorded is a superposition**.
+
+The Schrödinger equation delivers "a pointer aiming at two readings at once". And nobody has ever seen such a thing.
+
+</div>
+<div slot="right">
+
+**Where the seam is**
+
+$$
+\underbrace{c_1\ket{a_1}\ket{M_1}+c_2\ket{a_2}\ket{M_2}}_{\text{what postulate 4 gives}}
+$$
+
+$$
+\Big\downarrow\ ?
+$$
+
+$$
+\underbrace{\ket{a_1}\ket{M_1}\ \text{or}\ \ket{a_2}\ket{M_2}}_{\text{what we see}}
+$$
+
+This step **cannot** come from postulate 4: unitary evolution is linear, it turns superpositions into superpositions, and it never singles out one term.
+
+Schrödinger's cat is the same argument with the apparatus swapped for a cat.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="What decoherence achieves — and what it does not">
+The apparatus is not isolated: it interacts ceaselessly with its environment (air molecules, thermal radiation, internal degrees of freedom). Write the environment in too:
+
+$$
+c_1\ket{a_1}\ket{M_1}\ket{E_1}+c_2\ket{a_2}\ket{M_2}\ket{E_2}
+$$
+
+For a macroscopic apparatus the two environment states become orthogonal almost instantly, $\braket{E_1}{E_2}\approx0$. Trace out the environment and the off-diagonal elements of the apparatus's reduced density matrix are exponentially suppressed:
+
+$$
+\rho_M\to\begin{pmatrix}|c_1|^2&\approx0\\ \approx0&|c_2|^2\end{pmatrix}
+$$
+
+The timescale is absurdly short: for a dust grain in air, about $10^{-31}$ seconds.
+
+**What decoherence solves**: why macroscopic objects never show interference between superposed states; why "pointer position", and not some other basis, gets singled out (the **preferred-basis problem**); why collapse looks instantaneous.
+
+**What decoherence does not solve**: the matrix above is a **mixed state**, read as "it is 1 or 2, we just don't know which". But mathematically it is still part of the full entangled state — the global state remains a superposition. **Why we experience only one outcome**, decoherence does not answer.
+
+This is worth stating plainly, because "decoherence solved the measurement problem" is a widespread oversimplification. It shrank the problem from "why no macroscopic superpositions" to "why a single outcome" — enormous progress, but not the end. [Section 10.5](/en/ch/10-open-systems/05-decoherence/) carries out the full calculation.
+</Callout>
+
+<Callout type="warning" title="What each interpretation gives up">
+| Interpretation | What it gives up | The price |
+| --- | --- | --- |
+| Copenhagen | asking about the collapse mechanism | "measurement" remains forever a primitive |
+| Many-worlds | postulate 3 (a unique outcome) | all branches actually exist; the origin of probability needs a separate argument |
+| Bohmian mechanics | locality | explicitly nonlocal, sitting awkwardly with relativity |
+| GRW / spontaneous collapse | strictly unitary evolution | modifies the Schrödinger equation; falsifiable in principle |
+| Relational / QBism | objectivity of the state | the state becomes "observer-relative" or "a belief" |
+
+**Look at the last column.** These are not "matters of taste" — each pays a genuine price somewhere, and the GRW family actually makes predictions that differ from standard quantum mechanics, with experiments steadily tightening the bounds.
+
+**All interpretations give identical predictions for every experiment so far**, so this is not a problem that more precise calculation can settle. See [section 13.7](/en/ch/13-frontier/07-foundations/).
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Measurement probability (with degeneracy)', latex: 'P(a_n)=\\bra{\\psi}\\hat P_n\\ket{\\psi}=\\|\\hat P_n\\ket{\\psi}\\|^2', note: 'Reduces to |⟨aₙ|ψ⟩|² when non-degenerate' },
+    { name: 'Post-measurement state', latex: '\\ket{\\psi\'}=\\hat P_n\\ket{\\psi}/\\|\\hat P_n\\ket{\\psi}\\|', note: 'The denominator is just renormalisation' },
+    { name: 'Probability normalisation', latex: '\\sum_n P(a_n)=\\bra{\\psi}\\hat 1\\ket{\\psi}=1', note: 'A free gift of the spectral theorem' },
+    { name: 'Repeatability', latex: 'P(a_n\\ \\text{again})=1', note: 'Persists indefinitely only when [Â,Ĥ]=0' },
+    { name: 'Location of the measurement problem', latex: 'c_1\\ket{a_1}\\ket{M_1}+c_2\\ket{a_2}\\ket{M_2}\\ \\not\\to\\ \\text{a single term}', note: 'Linear evolution cannot single out one term' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'meas-1',
+      prompt: 'The most direct experimental evidence for the step "the post-measurement state becomes an eigenstate" is:',
+      options: [
+        'Immediately repeating the same measurement always gives the same result',
+        'Measurement outcomes are random',
+        'The probabilities sum to 1',
+        'The eigenvalues are real',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Randomness is the content of the Born rule — projection is a separate matter.',
+        2: 'That is a corollary of completeness.',
+        3: 'That is a corollary of Hermiticity.',
+      },
+      explain: 'With the Born rule alone and no projection, a second measurement would again give random results with the original probabilities — contradicting experiment. The testable meaning of "collapse" is precisely this repeatability.',
+    },
+    {
+      id: 'meas-2',
+      prompt: 'Regarding "the post-measurement state remains an eigenstate forever", which is correct?',
+      options: [
+        'It holds only when [Â, Ĥ] = 0; otherwise the state evolves away under the Schrödinger equation',
+        'It always holds',
+        'It never holds',
+        'It depends on the precision of the apparatus',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A wave packet starts spreading right after a position measurement — a counterexample.',
+        2: 'Conserved quantities like energy and total angular momentum stay put once measured.',
+        3: 'It has nothing to do with apparatus precision — it depends on the commutation relation.',
+      },
+      explain: 'This is why the postulate stresses "immediately". After a position measurement the packet spreads on the scale τ = 2mσ²/ħ; a conserved quantity commuting with Ĥ, once measured, never changes again.',
+    },
+    {
+      id: 'meas-3',
+      prompt: 'The precise content of the measurement problem is:',
+      options: [
+        'Unitary evolution turns superpositions into superpositions and cannot single out one outcome, yet we only ever observe one',
+        'We cannot measure microscopic particles precisely',
+        'The apparatus always disturbs the measured system',
+        'The wavefunction is unobservable',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That is a technical issue, not the structural one at stake here.',
+        2: 'Disturbance is real, but it does not explain why only one outcome appears.',
+        3: 'The wavefunction being unobservable creates no contradiction.',
+      },
+      explain: 'Treat the apparatus as a quantum system and postulate 4 gives c₁|a₁⟩|M₁⟩ + c₂|a₂⟩|M₂⟩ — a pointer aiming at two readings at once. Linear evolution can never single out one term, so the theory must switch to postulate 3 somewhere, without saying where. Schrödinger''s cat is the same argument.',
+    },
+    {
+      id: 'meas-4',
+      prompt: 'Which statements about decoherence are correct? (Select all that apply.)',
+      options: [
+        'It explains why macroscopic objects show no interference effects',
+        'It explains why the "pointer position" basis gets singled out',
+        'It completely solves the measurement problem',
+        'The reduced density matrix after decoherence is a mixed state, but the global state remains a superposition',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'It shrank the problem from "why no macroscopic superpositions" to "why a single outcome" — enormous progress, but not the end.',
+      },
+      explain: 'Environment states become orthogonal almost instantly (about 10⁻³¹ s for a dust grain in air), and the off-diagonal elements are exponentially suppressed. But that is only the reduced description after tracing out the environment — the global state is still an entangled superposition, and "why do we experience only one branch" remains unanswered.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Measurement is the one non-unitary step in the theory. The rest of the time, states evolve by postulate 4.
+
+The next section packages that evolution into a single operator and introduces something very practical: **whether the time dependence sits on the states or on the operators is a free choice.**

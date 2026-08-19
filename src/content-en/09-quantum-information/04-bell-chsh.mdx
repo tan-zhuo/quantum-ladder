@@ -1,25 +1,338 @@
 ---
-title: 'Bell inequalities and CHSH'
-summary: 'Local realism, sentenced to death by experiment.'
+title: The Bell inequality and CHSH
 section: '9.4'
 order: 4
-status: stub
-sims: ['bell-test']
+summary: 'Write the worldview "the outcomes were fixed all along" as an inequality S ≤ 2; quantum mechanics computes 2√2, loophole-free experiments confirm it — and local realism is out.'
+status: done
+prereqs:
+  - 09-quantum-information/03-entanglement-measures
+  - 05-angular-momentum/04-stern-gerlach
+objectives:
+  - State in your own words what local realism (a local hidden-variable model) actually claims
+  - Derive the CHSH inequality ∣S∣ ≤ 2 on your own, and name the two assumptions the derivation uses
+  - Compute the singlet's quantum correlation function and obtain S = 2√2 at the optimal angles
+  - Say what the detection loophole and the locality loophole are, and how the 2015 experiments closed both at once
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section ended on a dangling question: could the Bell state's perfect correlations
+just mean the two particles copied the same answer sheet before parting?
+This section is the intellectual climax of the chapter — we will watch this seemingly untestable
+philosophical question be turned by John Bell, in 1964, into a piece of **arithmetic**,
+and then voted down by experiment, ballot by ballot, over the following sixty years.
+
+## EPR: a thoroughly reasonable objection
+
+In 1935, Einstein, Podolsky and Rosen stared at entangled states and made the following argument.
+Take the spin singlet (the Bell state $\ket{\Psi^-}$, total spin zero):
+
+$$
+\ket{\Psi^-}=\frac{\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}}{\sqrt2}
+$$
+
+Send the two particles to a far-apart Alice and Bob. Alice measures along $z$ and gets $\uparrow$;
+she **immediately knows** that Bob, measuring along $z$, must get $\downarrow$ — one hundred percent,
+no exceptions. EPR argue: Bob's particle is worlds away from Alice, so her measurement cannot
+instantly change it (**locality**); and a quantity you can predict with certainty without touching
+the system must be a property it carried all along (**realism**). Conclusion: the outcomes were
+determined before any measurement, and quantum mechanics' "probabilities" merely reflect hidden
+determining factors we have not seen — **hidden variables**.
+
+The claim sounds untestable: the crib sheet is hidden in the particle's pocket — who could prove it
+isn't there? Bell's genius was to discover: **if the crib sheet exists, then no matter what is
+written on it, it must obey an inequality**.
+
+## What a local hidden-variable model actually promises
+
+Write the claim as mathematics. Each particle pair sets out carrying a hidden variable $\lambda$
+(the crib sheet — arbitrary content, arbitrary distribution). Alice has two possible measurement
+directions $a, a'$, Bob has $b, b'$, and every outcome is recorded as $\pm1$.
+Local realism promises the existence of four **predetermined** functions:
+
+$$
+A(a,\lambda),\ A(a',\lambda),\ B(b,\lambda),\ B(b',\lambda)\ \in\ \{\pm1\}
+$$
+
+Two points are crucial: $A$ does not depend on what Bob chose (locality),
+and all four values **exist simultaneously** for each $\lambda$ (realism — even if Alice only
+measured $a$ this round, "what would I have got measuring $a'$" has a definite answer).
+The correlation function is just an average over crib sheets:
+
+$$
+E(a,b)=\int \dd\lambda\,p(\lambda)\,A(a,\lambda)B(b,\lambda)
+$$
+
+<Derivation title="The CHSH inequality: ∣S∣ ≤ 2" level="基础" minutes={6} open={true}>
+
+**Step 1: for one fixed crib sheet $\lambda$, examine the combination**
+
+$$
+s(\lambda)=A(a,\lambda)\big[B(b,\lambda)-B(b',\lambda)\big]
++A(a',\lambda)\big[B(b,\lambda)+B(b',\lambda)\big]
+$$
+
+**Step 2: enumerate.** $B(b,\lambda)$ and $B(b',\lambda)$ are each $\pm1$, so there are only two cases:
+
+- they are **equal**: the first bracket is 0, the second is $\pm2$, so $s=\pm2$;
+- they are **opposite**: the second bracket is 0, the first is $\pm2$, so $s=\pm2$.
+
+However the crib sheet is written, always $s(\lambda)=\pm2$.
+
+**Step 3: average.** Define
+
+$$
+S\equiv E(a,b)-E(a,b')+E(a',b)+E(a',b')=\int\dd\lambda\,p(\lambda)\,s(\lambda)
+$$
+
+A weighted average of $\pm2$'s can never leave $[-2,2]$:
+
+$$
+\boxed{\,|S|\le 2\,}
+$$
+
+**The derivation used exactly two assumptions**: the outcomes are predetermined (all four values
+exist at once) and do not depend on the other party's choice. Not a single ingredient of quantum
+mechanics was used — this is the ceiling for **every** local hidden-variable theory.
+
+</Derivation>
+
+## What quantum mechanics says: first compute the correlation function
+
+<Derivation title="The singlet's correlation function E(a, b) = −cos(θa − θb)" level="进阶" minutes={8}>
+
+Let Alice measure the spin along $\hat a$ and Bob along $\hat b$ (outcomes $\pm1$, i.e. measuring
+$\hat a\cdot\vec\sigma$). The quantum correlation function is
+
+$$
+E(a,b)=\braket{\Psi^-}{(\hat a\cdot\vec\sigma)\otimes(\hat b\cdot\vec\sigma)\,|\Psi^-}
+$$
+
+**Step 1: exploit the singlet's rotational symmetry.** $\ket{\Psi^-}$ has total spin zero and is
+invariant under simultaneous rotation of both particles (chapter 5). So the answer can depend only
+on the angle between $\hat a$ and $\hat b$. Take both in the $x$–$z$ plane, angle $\theta_{ab}$.
+
+**Step 2: three special cases first.** Take $\hat a=\hat b=\hat z$:
+
+$$
+(\sigma_z\otimes\sigma_z)\ket{\Psi^-}
+=\frac{(+1)(-1)\ket{\uparrow\downarrow}-(-1)(+1)\ket{\downarrow\uparrow}}{\sqrt2}
+=-\ket{\Psi^-}
+$$
+
+So $E=-1$: parallel measurements are **perfectly anticorrelated** (total spin zero, made visible).
+The same method with $\hat a=\hat z,\hat b=\hat x$ (using $\sigma_x$ to flip basis states) makes the
+cross terms cancel in pairs, giving $E=0$.
+
+**Step 3: general angle.** Decompose $\hat b\cdot\vec\sigma=\cos\theta_{ab}\,\sigma_{\parallel}+\sin\theta_{ab}\,\sigma_{\perp}$
+along the directions parallel and perpendicular to $\hat a$, and assemble linearly from the two
+special cases:
+
+$$
+E(a,b)=-\cos\theta_{ab}
+$$
+
+**Check the endpoints**: $\theta_{ab}=0$ gives $-1$ (perfect anticorrelation), $90^\circ$ gives $0$
+(independence), $180^\circ$ gives $+1$ (perfect correlation). A smooth cosine — compare it with the
+closest thing a hidden-variable model can produce, a piecewise-linear ramp: the cosine is steep in
+the middle and flat at the ends, and that is precisely the geometric reason it can violate CHSH.
+
+</Derivation>
+
+**Now pick angles to maximise $|S|$.** Take (all in one plane, in degrees)
+
+$$
+a=0,\quad a'=90,\quad b=45,\quad b'=135
+$$
+
+Substitute each pair into $E=-\cos\theta_{ab}$:
+
+| Pair | Angle | $E$ |
+| --- | --- | --- |
+| $a,b$ | 45° | $-\tfrac{\sqrt2}{2}$ |
+| $a,b'$ | 135° | $+\tfrac{\sqrt2}{2}$ |
+| $a',b$ | 45° | $-\tfrac{\sqrt2}{2}$ |
+| $a',b'$ | 45° | $-\tfrac{\sqrt2}{2}$ |
+
+$$
+S=E(a,b)-E(a,b')+E(a',b)+E(a',b')
+=-\frac{\sqrt2}{2}\times4=-2\sqrt2\approx-2.83
+$$
+
+$$
+|S|=2\sqrt2>2
+$$
+
+Quantum mechanics **crashes through the ceiling of every local hidden-variable theory**.
+And $2\sqrt2$ is no lucky choice of angles: one can prove that quantum mechanics cannot produce a
+larger value with any state and any measurements (the **Tsirelson bound**) —
+$2\sqrt2$ is the limit of quantum correlations.
+
+<DualView>
+<div slot="left">
+
+**Intuition: why the cosine beats the ramp.** A hidden-variable model can also manage
+"anticorrelated when parallel, uncorrelated when perpendicular" — for instance, give each pair a
+random direction $\hat\lambda$ and let each side output the sign of $\hat a\cdot\hat\lambda$.
+That model's correlation varies **linearly** with the angle — a straight ramp.
+The four CHSH angles deliberately strike at the 45° "midsection":
+at 45° the cosine's correlation strength is $0.707$, much steeper than the ramp's $0.5$,
+and summing four such terms amplifies the gap into $2\sqrt2$ versus 2.
+Entanglement wins by being **more strongly correlated on every measurement axis than classical
+physics allows** — the payoff of last section's "wins on both axes" foreshadowing.
+
+</div>
+<div slot="right">
+
+The hidden-variable toy model (random axis $\hat\lambda$, output by sign):
+
+$$
+E_{\text{ramp}}(\theta)=-1+\frac{2\theta}{\pi},\qquad \theta\in[0,\pi]
+$$
+
+At the CHSH angle combination:
+
+$$
+S_{\text{ramp}}=-\tfrac12\times4=-2
+$$
+
+Flat against the ceiling. Quantum:
+
+$$
+S_{\text{QM}}=-\cos45^\circ\times4=-2\sqrt2
+$$
+
+The Tsirelson bound: $|S|_{\text{QM}}\le2\sqrt2$, with equality iff the state is maximally entangled
+and the angles are as above.
+
+</div>
+</DualView>
+
+## The experimental tribunal: closing the loopholes one by one
+
+An inequality can be violated on paper, but it must also be violated in the laboratory. From
+Freedman–Clauser in 1972 to Aspect's photon experiments in 1982, the measured $S$ has always sided
+with quantum mechanics. But careful sceptics pointed out two **loopholes** — assumptions of the
+derivation that an experiment does not automatically enforce:
+
+1. **The locality loophole**: if a signal carrying Alice's choice of measurement direction has time
+   to reach Bob's particle (at light speed), the assumption "$B$ does not depend on $a$" is not
+   enforced. The fix: put the stations far enough apart and choose the measurement directions with
+   fast random number generators only while the particles are in flight, so that any "tip-off" is
+   relativistically too late. Aspect first implemented fast switching in 1982; the 1998 Innsbruck
+   experiment nailed it with strict spacelike separation.
+2. **The detection loophole**: photon detectors are inefficient, and if only a small fraction of
+   particles is recorded, the recorded sample may be biased — hidden variables could conspire to let
+   only the "cooperative" particles be detected (one must assume "fair sampling" to conclude
+   anything). The fix: push the total detection efficiency above roughly 83%, or switch to matter
+   qubits with near-unit detection efficiency.
+
+The trouble was that early experiments each closed only one: photon experiments had the distance but
+poor detection; ion experiments detected everything but sat too close together. **In 2015, three
+experiments closed both loopholes simultaneously**: Delft used diamond colour centres 1.3 km apart
+(detection efficiency near 100% — extremely low event rate, but every event counts), while Vienna
+and NIST used entangled photons with high-efficiency superconducting detectors (hundreds of millions
+of events, with statistical significance at the level of $p$-values below $10^{-30}$).
+All three clearly violated the Bell inequality. The 2022 Nobel Prize in Physics, awarded to Clauser,
+Aspect and Zeilinger, put the official seal on this experimental line.
+
+<Callout type="insight" title="What was sentenced to death is neither 'realism' nor 'locality', but their conspiracy">
+What the Bell experiments rule out is the **conjunction**: "outcomes are predetermined AND
+unaffected by distant choices". Quantum mechanics keeps the part of locality that truly matters —
+**no signalling**: last section we computed that $\rho_A=I/2$ is independent of anything Bob does,
+Alice's statistics never budge, and no information travels faster than light. The price paid is
+realism: "what would I have got had I measured $a'$" has **no answer** in quantum mechanics —
+an unperformed measurement has no outcome. That is not a gap in our knowledge; it is how the world
+is built.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Common misreadings">
+"Bell experiments prove faster-than-light action" — no: the no-signalling theorem survives intact,
+and you can never use entanglement to send a message (section 9.5 will hammer on this again).
+"Violating the Bell inequality proves quantum mechanics" — also no: it only **rules out** local
+hidden variables; quantum mechanics is one theory consistent with the data (though predicting
+exactly $2\sqrt2$ is a hard-edged success). One remaining escape route is to abandon the free choice
+of measurement settings (superdeterminism) — logically irrefutable, but at the price of giving up
+the methodology of experimental science altogether.
+</Callout>
 
-- The EPR paradox
-- Deriving the CHSH inequality
-- The Tsirelson bound 2√2
-- Loopholes and the loophole-free experiments of 2015
+To pile up CHSH data with your own hands and watch $S$ climb past 2,
+go to [Lab module 08: entanglement and Bell non-locality](/en/lab/08-entanglement/).
 
-## Planned simulations
+<KeyFormulas
+  items={[
+    { name: 'CHSH combination', latex: 'S=E(a,b)-E(a,b\')+E(a\',b)+E(a\',b\')', note: 'Four correlations measured separately, assembled afterwards' },
+    { name: 'Classical ceiling', latex: '|S|\\le 2', note: 'All local hidden-variable theories; uses only "predetermined + local"' },
+    { name: 'Singlet correlation', latex: 'E(a,b)=-\\cos\\theta_{ab}', note: 'Fully anticorrelated when parallel, uncorrelated when perpendicular; cosine beats the ramp' },
+    { name: 'Tsirelson bound', latex: '|S|_{\\text{QM}}\\le 2\\sqrt2\\approx 2.83', note: 'The quantum-mechanical limit, reached at the optimal angles 0°, 90°, 45°, 135°' },
+  ]}
+/>
 
-- `bell-test`
+<QuizBlock
+  questions={[
+    {
+      id: 'bc-1',
+      prompt: 'Which assumptions does the derivation of the CHSH inequality use? (Select all that apply.)',
+      options: [
+        'In each round, all four outcomes A(a), A(a′), B(b), B(b′) simultaneously have definite values',
+        'Alice’s outcome does not depend on which direction Bob chooses to measure',
+        'The Born rule of quantum mechanics',
+        'The two particles are in a maximally entangled state',
+      ],
+      answer: [0, 1],
+      distractors: {
+        2: 'The derivation uses no quantum mechanics at all — which is exactly its power: the conclusion applies to every local hidden-variable theory.',
+        3: 'The inequality holds for any particle source; entangled states only enter when it comes to violating it.',
+      },
+      explain: 'Realism (four values exist at once) + locality (outcomes independent of distant choices) ⇒ s(λ) = ±2 ⇒ ∣S∣ ≤ 2. When experiment violates it, what falls is the conjunction of these two assumptions.',
+    },
+    {
+      id: 'bc-2',
+      type: 'numeric',
+      prompt: 'At the optimal angles, what ∣S∣ does quantum mechanics predict? (Give three decimal places.)',
+      answer: 2.828,
+      tolerance: 0.01,
+      explain: '∣S∣ = 2√2 ≈ 2.828: each of the four correlations contributes cos45° = √2/2, with the signs arranged so they add up coherently. This is also the Tsirelson bound — no amount of quantum optimisation reaches the algebraic maximum of 4.',
+    },
+    {
+      id: 'bc-3',
+      prompt: 'What is the "detection loophole"?',
+      options: [
+        'With low detection efficiency, the recorded subsample may be biased, requiring an extra fair-sampling assumption',
+        'Detector noise can push S above 2',
+        'The detectors are close enough to communicate with each other',
+        'A single detector cannot distinguish +1 from −1',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Noise typically drags correlations down (pushing S inside 2); the loophole is about sample-selection bias, not noise.',
+        2: 'That is the locality loophole, closed by spacelike separation and fast switching of measurement settings.',
+      },
+      explain: 'If hidden variables could influence "whether this event gets detected", they could admit only cooperative events into the statistics and fake a violation with a biased sample. The fix: total efficiency above roughly 83%, or systems with near-unit detection efficiency (like Delft’s colour-centre experiment).',
+    },
+    {
+      id: 'bc-4',
+      prompt: 'Once experiment confirms ∣S∣ > 2, which conclusion holds?',
+      options: [
+        'At least one of "outcomes are predetermined" and "unaffected by distant choices" must fail',
+        'Alice can use entanglement to send Bob a message instantaneously',
+        'All hidden-variable theories are ruled out',
+        'Quantum mechanics is proven to be the uniquely correct theory',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The no-signalling theorem still holds: Bob’s local statistics are independent of anything Alice does.',
+        2: 'Non-local hidden-variable theories (such as Bohmian mechanics) are outside the blast radius — only local hidden variables are excluded.',
+        3: 'Experiments can only rule out a class of theories; quantum mechanics is a survivor, not "the proven unique one".',
+      },
+      explain: 'A Bell experiment is a verdict of exclusion: local realism is out. Each surviving option pays its own price — quantum mechanics gives up "unmeasured quantities have values", Bohmian mechanics gives up locality, superdeterminism gives up the free-choice assumption.',
+    },
+  ]}
+/>
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="bell-test" />`.
+## What comes next
+
+The Bell experiments tell us: the correlations inside entanglement are stronger than any classical
+mechanism, and yet cannot carry a single bit. So what is this "super-strong but incommunicable
+correlation" actually good for? The next section gives the first astonishing answer: transferring an
+unknown quantum state from Alice's hands to Bob's — moving no particle at all, just making one
+two-bit phone call.

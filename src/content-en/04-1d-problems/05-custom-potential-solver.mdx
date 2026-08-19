@@ -1,23 +1,263 @@
 ---
-title: 'A solver for arbitrary potentials'
-summary: 'Draw a potential and solve for its levels on the spot.'
+title: A numerical solver for custom potentials
 section: '4.5'
 order: 5
-status: stub
-sims: ['custom-potential']
+summary: 'Package last section''s method into a general-purpose solver: feed in any potential curve, get back levels and wavefunctions — then commission it on the double well, explaining the ammonia maser along the way.'
+status: done
+prereqs:
+  - 04-1d-problems/04-finite-difference
+  - 04-1d-problems/01-symmetry-parity
+objectives:
+  - Wrap the finite difference method into a solver usable for any V(x), and handle the unit conversions
+  - "Sign off numerical results against a checklist: node counts, parity, orthogonality, double convergence"
+  - Solve the double well with the solver, read off the tunneling splitting, and explain its exponential sensitivity
+  - Deduce the period of left-right oscillation from a split pair of levels, connecting to the ammonia maser and the chemical bond
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section we walked the finite difference method through, end to end, on the harmonic oscillator. But fiddling afresh with grid, units, and checks at every change of potential is no way to live. This section does two things: **package** the method into a solver you can grab whenever you need it; then use it to chew through a bone analytic methods cannot crack — the **double well** — and read genuine physics out of the numbers: the ammonia molecule's microwave maser, and the embryo of the chemical bond.
+
+## The solver itself
+
+The code is almost a reprint of last section's; the one new idea is passing the potential in as a parameter — any function that can evaluate on an array will do:
+
+```python
+import numpy as np
+from scipy.linalg import eigh_tridiagonal
+
+def solve(V, L, N, k=6):
+    """Solve -psi''/2 + V(x) psi = E psi (dimensionless units hbar = m = 1).
+
+    V : potential function, accepts a numpy array
+    L : width of the solution interval [-L/2, L/2] (both ends treated as infinitely high walls)
+    N : number of interior grid points
+    k : number of lowest levels requested
+    Returns: grid x, levels E[0..k-1], wavefunctions psi[:, i] (normalised)
+    """
+    x = np.linspace(-L/2, L/2, N + 2)[1:-1]
+    h = x[1] - x[0]
+    diag = 1.0 / h**2 + V(x)
+    off  = -0.5 / h**2 * np.ones(N - 1)
+    E, psi = eigh_tridiagonal(diag, off, select='i', select_range=(0, k - 1))
+    return x, E, psi / np.sqrt(h)
+```
+
+First run it on a known answer to make sure nothing was miscopied:
+
+```python
+x, E, psi = solve(lambda x: 0.5 * x**2, L=16, N=1000)
+print(np.round(E, 4))    # [0.5  1.5  2.4999  3.4998  4.4997  5.4995]
+```
+
+The oscillator levels $n+\frac12$ arrive on schedule.
+
+**What about units?** The code runs in dimensionless units with $\hbar=m=1$ — not laziness but standard numerical practice: it keeps numbers of order $10^{-34}$ from rampaging through the floating-point arithmetic. The conversion rule fits in one sentence: pick a length unit $L_0$, and the energy unit is automatically $\varepsilon_0=\hbar^2/(mL_0^2)$. For an electron with $L_0=1$ nm:
+
+$$
+\varepsilon_0=\frac{(\hbar c)^2}{mc^2\,L_0^2}=\frac{197.3^2}{511000\times1^2}\approx0.0762\ \text{eV}
+$$
+
+Scale the real potential by $\varepsilon_0$ into dimensionless numbers before feeding it in, multiply the computed $E$ back by $\varepsilon_0$, and you have eV.
+
+<Callout type="warning" title="Numerical results never cry out that they are wrong">
+A broken analytic derivation usually refuses to go any further; a broken numerical program **prints out a pile of numbers anyway**, looking thoroughly plausible. The three most common silent failures:
+
+1. **Mixed units** — potential in eV, lengths in nm, matrix assembled by the dimensionless formula: the result is off by orders of magnitude yet perfectly self-consistent;
+2. **The box pinching the wavefunction** — a high excited state's tail touches the fake walls and the level is quietly pushed up (especially dangerous for flat-bottomed potentials with long-dragging tails);
+3. **The lost $\sqrt h$ in normalisation** — the waveform is perfectly right, and every probability computed from it is wrong.
+
+The defence is not "be more careful" but **institutionalised sign-off**, per the checklist below.
 </Callout>
 
-## Planned contents
+<Callout type="check" title="Sign-off checklist: run it for every new potential">
+1. **Convergence**: recompute once with $N$ doubled and once with $L$ enlarged; the digits you quote must not budge (last section's two knobs).
+2. **Count nodes**: state $n$ must have exactly $n$ nodes. One too many or too few usually means the solver skipped a state or the box is too small.
+3. **Check parity**: for a symmetric potential the wavefunctions must alternate even and odd (the theorem of [section 4.1](/en/ch/04-1d-problems/01-symmetry-parity/) here becomes a free test case).
+4. **Verify orthogonality**: `psi[:,i] @ psi[:,j] * h` should be zero to machine precision.
+5. **Push a limit**: drive a parameter of the potential toward a known case (a very deep well → the infinite well; an expanded bottom → the oscillator), and the results must converge onto it.
+</Callout>
 
-- Interactive potential editing
-- Real-time eigenstate solving
+## Commissioning trial: the double well
 
-## Planned simulations
+Now the main course. Take
 
-- `custom-potential`
+$$
+V(x)=V_0\,(x^2-1)^2
+$$
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="custom-potential" />`.
+Two minima at $x=\pm1$, separated by a hump of height $V_0$. This is a graveyard for analytic methods — no closed-form solution — but a gold mine for physics: the nitrogen atom of ammonia flipping between the two sides of its hydrogen plane, the shared electron of a chemical bond, the double-well circuit of a superconducting qubit — all are variations on it.
+
+To the solver it is nothing special. Change one line:
+
+```python
+x, E, psi = solve(lambda x: 20.0 * (x**2 - 1)**2, L=8, N=2000)
+print(np.round(E, 3))    # [6.036  6.056  16.23  17.111  23.379  27.933]
+```
+
+Stare at that string of numbers — it is telling a story:
+
+- $E_0=6.036$ and $E_1=6.056$ are **squeezed into a pair**, split by only $\Delta E=0.019$, while $E_1$ to $E_2$ is a full $10.2$ apart. The levels no longer spread out evenly: they **come in pairs, nearly degenerate within each pair**.
+- Check the wavefunctions: $\psi_0$ is even — one bump over each well, joined with the same sign; $\psi_1$ is odd — the same two bumps, the right one flipped, crossing zero in the middle. Checklist item 3 passes: symmetric potential, even-odd alternation.
+- The oscillator limit checks out too (item 5): near a single well bottom $V''(\pm1)=8V_0=160$, effective frequency $\omega=\sqrt{160}\approx12.6$, zero-point energy about $\omega/2\approx6.3$ — consistent with $E_0\approx6.0$, the shortfall being exactly the anharmonic correction.
+
+Why squeezed into a pair? Imagine the hump infinitely high: the left and right wells are two sealed-off worlds, each with a ground state at exactly the same energy — **strict two-fold degeneracy**. With the hump finite, the two wells' wavefunction tails meet under the peak by [tunneling](/en/ch/02-wavefunction/11-tunneling/), the degeneracy breaks, and one level splits into two. $\Delta E$ is the **tunneling splitting**, a direct gauge of how easily the wells "visit each other".
+
+The numerics can verify this interpretation on the spot: lower the hump from $V_0=20$ to $10$, and the splitting jumps from $0.019$ to $0.125$ — halve the hump, and the splitting grows more than sixfold. This wildly disproportionate response is the fingerprint of section 2.11's tunneling exponential $\ee^{-2\kappa a}$: the splitting is **exponentially sensitive** to the barrier parameters.
+
+## From a pair of levels to a back-and-forth oscillation
+
+A nearly degenerate pair of levels is not just decoration on the spectrum — it hides a clock.
+
+<Derivation title="Derivation: the particle oscillating between the wells" level="基础" minutes={8} open={true}>
+
+**Step 1: build the "in the left well" state.** $\psi_0$ (even) and $\psi_1$ (odd) have the same sign in the left well and opposite signs in the right, so the superpositions
+
+$$
+\psi_L=\frac{\psi_0+\psi_1}{\sqrt2},\qquad
+\psi_R=\frac{\psi_0-\psi_1}{\sqrt2}
+$$
+
+have the two terms cancelling in the right well and reinforcing in the left for $\psi_L$ — it is **localised in the left well**; $\psi_R$ the other way round. (The $1/\sqrt2$ keeps them normalised; the two are orthogonal.) Note: $\psi_L$ is a superposition of two eigenstates of different energy — **not a stationary state**. That is where the show begins.
+
+**Step 2: let it evolve.** Take the initial state $\Psi(0)=\psi_L$. By chapter 2's old rule, hang a phase clock on each eigencomponent:
+
+$$
+\Psi(t)=\frac{1}{\sqrt2}\left[\psi_0\,\ee^{-\ii E_0t/\hbar}+\psi_1\,\ee^{-\ii E_1t/\hbar}\right]
+$$
+
+**Step 3: ask whether it is still on the left.** Project back onto $\psi_L$ (using the orthonormality of $\psi_0,\psi_1$):
+
+$$
+\braket{\psi_L}{\Psi(t)}=\frac12\left[\ee^{-\ii E_0t/\hbar}+\ee^{-\ii E_1t/\hbar}\right]
+=\ee^{-\ii(E_0+E_1)t/2\hbar}\cos\frac{\Delta E\,t}{2\hbar}
+$$
+
+The common phase factors out, leaving an honest cosine. The probabilities are
+
+$$
+\boxed{\ P_L(t)=\cos^2\frac{\Delta E\,t}{2\hbar}\ }\qquad
+P_R(t)=\sin^2\frac{\Delta E\,t}{2\hbar}
+$$
+
+**Read the result.** The particle **moves house wholesale between the two wells** with period $T_{\text{osc}}=2\pi\hbar/\Delta E$: at $t=\pi\hbar/\Delta E$ it is one hundred percent in the right well. The single parameter driving this clock is the tunneling splitting $\Delta E$ — the smaller the splitting (the taller the barrier), the slower the moves. In the limit of an infinitely high hump, $\Delta E\to0$ and the period diverges: the particle is trapped on one side forever, recovering the "two sealed-off worlds" picture. Self-consistent.
+
+</Derivation>
+
+<Callout type="insight" title="Ammonia: a molecular clock that has ticked for aeons">
+The ammonia molecule NH₃ is a pyramid: the nitrogen atom can sit **above or below** the plane of the three hydrogens, and the two configurations are mirror-equivalent — precisely a double well, with a barrier of about 0.25 eV to "flip through".
+
+The measured tunneling splitting is ΔE ≈ 9.8×10⁻⁵ eV, corresponding to a frequency ΔE/h ≈ 24 GHz: the nitrogen atom moves house across the plane about 24 billion times a second. In 1954, Townes used this pair of levels to build humanity's first **microwave maser** (the laser's predecessor) — coaxing ammonia molecules in the upper level into stimulated emission of 24 GHz microwaves. The earliest coherent light source in the quantum mechanics you are now reading came out of the splitting of a double well.
+
+One step further in the same double-well language and you reach the **chemical bond**: two protons sharing one electron (the H₂⁺ molecular ion), and what the electron sees is exactly a double well. The even combination $\psi_0$ piles charge up between the nuclei and sits lower in energy — the **bonding orbital**; the odd combination $\psi_1$ crosses zero in the middle — the **antibonding orbital**. The essence of the covalent bond is an electron choosing the double well's even-parity ground state.
+</Callout>
+
+<DualView>
+<div slot="left">
+
+**The double well is an incubator for quantum two-level systems.** As long as temperature and perturbations stay far below the gap of about 10 up to $E_2-E_1$ (over five hundred times the splitting $\Delta E$), the system is frozen into the lowest pair — the world is effectively two-dimensional. "Left/right" (or "up/down") is a natural qubit, and the tunneling splitting sets its flip rate.
+
+The flux double wells of superconducting qubits and the tunneling two-level systems in solid-state defects both take their design cue from here.
+
+</div>
+<div slot="right">
+
+The effective two-level Hamiltonian (in the $\psi_L,\psi_R$ basis):
+
+$$
+H_{\text{eff}}=\begin{pmatrix}\varepsilon&-\Delta E/2\\-\Delta E/2&\varepsilon\end{pmatrix}
+$$
+
+The diagonal $\varepsilon=(E_0+E_1)/2$ is the single-well energy; the off-diagonal element is set by the tunneling splitting. Diagonalising back to $\psi_0,\psi_1$ gives eigenvalues $\varepsilon\mp\Delta E/2$ — the pair the numerics produced.
+
+By [chapter 5](/en/ch/05-angular-momentum/) you will recognise this: it is the mathematics of spin 1/2.
+
+</div>
+</DualView>
+
+## Make it your own instrument
+
+From here on, this solver is your laboratory bench. A few potentials worth running by hand (remember the sign-off checklist for each):
+
+- **The asymmetric double well** $V_0(x^2-1)^2+\lambda x$: add a tiny tilt $\lambda$ and watch the nearly degenerate pair get prised apart, each wavefunction retreating into its own well — the numerical edition of section 4.1's "no symmetry, no parity".
+- **The tilted-floor well** $V=\alpha x$ (for $x>0$, wall at the left end): the triangular well, the real predicament of electrons at a semiconductor heterojunction interface.
+- **The truncated oscillator**: flatten $x^2/2$ above some height, count how many bound states survive, and compare with section 4.1's $z_0$ counting rule.
+
+Publication-grade code adds two more items: the Numerov method to lift the accuracy from $O(h^2)$ to $O(h^4)$, and imaginary-time evolution for two and three dimensions — but the skeleton never changes: **discretise, diagonalise, sign off**.
+
+<KeyFormulas
+  items={[
+    { name: 'Nondimensionalisation', latex: '\\varepsilon_0=\\frac{\\hbar^2}{mL_0^2}=\\frac{(\\hbar c)^2}{mc^2L_0^2}\\ \\xrightarrow{\\text{electron},\\,L_0=1\\,\\text{nm}}\\ 0.0762\\ \\text{eV}', note: 'Choosing the length unit fixes the energy unit; multiply back when done' },
+    { name: 'Tunneling splitting', latex: 'E_1-E_0=\\Delta E\\ \\propto\\ \\ee^{-2\\int\\kappa\\,\\dd x}', note: 'Exponentially sensitive to barrier height and width; infinite barrier restores two-fold degeneracy' },
+    { name: 'Left/right localised states', latex: '\\psi_{L,R}=\\frac{\\psi_0\\pm\\psi_1}{\\sqrt2}', note: 'Superpositions of stationary states, themselves not stationary; even and odd parity reinforce/cancel on each side' },
+    { name: 'Two-well oscillation', latex: 'P_L(t)=\\cos^2\\frac{\\Delta E\\,t}{2\\hbar},\\qquad T_{\\text{osc}}=\\frac{2\\pi\\hbar}{\\Delta E}', note: 'Ammonia ΔE ≈ 9.8×10⁻⁵ eV → 24 GHz, the maser operating frequency' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'cps-1',
+      prompt: 'The double well\'s lowest two levels squeeze into a nearly degenerate pair (ΔE far smaller than the gap to the next level). The physical root of this "squeezing together" is:',
+      options: [
+        'With an infinitely high barrier the two wells are strictly degenerate, and finite tunneling splits the degeneracy slightly',
+        'Numerical error in the finite difference method computed one level as two',
+        'The two levels belong to two different wells',
+        'Parity conservation requires levels to come in pairs',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Doubling N leaves the splitting rock-steady — the convergence check exists precisely to rule out this suspicion.',
+        2: 'Every eigenstate spreads over both wells at once (even or odd parity); the "left-well state" and "right-well state" are their superpositions, not eigenstates.',
+        3: 'Parity only dictates that each state is even or odd; it does not require even and odd energies to be close. The size of the splitting is set by tunneling.',
+      },
+      explain: 'Two sealed-off wells each hold a ground state at the same energy; with a finite barrier the tails meet by tunneling and the degeneracy splits into an even (lower) and odd (higher) pair. ΔE varies with the barrier as e^{−2∫κdx} — in the numerical experiment, dropping V₀ from 20 to 10 grew ΔE from 0.019 to 0.125.',
+    },
+    {
+      id: 'cps-2',
+      prompt: 'Concerning the localised state ψ_L = (ψ₀ + ψ₁)/√2, which statements are correct? (Select all that apply.)',
+      options: [
+        'It is not an energy eigenstate and evolves in time',
+        'Starting from it, the probability of staying in the left well goes as cos²(ΔE·t/2ħ), periodically moving house wholesale to the right well',
+        'It has no definite parity',
+        'Its average energy exceeds E₁',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: '⟨E⟩ = (E₀+E₁)/2 lands dead centre between the two levels, below E₁.',
+      },
+      explain: 'An equal-weight superposition of an even and an odd state: no definite parity (section 4.1), not stationary. The two components\' phase clocks run apart at rate ΔE/ħ; at t = πħ/ΔE the relative phase has flipped and ψ_L has become ψ_R — the particle has moved house. This is the nitrogen atom\'s daily routine inside ammonia.',
+    },
+    {
+      id: 'cps-3',
+      prompt: 'After solving a new potential numerically, which sign-off item best exposes the mistake of "taking the box L too small"?',
+      options: [
+        'Enlarge L, recompute, and see whether the low levels move',
+        'Check that the eigenvectors are mutually orthogonal',
+        'Count the nodes of the wavefunctions',
+        'Check that the energies are real',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Orthogonality is guaranteed by the matrix\'s symmetry and holds however small the box — this check is blind to the problem.',
+        2: 'Node counts usually stay correct until the box is absurdly small.',
+        3: 'A real symmetric matrix always has real eigenvalues; this check passes forever.',
+      },
+      explain: 'When the fake walls pinch a wavefunction\'s tails, the levels are systematically pushed up, yet the solution itself still looks respectable: orthogonal, real, node counts correct. The only reliable probe is to perturb the box itself — if results keep drifting after L is enlarged, convergence has not been reached.',
+    },
+    {
+      id: 'cps-4',
+      type: 'numeric',
+      prompt: 'Run this section\'s solver on the harmonic oscillator V(x) = x²/2 (dimensionless units) with a sufficiently dense grid. The fifth level in the output, E₄, should be very close to what value?',
+      answer: 4.5,
+      tolerance: 0.05,
+      explain: 'Oscillator levels are Eₙ = n + 1/2 (ħ = m = ω = 1), and n = 4 gives 4.5. The actual output 4.4997 is slightly low — the difference method systematically underestimates levels, more so for higher ones (section 4.4\'s j² law). "Run a known answer first" is forever the first sign-off for new code.',
+    },
+  ]}
+/>
+
+## End of chapter
+
+Take stock of what this chapter has added to the toolkit: **parity** used one commutator to sort the bound states into even-odd alternation, striking out a batch of integrals for free; the **phase shift** condensed scattering into a single angle, with resonances and bound states shaking hands in Levinson's theorem; the **transfer matrix** turned multilayer structures into $2\times2$ multiplication, delivering resonant tunneling and energy bands; **finite differences** landed "operators are matrices" as running code, making any one-dimensional potential a ten-line program. The one-dimensional world, it is fair to say, is now firmly in hand.
+
+But real atoms are not one-dimensional. The electron in hydrogen lives in a three-dimensional Coulomb potential, and three dimensions bring a character one dimension simply lacks: **rotation**. A particle can orbit the nucleus, and rotation has speed and direction — angular momentum takes the stage. The good news: every one of your tools carries over. For a central potential, the 3D equation separates into a **radial equation** that lives exactly on the half-axis — precisely the "wall plus potential" stage of section 4.2. The bad news (really the most exciting news): the angular part is a world of its own. The three components of angular momentum fail to commute pairwise, $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$ — and chapter 3's commutator algebra will no longer be a mere test of "can they be measured sharply together", but the very tool that **builds** the allowed values of angular momentum, one rung at a time.
+
+[Chapter 5](/en/ch/05-angular-momentum/) — it begins with rotation.

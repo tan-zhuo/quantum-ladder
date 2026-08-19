@@ -1,17 +1,166 @@
 ---
-title: 'Foundations: collapse, macroscopic realism and Wigner’s friend'
-summary: 'The questions that are still open.'
+title: 'Quantum foundations: collapse, macrorealism, and Wigner''s friend'
 section: '13.7'
 order: 7
-status: stub
+summary: 'Decoherence explains "why we never see the interference", but not "why there is only one outcome". A century on, the measurement problem remains open — but it has turned from a philosophical debate into a research field with an experimental budget.'
+status: done
+prereqs:
+  - 03-formalism/08-measurement
+  - 10-open-systems/05-decoherence
+  - 09-quantum-information/04-bell-chsh
+objectives:
+  - State precisely what the measurement problem is, and which half of it decoherence has solved
+  - Outline the price paid by each of three routes — many-worlds, objective collapse (GRW/CSL), and QBism — while staying neutral
+  - Derive the Leggett–Garg inequality, and explain what it and Wigner's-friend experiments each put to the test
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Thirteen chapters into this book, you might assume the foundations of quantum mechanics were poured and set long ago. But one question has hung in the air from the 1927 Solvay conference to this day: **when, and by what right, does the wavefunction collapse?**
+
+There is a crack hidden in the list of postulates from [section 3.7](/en/ch/03-formalism/07-postulates/). The postulates say: left alone, a system evolves unitarily, deterministically, linearly, by the Schrödinger equation; but the moment it is "measured", it suddenly jumps at random to some eigenstate by the Born rule. Two sets of rules, welded together by the word "measurement". Yet isn't a measuring device made of atoms? The apparatus, the experimenter, the whole laboratory building should obey the Schrödinger equation — so where does the second set of rules come from? **At what moment, and by what agency, does "both this and that" become "just this"?**
+
+This is the **measurement problem**. It is not a student's confusion; it is an open case in the very structure of the theory. The good news: over the past thirty years it has gone from after-dinner philosophy to a research field with precise theorems, decisive experiments, and grant budgets.
+
+## Settle the accounts first: which half decoherence solved
+
+The decoherence theory of [section 10.5](/en/ch/10-open-systems/05-decoherence/) must take the stage first, because it is so often mistaken for the whole answer. What it genuinely solves is: **why the interference of macroscopic superpositions is never seen.** The environment "peeks" at macroscopic objects incessantly (every scattered photon, every colliding gas molecule carries away position information), and the off-diagonal elements of the reduced density matrix decay to zero in a vanishingly short time — the "dead + alive" coherence of a cat drains into the environment on a timescale of order $10^{-23}$ seconds, never to be recovered by any experiment.
+
+But keep the books honest: decoherence turns the coherent superposition $\ket{\text{dead}}+\ket{\text{alive}}$ into a **mixed state** ([section 10.2](/en/ch/10-open-systems/02-mixed-states/)) with half-and-half weights — a "list of probabilities". It does not answer: **why, in this particular run of the experiment, did this particular outcome appear?** The final step from "list" to "single fact" is still unaccounted for. That is the remaining, hard half of the measurement problem.
+
+<Callout type="insight" title="Two questions — do not conflate them">
+"Why do we never see macroscopic interference?" — solved. The answer is decoherence: quantitative, computable, confirmed by experiment again and again.
+
+"Why does only one outcome occur?" — unsolved. Any claim that "decoherence solves the measurement problem" is switching one question for the other. The real disagreement between the interpretations lives entirely in this second half.
 </Callout>
 
-## Planned contents
+## Three routes, three invoices
 
-- Objective collapse models: GRW and CSL
-- The Leggett–Garg inequality
-- Wigner's friend and the Frauchiger–Renner paradox
+To deal with the remaining half, each of the mainstream programmes has chosen to grit its teeth and swallow a particular cost. Here they are, laid out in three columns — what it claims / what it pays / whether experiment can tell it apart. This book takes no side.
+
+**Many-worlds** (Everett, 1957).
+Claim: delete the collapse postulate; the universal wavefunction evolves unitarily forever. Measurement is just entanglement spreading, and in every branch there is a "you" seeing one definite outcome — all outcomes happen, in different branches.
+Cost: ontologically extravagant beyond measure (uncountably many parallel branches); the more technical soft spot is the **status of probability** — if every branch is realised, what does "outcome A has probability 1/3" even mean? Derivations of the Born rule from decision theory exist, but whether they succeed is still contested.
+Experimental discrimination: in principle impossible — its predictions coincide with standard quantum mechanics in full.
+
+**Objective collapse models** (GRW 1986 / CSL).
+Claim: collapse is a real physical process. Modify the Schrödinger equation by adding a weak stochastic nonlinear term: each nucleon spontaneously localises its wavefunction (to a width of $10^{-7}$ m) on average once every $10^{16}$ seconds. For a single particle that is once in hundreds of millions of years, so quantum mechanics proceeds as usual; a macroscopic object has $10^{23}$ nucleons and suffers $10^{7}$ localisations per second — superpositions die instantly. The word "measurement" retires from the postulates.
+Cost: two new constants of nature conjured from nothing; the collapse noise implies a faint violation of energy conservation.
+Experimental discrimination: **yes!** It predicts that interference fails for sufficiently large molecules, and predicts a measurable background of spontaneous radiation. It is the only one of the three that sticks its neck out — large-molecule interferometry (now up to $2.5\times10^4$ atomic mass units) and cryogenic mechanical oscillators are steadily tightening its parameter space.
+
+**QBism and its relational cousins**.
+Claim: the wavefunction is not a property of the world but **the user's state of belief** — quantum mechanics is a normative handbook for "how to place bets on measurement outcomes". Collapse is nothing but Bayesian updating: you saw the result, so of course you revise your bets. The measurement problem dissolves: there never was a physical collapse to explain.
+Cost: giving up the realist picture of "a quantum state independent of the observer"; "for whom is this outcome a fact?" becomes a statement that needs a subject, and the objectivity of science has to be re-argued.
+Experimental discrimination: in principle impossible — it is a reinterpretation of the same predictions.
+
+## Turning "macrorealism" into a measurable number: the Leggett–Garg inequality
+
+Bell's inequality ([section 9.4](/en/ch/09-quantum-information/04-bell-chsh/)) tests local realism with two spatially separated parties. Leggett and Garg (1985) turned the same logic around — towards **time**: a test of the everyday belief that "a macroscopic object is in a definite state at every moment".
+
+<Derivation title="Derive the Leggett–Garg inequality, then let quantum mechanics violate it" level="进阶" minutes={10} open={true}>
+
+**Step 1: write down the two assumptions of the classical worldview.**
+
+1. **Macrorealism**: the observable $Q(t)=\pm1$ has a definite value at every moment (whether measured or not);
+2. **Non-invasive measurability**: that value can in principle be read out without disturbing the system's subsequent evolution.
+
+**Step 2: derive the inequality.**
+
+Take three times $t_1<t_2<t_3$ and define the correlators $C_{ij}=\langle Q(t_i)Q(t_j)\rangle$. Under assumption 1, every run has a definite triple $(Q_1,Q_2,Q_3)$, each $\pm1$. Enumerate all 8 sign combinations and verify, one by one, the identity
+
+$$
+Q_1Q_2+Q_2Q_3-Q_1Q_3\le1
+$$
+
+(For instance $(+,+,+)$ gives $1+1-1=1$; $(+,-,+)$ gives $-1-1-1=-3$; and so on — the upper bound is 1.) Averaging over many runs gives the **Leggett–Garg inequality**:
+
+$$
+K\equiv C_{12}+C_{23}-C_{13}\le1
+$$
+
+**Step 3: what quantum mechanics says.**
+
+Take the system you know best: a spin-1/2 precessing in a magnetic field ([section 5.5](/en/ch/05-angular-momentum/05-spin-precession/)) at angular frequency $\omega$, with $\sigma_z$ measured at intervals $\tau$. The quantum calculation gives $C_{ij}=\cos\omega\tau_{ij}$, so
+
+$$
+K=2\cos\omega\tau-\cos2\omega\tau
+$$
+
+Extremise over $\omega\tau$: $\dd K/\dd(\omega\tau)=-2\sin\omega\tau+2\sin2\omega\tau=0$, with the maximum at $\omega\tau=\pi/3$:
+
+$$
+K_{\max}=2\times\frac12-\left(-\frac12\right)=\frac32>1
+$$
+
+**Step 4: read off the meaning.** A violation means at least one of the two classical assumptions is wrong: either the system does **not** have a definite value of $Q$ between measurements (it genuinely sits in a superposition), or measurement necessarily disturbs the system. Violations have been observed in superconducting qubits, photons, and atomic ensembles; pushing the violation into ever more "macroscopic" systems is how this front advances — it hands us a quantitative ruler for "where does the quantum–classical boundary lie?".
+
+</Derivation>
+
+## Wigner's friend: putting the observer inside the wavefunction
+
+Finally, the sharpest thought experiment of the present day. Wigner (1961) imagined: his friend, inside a sealed laboratory, measures a spin and obtains a definite outcome; but Wigner, standing outside, must by quantum mechanics describe "friend + spin" as an entangled superposition — **for the friend the fact is settled; for Wigner it is not**. Who is wrong? Or is "fact" itself relative?
+
+In 2018, Frauchiger and Renner forged this into a theorem. Give each of two observers a friend "nested inside the wavefunction", and let them reason about each other's reasoning. They proved that the following three innocent-sounding assumptions **cannot all hold**:
+(Q) quantum mechanics applies to every system, observers included;
+(C) correct inferences by different observers can be chained together;
+(S) a measurement has a single outcome.
+Together with the related "local friendliness" inequality experiments (proof-of-principle demonstrations with photons playing the "friend" since 2019), this work backs every interpretation against the wall and makes it declare its position: many-worlds drops (S), objective collapse drops (Q), QBism drops (C). **There is no free exit** — and that is exactly its value as a theorem: it does not rule who is right, but it ensures nobody can pretend the bill isn't theirs.
+
+<KeyFormulas
+  items={[
+    { name: 'The measurement problem', latex: '\\text{unitary evolution}\\ \\ket{\\psi}\\to\\hat U\\ket{\\psi}\\ \\ \\text{vs}\\ \\ \\text{collapse}\\ \\ket{\\psi}\\to\\ket{a_n}', note: 'Two evolution rules divided by the word "measurement" — yet the apparatus is a quantum system too' },
+    { name: 'The limit of decoherence', latex: '\\rho\\to\\sum_n p_n\\ket{a_n}\\bra{a_n}', note: 'Explains why interference disappears; not why a single outcome is realised' },
+    { name: 'Leggett–Garg inequality', latex: 'K=C_{12}+C_{23}-C_{13}\\le1,\\qquad K_{\\text{QM}}^{\\max}=\\tfrac32', note: 'Bound from macrorealism + non-invasive measurement; quantum mechanics violates it' },
+    { name: 'Frauchiger–Renner theorem', latex: '(Q)\\wedge(C)\\wedge(S)\\Rightarrow\\text{contradiction}', note: 'Universality, chained reasoning, single outcomes: not all three — every interpretation must drop one' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'found-1',
+      prompt: 'Which statement about the relation between decoherence and the measurement problem is correct?',
+      options: [
+        'Decoherence explains why macroscopic interference is never observed, but not why each measurement realises only one outcome',
+        'Decoherence has completely solved the measurement problem',
+        'Decoherence has nothing to do with the measurement problem',
+        'Decoherence proves that collapse is a real physical process',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Decoherence only turns a coherent superposition into a mixed state (a list of probabilities); the step from list to single fact remains unexplained — which is exactly where the interpretations part ways.',
+        3: 'Decoherence operates entirely within the unitary framework; it neither requires nor demonstrates real collapse.',
+      },
+      explain: 'Split the ledger in two: "where did the interference go?" is quantitatively settled by decoherence; "how did the outcomes shrink to one?" remains open. Conflating the two halves is the most common error about the measurement problem.',
+    },
+    {
+      id: 'found-2',
+      prompt: 'Match each mainstream route to the price it pays. Which pairings are correct? (Select all that apply.)',
+      options: [
+        'Many-worlds: keeps pure unitary evolution, at the price of a vast multitude of branches and a puzzle about what probability means',
+        'GRW/CSL: modifies the dynamics with new constants, but thereby makes predictions that experiment can test against standard quantum mechanics',
+        'QBism: treats the wavefunction as the user\'s belief, at the price of giving up an observer-independent reality of the quantum state',
+        'All three are experimentally indistinguishable from standard quantum mechanics',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'GRW/CSL is the exception — it predicts the failure of interference for large molecules and extra noise, and its parameter space is being squeezed by large-molecule interferometry and cryogenic oscillator experiments.',
+      },
+      explain: 'Remember the layout: many-worlds drops "single outcomes", objective collapse drops "quantum mechanics is universal" (it modifies the dynamics), QBism drops "observer-independent facts". The Frauchiger–Renner theorem shows such trade-offs cannot all be avoided.',
+    },
+    {
+      id: 'found-3',
+      type: 'numeric',
+      prompt: 'For the precessing spin at the optimal measurement interval (ωτ = π/3), what is the quantum maximum of the Leggett–Garg quantity K = 2cos(ωτ) − cos(2ωτ)? (The classical bound is 1.)',
+      answer: 1.5,
+      tolerance: 0.05,
+      unit: '',
+      explain: 'K = 2cos(π/3) − cos(2π/3) = 2×0.5 − (−0.5) = 1.5. Exceeding the classical bound of 1 means at least one of "definite values at all times" and "non-invasive measurability" must fail — a Bell test in time.',
+    },
+  ]}
+/>
+
+## Where to dig deeper
+
+Introductory reviews: Zurek's long article on decoherence (Rev. Mod. Phys. 2003), the review by Bassi and colleagues on objective collapse models and their experimental bounds (Rev. Mod. Phys. 2013), and the Leggett–Garg test review (Emary et al., Rep. Prog. Phys. 2014). The original Frauchiger–Renner paper (Nat. Commun. 2018) has a modest technical barrier and is worth reading yourself — and as you read, try to find the loophole on your own: that is the standard initiation rite of the field.
+
+The next section throws the question "where did the information go?" at a limiting case: drop a book into a black hole, wait for the black hole to evaporate away completely — is the book's information still in the universe?

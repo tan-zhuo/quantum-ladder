@@ -1,17 +1,317 @@
 ---
-title: 'Dirac notation, in full'
-summary: 'Bras, kets, inner products, outer products and matrix elements.'
+title: The complete rules of Dirac notation
 section: '3.2'
 order: 2
-status: stub
+summary: 'A notation that compresses "vectors, inner products, projections, changes of basis" into a few angle brackets. Learn it, and the derivations of chapter 2 shrink to a fraction of their length.'
+status: done
+prereqs:
+  - 03-formalism/01-from-wavefunction-to-vector
+objectives:
+  - Read and write kets, bras, inner products, outer products and matrix elements of operators correctly
+  - Use the completeness relation Σ|n⟩⟨n| = 1 to convert between any two representations
+  - Explain the geometric meaning of the projection operator |ψ⟩⟨ψ|
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The previous section established that the state is a vector and the wavefunction its components. This section equips that idea with notation that fits it like a glove.
+
+## The ket: the state itself
+
+A quantum state is written
+
+$$
+\ket{\psi}
+$$
+
+read "ket psi". **It stands for the state itself, carrying no basis information whatsoever** — like the arrow of the previous section, not the $(3,4,0)$.
+
+<Callout type="check" title="A correspondence that is easy to muddle">
+$\ket{\psi}$ is **not** the same thing as $\psi(x)$.
+
+$\psi(x)$ is the component of $\ket{\psi}$ in the position basis, written
+
+$$
+\psi(x)=\braket{x}{\psi}
+$$
+
+Likewise $\phi(k)=\braket{k}{\psi}$ and $c_n=\braket{n}{\psi}$.
+
+**One and the same $\ket{\psi}$: whichever set of components you want, "dot" it with the corresponding basis.**
 </Callout>
 
-## Planned contents
+## The bra: the half you use for inner products
 
-- ⟨φ|ψ⟩: definition and properties
-- |ψ⟩⟨ψ| as a projection operator
-- The completeness relation Σ|n⟩⟨n| = 1
+Every ket $\ket{\psi}$ comes with a bra $\bra{\psi}$. Snap the two together and you get the inner product:
+
+$$
+\braket{\phi}{\psi}=\int\phi^*(x)\psi(x)\,\dd x
+$$
+
+(The word "bra-ket" comes from "bracket" — Dirac split it down the middle.)
+
+<DualView>
+<div slot="left">
+
+**Three properties of the inner product**
+
+$$
+\braket{\phi}{\psi}=\braket{\psi}{\phi}^*
+$$
+
+Swapping the order takes the complex conjugate — because $\int\phi^*\psi$ and $\int\psi^*\phi$ are conjugates of each other.
+
+$$
+\braket{\psi}{\psi}\ge0,\quad\text{and}\ =0\iff\ket{\psi}=0
+$$
+
+The squared length is non-negative. A normalised state satisfies $\braket{\psi}{\psi}=1$.
+
+$$
+\bra{\phi}\big(a\ket{\psi_1}+b\ket{\psi_2}\big)=a\braket{\phi}{\psi_1}+b\braket{\phi}{\psi_2}
+$$
+
+Linear in the right slot, **anti**linear in the left (coefficients pulled out of the bra pick up a conjugate).
+
+</div>
+<div slot="right">
+
+**Chapter 2's formulas, rewritten**
+
+Normalisation:
+
+$$
+\int|\Psi|^2\dd x=1
+\ \longrightarrow\
+\braket{\Psi}{\Psi}=1
+$$
+
+Expansion coefficients:
+
+$$
+c_n=\int\psi_n^*\Psi\,\dd x
+\ \longrightarrow\
+c_n=\braket{n}{\Psi}
+$$
+
+Orthonormality:
+
+$$
+\int\psi_m^*\psi_n\dd x=\delta_{mn}
+\ \longrightarrow\
+\braket{m}{n}=\delta_{mn}
+$$
+
+Expectation value:
+
+$$
+\int\Psi^*\hat A\Psi\,\dd x
+\ \longrightarrow\
+\bra{\Psi}\hat A\ket{\Psi}
+$$
+
+</div>
+</DualView>
+
+## An operator sandwiched in the middle
+
+$\hat A\ket{\psi}$ is another ket. Take its inner product with $\bra{\phi}$ and you get a **matrix element**:
+
+$$
+\bra{\phi}\hat A\ket{\psi}
+$$
+
+The deliberate ambiguity of this notation is a feature: you may read it as "the inner product of $\bra{\phi}$ with $(\hat A\ket{\psi})$", or as "the inner product of $(\bra{\phi}\hat A)$ with $\ket{\psi}$". Both readings give the same number, so no parentheses are needed.
+
+**That is where the name matrix element comes from**: in a basis $\{\ket{n}\}$, $A_{mn}=\bra{m}\hat A\ket{n}$ is precisely the matrix representation of the operator.
+
+## The outer product: snapped together the other way round
+
+Put the ket on the left and the bra on the right:
+
+$$
+\ket{\phi}\bra{\psi}
+$$
+
+This is not a number but an **operator** — acting on any ket, it returns a ket:
+
+$$
+\big(\ket{\phi}\bra{\psi}\big)\ket{\chi}=\ket{\phi}\underbrace{\braket{\psi}{\chi}}_{\text{a number}}
+$$
+
+<Callout type="insight" title="The projection operator">
+The most important special case is the outer product of $\ket{\psi}$ with itself (with $\ket{\psi}$ normalised):
+
+$$
+\hat P_\psi=\ket{\psi}\bra{\psi}
+$$
+
+Acting on an arbitrary $\ket{\chi}$:
+
+$$
+\hat P_\psi\ket{\chi}=\ket{\psi}\braket{\psi}{\chi}
+$$
+
+**It projects $\ket{\chi}$ onto the direction of $\ket{\psi}$**, with projection length $\braket{\psi}{\chi}$. Exactly like $(\hat n\cdot\vec v)\hat n$ in three-dimensional space.
+
+Two properties you can verify at a glance:
+
+$$
+\hat P_\psi^2=\ket{\psi}\underbrace{\braket{\psi}{\psi}}_{=1}\bra{\psi}=\hat P_\psi
+$$
+
+**Projecting twice is the same as projecting once** (after the first projection you are already on the line, so the second does nothing). This property is called **idempotence**, and it is the algebraic definition of what "projecting" means.
+
+$$
+\hat P_\psi^\dagger=\hat P_\psi
+$$
+
+Projection operators are Hermitian — [section 3.5](/en/ch/03-formalism/05-hermitian-operators/) will spell out what that means. The measurement postulate is written precisely in terms of projection operators ([section 3.8](/en/ch/03-formalism/08-measurement/)).
+</Callout>
+
+## The completeness relation: the most useful identity in the chapter
+
+Let $\{\ket{n}\}$ be an orthonormal, complete basis. "Complete" means any state can be expanded:
+
+$$
+\ket{\psi}=\sum_n c_n\ket{n},\qquad c_n=\braket{n}{\psi}
+$$
+
+Substitute the $c_n$ back in:
+
+$$
+\ket{\psi}=\sum_n \ket{n}\braket{n}{\psi}=\left(\sum_n\ket{n}\bra{n}\right)\ket{\psi}
+$$
+
+This holds for every $\ket{\psi}$, so the operator in parentheses is the identity:
+
+$$
+\boxed{\ \sum_n\ket{n}\bra{n}=\hat 1\ }
+$$
+
+The continuous-basis version swaps the sum for an integral:
+
+$$
+\int\ket{x}\bra{x}\,\dd x=\hat 1,\qquad \int\ket{p}\bra{p}\,\dd p=\hat 1
+$$
+
+<Callout type="insight" title="How to use it: to change basis, insert a 1">
+Because multiplying by $\hat 1$ changes nothing, you may insert a completeness relation anywhere you like. **This is the single most-used move in the whole notation.**
+
+**Example 1: the inner product as an integral.**
+
+$$
+\braket{\phi}{\psi}
+=\bra{\phi}\hat 1\ket{\psi}
+=\int\braket{\phi}{x}\braket{x}{\psi}\dd x
+=\int\phi^*(x)\psi(x)\,\dd x
+$$
+
+Chapter 2's definition of the inner product is here **derived**, not decreed.
+
+**Example 2: a matrix element as an integral.**
+
+$$
+\bra{\phi}\hat A\ket{\psi}=\int\!\!\int\braket{\phi}{x}\bra{x}\hat A\ket{x'}\braket{x'}{\psi}\,\dd x\,\dd x'
+$$
+
+For a local operator like $\hat A=\hat x$, $\bra{x}\hat x\ket{x'}=x\,\delta(x-x')$ and the double integral collapses to a single one.
+
+**Example 3: what the Fourier transform really is.**
+
+$$
+\psi(x)=\braket{x}{\psi}=\int\braket{x}{p}\braket{p}{\psi}\dd p=\frac{1}{\sqrt{2\pi\hbar}}\int \ee^{\ii px/\hbar}\,\phi(p)\,\dd p
+$$
+
+using $\braket{x}{p}=\ee^{\ii px/\hbar}/\sqrt{2\pi\hbar}$ (the components of a momentum eigenstate in the position basis — the plane wave).
+
+**The Fourier transform is not some external mathematical tool bolted on; it is the change-of-basis matrix between the position and momentum bases.**
+</Callout>
+
+<Callout type="warning" title="Two notational traps">
+**1. What sits inside $\ket{\psi}$ is a label, not a variable.** $\ket{n}$, $\ket{\uparrow}$, $\ket{0}$, $\ket{\text{cat alive}}$ are all legal — whatever goes inside the angle bracket merely names the state. A common beginner's mistake is to write $\ket{\psi(x)}$, which stuffs the components into the label.
+
+**2. Coefficients leaving a bra pick up a conjugate.** If $\ket{\chi}=a\ket{\psi}$, then $\bra{\chi}=a^*\bra{\psi}$. Forget that conjugate and your probabilities come out complex.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'State and components', latex: '\\psi(x)=\\braket{x}{\\psi},\\quad c_n=\\braket{n}{\\psi}', note: 'Whichever components you want, dot the state with that basis' },
+    { name: 'Inner product', latex: '\\braket{\\phi}{\\psi}=\\braket{\\psi}{\\phi}^*,\\quad\\braket{\\psi}{\\psi}=1', note: 'Linear on the right, antilinear on the left' },
+    { name: 'Projection operator', latex: '\\hat P_\\psi=\\ket{\\psi}\\bra{\\psi},\\qquad \\hat P^2=\\hat P=\\hat P^\\dagger', note: 'Idempotent + Hermitian: the algebraic definition of projection' },
+    { name: 'Completeness relation', latex: '\\sum_n\\ket{n}\\bra{n}=\\hat 1,\\qquad \\int\\ket{x}\\bra{x}\\dd x=\\hat 1', note: 'To change basis, insert a 1' },
+    { name: 'Change-of-basis matrix element', latex: '\\braket{x}{p}=\\frac{1}{\\sqrt{2\\pi\\hbar}}\\ee^{\\ii px/\\hbar}', note: 'Fourier transform = change of basis between position and momentum' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'dirac-1',
+      prompt: 'Which of the following equations is correct?',
+      options: [
+        'ψ(x) = ⟨x|ψ⟩',
+        '|ψ⟩ = ψ(x)',
+        'ψ(x) = |x⟩⟨ψ|',
+        '⟨ψ| = ψ*(x)',
+      ],
+      answer: 0,
+      distractors: {
+        1: '|ψ⟩ is the state itself; ψ(x) is only one of its components in the position basis.',
+        2: 'The right-hand side is an operator (an outer product); the left-hand side is a number.',
+        3: '⟨ψ| is a bra, not a function value.',
+      },
+      explain: 'This is the single most important distinction in the whole notation: the state and its components are not the same thing. The same |ψ⟩ reads cₙ = ⟨n|ψ⟩ in the energy basis and φ(p) = ⟨p|ψ⟩ in the momentum basis.',
+    },
+    {
+      id: 'dirac-2',
+      prompt: 'What is |φ⟩⟨ψ|?',
+      options: [
+        'An operator: acting on a ket, it returns a ket',
+        'A complex number',
+        'A bra',
+        'A ket',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'That would be the inner product ⟨φ|ψ⟩, with the bra on the left and the ket on the right.',
+        2: 'An outer product is not a bra.',
+        3: 'An outer product is not a ket.',
+      },
+      explain: '(|φ⟩⟨ψ|)|χ⟩ = |φ⟩⟨ψ|χ⟩ = (a number) × |φ⟩ — ket in, ket out, so it is an operator. The special case |ψ⟩⟨ψ| is the projection operator, and the measurement postulate is written with it.',
+    },
+    {
+      id: 'dirac-3',
+      prompt: 'The main use of the completeness relation Σₙ|n⟩⟨n| = 1 is:',
+      options: [
+        'Inserting it anywhere in an expression to convert from one representation to another',
+        'Proving that a state is normalised',
+        'Defining the Hermitian conjugate of an operator',
+        'Computing energy eigenvalues',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Normalisation is ⟨ψ|ψ⟩ = 1 — a different matter.',
+        2: 'The Hermitian conjugate has its own definition; see section 3.5.',
+        3: 'Eigenvalues come from solving the eigenvalue equation.',
+      },
+      explain: 'Because it equals the identity operator, inserting it anywhere leaves the value unchanged — yet it unfolds the abstract ⟨φ|Â|ψ⟩ into a concrete integral or sum. "To change basis, insert a 1" is the most practical trick in the whole notation.',
+    },
+    {
+      id: 'dirac-4',
+      prompt: 'For the projection operator P̂ = |ψ⟩⟨ψ| (with |ψ⟩ normalised), which statements are correct? (Select all that apply.)',
+      options: [
+        'P̂² = P̂',
+        'P̂ is Hermitian',
+        'P̂|χ⟩ gives the component of |χ⟩ along |ψ⟩',
+        'The eigenvalues of P̂ can only be 0 or 1',
+      ],
+      answer: [0, 1, 2, 3],
+      explain: 'P̂² = |ψ⟩⟨ψ|ψ⟩⟨ψ| = |ψ⟩⟨ψ| = P̂, using ⟨ψ|ψ⟩ = 1. From P̂² = P̂ the eigenvalues satisfy λ² = λ, so λ = 0 or 1 — "on the line" versus "perpendicular to it". Together these four statements are the complete algebraic characterisation of a projection.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The notation is in hand. But a few mathematical questions have been quietly stepped around: in what sense does $\sum_n c_n\ket{n}$ converge? $\ket{x}$ cannot be normalised — what entitles it to serve as a basis at all?
+
+The next section settles these — the only mathematics-first section in the chapter, and it will stick as closely as possible to the parts that actually matter for the physics.

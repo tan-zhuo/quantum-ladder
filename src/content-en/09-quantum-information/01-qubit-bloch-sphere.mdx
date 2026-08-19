@@ -1,24 +1,267 @@
 ---
-title: 'Qubits and the Bloch sphere'
-summary: 'The complete geometric picture of a two-level system.'
+title: Qubits and the Bloch sphere
 section: '9.1'
 order: 1
-status: stub
-sims: ['bloch-sphere']
+summary: 'Spin 1/2 gets a new name: the qubit. The pure states of a two-level system exactly tile a sphere, and every gate, entangled state and algorithm in this chapter lives on that map.'
+status: done
+prereqs:
+  - 03-formalism/02-dirac-notation
+  - 03-formalism/08-measurement
+  - 05-angular-momentum/03-spin-half
+objectives:
+  - Write any qubit pure state with two real parameters (θ, φ), and explain why two are enough
+  - Locate the six standard states ∣0⟩, ∣1⟩, ∣±⟩, ∣±i⟩ on the Bloch sphere
+  - Match the Bloch vector to Pauli expectation values, r = ⟨σ⟩
+  - Explain the counterintuitive fact that orthogonal states sit at antipodal points, not at right angles
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+In chapter 5 we worked hard on spin 1/2: a system with only two basic states,
+a two-dimensional complex state space, and measurements described by the Pauli operators.
+Back then it was "the smallest angular momentum". From this chapter on, it takes the stage
+under a new identity — **the smallest quantum carrier of information**.
+
+## A concrete question: how much information fits in a two-level system?
+
+A classical bit has exactly two states: 0 or 1. A coin, a switch, a voltage level.
+Now replace it with a quantum two-level system — say a spin-1/2 particle — and adopt the convention
+
+$$
+\ket{0}\equiv\ket{\uparrow},\qquad \ket{1}\equiv\ket{\downarrow}
+$$
+
+By the superposition principle of chapter 3, the legal states go far beyond those two:
+
+$$
+\ket{\psi}=\alpha\ket{0}+\beta\ket{1},\qquad
+\alpha,\beta\in\mathbb{C},\quad |\alpha|^2+|\beta|^2=1
+$$
+
+Such a system is called a **quantum bit** (qubit). And here comes the puzzle: $\alpha,\beta$
+are two complex numbers, four real parameters — does a single qubit hold "infinitely much information"?
+The classical "0 or 1" picture breaks down completely here. We need a new map,
+one that draws every legal state at once.
+
+## Where the old tools fall short
+
+Chapter 3 hands us two constraints: normalisation eats one real parameter,
+and the **unobservable global phase** eats another. Two real parameters remain —
+so the set of qubit pure states is a two-dimensional surface. Which surface?
+
+<Derivation title="From (α, β) to spherical coordinates (θ, φ)" level="基础" minutes={6} open={true}>
+
+**Step 1: rewrite in modulus and argument.** Let $\alpha=r_0\ee^{\ii\gamma_0}$ and $\beta=r_1\ee^{\ii\gamma_1}$.
+Normalisation requires $r_0^2+r_1^2=1$, so we may set
+
+$$
+r_0=\cos\frac{\theta}{2},\qquad r_1=\sin\frac{\theta}{2},\qquad \theta\in[0,\pi]
+$$
+
+(Why $\theta/2$ rather than $\theta$? Hold that thought — step 3 will settle it.)
+
+**Step 2: throw away the global phase.** Pull out the common factor $\ee^{\ii\gamma_0}$:
+
+$$
+\ket{\psi}=\ee^{\ii\gamma_0}\left(\cos\frac{\theta}{2}\ket{0}
++\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}\right),
+\qquad \varphi\equiv\gamma_1-\gamma_0
+$$
+
+The global phase has no measurable consequence whatsoever (every probability and every
+expectation value is unchanged), so delete it. What remains is
+
+$$
+\ket{\psi}=\cos\frac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1},
+\qquad \theta\in[0,\pi],\ \varphi\in[0,2\pi)
+$$
+
+$(\theta,\varphi)$ are exactly spherical coordinates: **the set of qubit pure states is a unit sphere**, called the Bloch sphere.
+
+**Step 3: justify the θ/2 — compute the Pauli expectation values.** Recall from chapter 5 that
+$\sigma_z\ket{0}=\ket{0}$, $\sigma_z\ket{1}=-\ket{1}$, together with the matrices of $\sigma_x,\sigma_y$. One by one:
+
+$$
+\braket{\psi}{\sigma_z|\psi}=\cos^2\frac{\theta}{2}-\sin^2\frac{\theta}{2}=\cos\theta
+$$
+
+$$
+\braket{\psi}{\sigma_x|\psi}=2\cos\frac{\theta}{2}\sin\frac{\theta}{2}\cos\varphi=\sin\theta\cos\varphi
+$$
+
+$$
+\braket{\psi}{\sigma_y|\psi}=\sin\theta\sin\varphi
+$$
+
+The three expectation values assemble into precisely the Cartesian components of a unit vector:
+
+$$
+\vec r\equiv(\langle\sigma_x\rangle,\langle\sigma_y\rangle,\langle\sigma_z\rangle)
+=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta)
+$$
+
+Had we written $\cos\theta$ instead of $\cos(\theta/2)$ in step 1, this would have come out as $\cos 2\theta$
+and the coordinates would not match. **The half-angle is the built-in price of mapping a complex
+two-dimensional space onto a real three-dimensional sphere** — it is the very same fact as chapter 5's
+"rotate a spin by 360° and the wavefunction flips sign; only 720° brings it back".
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**A map of states.** The north pole is $\ket{0}$, the south pole is $\ket{1}$,
+the equator holds their equal-weight superpositions; latitude sets the weights, longitude sets the relative phase.
+The six most-used states occupy the endpoints of the three coordinate axes:
+
+- $z$ axis: $\ket{0}$ (north pole), $\ket{1}$ (south pole)
+- $x$ axis: $\ket{\pm}=\tfrac{1}{\sqrt2}(\ket{0}\pm\ket{1})$
+- $y$ axis: $\ket{\pm\ii}=\tfrac{1}{\sqrt2}(\ket{0}\pm\ii\ket{1})$
+
+Measurement acquires a geometric language too: measure the spin along $\hat n$,
+and the probability of "+" depends only on the angle between the state vector and $\hat n$.
+
+</div>
+<div slot="right">
+
+$$
+\ket{\psi}=\cos\frac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\frac{\theta}{2}\ket{1}
+$$
+
+Measuring along $\hat n$ (operator $\hat n\cdot\vec\sigma$), the probabilities of the outcomes $\pm1$ are
+
+$$
+P_\pm=\frac{1\pm\hat n\cdot\vec r}{2}
+$$
+
+At angle $\Theta$, $P_+=\cos^2(\Theta/2)$. Special cases: $\vec r$ parallel to $\hat n$ gives $+1$ with certainty,
+antiparallel gives $-1$ with certainty, perpendicular is fifty-fifty.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="Orthogonal ≠ perpendicular">
+$\ket{0}$ and $\ket{1}$ are orthogonal in Hilbert space (their inner product vanishes),
+but on the Bloch sphere they are **antipodal points** (180° apart), not 90°.
+Two states 90° apart on the sphere (say $\ket{0}$ and $\ket{+}$) have inner-product modulus squared $1/2$ — nowhere near orthogonal.
+The conversion is exactly the half-angle formula above: the Hilbert-space angle is half the Bloch-sphere angle.
+The single easiest mistake to make when reading the Bloch sphere is to conflate these two kinds of "angle".
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="Why a qubit 'holds infinity but yields one bit'">
+The sphere really does contain a continuum of points, and which state we prepare is entirely up to us —
+in that sense a qubit's "state space" dwarfs a classical bit's.
+But **a single measurement can only ever extract 1 classical bit**: whichever axis you measure along,
+the outcome is + or −, and afterwards the state has collapsed onto a pole — the rest of the information in $(\theta,\varphi)$ is wiped out.
+Holevo's theorem (which we will not prove in this chapter) turns this remark into a theorem:
+$n$ qubits can reliably transmit at most $n$ classical bits.
+The tension between "an infinite state space" and "finitely much extractable information"
+is exactly the stage on which teleportation (section 9.5) and superdense coding (section 9.6) perform their tricks.
+</Callout>
 
-- What a qubit is
-- Bloch sphere coordinates
-- The correspondence with spin 1/2
+## Line-by-line match with spin 1/2
 
-## Planned simulations
+The qubit is not new physics — it is chapter 5's spin 1/2 in new notation. The dictionary:
 
-- `bloch-sphere`
+| Spin 1/2 (chapter 5) | Qubit (this chapter) |
+| --- | --- |
+| $\ket{\uparrow},\ket{\downarrow}$ (eigenstates of $S_z$) | Computational basis $\ket{0},\ket{1}$ |
+| $S_x,S_y,S_z=\frac{\hbar}{2}\sigma_{x,y,z}$ | Pauli gates $X,Y,Z$ (next section) |
+| Precession in a magnetic field $\ee^{-\ii\omega t\sigma_z/2}$ | Phase gates / single-qubit rotations |
+| Stern–Gerlach measurement along $\hat n$ | Projective measurement along $\hat n$ |
+| 720° to return to itself | The half-angle $\theta/2$ |
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="bloch-sphere" />`.
+A real qubit need not literally be a spin: superconducting circuits use their two lowest levels,
+ion traps use two hyperfine levels, photons use two polarisation directions.
+As long as it is "a two-dimensional complex space + unitary evolution + projective measurement",
+the mathematics is identical to spin 1/2 — which is precisely the power of chapter 3's formalism:
+**different physical carriers, isomorphic Hilbert spaces**.
+
+To spin this sphere with your own hands, head to [Lab module 05: spin and the Bloch sphere](/en/lab/05-spin/) —
+drag the point on the sphere and watch $\ket{\psi}$ update live in the readout, complete with precession and measurement collapse.
+
+## Mixed states live inside the ball
+
+Pure states tile the surface — so what is the interior? It is the **mixed states** introduced in
+[section 3.10](/en/ch/03-formalism/10-density-operator/). Any qubit density operator can be written
+
+$$
+\rho=\frac{1}{2}\left(I+\vec r\cdot\vec\sigma\right),\qquad |\vec r|\le 1
+$$
+
+$|\vec r|=1$ is a pure state (the surface), $|\vec r|<1$ is a mixed state (the interior),
+and the centre $\vec r=0$ is the maximally mixed state $\rho=I/2$ — fifty-fifty along every axis, telling you nothing.
+This picture returns again and again in section 9.3 (reduced density matrices measuring entanglement)
+and in chapter 10 (decoherence "shrinking" the surface toward the centre). For now, remember:
+**the closer to the centre, the less pure the state**.
+
+<KeyFormulas
+  items={[
+    { name: 'Qubit pure state', latex: '\\ket{\\psi}=\\cos\\frac{\\theta}{2}\\ket{0}+\\ee^{\\ii\\varphi}\\sin\\frac{\\theta}{2}\\ket{1}', note: 'θ∈[0,π] latitude, φ∈[0,2π) longitude; the global phase has been dropped' },
+    { name: 'Bloch vector', latex: '\\vec r=(\\langle\\sigma_x\\rangle,\\langle\\sigma_y\\rangle,\\langle\\sigma_z\\rangle)', note: 'Pure states have |r| = 1; orthogonal states are antipodal' },
+    { name: 'Measurement probability', latex: 'P_\\pm=\\frac{1\\pm\\hat n\\cdot\\vec r}{2}', note: 'Probability of ±1 when measuring n̂·σ along n̂; at angle Θ, P₊=cos²(Θ/2)' },
+    { name: 'Density operator', latex: '\\rho=\\frac{1}{2}(I+\\vec r\\cdot\\vec\\sigma),\\quad |\\vec r|\\le 1', note: 'Surface = pure, interior = mixed, centre = I/2' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qb-1',
+      prompt: 'Where does the Bloch vector of the state ∣ψ⟩ = (∣0⟩ + i∣1⟩)/√2 point?',
+      options: ['The +y axis', 'The +x axis', 'The +z axis', 'In the x-y plane, 45° from the x axis'],
+      answer: 0,
+      distractors: {
+        1: 'The +x axis corresponds to relative phase e^{i·0}=1, i.e. (∣0⟩+∣1⟩)/√2.',
+        3: 'The Bloch longitude φ is the argument of the relative phase; i = e^{iπ/2} gives φ = 90°, landing squarely on the y axis, not at 45°.',
+      },
+      explain: 'Equal weights ⇒ θ = π/2 (the equator); relative phase i = e^{iπ/2} ⇒ φ = π/2, i.e. the +y axis. Check by substituting: ⟨σ_y⟩ = sinθ sinφ = 1.',
+    },
+    {
+      id: 'qb-2',
+      prompt: 'Which of the following statements about the Bloch sphere are correct? (Select all that apply.)',
+      options: [
+        'Two states orthogonal in Hilbert space are antipodal points on the sphere',
+        'Two states 90° apart on the sphere have zero inner product',
+        'Points inside the ball represent mixed states',
+        'Two states differing only by a global phase are the same point on the sphere',
+      ],
+      answer: [0, 2, 3],
+      distractors: {
+        1: 'A 90° angle on the sphere corresponds to a 45° angle in Hilbert space; the inner-product modulus squared is cos²(45°) = 1/2, not zero.',
+      },
+      explain: 'The half-angle relation: the Hilbert-space angle is half the Bloch-sphere angle, so orthogonal (zero inner product) ⇔ 180° on the sphere. The global phase was deleted when constructing (θ,φ), and mixed states ρ = (I + r·σ)/2 with |r| < 1 fill the interior.',
+    },
+    {
+      id: 'qb-3',
+      type: 'numeric',
+      prompt: 'A qubit is in ∣0⟩. Measure n̂·σ along a direction n̂ at 60° to the z axis. Find the probability of getting +1.',
+      answer: 0.75,
+      tolerance: 0.02,
+      explain: 'P₊ = (1 + n̂·r)/2 = (1 + cos60°)/2 = (1 + 0.5)/2 = 0.75. Equivalently P₊ = cos²(Θ/2) = cos²30° = 3/4. Note the first formula uses the cosine of the full angle, the second the squared cosine of the half-angle — two routes to the same answer.',
+    },
+    {
+      id: 'qb-4',
+      prompt: 'How much classical information can a single measurement extract from one unknown qubit state, at most?',
+      options: [
+        '1 bit: the outcome is + or −, and afterwards the state has collapsed',
+        '2 real numbers: both θ and φ can be read out',
+        'Infinitely much: the sphere has a continuum of points',
+        'Zero: a single outcome is completely random and carries no information',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'A single measurement gives one binary outcome; estimating θ and φ requires repeated measurements on many identically prepared copies.',
+        3: 'The outcome statistics depend on the state, so even a single result carries (at most 1 bit of) information.',
+      },
+      explain: 'A continuous state space does not mean unlimited extractable information: a projective measurement has only two exits, and collapse destroys the rest. This is the intuitive version of Holevo’s theorem, and the hard constraint the protocols of sections 9.5 and 9.6 must design their way around.',
+    },
+  ]}
+/>
+
+## What comes next
+
+The map is drawn; now we learn to move on it. Classical computers process bits with AND, OR and NOT gates —
+what does a quantum computer process qubits with? The answer hides in chapter 3's time-evolution postulate:
+every operation must be unitary — and on the Bloch sphere, that means **rotations**.
+In the next section we lay out the most-used rotations as a catalogue of "gates",
+and answer a deeper question: how many kinds of gate does it take to assemble every possible operation?

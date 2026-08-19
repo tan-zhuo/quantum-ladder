@@ -1,24 +1,313 @@
 ---
-title: 'One- and two-qubit gates'
-summary: 'The basic operations of quantum computing.'
+title: Single-qubit and two-qubit gates
 section: '9.2'
 order: 2
-status: stub
-sims: ['quantum-circuit']
+summary: 'Quantum operations = rotations of the Bloch sphere: Pauli, H, S and T each own one rotation, CNOT wires two qubits together, and a small handful of gates assembles every unitary there is.'
+status: done
+prereqs:
+  - 09-quantum-information/01-qubit-bloch-sphere
+  - 03-formalism/07-postulates
+  - 05-angular-momentum/05-spin-precession
+objectives:
+  - Write the matrices of X, Y, Z, H, S, T, and name each one's Bloch-sphere axis and rotation angle
+  - Explain why quantum gates must be unitary, and hence reversible
+  - Work through the CNOT truth table and the full H + CNOT preparation of a Bell state by hand
+  - 'State what a "universal gate set" means: why H, T and CNOT suffice'
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The last section painted every state of a qubit onto a sphere. With the map in hand,
+the question becomes: **how do you get from one point on the sphere to another?**
+
+## Start with the humblest request: build a NOT gate for a qubit
+
+Everything a classical computer can do comes from a few logic gates: NOT, AND, OR.
+Try the simplest one first — NOT, which sends 0 to 1 and 1 to 0. For a qubit we require
+
+$$
+\ket{0}\mapsto\ket{1},\qquad \ket{1}\mapsto\ket{0}
+$$
+
+By linearity (chapter 3's postulate: evolution is a linear operator), its action on superpositions
+is completely fixed:
+
+$$
+\alpha\ket{0}+\beta\ket{1}\ \mapsto\ \alpha\ket{1}+\beta\ket{0}
+$$
+
+As a matrix, this is the Pauli matrix $\sigma_x$ — renamed the $X$ gate in this chapter.
+So far so good. But try to build AND next and you hit a wall: AND squeezes two inputs into one output
+(4 possible inputs, 2 possible outputs) — it is **irreversible**. From an output of 0 you cannot
+tell whether the input was 00, 01 or 10.
+
+## Why the classical-gate mindset falls short
+
+Chapter 3's time-evolution postulate says: a closed system evolves by $U=\ee^{-\ii Ht/\hbar}$, which is **unitary**.
+Unitary means $U^\dagger U=I$, means reversible, means no information lost.
+So quantum gates obey two iron rules that classical gates do not:
+
+1. **They must be reversible**: information-compressing gates like AND and OR have no direct quantum counterpart;
+2. **They must preserve inner products**: it is not enough to say what happens to the basis vectors — the probability structure of every superposition has to stay consistent.
+
+For a single qubit, unitary operations have a beautifully clean geometric meaning:
+
+<Derivation title="Single-qubit unitaries = rotations of the Bloch sphere" level="进阶" minutes={7}>
+
+**Step 1: take a 2×2 unitary apart.** Any $U\in U(2)$ can be written
+$U=\ee^{\ii\alpha}V$ with $\det V=1$ (the global phase $\ee^{\ii\alpha}$ is unobservable — discard it).
+The remaining $V\in SU(2)$ expands in Pauli matrices as
+
+$$
+V=\ee^{-\ii\frac{\Theta}{2}\hat n\cdot\vec\sigma}
+=\cos\frac{\Theta}{2}\,I-\ii\sin\frac{\Theta}{2}\,(\hat n\cdot\vec\sigma)
+$$
+
+(The second equality uses $(\hat n\cdot\vec\sigma)^2=I$ to split the exponential series into even and odd
+terms — word for word the same trick as chapter 5's derivation of spin precession.)
+
+**Step 2: see what it does to the Bloch vector.** The state map $\ket{\psi}\mapsto V\ket{\psi}$
+induces the expectation-value map $r_i=\langle\sigma_i\rangle\mapsto\langle V^\dagger\sigma_i V\rangle$.
+Working through the Pauli algebra term by term (or simply quoting chapter 5's precession result):
+
+$$
+\vec r\ \mapsto\ \vec r\cos\Theta+(\hat n\times\vec r)\sin\Theta
++\hat n(\hat n\cdot\vec r)(1-\cos\Theta)
+$$
+
+This is exactly a **three-dimensional rotation by angle $\Theta$ about the axis $\hat n$** (Rodrigues' formula).
+
+**Conclusion**: there is nothing mysterious about single-qubit gates — every one of them is a rigid
+rotation of the Bloch sphere. The $\Theta/2$ in the exponent is the half-angle relation reminding us again:
+the operator turns by $\Theta/2$, the sphere turns by $\Theta$.
+
+</Derivation>
+
+## The standard single-qubit gate catalogue
+
+| Gate | Matrix | Bloch-sphere action | Mnemonic |
+| --- | --- | --- | --- |
+| $X$ | $\begin{pmatrix}0&1\\1&0\end{pmatrix}$ | 180° about the $x$ axis | Quantum NOT; swaps the poles |
+| $Y$ | $\begin{pmatrix}0&-\ii\\\ii&0\end{pmatrix}$ | 180° about the $y$ axis | $Y=\ii XZ$ |
+| $Z$ | $\begin{pmatrix}1&0\\0&-1\end{pmatrix}$ | 180° about the $z$ axis | Puts a minus sign on $\ket{1}$; phase flip |
+| $H$ | $\frac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ | 180° about $\tfrac{\hat x+\hat z}{\sqrt2}$ | Swaps the $z$ axis with the $x$ axis |
+| $S$ | $\begin{pmatrix}1&0\\0&\ii\end{pmatrix}$ | 90° about the $z$ axis | $S^2=Z$ |
+| $T$ | $\begin{pmatrix}1&0\\0&\ee^{\ii\pi/4}\end{pmatrix}$ | 45° about the $z$ axis | $T^2=S$; the one "non-trivial angle" |
+
+Of these, the **Hadamard gate $H$** deserves a moment of its own:
+
+$$
+H\ket{0}=\frac{\ket{0}+\ket{1}}{\sqrt2}=\ket{+},\qquad
+H\ket{1}=\frac{\ket{0}-\ket{1}}{\sqrt2}=\ket{-}
+$$
+
+It turns "definite" into "superposed", and since $H^2=I$, applying it again turns it back.
+Nearly every algorithm to come opens with "hit every qubit with a row of $H$'s" —
+the standard move for manufacturing superposition and switching on quantum parallelism.
+
+<Callout type="warning" title="The Z gate is not 'doing nothing'">
+Act with $Z$ on $\ket{0}$ or $\ket{1}$ and the measurement probabilities do not budge,
+so beginners often write it off as a no-op. But act on $\ket{+}$:
+$Z\ket{+}=\ket{-}$ — the outcome of an $x$-axis measurement is completely reversed.
+**The relative phase is a genuine physical degree of freedom**; you just need a different
+measurement axis to see it. Chapter 10 will show that environmental noise's favourite mischief
+is precisely to apply random $Z$'s (dephasing) — it kills without leaving a trace, exactly
+because nothing shows up in the computational basis.
 </Callout>
 
-## Planned contents
+## Two-qubit gates: CNOT
 
-- Pauli gates, H, S, T
-- CNOT and controlled gates
-- Universal gate sets
+However many single-qubit gates you stack up, each just spins its own sphere — no correlation
+between two qubits ever appears. For a quantum computer to be more than "a row of side-by-side coins",
+we need **conditional operations**: what happens to one qubit depends on the state of another.
+The most basic is the **controlled-NOT gate** (CNOT):
+when the control is $\ket{1}$ it flips the target; when the control is $\ket{0}$ it does nothing.
 
-## Planned simulations
+```text
+control ──●──          |00⟩ → |00⟩
+          │            |01⟩ → |01⟩
+target  ──⊕──          |10⟩ → |11⟩
+                       |11⟩ → |10⟩
+```
 
-- `quantum-circuit`
+In matrix form (basis order $\ket{00},\ket{01},\ket{10},\ket{11}$):
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="quantum-circuit" />`.
+$$
+\mathrm{CNOT}=\begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{pmatrix}
+$$
+
+Its power lies in how it responds to a **superposed control**. Work through the single most
+important circuit by hand:
+
+<Derivation title="H + CNOT prepares a Bell state: step by step" level="基础" minutes={5} open={true}>
+
+The circuit: both qubits start in $\ket{0}$; apply $H$ to the first, then CNOT.
+
+```text
+|0⟩ ──[H]──●──
+           │      ⟹  |Φ⁺⟩
+|0⟩ ───────⊕──
+```
+
+**Step 0 (initial state):**
+
+$$
+\ket{00}
+$$
+
+**Step 1 ($H$ on the first qubit):**
+
+$$
+\frac{\ket{0}+\ket{1}}{\sqrt2}\otimes\ket{0}
+=\frac{\ket{00}+\ket{10}}{\sqrt2}
+$$
+
+**Step 2 (CNOT, acting linearly on each branch):**
+$\ket{00}\mapsto\ket{00}$ (control is 0, nothing happens); $\ket{10}\mapsto\ket{11}$ (control is 1, target flips).
+
+$$
+\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}
+$$
+
+This state **cannot be written in any product form** $\ket{a}\otimes\ket{b}$:
+if it could, the expansion coefficients would need $a_0b_0=a_1b_1=\tfrac{1}{\sqrt2}$ together with
+$a_0b_1=a_1b_0=0$; the latter forces some factor to vanish, contradicting the former. It is an
+entangled state — and by tweaking the state before the $H$, or the control/initial state of the CNOT,
+you get all four **Bell states**:
+
+$$
+\ket{\Phi^\pm}=\frac{\ket{00}\pm\ket{11}}{\sqrt2},\qquad
+\ket{\Psi^\pm}=\frac{\ket{01}\pm\ket{10}}{\sqrt2}
+$$
+
+They are mutually orthogonal and form a basis of the two-qubit space (the Bell basis) — the raw
+material for every protocol in sections 9.4–9.6.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**Is CNOT a "quantum photocopier"?** From the truth table, CNOT seems to "copy" the control onto
+the target ($\ket{x}\ket{0}\mapsto\ket{x}\ket{x}$, valid for $x=0,1$).
+But on a superposition it delivers **entanglement**, not two copies:
+the $\ket{\Phi^+}$ computed above is emphatically not $\ket{+}\otimes\ket{+}$.
+"Copying basis states ≠ copying arbitrary states" — the seed of section 9.5's no-cloning theorem.
+
+</div>
+<div slot="right">
+
+If cloning had succeeded we would have
+
+$$
+\ket{+}\otimes\ket{+}=\frac{\ket{00}+\ket{01}+\ket{10}+\ket{11}}{2}
+$$
+
+What we actually get is
+
+$$
+\ket{\Phi^+}=\frac{\ket{00}+\ket{11}}{\sqrt2}
+$$
+
+Their inner product is $\frac{1}{2\sqrt2}(1+1)=\frac{1}{\sqrt2}\ne1$ — genuinely different states.
+
+</div>
+</DualView>
+
+## How many gates are enough? — Universal gate sets
+
+In the classical world, NAND gates alone can build any logic circuit. The quantum counterpart:
+
+> **Universality theorem (statement)**: all single-qubit gates plus CNOT can exactly synthesise any
+> $n$-qubit unitary; stronger still, the discrete set $\{H, T, \mathrm{CNOT}\}$ alone can approximate
+> any unitary to arbitrary precision.
+
+The intuition comes in three layers: (1) any large unitary matrix decomposes into a chain of
+elementary rotations that each touch only two basis vectors;
+(2) each elementary rotation can be assembled from CNOTs plus single-qubit gates;
+(3) arbitrary single-qubit rotations are generated by $H$ and $T$ — $T$ rotates 45° about $z$,
+$HTH$ rotates 45° about $x$, and alternating irrational-angle rotations about two different axes
+can reach every corner of the rotation group
+(the Solovay–Kitaev theorem further guarantees the approximation error falls **exponentially**
+with gate count, at the cost of only a polynomial-length gate sequence).
+
+<Callout type="insight" title="Why the T gate, of all things, is the scarce one">
+The operations generated by $H$, $S$ and CNOT form the Clifford group — they map Pauli operators
+to Pauli operators, a structure so orderly that a classical computer can simulate them efficiently
+(the Gottesman–Knill theorem). What actually pushes quantum computation beyond classical simulability
+is that 45° $T$ gate. In section 9.10 you will meet the other side of the coin: in fault-tolerant
+schemes Clifford gates are cheap and $T$ gates are expensive — the price tag of a fault-tolerant
+quantum computer is estimated almost entirely by "how many $T$'s it needs".
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Single-qubit rotation', latex: 'R_{\\hat n}(\\Theta)=\\ee^{-\\ii\\frac{\\Theta}{2}\\hat n\\cdot\\vec\\sigma}=\\cos\\frac{\\Theta}{2}I-\\ii\\sin\\frac{\\Theta}{2}\\,\\hat n\\cdot\\vec\\sigma', note: 'Every single-qubit gate is a Bloch-sphere rotation (up to a global phase)' },
+    { name: 'Hadamard', latex: 'H=\\frac{1}{\\sqrt2}\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix},\\quad H\\ket{0}=\\ket{+},\\ H^2=I', note: 'Swaps the z axis with the x axis; the standard opening move of algorithms' },
+    { name: 'The phase family', latex: 'T^2=S,\\quad S^2=Z,\\quad T=\\mathrm{diag}(1,\\ee^{\\ii\\pi/4})', note: '45°/90°/180° about the z axis' },
+    { name: 'Bell-state preparation', latex: '\\mathrm{CNOT}\\,(H\\otimes I)\\ket{00}=\\frac{\\ket{00}+\\ket{11}}{\\sqrt2}', note: 'H makes superposition, CNOT turns superposition into entanglement' },
+    { name: 'Universal gate set', latex: '\\{H,\\,T,\\,\\mathrm{CNOT}\\}', note: 'Approximates any unitary to arbitrary precision (Solovay–Kitaev)' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'qg-1',
+      prompt: 'Why does the classical AND gate have no direct quantum counterpart?',
+      options: [
+        'It compresses 2 bits into 1, is irreversible, and so violates unitarity',
+        'Its matrix elements include negative numbers',
+        'Quantum computers cannot handle two inputs',
+        'It requires a measurement to implement',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The AND truth table is all 0s and 1s; the problem is not signs but 4 inputs mapping to 2 outputs.',
+        2: 'CNOT is a two-input gate; quantum gates are perfectly happy with multiple inputs.',
+      },
+      explain: 'Unitary ⇒ reversible ⇒ inputs and outputs in one-to-one correspondence. From an AND output of 0 the input cannot be recovered — information is destroyed. The fix is the Toffoli gate: three bits in, three bits out, with the AND result written onto an extra bit, keeping everything reversible.',
+    },
+    {
+      id: 'qg-2',
+      prompt: 'Apply the Z gate to ∣+⟩ = (∣0⟩+∣1⟩)/√2, then measure along the x axis. What is the probability of getting +1 (i.e. ∣+⟩)?',
+      options: ['0', '1', '1/2', '1/√2'],
+      answer: 0,
+      distractors: {
+        2: 'Z leaves computational-basis measurements unchanged, but here we measure along x. Z∣+⟩ = ∣−⟩, which is orthogonal to ∣+⟩.',
+      },
+      explain: 'Z∣+⟩ = (∣0⟩−∣1⟩)/√2 = ∣−⟩, the other eigenstate of the x measurement, so the probability of ∣+⟩ is exactly 0. The phase flip is a bona fide operation — it just takes a different measurement axis to expose it.',
+    },
+    {
+      id: 'qg-3',
+      prompt: 'The circuit (H⊗I) followed by CNOT acts on ∣10⟩. Which Bell state comes out?',
+      options: [
+        '(∣00⟩ − ∣11⟩)/√2, i.e. ∣Φ⁻⟩',
+        '(∣00⟩ + ∣11⟩)/√2, i.e. ∣Φ⁺⟩',
+        '(∣01⟩ + ∣10⟩)/√2, i.e. ∣Ψ⁺⟩',
+        '(∣01⟩ − ∣10⟩)/√2, i.e. ∣Ψ⁻⟩',
+      ],
+      answer: 0,
+      distractors: {
+        1: '∣Φ⁺⟩ comes from the initial state ∣00⟩; when the first qubit starts in ∣1⟩, H gives ∣−⟩, bringing in the minus sign.',
+        2: 'The target starts in ∣0⟩, so the two branches become 00 and 11 — no 01/10 ever appears.',
+      },
+      explain: 'H∣1⟩ = (∣0⟩−∣1⟩)/√2, so the joint state is (∣00⟩−∣10⟩)/√2; CNOT turns the second branch into ∣11⟩, giving (∣00⟩−∣11⟩)/√2 = ∣Φ⁻⟩. The four initial states ∣00⟩…∣11⟩ generate exactly the four Bell states.',
+    },
+    {
+      id: 'qg-4',
+      type: 'numeric',
+      prompt: 'The T gate rotates 45° about the z axis. Using only T gates, what is the minimum number of applications needed to carry the Bloch vector from the +x axis all the way around back to the +x axis (one full turn)?',
+      answer: 8,
+      tolerance: 0,
+      explain: 'At 45° per application, a full 360° takes 8: T⁸ = (T²)⁴ = S⁴ = Z² = I. Note that at the operator level T⁸ = I with no extra minus sign, because T’s definition already takes care of the global phase; viewed purely on the Bloch sphere it is just 8 × 45° = 360°.',
+    },
+  ]}
+/>
+
+## What comes next
+
+CNOT hands us an unexpected gift: the Bell states — two qubits "welded" together, neither of which
+owns a state of its own any longer. Last chapter we spoke of entanglement as something you "have or
+don't have", but a natural question immediately arises: $\frac{\ket{00}+\ket{11}}{\sqrt2}$ and
+$0.99\ket{00}+0.14\ket{11}$ are both entangled — are they "equally deeply" entangled?
+The next section fits entanglement with a measuring stick.

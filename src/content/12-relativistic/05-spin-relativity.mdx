@@ -2,17 +2,288 @@
 title: 自旋与相对论的必然联系
 section: '12.5'
 order: 5
-summary: Dirac 方程自动给出 g = 2。
-status: stub
+summary: 把 Dirac 方程放进电磁场、取低速极限：g=2 自己掉出来；再展开一阶，精细结构三件套——相对论修正、自旋轨道耦合（带 Thomas 1/2）、Darwin 项——全部自动到齐。自旋是相对论送给量子力学的礼物。
+status: done
+prereqs:
+  - 12-relativistic/03-dirac-equation
+  - 06-hydrogen/06-fine-structure
+  - 05-angular-momentum/07-spin-orbit
+sims: []
+objectives:
+  - 从电磁场中的 Dirac 方程取非相对论极限，推导 Pauli 方程与 g=2
+  - 说明再展开一阶后，6.6 节手工添加的精细结构三项如何全部自动出现（含 Thomas 1/2）
+  - 解释 g−2 的微小偏差为什么是通往量子场论的路标
+  - 说明自旋统计定理的相对论根源，回收第 8 章的公设
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+第 5 章我们被实验按着头接受了两件事：电子有自旋 $\hbar/2$；
+它的磁矩带一个古怪的因子 $g\approx2$——同样的角动量，
+自旋产生的磁矩是轨道的**两倍**（[5.4 节](/ch/05-angular-momentum/04-stern-gerlach/)）。
+第 6 章我们又往氢原子里手工塞了三块「相对论补丁」拼出精细结构
+（[6.6 节](/ch/06-hydrogen/06-fine-structure/)）。
+每一次都能算对数，每一次都说不出**为什么**。
+
+这一节一次性清账：以上所有「手工添加」的东西，
+全部是 Dirac 方程的自动推论。方法只有一个——把方程放进电磁场，
+按 $v/c$ 的幂次逐阶展开。
+
+## 第零阶惊喜：g = 2
+
+电磁场的接入方式与经典力学、薛定谔理论完全相同（最小耦合）：
+$\hat{\vec p}\to\hat{\vec\pi}=\hat{\vec p}-q\vec A$，再加上标势能量 $q\varphi$：
+
+$$
+\ii\hbar\frac{\partial\psi}{\partial t}
+=\bigl[c\,\vec\alpha\cdot\hat{\vec\pi}+\beta mc^2+q\varphi\bigr]\psi
+$$
+
+注意：这里**没有**放进任何磁矩——耦合方式对自旋只字未提。
+
+<Derivation title="从 Dirac 方程到 Pauli 方程：g=2 的诞生" level="进阶" minutes={12} open={true}>
+
+**第一步：拆成上下两半。** 按 12.3 节的分块结构把四分量旋量写成两个二分量旋量
+$\psi=\begin{pmatrix}\chi\\ \eta\end{pmatrix}$，并把主导的静能相位剥掉：
+$\psi\to\ee^{-\ii mc^2t/\hbar}\psi$。代入方程、用 $\alpha_k,\beta$ 的分块形式，
+得到耦合方程组：
+
+$$
+\ii\hbar\,\partial_t\chi=c\,\vec\sigma\cdot\hat{\vec\pi}\,\eta+q\varphi\,\chi
+$$
+
+$$
+\ii\hbar\,\partial_t\eta=c\,\vec\sigma\cdot\hat{\vec\pi}\,\chi+q\varphi\,\eta-2mc^2\eta
+$$
+
+**第二步：认出大小分量。** 第二式里 $-2mc^2\eta$ 一家独大：低速时
+$\ii\hbar\partial_t\eta$ 与 $q\varphi\eta$（量级 $\sim mv^2$ 的能量乘 $\eta$）
+都远小于它，于是
+
+$$
+\eta\approx\frac{\vec\sigma\cdot\hat{\vec\pi}}{2mc}\,\chi
+\;\sim\;\frac{v}{2c}\,\chi
+$$
+
+$\eta$ 比 $\chi$ 小一个 $v/c$ 因子——称 $\chi$ 为**大分量**（非相对论电子的
+Pauli 二分量波函数）、$\eta$ 为**小分量**。
+
+**第三步：回代。** 把 $\eta$ 代回第一式：
+
+$$
+\ii\hbar\,\partial_t\chi
+=\left[\frac{(\vec\sigma\cdot\hat{\vec\pi})^2}{2m}+q\varphi\right]\chi
+$$
+
+**第四步：全剧最关键的一步代数。** 用 Pauli 矩阵恒等式
+$(\vec\sigma\cdot\vec a)(\vec\sigma\cdot\vec b)=\vec a\cdot\vec b+\ii\vec\sigma\cdot(\vec a\times\vec b)$：
+
+$$
+(\vec\sigma\cdot\hat{\vec\pi})^2=\hat\pi^2+\ii\,\vec\sigma\cdot(\hat{\vec\pi}\times\hat{\vec\pi})
+$$
+
+普通向量自己叉乘自己是零，但 $\hat{\vec\pi}$ 的分量互不对易（$\hat{\vec p}$ 与
+$\vec A(\vec x)$ 不对易）！逐分量计算：
+
+$$
+(\hat{\vec\pi}\times\hat{\vec\pi})_z=\hat\pi_x\hat\pi_y-\hat\pi_y\hat\pi_x
+=-q\bigl([\hat p_x,A_y]+[A_x,\hat p_y]\bigr)
+=\ii\hbar q\Bigl(\frac{\partial A_y}{\partial x}-\frac{\partial A_x}{\partial y}\Bigr)
+=\ii\hbar q\,B_z
+$$
+
+三个分量合起来：$\hat{\vec\pi}\times\hat{\vec\pi}=\ii\hbar q\vec B$。代回去：
+
+$$
+(\vec\sigma\cdot\hat{\vec\pi})^2=\hat\pi^2-q\hbar\,\vec\sigma\cdot\vec B
+$$
+
+**第五步：读出 Pauli 方程与 g 因子。**
+
+$$
+\ii\hbar\,\partial_t\chi
+=\left[\frac{\hat\pi^2}{2m}+q\varphi
+-\frac{q\hbar}{2m}\,\vec\sigma\cdot\vec B\right]\chi
+$$
+
+最后一项是磁矩能 $-\vec\mu\cdot\vec B$，其中（用 $\hat{\vec S}=\frac\hbar2\vec\sigma$）
+
+$$
+\vec\mu=\frac{q\hbar}{2m}\vec\sigma=\underbrace{2}_{g}\cdot\frac{q}{2m}\hat{\vec S}
+$$
+
+对比轨道磁矩 $\vec\mu_L=\frac{q}{2m}\hat{\vec L}$（系数是 $\frac{q}{2m}$、没有 2）：
+**自旋磁矩的 g 因子恰好等于 2。**没有任何一步把磁矩放进理论——
+它从 $(\vec\sigma\cdot\hat{\vec\pi})^2$ 的代数里自己长了出来，
+数值与 Stern-Gerlach 和反常塞曼效应的测量一致。
+1928 年之前 $g=2$ 是一个纯粹的经验数字；1928 年之后它是一道推导题。
+
+</Derivation>
+
+## 第一阶：精细结构三件套自动到齐
+
+把上面的近似再往前推一阶（对 $\eta$ 的方程保留 $1/c^2$ 修正，
+这套系统展开称为 Foldy-Wouthuysen 变换，代数繁琐但没有新思想），
+氢原子（$q\varphi=V(r)$ 为库仑势）的有效哈密顿量多出三项：
+
+$$
+\hat H_{1/c^2}
+=\underbrace{-\frac{\hat p^4}{8m^3c^2}}_{\text{相对论动能修正}}
++\underbrace{\frac{1}{2m^2c^2}\frac1r\frac{\dd V}{\dd r}\,\hat{\vec S}\cdot\hat{\vec L}}_{\text{自旋轨道耦合}}
++\underbrace{\frac{\hbar^2}{8m^2c^2}\nabla^2V}_{\text{Darwin 项}}
+$$
+
+逐项对账，每一项都是 6.6 节的老熟人：
+
+<DualView>
+<div slot="left">
+
+**当年怎么来的（6.6 节）：**
+
+1. 动能修正：把 $\sqrt{p^2c^2+m^2c^4}$ 展开到下一阶，**手工**加进去。
+2. 自旋轨道耦合：电子参考系里核绕电子转、产生磁场作用于自旋磁矩——
+   但这样算出的系数**大了一倍**，还得再手工乘上说不清道不明的
+   「Thomas 进动因子 1/2」才对上实验。
+3. Darwin 项：当年根本讲不出半经典来源，只能承认「反正得加上」，
+   解释是电子位置的「颤动」（Zitterbewegung）抹平了它感受到的势。
+
+三块补丁，三种来历，各自为政。
+
+</div>
+<div slot="right">
+
+**现在怎么来的（本节）：**
+
+三项从**同一个** Dirac 方程的同一次展开中一起出现——
+
+1. 动能修正：来自能量根号的展开，自动带对系数。
+2. 自旋轨道项：**系数天生就带着 Thomas 的 1/2**，
+   因为展开同时包含了磁相互作用与参考系进动两种效应。
+3. Darwin 项：来自大小分量耦合的非局域性，只作用于
+   $\nabla^2V\neq0$ 处——库仑势下即原点，所以只影响 $s$ 态，
+   与光谱数据严丝合缝。
+
+合并后的能级只依赖 $n$ 与总角动量 $j$：
+
+$$
+E_{nj}=-\frac{13.6\ \text{eV}}{n^2}
+\left[1+\frac{\alpha^2}{n^2}\Bigl(\frac{n}{j+1/2}-\frac34\Bigr)\right]
+$$
+
+与 6.6 节拼出来的公式逐项全同。
+
+</div>
+</DualView>
+
+<Callout type="insight" title="这一章的主旨，一句话">
+**自旋不是量子力学的附件，是相对论的礼物。**
+
+第 5 章的自旋、$g=2$、第 6 章的精细结构三件套、乃至第 8 章「费米子服从
+不相容原理」——这些当年一件件从实验搬进理论的「公设」，
+在「量子力学 + 狭义相对论 + 稳定真空」的联合要求下全部变成了**定理**。
+最后这件（自旋统计定理：半整数自旋必为费米子、整数自旋必为玻色子）
+是 Pauli 在 1940 年于相对论量子场论框架内证明的——它的根子恰恰在相对论的
+因果结构（类空间隔上测量不能互相影响）。非相对论量子力学里它只能是公设，
+相对论一进场，它就是唯一自洽的选择。物质世界的稳定性——原子不塌缩、
+元素周期表存在、白矮星撑得住引力——最终都系在洛伦兹对称性上。
 </Callout>
 
-## 内容规划
+<Callout type="warning" title="g 其实不严格等于 2——而这是好消息">
+实验测得电子的 g 因子是
 
-- 旋量表示与洛伦兹群
-- g 因子的自然出现
-- 自旋统计定理的相对论根源
+$$
+g=2.002\,319\,304\,360\ldots
+$$
 
+Dirac 的 2 之后还有一串尾巴，相对偏差约千分之一。这不是 Dirac 方程算错了，
+而是它的适用边界露头了：电子永远浸泡在电磁场的量子涨落里，
+不断发射并重吸收虚光子，磁矩因此被轻微修饰。这已经是**场**的效应，
+单粒子方程管不到。1948 年 Schwinger 用量子电动力学算出首阶修正
+
+$$
+\frac{g-2}{2}=\frac{\alpha}{2\pi}\approx0.001\,161\ldots
+$$
+
+与实验一致；今天理论与实验在**万亿分之一**的精度上吻合——
+物理学史上被检验得最精确的预言。$g-2$ 的那条小尾巴，
+是量子场论递进来的第一张名片。
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Pauli 方程（自动导出）', latex: '\\ii\\hbar\\,\\partial_t\\chi=\\Bigl[\\frac{(\\hat{\\vec p}-q\\vec A)^2}{2m}+q\\varphi-\\frac{q\\hbar}{2m}\\vec\\sigma\\cdot\\vec B\\Bigr]\\chi', note: '大分量的非相对论极限；磁矩项无须手加' },
+    { name: '关键代数', latex: '(\\vec\\sigma\\cdot\\hat{\\vec\\pi})^2=\\hat\\pi^2-q\\hbar\\,\\vec\\sigma\\cdot\\vec B', note: '源于 π×π=iħqB（分量不对易）；g=2 由此而来' },
+    { name: '精细结构（自动到齐）', latex: '\\hat H_{1/c^2}=-\\frac{\\hat p^4}{8m^3c^2}+\\frac{1}{2m^2c^2}\\frac1r\\frac{\\dd V}{\\dd r}\\hat{\\vec S}\\cdot\\hat{\\vec L}+\\frac{\\hbar^2}{8m^2c^2}\\nabla^2V', note: 'Thomas 1/2 天生带对；Darwin 项只碰 s 态' },
+    { name: '氢原子能级', latex: 'E_{nj}=-\\frac{13.6\\ \\text{eV}}{n^2}\\Bigl[1+\\frac{\\alpha^2}{n^2}\\Bigl(\\frac{n}{j+1/2}-\\frac34\\Bigr)\\Bigr]', note: '只依赖 n 与 j，与 6.6 节公式全同' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel5-1',
+      prompt: '推导中 g=2 的直接来源是哪一步代数？',
+      options: [
+        '(σ·π)² = π² − qħσ·B，其中 π×π = iħqB 因 p 与 A(x) 不对易而不为零',
+        '在哈密顿量里按实验值加入磁矩项 −μ·B',
+        '把电子当成带电小球计算其自转磁矩',
+        '对库仑势做一阶微扰论',
+      ],
+      answer: 0,
+      distractors: {
+        1: '全程没有手加任何磁矩——最小耦合 p→p−qA 对自旋只字未提，磁矩项是代数的产物。',
+        2: '自转小球模型给出的 g=1（且早已被否决）；g=2 恰恰是无经典对应的标志。',
+      },
+      explain: '普通向量 a×a=0，但算符 π 的分量互不对易，π×π=iħqB。这一项经 Pauli 恒等式变成 −qħσ·B/2m，对比轨道磁矩 qL/2m 正好差一个因子 2。',
+    },
+    {
+      id: 'rel5-2',
+      prompt: '与 6.6 节的手工做法相比，从 Dirac 方程展开得到精细结构的优势是：（多选）',
+      options: [
+        '三项修正出自同一次展开，不再各自为政',
+        '自旋轨道耦合的系数自动带上 Thomas 的 1/2，无须额外修正',
+        'Darwin 项获得明确来源，且自动只作用于 s 态（∇²V 集中在原点）',
+        '展开结果表明精细结构其实不存在',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: '恰恰相反：展开精确重现 6.6 节与实验一致的 E_nj 公式，只依赖 n 和 j。',
+      },
+      explain: '半经典推导的自旋轨道系数大一倍、要靠 Thomas 进动救场；Darwin 项当年完全没有来源。Foldy-Wouthuysen 展开一次性给出三项、系数全对——「补丁」升级为「推论」。',
+    },
+    {
+      id: 'rel5-3',
+      prompt: '实验测得 g=2.00232 而非严格的 2。这个偏差说明：',
+      options: [
+        'Dirac 单粒子方程到达适用边界：电子与电磁场量子涨落的相互作用修饰了磁矩，需要量子场论（首阶修正 α/2π）',
+        'Dirac 方程被证伪，需要推翻重来',
+        '实验精度不足造成的系统误差',
+        '电子其实是自旋 1 的粒子',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'g=2 本身正是 Dirac 方程的胜利；小尾巴是更深一层理论（QED）的效应，如同精细结构之于玻尔模型。',
+        2: 'g−2 已测到万亿分之一量级并与 QED 计算吻合——它是物理史上最精确的理论-实验对照。',
+      },
+      explain: 'Schwinger 1948 年算出 (g−2)/2=α/2π≈0.00116 与实验一致。虚光子的发射与重吸收是「场」的效应，单粒子波动方程原则上无法包含——g−2 是量子场论的第一张名片。',
+    },
+    {
+      id: 'rel5-4',
+      type: 'numeric',
+      prompt: '氢原子 n=2 能级中，2p₃/₂ 与 2p₁/₂ 的精细结构劈裂为 ΔE=13.6 eV×α²/16。取 α=1/137.0，求 ΔE（单位 10⁻⁵ eV）。',
+      answer: 4.53,
+      tolerance: 0.2,
+      unit: '×10⁻⁵ eV',
+      explain: '由 E_nj 公式，n=2 时 j=3/2 与 j=1/2 两项之差为 (13.6/4)·(α²/4)·(2/1−2/2)=13.6α²/16 ≈ 4.53×10⁻⁵ eV，对应约 10.9 GHz——正是 6.6 节引用的实测劈裂。手工补丁与自动展开，算的是同一个自然。',
+    },
+  ]}
+/>
+
+## 接下来
+
+数一数这一章欠下的「借条」：KG 的负概率要靠场的电荷解释兑现（12.2）；
+Dirac 海的无穷背景要靠场的真空重铸抹平（12.4）；$g-2$ 的小尾巴要靠
+虚光子涨落计算（本节）；自旋统计定理的证明整个生活在场论里。
+每一条线索都指向同一个方向：把「一个粒子的波函数」升级为
+「每个时空点都在振动的量子场」，粒子只是场的激发。
+**场论的大门已经推开一条缝。**下一章我们不再逐行推导，
+而是带着这套完整的量子力学素养，去看一看门缝后面的前沿风景——
+从拓扑物态到黑洞信息，那里的每一个问题，都在使用你已经学会的语言。

@@ -1,17 +1,228 @@
 ---
-title: 'The Klein–Gordon equation'
-summary: 'The first attempt, and its difficulties.'
+title: The Klein–Gordon equation
 section: '12.2'
 order: 2
-status: stub
+summary: 'Translate E²=p²c²+m²c⁴ directly into a wave equation: covariance achieved, at the price of a probability density that can go negative. Track the negative probability to its source and you find it is reporting something true — the existence of antiparticles.'
+status: done
+prereqs:
+  - 12-relativistic/01-why-relativistic
+  - 02-wavefunction/02-normalization-and-current
+sims: []
+objectives:
+  - Construct the Klein–Gordon equation from the relativistic dispersion relation using the operator translation rules
+  - Derive the conserved current of the KG equation and explain why its density is not positive definite
+  - 'Trace the negative-probability difficulty to its structural root: the equation is second order in time'
+  - 'State the modern reading: ρ is a charge density, and the KG equation describes a spin-0 field'
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section's diagnosis was written plainly: the disease is $E=p^2/2m$. The prescription seems ready-made — chapter 2's translation rules for building the Schrödinger equation have not expired:
+
+$$
+E\;\to\;\ii\hbar\frac{\partial}{\partial t},\qquad
+\vec p\;\to\;-\ii\hbar\nabla
+$$
+
+Just plug them into the **genuine** relativistic relation $E^2=p^2c^2+m^2c^4$, and done? Schrödinger himself tried exactly this route first, in 1926 (before he even published his non-relativistic equation), and Klein and Gordon published it formally the same year. In this section we walk the route ourselves and see where it succeeds and where it stumbles — and the way it stumbles is highly instructive.
+
+## Constructing the equation
+
+<Derivation title="From dispersion relation to the Klein–Gordon equation" level="基础" minutes={5} open={true}>
+
+**Step 1: direct translation.** Substitute the translation rules into $E^2=p^2c^2+m^2c^4$ and let both sides act on a wavefunction $\phi(x,t)$:
+
+$$
+-\hbar^2\frac{\partial^2\phi}{\partial t^2}
+=-\hbar^2c^2\nabla^2\phi+m^2c^4\phi
+$$
+
+**Step 2: tidy into standard form.** Divide by $-\hbar^2c^2$ and rearrange:
+
+$$
+\boxed{\;\frac{1}{c^2}\frac{\partial^2\phi}{\partial t^2}-\nabla^2\phi
++\Bigl(\frac{mc}{\hbar}\Bigr)^2\phi=0\;}
+$$
+
+This is the **Klein–Gordon equation**. Identify the parts: the first two terms together are the wave-equation operator (the d'Alembertian $\Box$) — second derivatives in both time and space, paired in the correct $1/c^2$ ratio: **Lorentz covariant, box ticked**. The coefficient of the third term is the inverse square of the Compton wavelength we just met, $1/\lambda_C^2$: the mass's sole role in the equation is to endow the wave equation with an intrinsic length scale.
+
+**Step 3: two limiting self-checks.**
+- $m=0$: it degenerates to the wave equation $\Box\phi=0$, whose solutions travel at the speed of light — the equation a photon should satisfy.
+- Insert the plane wave $\phi=\ee^{\ii(px-Et)/\hbar}$ and the equation demands
+
+$$
+E^2=p^2c^2+m^2c^4\;\Longrightarrow\;E=\pm\sqrt{p^2c^2+m^2c^4}
+$$
+
+The dispersion relation returns exactly to our starting point — but note the $\pm$: **every momentum comes paired with a negative-energy solution**. File that away; this section is trying a different case first.
+
+</Derivation>
+
+## The crime scene: where did the probability go?
+
+A candidate "quantum-mechanical equation" must hand over two things: a probability density $\rho$ and a probability current $\vec j$ satisfying the continuity equation $\partial_t\rho+\nabla\cdot\vec j=0$ (probability neither appears from nowhere nor vanishes — recall [section 2.2](/en/ch/02-wavefunction/02-normalization-and-current/)). The Schrödinger equation hands over $\rho=|\Psi|^2\geq0$, qualified by birth. What about KG?
+
+<Derivation title="Deriving the KG conserved current — and the autopsy" level="进阶" minutes={9}>
+
+**Step 1: the standard trick for a conservation law.** Exactly the move of section 2.2: multiply the equation by $\phi^*$ and subtract $\phi$ times the conjugate equation. The KG equation and its complex conjugate are
+
+$$
+\frac1{c^2}\partial_t^2\phi-\nabla^2\phi+\frac{m^2c^2}{\hbar^2}\phi=0,\qquad
+\frac1{c^2}\partial_t^2\phi^*-\nabla^2\phi^*+\frac{m^2c^2}{\hbar^2}\phi^*=0
+$$
+
+$\phi^*\times$(first) $-\;\phi\times$(second) — the mass terms cancel:
+
+$$
+\frac1{c^2}\bigl(\phi^*\partial_t^2\phi-\phi\,\partial_t^2\phi^*\bigr)
+-\bigl(\phi^*\nabla^2\phi-\phi\nabla^2\phi^*\bigr)=0
+$$
+
+Both brackets can be written as total derivatives:
+
+$$
+\frac{\partial}{\partial t}\Bigl[\frac1{c^2}\bigl(\phi^*\partial_t\phi-\phi\,\partial_t\phi^*\bigr)\Bigr]
+-\nabla\cdot\bigl(\phi^*\nabla\phi-\phi\nabla\phi^*\bigr)=0
+$$
+
+**Step 2: normalise the coefficient and recognise the current.** Multiply by $\frac{\ii\hbar}{2m}$ so the spatial part matches the Schrödinger probability current:
+
+$$
+\rho=\frac{\ii\hbar}{2mc^2}\Bigl(\phi^*\frac{\partial\phi}{\partial t}-\phi\frac{\partial\phi^*}{\partial t}\Bigr),
+\qquad
+\vec j=\frac{\hbar}{2m\ii}\bigl(\phi^*\nabla\phi-\phi\nabla\phi^*\bigr)
+$$
+
+$\vec j$ is identical to Schrödinger's probability current — familiar and reassuring. But $\rho$ has changed: it is no longer $|\phi|^2$ but a combination involving the **time derivative**.
+
+**Step 3: the autopsy.** Insert the plane wave $\phi=N\ee^{\ii(\vec p\cdot\vec x-Et)/\hbar}$ (so $\partial_t\phi=-\ii E\phi/\hbar$):
+
+$$
+\rho=\frac{\ii\hbar}{2mc^2}\cdot\Bigl(-\frac{2\ii E}{\hbar}\Bigr)|N|^2
+=\frac{E}{mc^2}\,|N|^2
+$$
+
+Positive-energy solutions ($E>0$): $\rho>0$, all is well, and at low speed $E\to mc^2$, $\rho\to|N|^2$, joining smoothly onto Schrödinger — good. Negative-energy solutions ($E<0$): $\rho<0$. **The probability density is negative.**
+
+And as we just established, the negative-energy solutions make up fully half of the solution space and cannot be thrown away (discard half the solutions and the remaining family is incomplete — you cannot even assemble an arbitrary initial wave packet).
+
+</Derivation>
+
+<Callout type="insight" title="To the root: negative probability is the inevitable child of 'second order in time'">
+This is not a flaw in the derivation technique; it is structural necessity. Seeing this clearly matters most of all:
+
+The Schrödinger equation is **first** order in time: given $\Psi(x,0)$ the future is uniquely determined, and $\rho=|\Psi|^2$ contains no time derivative — it could not go negative if it tried.
+
+The KG equation is **second** order in time — like Newton's equation, it needs **two** pieces of initial data: $\phi(x,0)$ **and** $\partial_t\phi(x,0)$, independent of each other. The conserved density $\rho$ is precisely a combination of these two, and a combination of two independent quantities can of course take either sign.
+
+Now the knot is visible: **relativity forces you to choose the same derivative order for time and space.** Choose second order (KG) — a positive-definite probability density cannot be salvaged. That leaves only one untried road: **first order in both time and space**. This is exactly Dirac's entrance in the next section.
 </Callout>
 
-## Planned contents
+## Rehabilitation: not wrong, just misused
 
-- Constructing the equation
-- The negative probability density problem
-- The correct reading: a scalar field
+The KG equation was later fully rehabilitated — the problem was never the equation, but the reading "$\phi$ is a single-particle probability amplitude".
+
+<DualView>
+<div slot="left">
+
+**Change spectacles.** Multiply $\rho$ by the charge $q$ and stop calling it a probability density: call it the **charge density**. A charge density is supposed to take either sign — positive particles contribute positively, **antiparticles** negatively. The scandal of "negative probability", under its new name, becomes a prediction: the negative-energy solutions of the KG equation are holding a seat for a particle of opposite charge. The equation was telling the truth all along; we were just listening in the wrong language.
+
+In quantum field theory, $\phi$ is recast as a **field** (one degree of freedom at each spacetime point, whose quantised excitations are the particles), and the KG equation is the field equation for spin-0 particles. The pion (discovered 1947) and the Higgs boson (discovered 2012) satisfy exactly this "failed" equation of 1926.
+
+</div>
+<div slot="right">
+
+**What is conserved is charge, not particle number.**
+
+$$
+Q=q\int\rho\,\dd^3x=\text{const}
+$$
+
+A typical relativistic process: a photon creates a particle-antiparticle pair,
+
+$$
+\gamma\;\to\;\pi^+ +\pi^-
+$$
+
+Particle number $1\to2$ (not conserved); charge $0\to(+1)+(-1)=0$ (conserved). The KG conservation law keeps precisely this ledger.
+
+A clean corroborating clue: a **real** $\phi$ ($\phi^*=\phi$) inserted into the expression for $\rho$ gives identically zero — a real field describing an electrically neutral particle (such as $\pi^0$ or the Higgs) has no such density to speak of, and the "probability interpretation" never applied to it in the first place.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="But within this chapter, the problem remains open">
+"Read it as a charge density" only becomes truly self-consistent in quantum field theory — that requires abandoning the fixed-particle-number framework, a matter for chapter 13 and beyond. On the home turf of **single-particle quantum mechanics**, we still need an equation with a positive-definite probability density, or we cannot even ask "where is the electron?" The KG autopsy report points the way: second order in time was the cause of death, so build an equation first order in time, first order in space, that still satisfies the relativistic dispersion relation. It sounds like an impossible assignment — Dirac pulled it off with a beautiful piece of algebra.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Klein–Gordon equation', latex: '\\frac1{c^2}\\frac{\\partial^2\\phi}{\\partial t^2}-\\nabla^2\\phi+\\Bigl(\\frac{mc}{\\hbar}\\Bigr)^2\\phi=0', note: 'Second derivatives in both space and time, Lorentz covariant; mass term = 1/λ_C²' },
+    { name: 'Energy spectrum', latex: 'E=\\pm\\sqrt{p^2c^2+m^2c^4}', note: 'Negative-energy solutions are half the solution space; completeness forbids discarding them' },
+    { name: 'Conserved density', latex: '\\rho=\\frac{\\ii\\hbar}{2mc^2}\\bigl(\\phi^*\\partial_t\\phi-\\phi\\,\\partial_t\\phi^*\\bigr)', note: 'Plane waves give ρ=(E/mc²)|N|²; negative-energy solutions have ρ<0' },
+    { name: 'Modern reading', latex: 'q\\rho=\\text{charge density},\\qquad Q=q\\int\\rho\\,\\dd^3x=\\text{const}', note: 'KG is the spin-0 field equation: pions, the Higgs boson' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rel2-1',
+      prompt: 'The structural root of the KG conserved density ρ failing to be non-negative is:',
+      options: [
+        'The equation is second order in time, φ and ∂ₜφ are independent initial data, and ρ is a combination of the two',
+        'The mass term (mc/ħ)²φ appears in the equation',
+        'The wrong normalisation coefficient was used in deriving the conservation law',
+        'φ is complex rather than real',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The mass terms cancel exactly in the subtraction "φ*×equation − φ×conjugate equation" and have no effect on the form of the conserved current.',
+        3: 'Quite the opposite: a real φ makes ρ identically zero; only a complex φ can have a non-zero density.',
+      },
+      explain: 'In the first-order-in-time Schrödinger equation, ρ=|Ψ|² contains no time derivative and is naturally non-negative; in the second-order KG equation, ρ ∝ Im(φ*∂ₜφ) depends on the independent initial-velocity data and can take either sign. Relativistic covariance (equal derivative orders in space and time) and positive-definite probability cannot coexist in a second-order equation.',
+    },
+    {
+      id: 'rel2-2',
+      prompt: 'Why can we not simply discard the negative-energy solutions of the KG equation?',
+      options: [
+        'The family of positive-energy solutions alone is incomplete — even a general initial wave packet cannot be expanded in it',
+        'The momentum of the negative-energy solutions is imaginary',
+        'The negative-energy solutions do not satisfy the KG equation',
+        'The negative-energy solutions propagate faster than light',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The momentum p of a negative-energy plane wave is an ordinary real number; only E takes the negative square root.',
+        2: 'Negative-energy plane waves satisfy the equation exactly — they are solutions the equation itself hands over.',
+      },
+      explain: 'For each momentum, the positive- and negative-energy solutions together form a complete basis (like sin and cos, neither dispensable). Force yourself to use only half and no localised initial state can be assembled. The negative-energy solutions must be interpreted, not deleted — a thread that bears fruit as the positron in section 12.4.',
+    },
+    {
+      id: 'rel2-3',
+      prompt: 'Which statements about the modern standing of the KG equation are correct? (Select all that apply.)',
+      options: [
+        'qρ should be read as a charge density, and its two signs correspond exactly to particles and antiparticles',
+        'It is the field equation for spin-0 particles, satisfied by pions and the Higgs boson',
+        'It has been proven wrong and completely replaced by the Dirac equation',
+        'A real scalar field φ*=φ has identically zero conserved density, corresponding to electrically neutral particles',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'The Dirac equation describes spin 1/2, KG describes spin 0 — a division of labour, not a replacement. What "failed" was only the single-particle probability reading of φ.',
+      },
+      explain: 'What is conserved is charge, not particle number (in γ→π⁺π⁻ the particle number changes while the charge does not). The equation itself lives a long, healthy life in field theory; this chapter sets it aside only because the single-particle framework still demands positive-definite probability.',
+    },
+    {
+      id: 'rel2-4',
+      type: 'numeric',
+      prompt: 'The length scale of the KG mass term is the Compton wavelength λ_C=ħ/mc (this book’s convention). For comparison with the more commonly quoted h/mc: what is the electron’s h/mc in picometres? (h=6.626×10⁻³⁴ J·s, m=9.109×10⁻³¹ kg, c=2.998×10⁸ m/s)',
+      answer: 2.43,
+      tolerance: 0.1,
+      unit: 'pm',
+      explain: 'h/mc = 6.626×10⁻³⁴/(9.109×10⁻³¹×2.998×10⁸) ≈ 2.43×10⁻¹² m = 2.43 pm (the reduced version ħ/mc ≈ 0.386 pm). This is the natural length of relativistic quantum effects: below it, the single-particle picture yields to pair creation.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Cause of death established: the second time derivative killed positive-definite probability. Dirac's strategy strikes at the root — build an equation with **only first derivatives in both time and space**, which upon squaring returns to $E^2=p^2c^2+m^2c^4$. With ordinary numbers this cannot be done; Dirac discovered that with **matrices** it can. And the algebraic structure introduced purely to "take a square root" will hand over, free of charge, the most mysterious thing in quantum mechanics — spin.

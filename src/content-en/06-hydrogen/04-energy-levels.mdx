@@ -1,17 +1,202 @@
 ---
-title: 'Levels, degeneracy and quantum numbers'
-summary: 'What n, l and m each control.'
+title: Energy levels, degeneracy, and quantum numbers
 section: '6.4'
 order: 4
-status: stub
+summary: 'Three quantum numbers, three jobs: n runs the energy, l the magnitude of angular momentum, m the orientation. Count the n²-fold degeneracy of each level, ask what entitles the Coulomb potential to its "accidental" surplus, then use selection rules to connect the level diagram to the real spectrum.'
+status: done
+prereqs:
+  - 06-hydrogen/03-hydrogen-solution
+  - 05-angular-momentum/06-clebsch-gordan
+objectives:
+  - State what each of n, l, m determines and the rules governing their values
+  - Derive the n² degeneracy of each level and distinguish "necessary" from "accidental" degeneracy
+  - Use the Runge–Lenz vector to explain the symmetry origin of the Coulomb potential's accidental degeneracy
+  - Use the selection rule Δl = ±1 to explain the structure of the spectral series and compute specific line wavelengths
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The derivation of the last section bore a whole family tree of states: each state is labelled by three integers $(n,l,m)$, and the energy acknowledges only the first. In this section we count that tree, read it properly, and then hook it up to one more thing — the real spectrum. After all, this whole subject began with a few spectral lines ([section 1.4](/en/ch/01-history/04-bohr-model/)); now it is our turn not only to compute where the lines are, but to answer the question Bohr could not: **why some transitions never light up**.
+
+## The division of labour among the three quantum numbers
+
+First lay out the rules. Each bound state $\psi_{nlm}$ we solved for is labelled by three quantum numbers:
+
+| Quantum number | Name | Values | Determines |
+| --- | --- | --- | --- |
+| $n$ | principal | $1,2,3,\dots$ | energy $E_n=-13.6\ \text{eV}/n^2$; size $\sim n^2a_0$ |
+| $l$ | orbital (azimuthal) | $0,1,\dots,n-1$ | magnitude of angular momentum $\lvert\vec L\rvert=\sqrt{l(l+1)}\,\hbar$; shape of the radial distribution |
+| $m$ | magnetic | $-l,\dots,+l$ | $z$-component $L_z=m\hbar$; orientation of the angular distribution |
+
+Spectroscopic tradition gives $l$ letter aliases: $l=0,1,2,3$ are called s, p, d, f (from nineteenth-century descriptions of how the lines looked — sharp, principal, diffuse, fundamental; the names are older than the theory). So "$n=2,l=1$" is written 2p, and "$n=3,l=2$" is 3d. The notation you memorised in chemistry class gets its birth certificate here.
+
+The electron also has spin $s=1/2$ ([section 5.3](/en/ch/05-angular-momentum/03-spin-half/)), with two orientations $m_s=\pm1/2$. The Coulomb Hamiltonian contains no spin, so in this section we do the books "spinless" first and multiply by 2 at the end.
+
+## Counting the degeneracy: exactly n² states per level
+
+<Derivation title="Degeneracy = n² in three lines" level="基础" minutes={4} open={true}>
+
+The energy depends only on $n$. Fix $n$: $l$ runs from $0$ to $n-1$, and each $l$ offers $2l+1$ values of $m$. Total:
+
+$$
+d(n)=\sum_{l=0}^{n-1}(2l+1)
+=2\cdot\frac{(n-1)n}{2}+n=n^2
+$$
+
+Roll call, level by level: $n=1$ has only 1s — one state; $n=2$ has 2s plus three orientations of 2p, $1+3=4$; $n=3$ has 3s, 3p, 3d, $1+3+5=9$. Double for spin: $2n^2=2,8,18,\dots$ — **the capacity sequence of the periodic table's rows** shows its face here. (Why the electrons don't all pile into 1s must wait for the Pauli principle in [Chapter 8](/en/ch/08-identical-particles/).)
+
+</Derivation>
+
+This $n^2$-fold degeneracy splits into two accounts of entirely different character:
+
+<DualView>
+<div slot="left">
+
+**The necessary part: $m$ degeneracy.** That the $2l+1$ states of $m$ under one $l$ share an energy we already understood in [section 6.1](/en/ch/06-hydrogen/01-central-force/): space is isotropic, with no external field there is no preferred direction, and it cannot matter along which axis $L_z$ is measured. **Every** central potential has this degeneracy, and it is rock solid — to break it, you must genuinely single out a direction (say, by applying a magnetic field; see [section 6.7](/en/ch/06-hydrogen/07-zeeman-stark/)).
+
+**The accidental part: $l$ degeneracy.** That 2s and 2p share an energy is downright suspicious. They face completely different effective-potential curves (one has no centrifugal barrier, the other does), their radial equations are not even the same — what entitles their energies to coincide exactly? Swap in any other central potential — say, the screened potential an alkali-metal valence electron feels behind the inner shells — and this degeneracy vanishes at once (sodium's 3s and 3p differ by 2.1 eV, producing the famous 589 nm yellow doublet). Textbooks call it **accidental degeneracy**.
+
+</div>
+<div slot="right">
+
+"Accidental" is really an alias for "hidden symmetry". The Coulomb potential possesses an extra conserved quantity — the **Runge–Lenz vector**:
+
+$$
+\hat{\vec A}=\frac{1}{2\mu}\left(\hat{\vec p}\times\hat{\vec L}-\hat{\vec L}\times\hat{\vec p}\right)-\frac{e^2}{4\pi\varepsilon_0}\frac{\hat{\vec r}}{r}
+$$
+
+Classical counterpart: a vector pointing along the ellipse's major axis, with length proportional to the eccentricity. Its conservation is equivalent to **the orbit not precessing** — the Kepler ellipse closing on itself year after year without drifting. This is a property unique to the $1/r$ potential (and the harmonic oscillator): nudge the potential away from $1/r$ ever so slightly and the orbit starts to precess, and $\vec A$ is no longer conserved (Mercury's perihelion precession is precisely the effect of general relativity's tiny correction to $1/r$).
+
+Quantum mechanically $[\hat H,\hat{\vec A}]=0$, so $\hat{\vec A}$ connects states of different $l$ without changing the energy — this is the engine of the $l$ degeneracy. Together, $\vec L$ and $\vec A$ generate a symmetry group larger than 3D rotations (its mathematical name is SO(4)); in 1926 Pauli used it to derive the full energy spectrum purely algebraically, without solving a single differential equation.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="Degeneracy is symmetry's tally counter">
+A rule worth remembering for life: **see a degeneracy, look for a symmetry; see an "accidental" degeneracy, look for a hidden symmetry.**
+
+- $m$ degeneracy ↔ rotational symmetry (shared by all central potentials);
+- $l$ degeneracy ↔ Runge–Lenz conservation (unique to the $1/r$ potential);
+- the spin doubling ↔ a spin-free Hamiltonian (broken the moment fine structure enters; see [section 6.6](/en/ch/06-hydrogen/06-fine-structure/)).
+
+Read in reverse, the way a degeneracy breaks reports which symmetry got destroyed: the last three sections of this chapter — fine structure, Zeeman, Stark — are one long chronicle of degeneracies collapsing tier by tier.
 </Callout>
 
-## Planned contents
+## Connecting to the spectrum: selection rules
 
-- Where the n²-fold degeneracy comes from
-- Accidental degeneracy and the Runge–Lenz vector
-- Selection rules
+We have the level diagram — so the spectral lines are just the level differences… right? Not quite. If any two levels could interconvert, the spectrum would be far denser than what is observed. Experimentally, a great many lines that "ought" to exist simply never appear.
+
+The rule is: electric-dipole radiation (the dominant mechanism by which atoms emit light) requires
+
+$$
+\Delta l=\pm1,\qquad \Delta m=0,\pm1
+$$
+
+with no restriction on $n$.
+
+<Derivation title="Where selection rules come from: the photon carries off one unit of angular momentum" level="进阶" minutes={6}>
+
+The transition rate is proportional to the matrix element $\lvert\braket{\psi_{n'l'm'}}{\hat{\vec r}\,\psi_{nlm}}\rvert^2$ (rigorous derivation in Chapter 7's perturbation theory; here we only ask when it vanishes).
+
+**The parity argument.** Under spatial inversion $\vec r\to-\vec r$ the spherical harmonics transform as $Y_l^m\to(-1)^lY_l^m$, so $\psi_{nlm}$ has parity $(-1)^l$. The operator $\hat{\vec r}$ has odd parity. If $l'=l$, the integrand as a whole is odd and the integral vanishes — **$\Delta l=0$ is forbidden**.
+
+**The angular-momentum argument.** The three components of the position operator $\hat{\vec r}$ can be recombined into the form $rY_1^m$ — it "carries $l=1$" all by itself. The matrix element is a coupling integral of three angular-momentum objects ($l'$, $1$, $l$); by the addition rules of [section 5.6](/en/ch/05-angular-momentum/06-clebsch-gordan/), it is non-zero only if $l'$ lies between $\lvert l-1\rvert$ and $l+1$. Combined with parity ruling out $l'=l$, only $\Delta l=\pm1$ survives.
+
+In physical language: **the photon carries one unit of angular momentum**, so when an atom emits one, its own $l$ must change by exactly 1 to balance the books. The $\Delta m$ rule is the same statement for the $z$-component.
+
+One corollary: a 2s state wanting to fall to 1s finds the single-photon channel blocked by $\Delta l=0$; it can only take the far slower two-photon route — a lifetime of 0.12 seconds, eight orders of magnitude longer than an ordinary excited state (nanoseconds). Such "metastable states" are important players both in nebular spectra and in precision measurements of hydrogen.
+
+</Derivation>
+
+## The spectral series: an experimental photograph of the level diagram
+
+Apply the selection rules to the level diagram, group transitions by their **landing level** $n_1$, and each group is a spectral series:
+
+| Series | Landing level | Wavelength range | Band | Notes |
+| --- | --- | --- | --- | --- |
+| Lyman | $n\to1$ | 91.2–121.6 nm | vacuum UV | Ly$\alpha$ 121.6 nm is the brightest hydrogen line in the universe |
+| Balmer | $n\to2$ | 364.6–656.3 nm | visible | $\mathrm H\alpha$ 656 nm red, $\mathrm H\beta$ 486 nm blue-green |
+| Paschen | $n\to3$ | 820.4–1875 nm | infrared | |
+| Brackett | $n\to4$ | 1458–4051 nm | infrared | |
+
+The **series limit** at each series' short-wavelength end (the $n\to\infty$ limiting wavelength, e.g. 91.2 nm for Lyman) corresponds to an electron dropping from the ionisation threshold to the landing level; at wavelengths shorter than the limit the spectrum becomes a continuous band — free electrons being captured, their initial energies continuous. The observed positions of the series limits are a direct test of the energy-level formula.
+
+<Callout type="warning" title="Spectral lines are not energy levels">
+The commonest beginner's confusion: the number and positions of the spectral lines are **not** the number and positions of the levels. Lines are level **differences**, further filtered by the selection rules. Two direct consequences:
+
+1. One line can hide multiple transitions: $\mathrm H\alpha$ ($3\to2$) is really the overlap of three allowed channels — 3s→2p, 3p→2s, 3d→2p — which the Coulomb degeneracy places at the same wavelength, so it looks like one line. When [section 6.6](/en/ch/06-hydrogen/06-fine-structure/) breaks the degeneracy, this line will split open.
+2. Not every arrow you can draw on the level diagram appears in the spectrum: 3d→2s ($\Delta l=2$) emits no light.
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: 'Quantum-number rules', latex: 'n=1,2,\\dots;\\quad l=0,\\dots,n-1;\\quad m=-l,\\dots,+l', note: 'n runs the energy, l the angular-momentum magnitude, m the orientation' },
+    { name: 'Degeneracy', latex: 'd(n)=\\sum_{l=0}^{n-1}(2l+1)=n^2\\ \\ (\\text{with spin}\\ 2n^2)', note: '2n² = 2, 8, 18, … the embryo of the periodic table\'s row capacities' },
+    { name: 'Runge–Lenz vector', latex: '\\hat{\\vec A}=\\frac{1}{2\\mu}(\\hat{\\vec p}\\times\\hat{\\vec L}-\\hat{\\vec L}\\times\\hat{\\vec p})-\\frac{e^2}{4\\pi\\varepsilon_0}\\frac{\\hat{\\vec r}}{r}', note: 'Conserved only for the 1/r potential; the root of the l (accidental) degeneracy' },
+    { name: 'Selection rules', latex: '\\Delta l=\\pm1,\\quad\\Delta m=0,\\pm1', note: 'The photon carries one unit of angular momentum; Δn unrestricted' },
+    { name: 'Rydberg formula', latex: '\\frac{1}{\\lambda}=R\\left(\\frac{1}{n_1^2}-\\frac{1}{n_2^2}\\right),\\quad R_\\infty=1.0974\\times10^7\\ \\text{m}^{-1}', note: 'Bohr\'s formula stands unchanged — but now every term has a pedigree' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'el-1',
+      prompt: 'What is the degeneracy of the hydrogen n = 4 level (ignoring spin), and which part of it is "accidental"?',
+      options: [
+        '16-fold; that different l (4s, 4p, 4d, 4f) share the same energy at all is the accidental degeneracy peculiar to the Coulomb potential',
+        '16-fold; different m sharing the same energy is the accidental degeneracy',
+        '8-fold; spin up and spin down sharing an energy is the accidental degeneracy',
+        '4-fold; there is no accidental component',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The m degeneracy comes from the isotropy of space; every central potential has it — it belongs to the "necessary" kind.',
+        3: 'd(4) = 1+3+5+7 = 16.',
+      },
+      explain: 'The m degeneracy is guaranteed by rotational symmetry; the l degeneracy requires an extra conserved quantity (the Runge–Lenz vector), possessed only by the 1/r potential (and the 3D oscillator). Alkali-metal potentials deviate from 1/r and their s and p levels immediately separate — sodium\'s yellow light is the evidence.',
+    },
+    {
+      id: 'el-2',
+      prompt: 'Why is the lifetime of the 2s state (about 0.12 s) eight orders of magnitude longer than that of 2p (about 1.6 ns)?',
+      options: [
+        '2s→1s is a Δl = 0 transition, forbidden by the electric-dipole selection rule; it can only take the much slower two-photon channel',
+        'The 2s energy is much lower than 2p',
+        'The 2s electron is too far from the nucleus',
+        'The 2s state has no such thing as a transition matrix element',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'With no external field, 2s and 2p have exactly the same energy in the Coulomb approximation.',
+      },
+      explain: 'The photon carries one unit of angular momentum, and s→s cannot balance the angular-momentum books. Such single-photon-blocked "metastable states" are enormously useful, both in astrophysical spectra and in precision hydrogen spectroscopy (the 1s–2s two-photon measurement reaches 15 digits).',
+    },
+    {
+      id: 'el-3',
+      prompt: 'Which statements about the hydrogen spectral series are correct? (Select all that apply.)',
+      options: [
+        'The Balmer series is the family of transitions landing on n = 2, and happens to fall in the visible band',
+        'Each series has a series limit at its short-wavelength end, corresponding to a drop from the ionisation threshold',
+        'Beyond the series limit (shorter wavelengths) the spectrum is continuous, because free-electron energies are continuous',
+        'The Lyman series lies in the infrared',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'The Lyman series lands on n = 1, has the largest energy differences, and lies in the vacuum ultraviolet (91–122 nm).',
+      },
+      explain: 'The lower the landing level, the larger the energy gap: Lyman UV, Balmer visible, Paschen and beyond infrared. The continuum past the series limit is a direct spectral photograph of "levels piling up toward E = 0, with continuous scattering states above".',
+    },
+    {
+      id: 'el-4',
+      type: 'numeric',
+      prompt: 'Compute the wavelength of the Lyman α line (n = 2 → 1) in nm. (E₁ = −13.606 eV, hc = 1240 eV·nm)',
+      answer: 121.5,
+      tolerance: 1.0,
+      unit: 'nm',
+      explain: 'ΔE = 13.606×(1 − 1/4) = 10.20 eV, λ = 1240/10.20 = 121.5 nm. This vacuum-UV line is among the most important in the universe: cosmic expansion redshifts distant galaxies\' Lyα into the visible and even infrared, and the "Lyman break" is a standard ruler for measuring galaxy redshifts.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Levels, degeneracies, spectral lines — all in hand. One thing remains unseen: **what the wavefunctions themselves look like**. What exactly are those spherical, dumbbell, and cloverleaf "electron cloud" pictures in chemistry books depicting? Is the place where $\lvert\psi\rvert^2$ peaks the radius where the electron is most likely to be found? (Hint: no — and almost everyone falls for it.) The next section is devoted to teaching you how to "read" an orbital correctly.

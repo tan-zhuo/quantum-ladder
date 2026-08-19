@@ -2,24 +2,281 @@
 title: 自旋进动
 section: '5.5'
 order: 5
-summary: 磁场中的自旋如何演化。
-status: stub
-sims: ['bloch-sphere']
+summary: 磁场里的自旋像陀螺一样绕场转圈，转多快只由磁场强度决定。医院的 MRI 听的就是这个转速。
+status: done
+prereqs:
+  - 05-angular-momentum/04-stern-gerlach
+  - 03-formalism/09-time-evolution-pictures
+objectives:
+  - 写出磁场中自旋的哈密顿量，完整解出态的时间演化
+  - 算出 Larmor 频率并解释为什么它与自旋初始方向无关
+  - 定性说明共振与 Rabi 振荡：旋转的横向场如何翻转自旋
+  - 讲清 NMR/MRI 的基本流程：极化、翻转、听信号
 ---
 
-<Callout type="note" title="本节尚未撰写">
-正文与推导还没写。下面是这一节的内容规划——如果你正在贡献内容，请按这个骨架展开。
+上一节的 SG 装置回答「此刻自旋朝哪」。这一节问下一个自然的问题：
+两次测量之间，自旋在**做**什么？
+
+这不只是理论洁癖。你身体里每一个氢原子核都是一个自旋 $\tfrac12$，
+医院的磁共振成像（MRI）机器整天在跟它们打交道——
+它依赖的物理，恰好就是「测量之间自旋如何演化」这一问的答案。
+
+## 哈密顿量：只剩一项
+
+把一个磁矩为 $\vec\mu$ 的粒子放进**均匀**磁场 $\vec B=B\hat z$。
+均匀意味着没有力（上一节的力来自梯度），粒子不动；位置这本账完全平静，
+只剩自旋这本账在演化。能量就是经典的取向能：
+
+$$
+\hat H=-\vec\mu\cdot\vec B=-\gamma B\,\hat S_z
+$$
+
+这里 $\vec\mu=\gamma\hat{\vec S}$，比例常数 $\gamma$ 叫**旋磁比**——
+每种粒子一个固定值，电子的 $|\gamma_e|=g_e\mu_B/\hbar$（$g_e\approx2.002$），
+质子的约小 660 倍（质量大，磁矩小）。
+
+这大概是量子力学里最简单的非平庸哈密顿量：一个 $2\times2$ 对角矩阵。
+本征态就是 $\ket{\uparrow},\ket{\downarrow}$，能量
+
+$$
+E_\uparrow=-\frac{\gamma\hbar B}{2},\qquad E_\downarrow=+\frac{\gamma\hbar B}{2}
+$$
+
+（取 $\gamma$ 为正来叙述；电子的 $\gamma$ 实际为负，只是让转向反过来。）
+两能级的间隔 $\Delta E=\gamma\hbar B$ 随磁场线性张开——这就是 **Zeeman 分裂**
+在两能级系统上的最简版本。把这个间隔换算成频率，记
+
+$$
+\omega\equiv\frac{\Delta E}{\hbar}=\gamma B
+$$
+
+这个频率马上要成为主角。
+
+## 解演化：自旋绕场转圈
+
+<Derivation title="任意初态的演化与 ⟨S⟩ 的进动" level="基础" minutes={9} open={true}>
+
+**第一步：初态。** 设 $t=0$ 时自旋沿某个方向 $(\theta,\phi=0)$「朝上」
+（用 [5.3 节](/ch/05-angular-momentum/03-spin-half/)的一般公式，$\phi$ 取零不失一般性）：
+
+$$
+\ket{\chi(0)}=\cos\frac\theta2\ket{\uparrow}+\sin\frac\theta2\ket{\downarrow}
+$$
+
+**第二步：套用定态展开。** $\hat H$ 的本征态现成，直接给每个分量挂上相位钟
+$\ee^{-\ii E t/\hbar}$（见 [3.9 节](/ch/03-formalism/09-time-evolution-pictures/)）：
+
+$$
+\ket{\chi(t)}=\cos\frac\theta2\,\ee^{+\ii\omega t/2}\ket{\uparrow}
++\sin\frac\theta2\,\ee^{-\ii\omega t/2}\ket{\downarrow}
+$$
+
+（代入 $E_\uparrow=-\hbar\omega/2$、$E_\downarrow=+\hbar\omega/2$。）
+提出整体相位 $\ee^{+\ii\omega t/2}$ 扔掉：
+
+$$
+\ket{\chi(t)}\ \sim\ \cos\frac\theta2\ket{\uparrow}
++\ee^{-\ii\omega t}\sin\frac\theta2\ket{\downarrow}
+$$
+
+**第三步：认出这是谁。** 对照一般自旋态
+$\cos\tfrac\theta2\ket{\uparrow}+\ee^{\ii\phi}\sin\tfrac\theta2\ket{\downarrow}$——
+这正是方向 $(\theta,\ \phi(t)=-\omega t)$ 上的「朝上」态！
+极角 $\theta$ 一动不动，方位角匀速旋转。**演化 = 绕 z 轴转圈**，在 Bloch
+球上是一条纬线。
+
+**第四步：验证期望值。** 逐个算（用 Pauli 矩阵夹一下即可）：
+
+$$
+\langle\hat S_z\rangle=\frac\hbar2\cos\theta=\text{常数}
+$$
+
+$$
+\langle\hat S_x\rangle=\frac\hbar2\sin\theta\cos\omega t,\qquad
+\langle\hat S_y\rangle=-\frac\hbar2\sin\theta\sin\omega t
+$$
+
+$\langle\vec S\rangle$ 是一支长度不变、以角速度 $\omega=\gamma B$
+绕磁场方向匀速转动的矢量——与经典陀螺在重力下的进动一模一样。
+这个转动叫 **Larmor 进动**，$\omega$ 叫 Larmor 频率。
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**直觉：进动就是两个音叉的拍。**
+
+自旋态是 $\ket{\uparrow}$ 与 $\ket{\downarrow}$ 的叠加，
+两个成分的相位钟走速不同（能量不同）。相对相位以
+$\omega=\Delta E/\hbar$ 匀速累积——宏观上看，就是横向分量在转圈。
+
+这和 [2.7 节](/ch/02-wavefunction/07-infinite-well/)里两个本征态叠加、
+概率云以 $\omega_{21}$ 来回晃是**同一件事**：
+凡是两能级的叠加，可观测量都以能级差对应的频率振荡。
+自旋只是把这件事画在了球面上。
+
+</div>
+<div slot="right">
+
+**数字：每种粒子一个电台频道。**
+
+$\omega=\gamma B$，除以 $2\pi$ 换成普通频率：
+
+- 电子，$B=1\ \text{T}$：$f=g_e\mu_B B/h\approx28.0\ \text{GHz}$（微波）。
+- 质子，$B=1\ \text{T}$：$f\approx42.6\ \text{MHz}$（短波电台波段）。
+- 质子，$B=3\ \text{T}$（主流 MRI 机）：$f\approx127.7\ \text{MHz}$。
+
+频率只依赖 $\gamma$ 和 $B$，**与自旋的初始方向无关**（$\theta$ 只决定转圈的半径，
+不决定转速）。所以每种核在给定磁场下有自己雷打不动的「频道」——
+想跟谁说话，就把收音机调到谁的频率。
+
+</div>
+</DualView>
+
+## 共振：怎么把自旋翻过来
+
+光看着自旋转圈没什么用，我们还想**操控**它——比如把朝上的自旋翻到朝下。
+能级差是 $\hbar\omega$，直觉上讲：施加一个频率恰好为 $\omega$ 的扰动就行。
+
+具体做法：在大静场 $B_0\hat z$ 之外，再加一个在 xy 平面内**旋转**的小磁场
+$B_1$（$B_1\ll B_0$），旋转频率为 $\omega_{\text{rf}}$。定性结论
+（完整求解要用 3.9 节的旋转参考系技巧，这里讲清物理）：
+
+- **失谐时**（$\omega_{\text{rf}}$ 偏离 $\omega_0=\gamma B_0$）：小场跟自旋
+  「转不同步」，推力一会儿帮忙一会儿捣乱，平均下来几乎没效果。
+- **共振时**（$\omega_{\text{rf}}=\omega_0$）：换到跟着自旋一起转的参考系里看，
+  大场 $B_0$ 的效果被转动恰好抵消，只剩一个**静止**的小场 $B_1$——
+  于是自旋绕 $B_1$ 以慢频率 $\omega_1=\gamma B_1$ 缓缓转动，
+  从北极大回环转到南极再转回来。$\ket{\uparrow}$ 与 $\ket{\downarrow}$
+  之间的概率来回摆动：
+
+$$
+P_{\downarrow}(t)=\sin^2\frac{\omega_1 t}{2}\quad(\text{共振时})
+$$
+
+这个摆动叫 **Rabi 振荡**。掐好时间关掉小场，就能把自旋精确停在任何想要的位置：
+转 $t=\pi/\omega_1$（「$\pi$ 脉冲」）恰好完全翻转；转一半（「$\pi/2$ 脉冲」）
+把自旋放平到赤道——这是下面 NMR 要用的关键一招。
+
+<Callout type="insight" title="每个两能级系统都是一个披着马甲的自旋">
+这一节没有任何推导真正用到「磁矩」的物理——用到的只是：
+两个能级、能量差 $\hbar\omega_0$、一个振荡的耦合。
+所以结论适用于**一切**两能级系统：原子的两条能级配激光、
+超导电路的两个电流态配微波、离子阱里的两个内态……
+在量子计算的语言里，Bloch 球上的 Larmor 进动就是 Z 旋转门，
+Rabi 脉冲就是 X/Y 旋转门——「打磁共振」与「跑量子门」在数学上是同一件事。
+自旋 1/2 不只是一个粒子属性，它是两能级物理的通用语法。
 </Callout>
 
-## 内容规划
+## NMR 与 MRI：把这一节变成一台机器
 
-- Larmor 进动
-- 磁共振与 Rabi 振荡
-- NMR 与 MRI 的原理
+核磁共振（NMR）的流程，用本节的语言三句话说完：
 
-## 计划中的交互模拟
+1. **极化。** 把样品放进强磁场 $B_0$。热平衡下自旋朝上比朝下略多
+   （能量低的态人口稍多——室温 3 T 下也就多百万分之十的量级，
+   但样品里核的数目是 $10^{23}$ 级，净磁化足够用），
+   样品获得一个沿 z 的净磁矩。
+2. **翻转。** 打一个频率对准 $\omega_0=\gamma B_0$ 的射频 $\pi/2$ 脉冲，
+   把净磁矩放平到 xy 平面。
+3. **听。** 平躺的磁矩以 Larmor 频率进动，像一根旋转的条形磁铁，
+   在线圈里感应出频率为 $\omega_0$ 的振荡电压。测这个信号的频率与衰减。
 
-- `bloch-sphere`
+为什么值得听？因为 $\omega_0=\gamma B$ 里的 $B$ 是**核所在处的实际磁场**，
+它被周围电子云轻微屏蔽——不同化学环境里的同种核，频率有百万分之几的偏差
+（「化学位移」）。化学家由此从一张频谱读出分子结构，这是 NMR 谱学。
 
-模拟组件写好后在 `src/components/mdx/Sim.astro` 的 REGISTRY 里登记，
-正文里用 `<Sim name="bloch-sphere" />` 嵌入即可。
+MRI 则反其道行之：故意把 $B_0$ 做成随位置变化的梯度场，
+于是**频率变成了位置的条形码**——收到 127.68 MHz 的信号，就知道它来自磁场
+恰好对应这个频率的那一层组织。再加上不同组织里信号衰减快慢不同
+（水多脂肪多弛豫时间不同），就能重建出软组织的三维图像。
+你躺进 MRI 机时听到的敲击声，就是梯度线圈在快速切换这个「条形码」。
+
+<Callout type="warning" title="进动的是期望值，不是「那支箭」">
+「自旋矢量绕磁场转圈」说的是**期望值** $\langle\vec S\rangle$ 的运动。
+任何时刻去测任何方向的分量，得到的仍然只有 $\pm\tfrac\hbar2$ 两种结果——
+SG 实验的结论一条不少。转圈的是概率的重心，不是一支真实存在的箭。
+（NMR 里线圈听到的确实是平滑的正弦波，但那是 $10^{23}$
+个自旋的集体平均——单个自旋依然只会给出「上」或「下」。）
+</Callout>
+
+<KeyFormulas
+  items={[
+    { name: '哈密顿量与分裂', latex: '\\hat H=-\\gamma B\\hat S_z,\\qquad \\Delta E=\\gamma\\hbar B=\\hbar\\omega_0', note: '两能级 Zeeman 分裂；ω₀ 与初始方向无关' },
+    { name: 'Larmor 进动', latex: '\\langle\\hat S_x\\rangle=\\tfrac\\hbar2\\sin\\theta\\cos\\omega_0 t,\\quad \\langle\\hat S_z\\rangle=\\text{常数}', note: '极角不变、方位角匀速转：Bloch 球上的一条纬线' },
+    { name: 'Larmor 频率', latex: '\\omega_0=\\gamma B', note: '质子 42.6 MHz/T，电子 28.0 GHz/T——每种粒子一个频道' },
+    { name: 'Rabi 振荡', latex: 'P_{\\downarrow}(t)=\\sin^2\\tfrac{\\omega_1 t}{2},\\qquad \\omega_1=\\gamma B_1', note: '共振时上下人口全幅摆动；π 脉冲完全翻转' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'am5-1',
+      prompt: 'Larmor 进动中，下列哪个量随时间变化？',
+      options: [
+        '⟨S_x⟩ 和 ⟨S_y⟩',
+        '⟨S_z⟩',
+        '进动频率 ω₀',
+        '|S| 的大小',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'H 正比于 S_z，S_z 与 H 对易，是守恒量——这正是「极角不变」的原因。',
+        2: 'ω₀ = γB 只由粒子种类和磁场决定，全程恒定。',
+      },
+      explain: '演化只让方位角 φ = −ω₀t 匀速走动：横向分量转圈，纵向分量和长度都不动。在 Bloch 球上就是沿一条纬线匀速巡航。',
+    },
+    {
+      id: 'am5-2',
+      prompt: '为什么 Rabi 翻转要求射频场频率对准 ω₀ = γB₀？',
+      options: [
+        '共振时在随自旋旋转的参考系里，小场 B₁ 看起来静止，能持续把自旋往同一个方向推',
+        '只有这个频率的光子能被磁场吸收',
+        '因为 B₁ 必须大于 B₀',
+        '失谐时能量不守恒',
+      ],
+      answer: 0,
+      distractors: {
+        2: '恰恰相反，B₁ ≪ B₀ 也没关系——共振的意义就在于让小场的推力全部积累起来。',
+        3: '失谐时跃迁并非禁止，只是概率摆幅远小于 1；说「不守恒」过强。',
+      },
+      explain: '失谐时 B₁ 与自旋转速不同步，推力时正时负平均归零；共振时同步旋转，B₀ 的作用在旋转系中被抵消，自旋绕 B₁ 以慢频率 ω₁ = γB₁ 大回环——上下人口以 sin²(ω₁t/2) 全幅摆动。',
+    },
+    {
+      id: 'am5-3',
+      prompt: '关于 NMR/MRI，正确的是：（多选）',
+      options: [
+        'MRI 用梯度磁场把 Larmor 频率变成位置的编码',
+        '化学位移来自电子云对外磁场的微小屏蔽',
+        '单个质子在线圈中感应出平滑的正弦电压',
+        'π/2 脉冲的作用是把净磁化放平到垂直于 B₀ 的平面内',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: '平滑正弦波是约 10²³ 个自旋期望值的集体效果；单个自旋任何一次测量仍只给 ±ħ/2。',
+      },
+      explain: 'NMR 听频率的微小偏移读化学结构；MRI 故意制造频率的空间差异来定位。两者共享同一句物理：ω₀ = γB，且 B 是核所在处的真实磁场。',
+    },
+    {
+      id: 'am5-4',
+      type: 'numeric',
+      prompt: '质子的旋磁比 γ = 2.675×10⁸ rad·s⁻¹·T⁻¹。在 3.0 T 的 MRI 磁体中，质子的 Larmor 频率 f = γB/2π 是多少 MHz？（保留一位小数）',
+      answer: 127.7,
+      tolerance: 0.5,
+      unit: 'MHz',
+      explain: 'f = 2.675×10⁸ × 3.0 / (2π) ≈ 8.025×10⁸/6.283 ≈ 1.277×10⁸ Hz = 127.7 MHz。这就是 3 T MRI 机的射频工作频率——恰好落在调频广播附近，所以 MRI 室要做电磁屏蔽。',
+    },
+  ]}
+/>
+
+## 接下来
+
+到此为止，我们一直在摆弄**单个**自旋。但真实体系里角动量很少单独出现：
+氢原子的电子既有轨道角动量 $\hat{\vec L}$ 又有自旋 $\hat{\vec S}$；
+氦原子有两个电子的自旋；质子和中子凑成原子核。
+
+两个角动量摆在一起，总角动量是多少？经典答案「矢量相加」在量子力学里
+立刻遇到麻烦——连每支矢量自己的三个分量都不能同时确定，拿什么相加？
+下一节给出正确的加法，它的答案会同时解释「单态」「三重态」这些
+将来在化学键和纠缠态里反复出现的词。

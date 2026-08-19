@@ -1,24 +1,290 @@
 ---
-title: 'Quantum teleportation'
-summary: 'What is transmitted is a state — not matter, and not faster than light.'
+title: Quantum teleportation
 section: '9.5'
 order: 5
-status: stub
-sims: ['teleportation']
+summary: 'One Bell pair plus one two-bit phone call delivers an unknown quantum state to the far side intact: four measurement outcomes, four correction gates, all worked by hand — with the no-cloning theorem proved and the not-faster-than-light point cleared up along the way.'
+status: done
+prereqs:
+  - 09-quantum-information/04-bell-chsh
+  - 09-quantum-information/02-quantum-gates
+  - 03-formalism/08-measurement
+objectives:
+  - 'Work through the teleportation protocol in full: expand the three-qubit state in the Bell basis and list all four outcomes with their corrections'
+  - Prove the no-cloning theorem and show how it blocks the naive "quantum fax machine"
+  - Explain why the classical channel is indispensable and why the protocol does not violate relativity
+  - 'Balance the resource ledger: 1 ebit + 2 classical bits = 1 qubit delivered'
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+Last section's conclusion felt a little frustrating: entanglement's correlations are strong enough
+to violate the Bell inequality, yet cannot carry a single bit of messaging. This section shows what
+entanglement is really for — not sending messages with it, but **sending states**.
+
+## The problem at the door: how do you mail an unknown quantum state?
+
+Alice holds a qubit in a state that **even she does not know**:
+
+$$
+\ket{\chi}=\alpha\ket{0}+\beta\ket{1}
+$$
+
+She wants a faraway Bob to end up owning this state. Box up the particle and courier it?
+Decoherence en route would destroy the state (chapter 10's subject). Then how about faxing:
+measure it, phone the readings to Bob, and let him rebuild a copy?
+
+## Two walls facing the classical approach
+
+**Wall one: you cannot measure it all.** Section 9.1 told us a single measurement yields only 1 bit,
+and the state collapses on the spot — the rest of the information in $\alpha,\beta$ goes up in smoke.
+With a single specimen, $(\alpha,\beta)$ simply cannot be measured.
+
+**Wall two: you cannot copy it.** Fine — photocopy a few first and measure at leisure? Quantum
+mechanics welds that road shut too:
+
+<Derivation title="The no-cloning theorem" level="基础" minutes={4} open={true}>
+
+**Claim**: there is no unitary $U$ that achieves
+$U\ket{\chi}\ket{e}=\ket{\chi}\ket{\chi}$ for an **arbitrary** unknown state $\ket{\chi}$
+($\ket{e}$ being a fixed blank page).
+
+**Proof (one clean blow from linearity).** Suppose it works on the two basis states:
+
+$$
+U\ket{0}\ket{e}=\ket{0}\ket{0},\qquad U\ket{1}\ket{e}=\ket{1}\ket{1}
+$$
+
+For the superposition $\ket{+}=\frac{\ket{0}+\ket{1}}{\sqrt2}$, linearity **forces**
+
+$$
+U\ket{+}\ket{e}=\frac{\ket{00}+\ket{11}}{\sqrt2}
+$$
+
+But "successful cloning" would require
+
+$$
+\ket{+}\ket{+}=\frac{\ket{00}+\ket{01}+\ket{10}+\ket{11}}{2}
+$$
+
+The two are not equal (section 9.2 computed the inner product: $1/\sqrt2$).
+Contradiction — no cloning machine exists. $\blacksquare$
+
+Linear evolution can only turn "copying basis states" into "creating entanglement" — CNOT's failed
+photocopy was not poor craftsmanship but a law of nature. Incidentally: if cloning were possible,
+section 9.4's entanglement correlations would become a faster-than-light telegraph (Bob could clone
+a thousand copies and measure each to tell which axis Alice had measured along) —
+so no-cloning and no-signalling are tied to the same rope.
+
+</Derivation>
+
+Cannot measure it all, cannot copy it — a dead end, it seems. The way out, found by Bennett and five
+co-authors in 1993, is exquisite: **don't read it — let entanglement carry it for you.**
+
+## The full protocol, by hand
+
+Setup in advance: Alice and Bob each hold half of the Bell state
+$\ket{\Phi^+}_{23}=\frac{\ket{00}+\ket{11}}{\sqrt2}$ (particle 2 to Alice, particle 3 to Bob).
+Alice also holds particle 1, in the state $\ket{\chi}$ to be sent.
+
+```text
+particle 1 |χ⟩  ──●──[H]──[measure]──┐m₁ ─────────────┐
+                  │                  │m₂ ──┐          │
+particle 2 ───────⊕───────[measure]──┘     │(phone)   │(phone)
+                                           ↓          ↓
+particle 3 ───────────────────────────────[Xᵐ²]─────[Zᵐ¹]── |χ⟩
+          Alice's side                 Bob's side
+```
+
+<Derivation title="Expanding the three-qubit state in the Bell basis: all four outcomes, none missed" level="进阶" minutes={9} open={true}>
+
+**Step 0: the initial state.**
+
+$$
+\ket{\Psi_0}=\ket{\chi}_1\otimes\ket{\Phi^+}_{23}
+=\frac{1}{\sqrt2}\Big(\alpha\ket{000}+\alpha\ket{011}+\beta\ket{100}+\beta\ket{111}\Big)
+$$
+
+(The three subscripts are particles 1, 2, 3 in order.)
+
+**Step 1: put on different glasses for particles 1 and 2.** Rather than measuring the two particles
+separately, Alice performs a **Bell-basis measurement** — asking "which of the four Bell states are
+particles 1 and 2 in?" First invert the computational basis into the Bell basis:
+
+$$
+\ket{00}=\frac{\ket{\Phi^+}+\ket{\Phi^-}}{\sqrt2},\quad
+\ket{11}=\frac{\ket{\Phi^+}-\ket{\Phi^-}}{\sqrt2},\quad
+\ket{01}=\frac{\ket{\Psi^+}+\ket{\Psi^-}}{\sqrt2},\quad
+\ket{10}=\frac{\ket{\Psi^+}-\ket{\Psi^-}}{\sqrt2}
+$$
+
+**Step 2: substitute and sort by Bell state.** Replace the particle-1,2 part of $\ket{\Psi_0}$ term
+by term and patiently collect like terms (write out every one):
+
+$$
+\begin{aligned}
+\ket{\Psi_0}=\frac12\Big[
+&\ket{\Phi^+}_{12}\otimes(\alpha\ket{0}+\beta\ket{1})_3\\
++&\ket{\Phi^-}_{12}\otimes(\alpha\ket{0}-\beta\ket{1})_3\\
++&\ket{\Psi^+}_{12}\otimes(\alpha\ket{1}+\beta\ket{0})_3\\
++&\ket{\Psi^-}_{12}\otimes(\alpha\ket{1}-\beta\ket{0})_3
+\Big]
+\end{aligned}
+$$
+
+**This is a pure identity** — nobody has done anything yet, and Bob's particle 3 already has four
+states "pre-hung" on it, each just one Pauli gate away from $\ket{\chi}$.
+
+**Step 3: Alice measures.** Each Bell state carries amplitude $\tfrac12$, so the four outcomes have
+probability $\tfrac14$ each (**independent of $\alpha,\beta$** — Alice's readout contains no
+information whatsoever about $\ket{\chi}$; we will need this later). After collapse, four cases:
+
+| Alice obtains | Bob's particle 3 becomes | Bob's correction |
+| --- | --- | --- |
+| $\ket{\Phi^+}$ | $\alpha\ket{0}+\beta\ket{1}$ | Do nothing ($I$) |
+| $\ket{\Phi^-}$ | $\alpha\ket{0}-\beta\ket{1}$ | $Z$ (remove the relative minus sign) |
+| $\ket{\Psi^+}$ | $\alpha\ket{1}+\beta\ket{0}$ | $X$ (swap back up and down) |
+| $\ket{\Psi^-}$ | $\alpha\ket{1}-\beta\ket{0}$ | $ZX$ (first $X$, then $Z$) |
+
+**Step 4: make the phone call.** Alice encodes her result into two classical bits $(m_1,m_2)$ and
+sends them to Bob, who applies $Z^{m_1}X^{m_2}$ according to the table. Verify the trickiest row:
+when she obtains $\ket{\Psi^-}$,
+
+$$
+ZX(\alpha\ket{1}-\beta\ket{0})=Z(\alpha\ket{0}-\beta\ket{1})=\alpha\ket{0}+\beta\ket{1}=\ket{\chi}
+$$
+
+All four cases converge: **Bob's particle is exactly in $\ket{\chi}$**,
+while Alice's particles 1 and 2 have collapsed onto a Bell state — $\ket{\chi}$ has vanished from
+her side without a trace.
+
+**Implementation detail**: the Bell measurement itself can be done with section 9.2's circuit —
+CNOT (1 controlling 2) followed by $H$ on 1 maps the four Bell states onto the four computational
+basis states $\ket{m_1 m_2}$; then just measure both (see the circuit diagram above).
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**What just happened?** No particle flew from Alice to Bob.
+What was transported is the **state** — the entire structure described by the pair of complex
+numbers $(\alpha,\beta)$ — which changed hosts through the "pre-laid pipeline" of entanglement.
+The marvel: $(\alpha,\beta)$ are continuous parameters (writing them down takes infinitely many
+decimal places), yet only a two-bit phone call was made. Where did the rest of the information come
+from? It hid in the Bell pair — the Bell experiments told us entangled correlations outclass every
+classical mechanism, and teleportation is the first time that super-strength was "cashed in" as a
+working protocol.
+
+</div>
+<div slot="right">
+
+The resource ledger (neither side of the equation can be shorted):
+
+$$
+1\ \text{ebit}+2\ \text{cbit}\ \longrightarrow\ 1\ \text{qubit}
+$$
+
+Consumable: the used Bell pair has collapsed; sending a second state takes a fresh pair.
+The two classical bits cannot be skipped: the correction is a four-way choice,
+and one bit short leaves Bob guessing.
+Next section shows the "dual" of this ledger:
+$1$ ebit $+$ $1$ qubit $\to 2$ cbit.
+
+</div>
+</DualView>
+
+<Callout type="warning" title="Three misunderstandings that must be cleared up">
+1. **Not faster than light.** Before the phone call arrives, Bob's particle is an equal-probability
+   mixture of the four states — averaging over $m_1,m_2$ gives exactly $\rho_3=I/2$ (check it term
+   by term), independent of $\ket{\chi}$. Bob can **measure nothing at all** before receiving the
+   classical bits, and classical bits travel at most at light speed. The protocol's speed limit is
+   the speed of the phone call.
+2. **No conflict with no-cloning.** By the time the transfer completes, Alice's original has
+   collapsed and been destroyed — there is only ever one copy of $\ket{\chi}$ in the world.
+   This is "cut and paste", not "copy and paste".
+3. **No matter is transmitted.** Bob's particle was in his hands all along; only its state changed.
+   The science-fiction picture of "disassembling a person and reassembling them" goes wrong at the
+   very first step — the disassembly.
 </Callout>
 
-## Planned contents
+<Callout type="insight" title="From thought experiment to engineering component">
+In 1997 the Innsbruck and Rome groups gave the first photonic demonstrations; ions, atoms and
+superconducting qubits followed; in 2017 the Micius satellite teleported photonic states from the
+ground to an orbit 500 km up. But its true destiny is not as blunt as "long-distance haulage":
+quantum repeaters use **entanglement swapping** (teleportation applied to entangled pairs
+themselves) to cascade entanglement across continents; and in fault-tolerant quantum computers,
+"gate teleportation" bakes hard operations into ancilla states in advance, then "pastes" them onto
+the data with this section's protocol — an idea we will meet again in section 9.10.
+Teleportation is quantum information's universal adapter.
+</Callout>
 
-- The protocol, step by step
-- Why a classical channel is required
-- The no-cloning theorem
+<KeyFormulas
+  items={[
+    { name: 'No-cloning theorem', latex: '\\nexists\\,U:\\ U\\ket{\\chi}\\ket{e}=\\ket{\\chi}\\ket{\\chi}\\ \\ \\forall\\ket{\\chi}', note: 'Linearity ⇒ copying basis states only creates entanglement; two faces of the no-signalling coin' },
+    { name: 'Bell-basis expansion', latex: '\\ket{\\chi}_1\\ket{\\Phi^+}_{23}=\\frac12\\sum_{k}\\ket{B_k}_{12}\\otimes(\\sigma_k\\ket{\\chi})_3', note: 'A pure identity: each Bell state pairs with one Pauli correction σ_k ∈ {I, Z, X, ZX}' },
+    { name: 'Correction rule', latex: '\\ket{\\chi}=Z^{m_1}X^{m_2}\\,\\ket{\\psi_3^{(m_1m_2)}}', note: 'Two classical bits encode exactly the four-way choice' },
+    { name: 'Resource equation', latex: '1\\ \\text{ebit}+2\\ \\text{cbit}\\to 1\\ \\text{qubit}', note: 'The Bell pair is destroyed on use; the classical channel sets the speed limit' },
+  ]}
+/>
 
-## Planned simulations
+<QuizBlock
+  questions={[
+    {
+      id: 'tp-1',
+      type: 'numeric',
+      prompt: 'Alice performs the Bell measurement. What is the probability of each of the four outcomes? (Independent of the state ∣χ⟩ being sent.)',
+      answer: 0.25,
+      tolerance: 0.001,
+      explain: 'In the expansion, all four Bell states carry coefficient 1/2, so each probability is 1/4, independent of α and β. This is no accident but a necessity: if the probabilities depended on (α, β), Alice’s readout would leak information about the state — and the "cannot measure it all" theorem forbids any such free lunch.',
+    },
+    {
+      id: 'tp-2',
+      prompt: 'Alice obtains ∣Ψ⁺⟩ and Bob’s particle is in α∣1⟩ + β∣0⟩. Which gate should he apply?',
+      options: ['X', 'Z', 'ZX', 'Nothing'],
+      answer: 0,
+      distractors: {
+        1: 'Z only handles the relative sign; here both terms have the same sign — the problem is that 0 and 1 are swapped.',
+        2: 'ZX is the correction for ∣Ψ⁻⟩ (swapped and carrying a minus sign).',
+      },
+      explain: 'X(α∣1⟩ + β∣0⟩) = α∣0⟩ + β∣1⟩ = ∣χ⟩. Outcomes and corrections match one to one: Φ⁺→I, Φ⁻→Z, Ψ⁺→X, Ψ⁻→ZX.',
+    },
+    {
+      id: 'tp-3',
+      prompt: 'Why can teleportation not transmit information faster than light?',
+      options: [
+        'Before the phone call arrives, Bob’s particle averaged over m₁m₂ is I/2, and nothing about ∣χ⟩ can be read out',
+        'Because establishing entanglement takes time',
+        'Because the Bell measurement is limited to light speed',
+        'It actually can — engineering just isn’t there yet',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'The Bell pair can be distributed long in advance; it is already in place when the protocol runs — the bottleneck is not there.',
+        2: 'Alice’s local measurement can be as fast as you like; the slow part is the classical channel carrying the result.',
+      },
+      explain: 'Without the correction instructions, Bob holds a uniform mixture of the four states, ρ₃ = I/2 — last section’s "no signalling" making another appearance. The useful state only takes shape after the classical bits arrive and the correction is applied, so information travels at ≤ light speed.',
+    },
+    {
+      id: 'tp-4',
+      prompt: 'Which statements about the protocol’s resource costs are correct? (Select all that apply.)',
+      options: [
+        'Each qubit sent consumes one Bell pair',
+        'Two classical bits must be transmitted',
+        'After the transfer, Alice no longer holds ∣χ⟩',
+        'The same Bell pair can be reused',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Alice’s measurement collapses the pair onto some Bell state and consumes it; sending again requires a fresh entangled pair — which is why the key metric of a quantum network is its entanglement distribution rate.',
+      },
+      explain: 'The resource equation 1 ebit + 2 cbit → 1 qubit has three hard costs: entanglement is destroyed on use, the two-bit phone call is mandatory, and the original is necessarily destroyed (otherwise no-cloning would be violated).',
+    },
+  ]}
+/>
 
-- `teleportation`
+## What comes next
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="teleportation" />`.
+Teleportation trades "1 ebit + 2 classical bits" for delivering 1 qubit.
+What happens if you run the trade backwards — first hand Bob half an entangled pair,
+then have Alice mail him **1 qubit**: how many classical bits does that buy?
+The answer is 2: a single qubit can supposedly yield only 1 bit (section 9.1),
+yet entanglement lets it carry an "overload". Next section: superdense coding.

@@ -1,17 +1,244 @@
 ---
-title: 'Reduced density matrices and a first look at entanglement'
-summary: 'Looking at one subsystem on its own.'
+title: Reduced density matrices and first steps in entanglement
 section: '8.7'
 order: 7
-status: stub
+summary: 'The whole can be pure while a part is mixed — the partial trace turns that sentence into a computable operation. The reduced density matrix keeps the books on "how much the subsystem knows", and entanglement entropy puts a scale on entanglement for the first time.'
+status: done
+prereqs:
+  - 03-formalism/10-density-operator
+  - 08-identical-particles/02-bosons-fermions
+objectives:
+  - Define the partial trace and compute the reduced density matrix of a concrete two-body pure state
+  - Explain why "whole pure, part mixed" is the signature of entanglement, and make the judgement quantitative with purity
+  - Compute the entanglement entropy of simple states, and state its values on product states and Bell states
+  - Connect the HF single-determinant approximation to "correlation = entanglement"
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+[Section 3.10](/en/ch/03-formalism/10-density-operator/) ended with an IOU. That section said: when a system is entangled with another, it "has no state vector of its own", and only a density operator can describe it — but at the time we merely displayed one result for the spin singlet ($\rho_A=\frac12\hat 1$), without giving a general method for **computing the subsystem's description from the state of the whole**.
+
+This chapter has run up a fresh debt as well: the last section defined the correlation energy as "the part a single determinant cannot describe", but gave us no ruler for "how entangled the behaviour of two electrons is".
+
+This section pays off both at once. The tool is a single one: the **partial trace**.
+
+## The phenomenon: watch only half, and a pure state looks like a coin toss
+
+Take two spins in a Bell state (the old friends from section 3.10):
+
+$$
+\ket{\Psi^-}=\frac{1}{\sqrt2}\bigl(\ket{\uparrow}_A\ket{\downarrow}_B-\ket{\downarrow}_A\ket{\uparrow}_B\bigr)
+$$
+
+The whole is a **pure state**: we know the joint state of these two spins completely, with not a shred of uncertainty.
+
+Now measure only particle A, along any direction you like: the outcome is forever fifty-fifty pure randomness, and **no experiment performed on A alone can distinguish it** from an unpolarised spin flying at random out of an oven (the "classical ignorance" case of section 3.10). The whole carries full information, yet either half alone carries none — where did the information go?
+
+The answer: it is not on A, and not on B, but in the **correlations between A and B** (the fact "the two are always opposite" itself). To turn this intuition into a computable statement, we need an operation that manufactures "A's ledger" out of the whole $\rho_{AB}$.
+
+## The partial trace: sum away the half you don't watch
+
+The **requirement** is clear: find an operator $\rho_A$ belonging to A alone such that for every observable $\hat O_A$ acting only on A,
+
+$$
+\langle\hat O_A\rangle=\operatorname{Tr}\bigl[\rho_A\hat O_A\bigr]
+$$
+
+gives the same prediction as the full-system calculation $\operatorname{Tr}[\rho_{AB}(\hat O_A\otimes\hat 1_B)]$. The unique answer meeting this requirement is the **partial trace**: sum over B's degrees of freedom,
+
+$$
+\rho_A=\operatorname{Tr}_B\,\rho_{AB}
+\equiv\sum_{b}\;{}_B\bra{b}\,\rho_{AB}\,\ket{b}_B
+$$
+
+where $\{\ket{b}_B\}$ is any orthonormal basis of B (the result is independent of the choice). $\rho_A$ is called A's **reduced density matrix**. Intuitively it is probability theory's marginal distribution — "integrate out the variables you don't care about" — with the object upgraded from a probability distribution to a density operator.
+
+<Derivation title="Working it through: the reduced density matrix of a general two-spin pure state" level="基础" minutes={8} open={true}>
+
+**Step 1: set the state.** Take
+
+$$
+\ket{\Psi}=\alpha\ket{\uparrow}_A\ket{\downarrow}_B+\beta\ket{\downarrow}_A\ket{\uparrow}_B,
+\qquad|\alpha|^2+|\beta|^2=1
+$$
+
+(The Bell state is $\alpha=-\beta=1/\sqrt2$; a product state has $\alpha$ or $\beta$ equal to zero.)
+
+**Step 2: write the density operator of the whole.** $\rho_{AB}=\ket{\Psi}\bra{\Psi}$ expands into four terms:
+
+$$
+\rho_{AB}=|\alpha|^2\ket{\uparrow\downarrow}\bra{\uparrow\downarrow}
++\alpha\beta^*\ket{\uparrow\downarrow}\bra{\downarrow\uparrow}
++\alpha^*\beta\ket{\downarrow\uparrow}\bra{\uparrow\downarrow}
++|\beta|^2\ket{\downarrow\uparrow}\bra{\downarrow\uparrow}
+$$
+
+**Step 3: trace over B.** Sandwich term by term with B's basis $\{\ket{\uparrow}_B,\ket{\downarrow}_B\}$. The rule: keep A's outer product, and collapse the B part to a number $\braket{b}{\,\cdot\,}\braket{\cdot}{\,b}$.
+
+- First term: the B part is $\ket{\downarrow}\bra{\downarrow}$, whose trace is 1, leaving $|\alpha|^2\ket{\uparrow}_A\bra{\uparrow}$.
+- Second term: the B part is $\ket{\downarrow}\bra{\uparrow}$, all diagonal elements zero, trace **0** — the cross term is dead.
+- Third term: 0 by the same reasoning.
+- Fourth term: leaves $|\beta|^2\ket{\downarrow}_A\bra{\downarrow}$.
+
+$$
+\rho_A=|\alpha|^2\ket{\uparrow}\bra{\uparrow}+|\beta|^2\ket{\downarrow}\bra{\downarrow}
+=\begin{pmatrix}|\alpha|^2&0\\0&|\beta|^2\end{pmatrix}
+$$
+
+**Step 4: read the result.**
+
+- **Product state** ($\beta=0$): $\rho_A=\ket{\uparrow}\bra{\uparrow}$, pure. A has a complete state of its own.
+- **Bell state** ($|\alpha|^2=|\beta|^2=\frac12$): $\rho_A=\frac12\hat 1$, the **maximally mixed state** — the result owed since section 3.10, now three lines of calculation.
+- In between: partially mixed. The "fuller" the entanglement, the more mixed $\rho_A$.
+
+Note the mechanism in step 3: **what kills the coherence terms is the orthogonality of B's two states.** In $\ket{\Psi}$, A's $\ket{\uparrow}$ and $\ket{\downarrow}$ each "hang onto" one of B's two orthogonal states; looking at A alone, the two branches cannot interfere — the superposition is demoted to a probabilistic mixture. (Walk this mechanism one step further and you have decoherence theory: the environment plays B. Chapter 10 unfolds it.)
+
+</Derivation>
+
+<Callout type="insight" title="Entanglement makes subsystems mixed — and the criterion runs both ways">
+For a two-part system whose **whole is a pure state**, the following three statements are strictly equivalent:
+
+1. $\ket{\Psi}$ is entangled (cannot be written $\ket{\psi}_A\otimes\ket{\chi}_B$);
+2. $\rho_A$ is mixed ($\operatorname{Tr}\rho_A^2<1$);
+3. $\rho_B$ is mixed (and $\rho_A$ and $\rho_B$ share the same eigenvalue spectrum).
+
+So the purity $\operatorname{Tr}\rho_A^2$ (the old tool of section 3.10) is reborn as an **entanglement detector**: the whole is manifestly pure, yet locally you measure mixture — every bit of the extra "mixedness" comes from entanglement. Mind the domain of validity: when the whole is itself mixed, a mixed $\rho_A$ no longer signals entanglement (it may be mere classical ignorance); certifying entanglement then needs the stronger tools of chapter 9.
 </Callout>
 
-## Planned contents
+## Giving entanglement a number: the entanglement entropy
 
-- The partial trace
-- Reduced density matrices
-- A first appearance of entanglement entropy
+"More mixed" can be quantified. Section 3.10 measured mixedness with the purity $\operatorname{Tr}\rho^2$; information theory supplies the more standard ruler — the **von Neumann entropy**:
+
+$$
+S(\rho)=-\operatorname{Tr}\bigl(\rho\log_2\rho\bigr)=-\sum_k\lambda_k\log_2\lambda_k
+$$
+
+where the $\lambda_k$ are $\rho$'s eigenvalues (with $0\log_2 0$ counted as 0). It is the quantum version of Shannon entropy: "how many bits of information, on average, this ledger is missing". For a pure overall state, $S(\rho_A)$ is called the **entanglement entropy**.
+
+<DualView>
+<div slot="left">
+
+**Three marks on the scale.**
+
+- Product state: $\rho_A$ pure, eigenvalues $\{1,0\}$, $S=0$. No entanglement; A's ledger holds full information.
+- Bell state: $\rho_A=\frac12\hat 1$, eigenvalues $\{\frac12,\frac12\}$, $S=-2\times\frac12\log_2\frac12=1$. **Exactly 1 bit** — this is the origin of the quantum-information catchphrase "one Bell pair = 1 ebit".
+- Intermediate state $\alpha\ket{\uparrow\downarrow}+\beta\ket{\downarrow\uparrow}$: $S=-|\alpha|^2\log_2|\alpha|^2-|\beta|^2\log_2|\beta|^2$, varying continuously between 0 and 1.
+
+Two spins cap the entanglement entropy at 1 bit; two $d$-dimensional systems cap it at $\log_2 d$.
+
+</div>
+<div slot="right">
+
+**Concrete numbers.** Take $|\alpha|^2=\tfrac13$, $|\beta|^2=\tfrac23$:
+
+$$
+\rho_A=\begin{pmatrix}1/3&0\\0&2/3\end{pmatrix}
+$$
+
+Purity:
+
+$$
+\operatorname{Tr}\rho_A^2=\tfrac19+\tfrac49=\tfrac59\approx0.556
+$$
+
+(Between the pure state's 1 and the maximally mixed $\frac12$.) Entanglement entropy:
+
+$$
+S=-\tfrac13\log_2\tfrac13-\tfrac23\log_2\tfrac23\approx0.918\ \text{bit}
+$$
+
+Already close to 1 — entanglement is not very sensitive to departures from an even split.
+
+</div>
+</DualView>
+
+## Back to this chapter: correlation energy is entanglement's bill
+
+Swing the camera back to identical particles and settle both debts.
+
+**HF and entanglement.** Hartree–Fock's trial state is a single Slater determinant — apart from the mandatory antisymmetrization, it has the product structure of "each electron minding its own orbital". The true ground state is a superposition of many determinants, with the electrons' occupation patterns **entangled** with one another: the correlation energy the last section could not recover is exactly the price of this entanglement, quoted in energy. Modern quantum chemistry even runs the logic in reverse, using entanglement entropy to diagnose "which orbitals are heavily entangled and demand careful treatment" — the core strategy of methods like the density matrix renormalization group (DMRG) is to prune Hilbert space along the distribution of entanglement.
+
+<Callout type="warning" title="Antisymmetrization is not usable entanglement">
+A subtle point: a single Slater determinant, written out, is itself a multi-term superposition (e.g. $\frac{1}{\sqrt2}(\ket{ab}-\ket{ba})$), formally resembling a Bell state — so are fermions "all born entangled"?
+
+The accepted answer is no. This minimal antisymmetrization, **forced** by identity, can never be extracted or exploited by any local operation: you cannot transmit one bit by means of the fact that "all electrons in the universe are antisymmetrized". So when discussing entanglement of identical particles, the baseline is "a single determinant (or symmetric product)", and only superposition **beyond** that baseline counts as genuine entanglement. The definition "correlation energy = what exceeds a single determinant" draws exactly the same line — the ledgers of the two disciplines align.
+</Callout>
+
+**Measurement and the partial trace.** Section 8.1 said "no overlap, treat as distinguishable"; now we have the dual statement: any degree of freedom you do not measure can be summed away by the partial trace, and the remaining ledger $\rho$ predicts everything about the part you do measure. "Subsystem + partial trace + density matrix" is quantum mechanics' standard kit for "watching only a part" — the next chapter, and the open systems of chapter 10, are built entirely on it.
+
+<KeyFormulas
+  items={[
+    { name: 'Partial trace', latex: '\\rho_A=\\operatorname{Tr}_B\\,\\rho_{AB}=\\sum_b{}_B\\bra{b}\\rho_{AB}\\ket{b}_B', note: 'The unique definition making ⟨Ô_A⟩ = Tr(ρ_A Ô_A) hold for every local observation' },
+    { name: 'Entanglement criterion (pure whole)', latex: '\\ket{\\Psi}\\ \\text{entangled}\\iff\\operatorname{Tr}\\rho_A^2<1', note: 'Whole pure yet part mixed — the mixedness can only come from entanglement' },
+    { name: 'Von Neumann entropy', latex: 'S(\\rho)=-\\operatorname{Tr}(\\rho\\log_2\\rho)=-\\sum_k\\lambda_k\\log_2\\lambda_k', note: '0 for pure states; log₂ n for the n-dimensional maximally mixed state' },
+    { name: 'Entanglement-entropy scale', latex: 'S(\\rho_A)=0\\ (\\text{product})\\ \\longrightarrow\\ 1\\ \\text{bit}\\ (\\text{Bell state})', note: 'The definition of "1 ebit"; the maximum for two spins' },
+  ]}
+/>
+
+<QuizBlock
+  questions={[
+    {
+      id: 'rdm-1',
+      prompt: 'A Bell state is pure as a whole, yet measuring particle A alone gives completely random outcomes. Where is the information?',
+      options: [
+        'In the correlations between A and B — no experiment touching only A (or only B) can reach it; the results from the two sides must be compared',
+        'On B''s side; measuring B recovers all of it',
+        'Destroyed by the measurement apparatus',
+        'This shows the Bell state is actually a mixed state',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'B alone is likewise maximally mixed, ρ_B = ½·1 — B''s side knows nothing either.',
+        2: 'It is so before any measurement: ρ_A = ½·1 is a property of the state itself.',
+        3: 'The whole has Tr(ρ²) = 1, strictly pure; "mixed parts" is precisely the signature of entanglement.',
+      },
+      explain: 'Both local ledgers are blank; all the information lives in correlation statements like "the two are always opposite". This is the quantitative version of section 3.10''s "knowing the whole is not knowing the parts", and the physical basis of quantum key distribution''s security.',
+    },
+    {
+      id: 'rdm-2',
+      prompt: 'The partial trace Tr_B is the "uniquely correct" subsystem description because:',
+      options: [
+        'It is the only operation that reproduces the full-system prediction Tr[ρ_AB(Ô_A⊗1)] for every observable acting only on A',
+        'It keeps the subsystem in a pure state',
+        'It is the mathematically simplest choice',
+        'It is basis-independent whereas the full trace is basis-dependent',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'Quite the opposite — under entanglement ρ_A is necessarily mixed; that is a feature, not a defect.',
+        2: 'The justification is physical (consistency of predictions), not aesthetic.',
+        3: 'The full trace is basis-independent too; the two do not differ on this point.',
+      },
+      explain: 'There is exactly one defining standard: the statistics of local experiments must not depend on "whether we recorded B". From this consistency requirement one can prove the partial trace is the unique solution.',
+    },
+    {
+      id: 'rdm-3',
+      type: 'numeric',
+      prompt: 'For the state |Ψ⟩ = √(1/3)|↑↓⟩ + √(2/3)|↓↑⟩, find the purity Tr(ρ_A²) of A''s reduced density matrix. (Three decimal places.)',
+      answer: 0.556,
+      tolerance: 0.005,
+      unit: '',
+      explain: 'ρ_A = diag(1/3, 2/3), so Tr(ρ_A²) = (1/3)² + (2/3)² = 1/9 + 4/9 = 5/9 ≈ 0.556. Less than 1, so |Ψ⟩ is entangled; greater than 1/2, so not maximally entangled (entanglement entropy about 0.918 bit).',
+    },
+    {
+      id: 'rdm-4',
+      prompt: 'Which statements about the entanglement entropy S(ρ_A) are correct? (Select all that apply.)',
+      options: [
+        'When the whole is a pure product state, S = 0',
+        'The two-spin Bell state gives S = 1 bit, the maximum for a two-level subsystem',
+        'When the whole is mixed, S(ρ_A) > 0 still directly establishes entanglement',
+        'The correlation missed by the HF single determinant can be characterised as entanglement between orbitals',
+      ],
+      answer: [0, 1, 3],
+      distractors: {
+        2: 'When the whole is mixed, local entropy may come purely from classical ignorance (like two independently random coins); certifying entanglement then needs chapter 9''s criteria (PPT, entanglement witnesses).',
+      },
+      explain: '"S(ρ_A) detects entanglement" presupposes a pure overall state. The last item is exactly the interface between 8.6 and 8.7: correlation energy is entanglement''s price in energy, and methods like DMRG prune the computation along the entanglement structure accordingly.',
+    },
+  ]}
+/>
+
+## What comes next
+
+Looking back over this chapter, entanglement has appeared only as a troublemaker: it robs subsystems of their state vectors, makes the mean field miss the correlation energy, and keeps many-body wavefunctions from factorising.
+
+The next chapter puts on different glasses: **entanglement is not just trouble — it is a resource.** A Bell pair can "teleport" an unknown quantum state across a distance, can let one quantum channel carry double the classical information, can let the security of a key rest on physical law rather than mathematical difficulty. The entanglement entropy just defined will become the universal currency for pricing this resource. Chapter 9: quantum information.

@@ -1,24 +1,312 @@
 ---
-title: 'The Deutsch–Jozsa algorithm'
-summary: 'The first algorithm proving a quantum speed-up.'
+title: The Deutsch-Jozsa algorithm
 section: '9.7'
 order: 7
-status: stub
-sims: ['quantum-circuit']
+summary: 'The first clean example of quantum speedup: phase kickback writes the function values into phases, and interference reads out "constant or balanced" in one go — classically 2ⁿ⁻¹ + 1 queries in the worst case, quantumly just 1.'
+status: done
+prereqs:
+  - 09-quantum-information/02-quantum-gates
+  - 03-formalism/08-measurement
+objectives:
+  - State the Deutsch–Jozsa problem and show the classical worst case needs 2ⁿ⁻¹ + 1 queries
+  - Hand-compute the full state evolution of the single-qubit Deutsch algorithm and point to the step where interference happens
+  - 'Explain phase kickback: why the function value ends up in the phase'
+  - Make clear why "quantum parallelism" alone is not enough — the speedup only cashes out with interference
+sims: []
 ---
 
-<Callout type="note" title="Not written yet">
-The prose and derivations are still to come. What follows is the plan for this section — if you are contributing, please build it out along this skeleton.
+The entanglement protocols of the past few sections solved **communication** problems.
+This section switches battlefields: **computation**. We will watch quantum mechanics beat the
+classical world at computing for the first time, cleanly — and the way it wins is not
+"calculating faster" but "asking fewer questions".
+
+## The problem at the door: can one question identify both faces of a coin?
+
+Someone hands you a black box (an **oracle**) containing a function
+$f:\{0,1\}^n\to\{0,1\}$ — feed it an $n$-bit string, it spits out one bit. They promise $f$ is one
+of exactly two kinds:
+
+- **Constant**: every input gives the same output (all 0 or all 1);
+- **Balanced**: exactly half the inputs give 0, the other half give 1.
+
+The task: decide which. The only thing you can do is **query** — feed one input, see one output.
+Question: how few queries suffice?
+
+**The classical bill.** With luck, 2 queries (two different outputs ⇒ balanced).
+But to declare "constant" **beyond all doubt**, the worst case requires
+
+$$
+\frac{2^n}{2}+1=2^{n-1}+1\ \text{queries}
+$$
+
+— if half the inputs have come back identical, only query number $2^{n-1}+1$ can settle it.
+For $n=100$ that is about $6.3\times10^{29}$ queries; the age of the universe would not cover it.
+The quantum algorithm queries **once**.
+
+## Why naive "quantum parallelism" is not enough
+
+The quantum black box must be reversible (section 9.2); the standard construction adds an ancilla wire:
+
+$$
+U_f\ket{x}\ket{y}=\ket{x}\ket{y\oplus f(x)}
+$$
+
+($\oplus$ is addition mod 2; applying it twice undoes it, so it really is unitary.)
+The first move anyone thinks of: use a row of $H$'s to build the superposition of all inputs,
+then query once:
+
+$$
+U_f\left(\frac{1}{\sqrt{2^n}}\sum_x\ket{x}\right)\ket{0}
+=\frac{1}{\sqrt{2^n}}\sum_x\ket{x}\ket{f(x)}
+$$
+
+One call, and all $2^n$ function values have been computed — that is **quantum parallelism**.
+But hold the celebration: measure this state and it collapses randomly onto a **single**
+$(x, f(x))$ pair, no different from one classical query. Section 9.1's old lesson: information
+stored in a state ≠ information you can take out. Quantum parallelism is the necessary fuel;
+**interference is the spark** — the information of all the $f(x)$'s must be funnelled into the
+probability distribution of the measurement outcome. The wrench that does the funnelling is called
+**phase kickback**.
+
+<Derivation title="Phase kickback: moving the function value into the phase" level="基础" minutes={5} open={true}>
+
+Prepare the ancilla in $\ket{-}=\frac{\ket{0}-\ket{1}}{\sqrt2}$ and feed it to $U_f$:
+
+$$
+U_f\ket{x}\ket{-}
+=\ket{x}\otimes\frac{\ket{0\oplus f(x)}-\ket{1\oplus f(x)}}{\sqrt2}
+$$
+
+Two cases:
+
+- $f(x)=0$: the ancilla is $\frac{\ket{0}-\ket{1}}{\sqrt2}=\ket{-}$, untouched;
+- $f(x)=1$: the ancilla is $\frac{\ket{1}-\ket{0}}{\sqrt2}=-\ket{-}$, an extra minus sign.
+
+Both cases in one line:
+
+$$
+U_f\ket{x}\ket{-}=(-1)^{f(x)}\ket{x}\ket{-}
+$$
+
+The ancilla stays $\ket{-}$ throughout, and **the function value has become a phase**
+$(-1)^{f(x)}$ **on the $\ket{x}$ branch**. For a single $x$, a global phase means nothing;
+but in a superposition, each branch collects its own sign — they become **relative phases**,
+and relative phases are the control lever of interference (section 9.2's lesson from $Z\ket{+}=\ket{-}$).
+
+</Derivation>
+
+## Hand-compute the smallest case first: the Deutsch algorithm (n = 1)
+
+For $n=1$ there are four possible $f$'s: constant ($f\equiv0$, $f\equiv1$),
+balanced ($f(x)=x$, $f(x)=1-x$). The decision problem boils down to one bit: $f(0)\oplus f(1)=?$
+(0 ⇒ constant, 1 ⇒ balanced). The circuit:
+
+```text
+|0⟩ ──[H]──┬──────[H]──[measure] → 0: constant / 1: balanced
+           │Uf
+|−⟩ ───────┴────────────────── (ancilla stays |−⟩ throughout)
+```
+
+**Step by step** (the ancilla stays $\ket{-}$; we write only the first qubit):
+
+$$
+\ket{0}
+\ \xrightarrow{H}\ \frac{\ket{0}+\ket{1}}{\sqrt2}
+\ \xrightarrow{U_f}\ \frac{(-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}}{\sqrt2}
+$$
+
+Pull out the global phase $(-1)^{f(0)}$ (unobservable — discard):
+
+$$
+=\frac{\ket{0}+(-1)^{f(0)\oplus f(1)}\ket{1}}{\sqrt2}
+=\begin{cases}\ket{+},&\text{constant}\\[2pt]\ket{-},&\text{balanced}\end{cases}
+$$
+
+The final $H$ rotates $\ket{\pm}$ back to the computational basis:
+
+$$
+\ket{+}\xrightarrow{H}\ket{0}\ (\text{constant}),\qquad
+\ket{-}\xrightarrow{H}\ket{1}\ (\text{balanced})
+$$
+
+Measure the first qubit and read the answer **deterministically**. One query has extracted
+$f(0)\oplus f(1)$, which classically takes two — note that we did **not** obtain the individual
+values of $f(0)$ and $f(1)$, only one **global property** of theirs. Quantum speedup always plays
+this game: surrender pointwise information, gain global information.
+
+## The general case: n-qubit Deutsch–Jozsa
+
+```text
+|0⟩ ──[H]──┬─────[H]──[measure]┐
+|0⟩ ──[H]──┤Uf   [H]──[measure]├─ all 0: constant / otherwise: balanced
+ ⋮    ⋮    │      ⋮     ⋮      │
+|−⟩ ───────┴───────────────────┘ (ancilla not measured)
+```
+
+<Derivation title="How interference concentrates the answer onto the all-zero string" level="进阶" minutes={8}>
+
+**Step 1: prepare and query.** $n$ copies of $\ket{0}$ go through a row of $H$'s, then phase kickback:
+
+$$
+\frac{1}{\sqrt{2^n}}\sum_{x}\ket{x}
+\ \xrightarrow{U_f}\
+\frac{1}{\sqrt{2^n}}\sum_{x}(-1)^{f(x)}\ket{x}
+$$
+
+**Step 2: another row of $H$'s.** We need the formula for $H^{\otimes n}$ acting on basis states.
+For one qubit, $H\ket{x}=\frac{1}{\sqrt2}\sum_{y}(-1)^{xy}\ket{y}$ (check by substituting $x=0,1$);
+for $n$ bits, multiply bit by bit:
+
+$$
+H^{\otimes n}\ket{x}=\frac{1}{\sqrt{2^n}}\sum_{y}(-1)^{x\cdot y}\ket{y},
+\qquad x\cdot y\equiv x_1y_1\oplus\cdots\oplus x_ny_n
+$$
+
+Substituting gives the final state:
+
+$$
+\ket{\Psi_{\text{final}}}=\sum_{y}\left[\frac{1}{2^n}\sum_{x}(-1)^{f(x)+x\cdot y}\right]\ket{y}
+$$
+
+**Step 3: look only at the amplitude of the all-zero string $y=0\cdots0$.** There $x\cdot y=0$:
+
+$$
+c_{0}=\frac{1}{2^n}\sum_{x}(-1)^{f(x)}
+$$
+
+- **Constant**: all $2^n$ terms share one sign, $c_0=\pm1$. Probability $|c_0|^2=1$ —
+  every branch **interferes constructively** and floods into the all-zero string;
+  the measurement is certain to give $0\cdots0$.
+- **Balanced**: half $+1$'s, half $-1$'s, cancelling in pairs, $c_0=0$ —
+  the all-zero string is emptied by **destructive interference**; the measurement is certain to
+  give a non-zero string.
+
+The verdict: an all-zero readout ⇒ constant; any non-zero bit ⇒ balanced. One query, zero error rate.
+
+</Derivation>
+
+<DualView>
+<div slot="left">
+
+**The speedup in three acts.** Looking back over the whole run, the quantum advantage is a relay of
+three things: (1) **superposition** lets one query touch every input;
+(2) **phase kickback** transcribes each function value into a branch phase;
+(3) **interference** (the final row of $H$'s) lets the phases decide the measurement distribution by
+"collective vote" — a constant function passes unanimously into the all-zero string, a balanced
+function's votes cancel half against half. Remove any link and you fall back to classical:
+without interference it is a lottery, without phase kickback the branches are indistinguishable,
+without superposition there are no votes to cast.
+
+</div>
+<div slot="right">
+
+Query-complexity comparison (for an error-free decision):
+
+$$
+\text{classical (deterministic)}:\ 2^{n-1}+1
+$$
+
+$$
+\text{quantum}:\ 1
+$$
+
+Exponential versus constant. But honesty requires a footnote: if the classical algorithm may
+**sample randomly** $k$ times and tolerate error probability $2^{-k}$, it too needs only a constant
+number of queries. So DJ's exponential advantage strictly holds in the "exact decision" sense —
+it is a demonstration of principle, not a practical algorithm.
+
+</div>
+</DualView>
+
+<Callout type="insight" title="DJ's true legacy: a reusable skeleton">
+The problem Deutsch–Jozsa decides has no practical value in itself (who ever gets handed such a
+black box?), but its three-movement skeleton — **open with a row of H's, let the oracle write
+phases, close with interference** — became the standard floor plan of quantum algorithms.
+Bernstein–Vazirani swaps in a different oracle and reads out a hidden string directly;
+Simon's algorithm uses it to find a hidden period, achieving a genuine exponential separation and
+directly inspiring Shor (section 9.9); Grover (section 9.8) replaces "one big interference" with
+"the accumulation of many small ones". Learn DJ, and every later algorithm is a variation on it.
 </Callout>
 
-## Planned contents
+<Callout type="warning" title="Don't mistake 'parallelism' for the cause of the speedup">
+Popular accounts often say "a quantum computer tries all answers at once, so it's fast".
+This section's computation shows that is only half true: superposition really does let $U_f$ act on
+all $2^n$ inputs in one shot, but **a measurement can carry out only one result** — if the story
+ended there, quantum would have no advantage at all. The entire credit for the speedup belongs to
+interference: compressing $2^n$ values that cannot be read out one by one into a single
+**global property** that can be read in one go (here, whether $f$ is "uniform").
+Which is also why quantum speedup serves only problems whose answer happens to be some global
+structure — it is not a universal accelerator.
+</Callout>
 
-- The problem statement
-- Quantum parallelism and interference
-- Why classically it takes exponentially many queries
+<KeyFormulas
+  items={[
+    { name: 'Quantum oracle', latex: 'U_f\\ket{x}\\ket{y}=\\ket{x}\\ket{y\\oplus f(x)}', note: 'The function query made reversible; applying twice undoes it' },
+    { name: 'Phase kickback', latex: 'U_f\\ket{x}\\ket{-}=(-1)^{f(x)}\\ket{x}\\ket{-}', note: 'Set the ancilla to ∣−⟩ and the function value moves into the phase' },
+    { name: 'Hadamard transform', latex: 'H^{\\otimes n}\\ket{x}=\\frac{1}{\\sqrt{2^n}}\\sum_y(-1)^{x\\cdot y}\\ket{y}', note: 'x·y is the mod-2 sum of bitwise products' },
+    { name: 'Decision amplitude', latex: 'c_0=\\frac{1}{2^n}\\sum_x(-1)^{f(x)}=\\pm1\\ \\text{or}\\ 0', note: 'Constant ⇒ all-zero string guaranteed; balanced ⇒ non-zero string guaranteed' },
+  ]}
+/>
 
-## Planned simulations
+<QuizBlock
+  questions={[
+    {
+      id: 'dj-1',
+      type: 'numeric',
+      prompt: 'n = 3 (8 inputs). To decide constant/balanced beyond all doubt, how many queries does a classical algorithm need in the worst case?',
+      answer: 5,
+      tolerance: 0,
+      explain: 'Worst case: the first 2^{n-1} = 4 queries all return the same output, which still cannot rule out balanced (a balanced function can easily have 4 identical outputs); only query 2^{n-1} + 1 = 5 settles it. Quantum: 1.',
+    },
+    {
+      id: 'dj-2',
+      prompt: 'What state must the ancilla be in for phase kickback?',
+      options: ['∣−⟩ = (∣0⟩ − ∣1⟩)/√2', '∣0⟩', '∣+⟩ = (∣0⟩ + ∣1⟩)/√2', 'Any state works'],
+      answer: 0,
+      distractors: {
+        1: 'With the ancilla in ∣0⟩, the function value is written onto the ancilla as ∣f(x)⟩, entangling it with ∣x⟩ and wrecking the interference in the first register.',
+        2: 'The two branches of ∣+⟩ swap under y⊕f(x) and come back unchanged with no minus sign: U_f∣x⟩∣+⟩ = ∣x⟩∣+⟩ — no information left behind at all.',
+      },
+      explain: '∣−⟩ is the eigenstate of X with eigenvalue −1: when f(x)=1, y⊕f(x) amounts to applying X to the ancilla, extracting the eigenvalue (−1)^{f(x)} as a phase. The same move will be replayed verbatim in Grover’s oracle.',
+    },
+    {
+      id: 'dj-3',
+      prompt: 'The algorithm ends and you measure the all-zero string 00…0. What does that tell you?',
+      options: [
+        'f is a constant function',
+        'f is a balanced function',
+        'f(00…0) = 0',
+        'This run failed and must be repeated',
+      ],
+      answer: 0,
+      distractors: {
+        1: 'For a balanced f, the all-zero amplitude is strictly 0 — the all-zero string can never be measured.',
+        2: 'The algorithm outputs a global property of f and provides no single-point function value — exactly what separates it from classical querying.',
+      },
+      explain: 'The all-zero amplitude is c₀ = 2⁻ⁿΣ(−1)^{f(x)}: for constant f, ∣c₀∣ = 1 (all-zero guaranteed); for balanced f, c₀ = 0 (all-zero impossible). The decision is deterministic, with no failure branch.',
+    },
+    {
+      id: 'dj-4',
+      prompt: 'Which statements about "quantum parallelism" are correct? (Select all that apply.)',
+      options: [
+        'A single U_f call really does act on all 2ⁿ input branches at once',
+        'Measuring straight after the parallel step yields no more than one classical query',
+        'Interference gathers the phase information scattered across branches into a measurable global property',
+        'Quantum parallelism means every problem gets an exponential speedup',
+      ],
+      answer: [0, 1, 2],
+      distractors: {
+        3: 'Only problems whose answer is itself a "global structure" can eat this speedup; quantum computing is not a universal accelerator — which is also why valuable quantum algorithms are so few.',
+      },
+      explain: 'Parallelism builds Σ∣x⟩∣f(x)⟩, but a measurement collapses onto a single pair (x, f(x)). The information must first be turned into relative phases by phase kickback, then closed out by H-interference, before a property jointly determined by all 2ⁿ values can be read in one shot.',
+    },
+  ]}
+/>
 
-- `quantum-circuit`
+## What comes next
 
-Once a simulation component exists, register it in the REGISTRY in `src/components/mdx/Sim.astro` and embed it with `<Sim name="quantum-circuit" />`.
+Deutsch–Jozsa is an exhibition match tailor-made for quantum mechanics: the problem is artificial,
+and classical randomised algorithms handle it easily too. A real-world problem looks like this:
+one of $N$ drawers hides a key, opening a drawer costs one look, and classically you open $N/2$ on
+average. Can quantum open fewer? Next section, Grover's algorithm answers $\sqrt N$ — and we will
+see it with perfect clarity in a purely geometric picture: two mirrors squeezing out a rotation.
