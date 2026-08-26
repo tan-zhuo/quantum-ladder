@@ -57,6 +57,11 @@ self.addEventListener('fetch', (event) => {
   // 只管自己域下的东西；跨域请求（如果有）交给浏览器默认处理
   if (url.origin !== self.location.origin) return
 
+  // Vercel 的监控端点（/_vercel/insights/*、/_vercel/speed-insights/*）虽然同域，
+  // 但脚本文件名不带哈希、由平台随时更新，缓存住会一直上报到旧端点；
+  // 上报本身也必须直连才有意义。整段放行给浏览器。
+  if (url.pathname.startsWith('/_vercel/')) return
+
   // 1) 内容哈希资源：cache-first
   if (isAsset(url)) {
     event.respondWith(

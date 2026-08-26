@@ -21,6 +21,21 @@ npm run preview  # 本地预览构建结果
 
 部署在子路径（如 GitHub Pages 的 `/quantum-ladder/`）时，把 `astro.config.mjs` 里的 `base` 打开。
 
+## 流量监控
+
+部署在 Vercel 上时，全站接入了官方的 **Web Analytics**（访问量、来源、热门页面）与
+**Speed Insights**（真实用户的 LCP / CLS / INP 等指标），在
+`src/components/analytics/VercelInsights.astro` 里统一注入，全部页面都算得上。
+
+- 脚本与上报都走同域的 `/_vercel/*`，不引第三方 CDN、不写 cookie、不做跨站跟踪；
+- 只在 Vercel 的生产构建里注入（构建环境自带 `VERCEL=1`）。本地 `npm run dev` /
+  `npm run build`、以及扔到 GitHub Pages / Cloudflare Pages 时都不会注入，
+  控制台干净，也不会多出两个必然 404 的请求；
+- 想在本地确认注入结果，用 `VERCEL=1 npm run build` 构建，再去 `dist/` 里搜
+  `vercel-analytics` 即可；
+- 数据要真正开始进面板，还需要在 Vercel 项目的 Analytics 与 Speed Insights
+  两个开关里各点一次「Enable」（免费额度够这个站用），否则脚本取不到、静默失败。
+
 ## 双语
 
 中文在根路径，英文在 `/en/` 下，页眉右侧的 `EN` / `中` 按钮在两者之间对折当前页面。

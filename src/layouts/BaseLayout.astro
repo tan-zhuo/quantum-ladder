@@ -4,6 +4,7 @@ import Sidebar from '@/components/layout/Sidebar.astro'
 import Footer from '@/components/layout/Footer.astro'
 import SearchDialog from '@/components/search/SearchDialog'
 import FormulaPanel from '@/components/ui/FormulaPanel.astro'
+import VercelInsights from '@/components/analytics/VercelInsights.astro'
 import { translator, localePath, HTML_LANG, DEFAULT_LANG, type Lang } from '@/i18n'
 
 interface Props {
@@ -211,6 +212,7 @@ const otherHref = localePath(otherLang, relNoLang, base)
 
     <SearchDialog client:idle />
     <FormulaPanel lang={lang} />
+    <VercelInsights />
 
     <script>
       // ── 主题切换 ───────────────────────────────────────────

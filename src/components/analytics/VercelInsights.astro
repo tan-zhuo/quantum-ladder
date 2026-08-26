@@ -1,0 +1,31 @@
+---
+/**
+ * Vercel 流量监控 —— Web Analytics（访问量）+ Speed Insights（真实用户性能）。
+ *
+ * 两个官方组件都只往页面里塞一个自定义元素，脚本从同域的 /_vercel/ 下取，
+ * 所以不依赖任何第三方 CDN，也不写 cookie、不做跨站跟踪。
+ *
+ * 只在「部署到 Vercel 的生产构建」里注入：
+ *   - 本地 `astro dev` / `astro build` 不注入，控制台干净，也不会有多余请求；
+ *   - 扔到 GitHub Pages / Cloudflare Pages 时同样不注入——那些托管上
+ *     /_vercel/* 是 404，留着只会白白多两个失败请求。
+ * Vercel 构建时会自动设 VERCEL=1；本地想验证注入结果，构建前手动带上这个变量即可。
+ *
+ * 数据要真正开始上报，还需要在 Vercel 项目面板里打开 Analytics 与 Speed Insights
+ * 两个开关（免费额度即可），否则脚本取不到、静默失败。
+ */
+import Analytics from '@vercel/analytics/astro'
+import SpeedInsights from '@vercel/speed-insights/astro'
+
+const onVercel = typeof process !== 'undefined' && Boolean(process.env?.VERCEL)
+const enabled = import.meta.env.PROD && onVercel
+---
+
+{
+  enabled && (
+    <>
+      <Analytics />
+      <SpeedInsights />
+    </>
+  )
+}
