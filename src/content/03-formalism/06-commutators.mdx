@@ -2,7 +2,7 @@
 title: 对易关系与广义不确定性原理
 section: '3.6'
 order: 6
-summary: 两个可观测量能不能同时测准，全看它们乘起来换不换顺序。一条不等式统一了所有不确定性关系。
+summary: 两个可观测量能否同时测准，取决于它们的乘积是否可交换次序。一条不等式给出了所有不确定性关系的统一形式。
 status: done
 prereqs:
   - 03-formalism/05-hermitian-operators
@@ -13,9 +13,8 @@ objectives:
   - 解释相容可观测量与完备对易可观测量集
 ---
 
-上一节留下的问题：既然可观测量有很多个，能不能同时把两个都测准？
-
-答案出人意料地干脆：**看它们换不换顺序。**
+上一节留下的问题是：可观测量有很多个，能否同时把其中两个都测准？
+答案取决于两个算符相乘时能否交换次序。
 
 ## 对易子
 
@@ -25,7 +24,7 @@ $$
 
 若 $[\hat A,\hat B]=0$ 就说两者**对易**。
 
-普通的数总是对易的，所以这个概念在经典力学里根本不存在。它是量子力学特有的结构。
+普通的数总是对易的，所以经典力学里没有这个概念，它是量子力学特有的结构。
 
 <Derivation title="计算：正则对易关系 [x̂, p̂]" level="基础" minutes={4} open={true}>
 
@@ -45,7 +44,7 @@ $$
 \hat p\hat x\psi=-\ii\hbar\frac{\dd}{\dd x}(x\psi)=-\ii\hbar(\psi+x\psi')
 $$
 
-**注意第二式里的乘积求导**——那个多出来的 $\psi$ 就是全部的关键。相减：
+注意第二式里的乘积求导，多出来的那个 $\psi$ 是结果非零的原因。相减：
 
 $$
 [\hat x,\hat p]\psi=-\ii\hbar x\psi'+\ii\hbar\psi+\ii\hbar x\psi'=\ii\hbar\psi
@@ -59,21 +58,21 @@ $$
 
 </Derivation>
 
-<Callout type="insight" title="这一个式子撑起了半个量子力学">
-$[\hat x,\hat p]=\ii\hbar$ 被称为**正则对易关系**。它的地位很难高估：
+<Callout type="insight" title="正则对易关系的地位">
+$[\hat x,\hat p]=\ii\hbar$ 称为**正则对易关系**。它在理论中的作用很多：
 
-- **海森堡的矩阵力学**（[1.7 节](/ch/01-history/07-uncertainty-origins/)）就是从它出发的。历史上它比薛定谔方程更早写下来。
-- **谐振子的代数解法**（[2.9 节](/ch/02-wavefunction/09-harmonic-oscillator/)）整套推导只用了这一条关系，一次都没解微分方程。
-- **不确定性原理**由它直接推出，见下文。
-- **正则量子化**这个从经典力学造量子理论的通用配方，就是把泊松括号换成 $\frac{1}{\ii\hbar}[\ ,\ ]$。
+- 海森堡的矩阵力学（[1.7 节](/ch/01-history/07-uncertainty-origins/)）从它出发。历史上它比薛定谔方程更早写下来。
+- 谐振子的代数解法（[2.9 节](/ch/02-wavefunction/09-harmonic-oscillator/)）整套推导只用了这一条关系，没有解微分方程。
+- 不确定性原理由它直接推出，见下文。
+- 正则量子化是从经典力学构造量子理论的通用方法，做法是把泊松括号换成 $\frac{1}{\ii\hbar}[\ ,\ ]$。
 
-$\hbar\to0$ 时它退化成 $[\hat x,\hat p]=0$，一切又都对易了——**经典极限就是「所有东西都对易」的极限**。
+$\hbar\to0$ 时它退化成 $[\hat x,\hat p]=0$，所有量又都对易了。从这个意义上说，经典极限就是「所有量都对易」的极限。
 </Callout>
 
 <DualView>
 <div slot="left">
 
-**常用运算规则**
+常用运算规则
 
 $$
 [\hat A,\hat B]=-[\hat B,\hat A]
@@ -89,7 +88,7 @@ $$
 
 第三条像莱布尼茨求导法则，注意保持算符顺序。
 
-**推论**（反复用第三条）：
+推论（反复用第三条）：
 
 $$
 [\hat x,\hat p^n]=\ii\hbar\, n\hat p^{\,n-1}
@@ -102,7 +101,7 @@ $$
 </div>
 <div slot="right">
 
-**几个要记住的**
+几个常用结果
 
 $$
 [\hat x_i,\hat x_j]=0,\qquad [\hat p_i,\hat p_j]=0
@@ -112,7 +111,7 @@ $$
 [\hat x_i,\hat p_j]=\ii\hbar\,\delta_{ij}
 $$
 
-不同方向的位置与动量互相对易——**$x$ 与 $p_y$ 可以同时测准**。
+不同方向的位置与动量互相对易，因此 $x$ 与 $p_y$ 可以同时测准。
 
 角动量（[第 5 章](/ch/05-angular-momentum/)）：
 
@@ -149,7 +148,7 @@ $$
 
 同理 $\sigma_B^2=\braket{g}{g}$，$\ket{g}\equiv\Delta\hat B\ket{\psi}$。（这一步用了 $\Delta\hat A$ 厄米。）
 
-**第一步：柯西-施瓦茨不等式。**
+第一步，柯西-施瓦茨不等式：
 
 $$
 \braket{f}{f}\braket{g}{g}\ge|\braket{f}{g}|^2
@@ -157,13 +156,13 @@ $$
 
 即 $\sigma_A^2\sigma_B^2\ge|\braket{f}{g}|^2$。
 
-**第二步：只保留虚部。** 对任意复数 $z$ 有 $|z|^2\ge(\operatorname{Im}z)^2=\left(\frac{z-z^*}{2\ii}\right)^2$。取 $z=\braket{f}{g}$，注意 $z^*=\braket{g}{f}$：
+第二步，只保留虚部。对任意复数 $z$ 有 $|z|^2\ge(\operatorname{Im}z)^2=\left(\frac{z-z^*}{2\ii}\right)^2$。取 $z=\braket{f}{g}$，注意 $z^*=\braket{g}{f}$：
 
 $$
 |\braket{f}{g}|^2\ge\left(\frac{\braket{f}{g}-\braket{g}{f}}{2\ii}\right)^2
 $$
 
-**第三步：把它换成对易子。**
+第三步，把它换成对易子：
 
 $$
 \braket{f}{g}=\bra{\psi}\Delta\hat A\,\Delta\hat B\ket{\psi}
@@ -181,7 +180,7 @@ $$
 \braket{f}{g}-\braket{g}{f}=\langle[\hat A,\hat B]\rangle
 $$
 
-**第四步：合并。**
+第四步，合并：
 
 $$
 \boxed{\ \sigma_A^2\sigma_B^2\ge\left(\frac{1}{2\ii}\langle[\hat A,\hat B]\rangle\right)^2\ }
@@ -202,26 +201,26 @@ $$
 \sigma_x\sigma_p\ge\frac12|\ii\hbar|=\frac{\hbar}{2}
 $$
 
-**这就是第 2 章那条不等式，现在它被证明了。**
+第 2 章那条不等式由此得到了证明。
 
-[2.6 节](/ch/02-wavefunction/06-expectation-and-uncertainty/)当时只能说「严格证明需要广义不确定性关系，见 3.6 节」，并从傅里叶分析给了一个直观来源。现在两条路会合了：傅里叶那条路解释了**为什么**，这条路给出了**严格的普遍形式**。
+[2.6 节](/ch/02-wavefunction/06-expectation-and-uncertainty/)当时只能说「严格证明需要广义不确定性关系，见 3.6 节」，并从傅里叶分析给了一个直观来源。现在两种论证可以互相补充：傅里叶分析给出直观的原因，这里的推导给出严格的普遍形式。
 
-而且这条不等式适用于任意一对可观测量。比如角动量：
+这条不等式适用于任意一对可观测量。比如角动量：
 
 $$
 \sigma_{L_x}\sigma_{L_y}\ge\frac{\hbar}{2}|\langle \hat L_z\rangle|
 $$
 
-注意右边不是常数，它依赖于态。若 $\langle L_z\rangle=0$，$L_x$ 与 $L_y$ 原则上可以同时测准——**下界为零并不意味着一定能做到，但至少这条不等式不再构成障碍**。
+注意右边不是常数，它依赖于态。若 $\langle L_z\rangle=0$，$L_x$ 与 $L_y$ 原则上可以同时测准。下界为零并不意味着一定能做到，只是这条不等式不再构成障碍。
 </Callout>
 
 ## 对易 ⟺ 存在共同本征态
 
 <Derivation title="定理与证明" level="进阶" minutes={6}>
 
-**定理**：两个厄米算符 $\hat A,\hat B$ 对易，当且仅当存在一组共同的正交归一完备本征基。
+定理：两个厄米算符 $\hat A,\hat B$ 对易，当且仅当存在一组共同的正交归一完备本征基。
 
-**（⟸）容易的方向。** 设 $\{\ket{n}\}$ 是共同本征基，$\hat A\ket{n}=a_n\ket{n}$，$\hat B\ket{n}=b_n\ket{n}$。则
+（⟸）这个方向比较容易。设 $\{\ket{n}\}$ 是共同本征基，$\hat A\ket{n}=a_n\ket{n}$，$\hat B\ket{n}=b_n\ket{n}$。则
 
 $$
 \hat A\hat B\ket{n}=a_nb_n\ket{n}=\hat B\hat A\ket{n}
@@ -229,19 +228,19 @@ $$
 
 对基里每个矢量都成立，由线性性对任意态成立，故 $[\hat A,\hat B]=0$。
 
-**（⟹）另一个方向。** 设 $[\hat A,\hat B]=0$ 且 $\hat A\ket{a}=a\ket{a}$。考察 $\hat B\ket{a}$：
+（⟹）另一个方向。设 $[\hat A,\hat B]=0$ 且 $\hat A\ket{a}=a\ket{a}$。考察 $\hat B\ket{a}$：
 
 $$
 \hat A\big(\hat B\ket{a}\big)=\hat B\hat A\ket{a}=a\big(\hat B\ket{a}\big)
 $$
 
-**所以 $\hat B\ket{a}$ 也是 $\hat A$ 的本征矢，本征值同样是 $a$。**
+所以 $\hat B\ket{a}$ 也是 $\hat A$ 的本征矢，本征值同样是 $a$。
 
-若 $a$ 非简并，则 $\hat B\ket{a}$ 只能正比于 $\ket{a}$，即 $\hat B\ket{a}=b\ket{a}$——$\ket{a}$ 自动也是 $\hat B$ 的本征矢，证毕。
+若 $a$ 非简并，则 $\hat B\ket{a}$ 只能正比于 $\ket{a}$，即 $\hat B\ket{a}=b\ket{a}$，$\ket{a}$ 自动也是 $\hat B$ 的本征矢，证毕。
 
-若 $a$ 简并，则 $\hat B$ 把本征子空间 $\mathcal H_a$ 映到自身。$\hat B$ 限制在 $\mathcal H_a$ 上仍是厄米的，因此可以在 $\mathcal H_a$ 内部对角化——**在简并子空间里重选一组基**，使它同时是 $\hat B$ 的本征基。$\blacksquare$
+若 $a$ 简并，则 $\hat B$ 把本征子空间 $\mathcal H_a$ 映到自身。$\hat B$ 限制在 $\mathcal H_a$ 上仍是厄米的，因此可以在 $\mathcal H_a$ 内部对角化，也就是在简并子空间里重选一组基，使它同时是 $\hat B$ 的本征基。$\blacksquare$
 
-最后这一步正是[3.4 节](/ch/03-formalism/04-linear-operators/)提到的「简并时基的选择有自由度」的用处所在。
+最后这一步用到了 [3.4 节](/ch/03-formalism/04-linear-operators/)提到的「简并时基的选择有自由度」。
 
 </Derivation>
 
@@ -250,17 +249,17 @@ $$
 
 一个可观测量若有简并，单靠它无法唯一标定态。这时就再找一个与它对易的可观测量来区分。不断补充，直到本征值组合能唯一确定态为止——这组算符叫**完备对易可观测量集**（CSCO）。
 
-**氢原子是标准例子**：$\hat H$ 单独有很大的简并（$n=2$ 时四重）。补上 $\hat L^2$ 与 $\hat L_z$，三个算符两两对易，本征值组合 $(n,l,m)$ 就把态唯一定下来了。再加上自旋 $\hat S_z$，得到 $(n,l,m,m_s)$——**这正是化学课上那四个量子数的来源**。
+氢原子是标准的例子。$\hat H$ 单独有很大的简并（$n=2$ 时四重）。补上 $\hat L^2$ 与 $\hat L_z$，三个算符两两对易，本征值组合 $(n,l,m)$ 就把态唯一定下来了。再加上自旋 $\hat S_z$，得到 $(n,l,m,m_s)$，也就是化学课上的四个量子数。
 
-它们不是记出来的，是「找一组两两对易的可观测量把简并彻底分开」的结果。
+这四个量子数来自「找一组两两对易的可观测量把简并完全分开」这一要求。
 </Callout>
 
-<Callout type="warning" title="不对易不等于「测不准」，要看具体的态">
+<Callout type="warning" title="下界依赖于态">
 $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 的右边依赖于态。
 
 若 $[\hat A,\hat B]$ 不是常数（比如角动量），完全可能在某些态上 $\langle[\hat A,\hat B]\rangle=0$，下界退化为零。
 
-**但 $[\hat x,\hat p]=\ii\hbar$ 是常数**，$\langle\ii\hbar\rangle=\ii\hbar$ 与态无关，所以 $\sigma_x\sigma_p\ge\hbar/2$ 对**一切**态成立，无一例外。这是位置-动量这一对的特殊之处。
+$[\hat x,\hat p]=\ii\hbar$ 则是常数，$\langle\ii\hbar\rangle=\ii\hbar$ 与态无关，所以 $\sigma_x\sigma_p\ge\hbar/2$ 对一切态成立。这是位置与动量这一对的特殊之处。
 </Callout>
 
 <KeyFormulas
@@ -291,7 +290,7 @@ $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 的右边依赖于�
         2: '实函数上同样能算出这个结果。',
         3: '这里没有做积分。',
       },
-      explain: 'd(xψ)/dx = ψ + xψ′，多出来的那个 ψ 就是全部的来源。若 x̂ 与 p̂ 是普通的数，乘积当然可交换，对易子为零——非零完全来自「求导作用在乘积上」。',
+      explain: 'd(xψ)/dx = ψ + xψ′，多出来的那个 ψ 就是结果的来源。若 x̂ 与 p̂ 是普通的数，乘积可交换，对易子为零；非零结果来自求导作用在乘积上。',
     },
     {
       id: 'comm-2',
@@ -306,7 +305,7 @@ $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 的右边依赖于�
       distractors: {
         3: '推导完全不涉及时间演化，对任意时刻的任意态都成立。',
       },
-      explain: '厄米性保证 σ² 能写成 ⟨f|f⟩ 的形式，柯西-施瓦茨给出乘积的下界，丢掉实部把 ⟨f|g⟩ 换成对易子的期望值。丢实部这一步意味着这个下界通常不是最紧的——保留实部会得到更强的 Robertson–Schrödinger 关系。',
+      explain: '厄米性保证 σ² 能写成 ⟨f|f⟩ 的形式，柯西-施瓦茨给出乘积的下界，丢掉实部把 ⟨f|g⟩ 换成对易子的期望值。丢掉实部意味着这个下界通常不是最紧的，保留实部会得到更强的 Robertson–Schrödinger 关系。',
     },
     {
       id: 'comm-3',
@@ -340,7 +339,7 @@ $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 的右边依赖于�
         2: '⟨L̂_z⟩ = 0 的态上，这条不等式允许两者同时为零。',
         3: '它是严格的量子关系。',
       },
-      explain: '这正是 x–p 那一对特殊的地方：[x̂,p̂] = iħ 是常数，所以 σₓσ_p ≥ ħ/2 对一切态无例外地成立。对易子是算符时，限制的强弱要看具体的态。',
+      explain: 'x–p 这一对的特殊之处在于：[x̂,p̂] = iħ 是常数，所以 σₓσ_p ≥ ħ/2 对一切态无例外地成立。对易子是算符时，限制的强弱要看具体的态。',
     },
   ]}
 />
@@ -349,4 +348,4 @@ $\sigma_A\sigma_B\ge\frac12|\langle[\hat A,\hat B]\rangle|$ 的右边依赖于�
 
 到这里，第 2 章那些「规定」大多已经变成了结论。
 
-下一节把整套理论压缩成五条公设——把「哪些是必须假设的」与「哪些是可以推出来的」彻底分清。
+下一节把整套理论归纳为五条公设，分清哪些是必须假设的，哪些可以推出来。

@@ -2,7 +2,7 @@
 title: 时间演化算符与绘景
 section: '3.9'
 order: 9
-summary: 把时间依赖记在态上还是记在算符上，是可以自由选择的。两种记账方式给出完全相同的物理，但难易可以差很多。
+summary: 时间依赖可以记在态上，也可以记在算符上。两种写法给出相同的物理结果，但计算的难易可能相差很大。
 status: done
 prereqs:
   - 03-formalism/08-measurement
@@ -15,7 +15,7 @@ objectives:
 
 测量是理论里唯一不幺正的一步。剩下的时间里，态都按公设四演化。
 
-这一节把那条演化整理成一个算符——然后会发现一件很实用的事。
+这一节把这条演化整理成一个算符，并由此引出一个很实用的结果。
 
 ## 演化算符
 
@@ -45,7 +45,7 @@ $$
 \ii\hbar\frac{\dd\hat U}{\dd t}=\hat H\hat U,\qquad \hat U(0)=\hat 1
 $$
 
-**若 $\hat H$ 不显含时间**，这就是一个标量微分方程的算符版本，解为
+若 $\hat H$ 不显含时间，这就是一个标量微分方程的算符版本，解为
 
 $$
 \boxed{\ \hat U(t)=\ee^{-\ii\hat Ht/\hbar}\ }
@@ -57,12 +57,12 @@ $$
 \ee^{\hat A}\equiv\sum_{n=0}^{\infty}\frac{\hat A^n}{n!}
 $$
 
-**验证**：逐项求导，$\frac{\dd}{\dd t}\ee^{-\ii\hat Ht/\hbar}=-\frac{\ii\hat H}{\hbar}\ee^{-\ii\hat Ht/\hbar}$，代入即得。（这一步用到 $\hat H$ 与自身对易，所以可以像普通数一样求导。）
+验证：逐项求导，$\frac{\dd}{\dd t}\ee^{-\ii\hat Ht/\hbar}=-\frac{\ii\hat H}{\hbar}\ee^{-\ii\hat Ht/\hbar}$，代入即得。（这一步用到 $\hat H$ 与自身对易，所以可以像普通数一样求导。）
 
 </Derivation>
 
 <Callout type="insight" title="怎么实际用它：在能量基下">
-指数算符看起来吓人，但在 $\hat H$ 的本征基下它是**对角**的，计算立刻塌成一行。
+指数算符看起来复杂，但在 $\hat H$ 的本征基下它是对角的，计算只需一行。
 
 设 $\hat H\ket{n}=E_n\ket{n}$，初态展开为 $\ket{\psi(0)}=\sum_n c_n\ket{n}$。由[3.4 节](/ch/03-formalism/04-linear-operators/)那条「函数的本征值」性质，$\ee^{-\ii\hat Ht/\hbar}\ket{n}=\ee^{-\ii E_nt/\hbar}\ket{n}$，所以
 
@@ -70,9 +70,9 @@ $$
 \ket{\psi(t)}=\sum_n c_n\,\ee^{-\ii E_nt/\hbar}\ket{n}
 $$
 
-**这正是[2.4 节](/ch/02-wavefunction/04-time-dependent-schrodinger/)的结果。** 当时的说法是「先展开成定态，每项配上自己的相位因子」——现在知道那就是把 $\hat U$ 在能量基下写出来。
+这与 [2.4 节](/ch/02-wavefunction/04-time-dependent-schrodinger/)的结果相同。当时的说法是「先展开成定态，每项配上自己的相位因子」，现在可以看出那就是把 $\hat U$ 在能量基下写出来。
 
-**解含时问题的标准三步**：展开成能量本征态 → 每个系数乘 $\ee^{-\ii E_nt/\hbar}$ → 需要时换回位置基。第 2 章那些叠加态的演化全是这个套路。
+解含时问题的标准步骤分三步：展开成能量本征态 → 每个系数乘 $\ee^{-\ii E_nt/\hbar}$ → 需要时换回位置基。第 2 章那些叠加态的演化都是这样算的。
 </Callout>
 
 ## 幺正性 = 概率守恒
@@ -91,32 +91,32 @@ $$
 \hat U^\dagger\hat U=\hat 1
 $$
 
-这就是**幺正**的定义。
+满足这个条件的算符称为**幺正**算符。
 
-**物理后果一：概率守恒。**
+物理后果一：概率守恒。
 
 $$
 \braket{\psi(t)}{\psi(t)}=\bra{\psi(0)}\hat U^\dagger\hat U\ket{\psi(0)}=\braket{\psi(0)}{\psi(0)}=1
 $$
 
-一次归一化，永远归一化。[2.2 节](/ch/02-wavefunction/02-normalization-and-current/)用连续性方程证明的那件事，在这里是一行。
+初始时刻归一化，之后就一直保持归一化。[2.2 节](/ch/02-wavefunction/02-normalization-and-current/)用连续性方程证明的结论，在这里只需一行。
 
-**物理后果二：内积保持。**
+物理后果二：内积保持。
 
 $$
 \braket{\phi(t)}{\psi(t)}=\braket{\phi(0)}{\psi(0)}
 $$
 
-**正交的态永远正交。** 两个可分辨的态不会随时间演化成不可分辨的——这在量子信息里很重要（不可克隆定理、量子纠错都依赖它）。
+正交的态始终正交。两个可分辨的态不会随时间演化成不可分辨的，这一点在量子信息里很重要（不可克隆定理、量子纠错都依赖它）。
 
-**物理后果三：可逆。** $\hat U(-t)=\hat U(t)^{-1}$，演化可以倒放。信息不会丢失。
+物理后果三：可逆。$\hat U(-t)=\hat U(t)^{-1}$，演化可以倒放。信息不会丢失。
 
-**这正是与测量的对比所在**：测量是投影，不可逆，信息真的丢了。整个测量问题的张力都在这里（[3.8 节](/ch/03-formalism/08-measurement/)）。
+测量则不同：测量是投影，不可逆，信息确实丢失了。测量问题的张力就来自这一对比（[3.8 节](/ch/03-formalism/08-measurement/)）。
 
 </Derivation>
 
 <Callout type="warning" title="H 含时的情形">
-若 $\hat H$ 显含时间，$\hat U(t)=\ee^{-\ii\int\hat H\dd t/\hbar}$ 一般是**错的**——因为不同时刻的 $\hat H(t_1)$ 与 $\hat H(t_2)$ 未必对易，指数不能这样合并。
+若 $\hat H$ 显含时间，$\hat U(t)=\ee^{-\ii\int\hat H\dd t/\hbar}$ 一般是错的，因为不同时刻的 $\hat H(t_1)$ 与 $\hat H(t_2)$ 未必对易，指数不能这样合并。
 
 正确的形式要加上编时算符：
 
@@ -131,9 +131,9 @@ $\mathcal T$ 表示把算符按时间从右到左排序。展开后是 Dyson 级
 
 ## 三种绘景
 
-现在是这一节最有用的一件事。
+下面是这一节最有用的内容。
 
-<Callout type="check" title="先看一个问题">
+<Callout type="check" title="括号的两种打法">
 我们最终要算的总是期望值：
 
 $$
@@ -141,17 +141,17 @@ $$
 =\bra{\psi(0)}\hat U^\dagger\hat A\hat U\ket{\psi(0)}
 $$
 
-括号可以这样打：$\big(\bra{\psi(0)}\hat U^\dagger\big)\hat A\big(\hat U\ket{\psi(0)}\big)$——时间在态上。
+括号可以这样打：$\big(\bra{\psi(0)}\hat U^\dagger\big)\hat A\big(\hat U\ket{\psi(0)}\big)$，时间依赖在态上。
 
-也可以这样打：$\bra{\psi(0)}\big(\hat U^\dagger\hat A\hat U\big)\ket{\psi(0)}$——时间在算符上。
+也可以这样打：$\bra{\psi(0)}\big(\hat U^\dagger\hat A\hat U\big)\ket{\psi(0)}$，时间依赖在算符上。
 
-**两种打法完全等价。** 那就是两种绘景。
+两种打法完全等价，分别对应两种**绘景**。
 </Callout>
 
 <DualView>
 <div slot="left">
 
-**薛定谔绘景（默认）**
+薛定谔绘景（默认）
 
 $$
 \ket{\psi_S(t)}=\hat U(t)\ket{\psi(0)},\qquad \hat A_S=\text{常}
@@ -159,7 +159,7 @@ $$
 
 态动，算符不动。这是第 2 章一直在用的。
 
-**海森堡绘景**
+海森堡绘景
 
 $$
 \ket{\psi_H}=\text{常},\qquad \hat A_H(t)=\hat U^\dagger\hat A_S\hat U
@@ -176,7 +176,7 @@ $$
 </div>
 <div slot="right">
 
-**海森堡运动方程**
+海森堡运动方程
 
 对 $\hat A_H=\hat U^\dagger\hat A_S\hat U$ 求导（$\hat A_S$ 不显含 $t$）：
 
@@ -190,39 +190,39 @@ $$
 
 （$\hat A_S$ 显含时间时再加一项 $\partial\hat A/\partial t$。）
 
-**与经典力学的对照**：
+与经典力学对照：
 
 $$
 \frac{\dd A}{\dd t}=\{H,A\}_{\text{泊松}}
 $$
 
-形式完全平行，只需 $\{\ ,\ \}\to\frac{1}{\ii\hbar}[\ ,\ ]$。**这就是正则量子化的配方。**
+两者形式平行，只需 $\{\ ,\ \}\to\frac{1}{\ii\hbar}[\ ,\ ]$，这就是正则量子化的规则。
 
 </div>
 </DualView>
 
-<Callout type="insight" title="守恒律一眼可见">
+<Callout type="insight" title="守恒律">
 海森堡方程立刻给出一条重要结论：
 
 $$
 [\hat H,\hat A]=0\ \Longrightarrow\ \frac{\dd\hat A_H}{\dd t}=0
 $$
 
-**与哈密顿量对易的可观测量是守恒量。**
+与哈密顿量对易的可观测量是守恒量。
 
 - $[\hat H,\hat H]=0$ → 能量守恒（$\hat H$ 不显含时间时）
 - 平移不变 → $[\hat H,\hat p]=0$ → 动量守恒
 - 转动不变 → $[\hat H,\hat L]=0$ → 角动量守恒
 
-这是**诺特定理的量子版本**，而且比经典版本还要直白：对称性表现为「某个算符与 $\hat H$ 对易」，守恒律直接从对易子读出来。
+这是诺特定理的量子版本，而且比经典版本更直接：对称性表现为「某个算符与 $\hat H$ 对易」，守恒律直接从对易子读出来。
 
-顺带回答了 [3.8 节](/ch/03-formalism/08-measurement/)的那个问题：为什么守恒量测完之后一直保持？因为它与 $\hat H$ 对易，海森堡绘景里它根本不随时间变。
+顺带回答了 [3.8 节](/ch/03-formalism/08-measurement/)的那个问题：为什么守恒量测完之后一直保持？因为它与 $\hat H$ 对易，在海森堡绘景里不随时间变。
 </Callout>
 
 <DualView>
 <div slot="left">
 
-**相互作用绘景（第三种）**
+相互作用绘景（第三种）
 
 当 $\hat H=\hat H_0+\hat V$，其中 $\hat H_0$ 可解、$\hat V$ 是小扰动时：
 
@@ -234,7 +234,7 @@ $$
 \hat A_I(t)=\ee^{\ii\hat H_0t/\hbar}\hat A_S\ee^{-\ii\hat H_0t/\hbar}
 $$
 
-**把 $\hat H_0$ 造成的「简单」演化吸收进算符，态只受 $\hat V$ 驱动**：
+$\hat H_0$ 造成的「简单」演化被吸收进算符，态只受 $\hat V$ 驱动：
 
 $$
 \ii\hbar\frac{\dd}{\dd t}\ket{\psi_I}=\hat V_I(t)\ket{\psi_I}
@@ -243,7 +243,7 @@ $$
 </div>
 <div slot="right">
 
-**该用哪一个**
+如何选择
 
 | 绘景 | 态 | 算符 | 适合 |
 | --- | --- | --- | --- |
@@ -251,7 +251,7 @@ $$
 | 海森堡 | 不动 | 动 | 守恒律、场论、与经典对照 |
 | 相互作用 | 慢动 | 快动 | 微扰论、散射、含时问题 |
 
-三者在 $t=0$ 重合，物理预言恒等。**选哪个纯粹看哪个算起来省事。**
+三者在 $t=0$ 重合，物理预言相同，选哪一个只看计算是否方便。
 
 相互作用绘景是含时微扰论与费米黄金规则的出发点（[7.5](/ch/07-approximation/05-time-dependent-perturbation/)–[7.6 节](/ch/07-approximation/06-fermi-golden-rule/)）。
 
@@ -266,7 +266,7 @@ $$
 \frac{\dd\hat p_H}{\dd t}=\frac{\ii}{\hbar}[\hat H,\hat p]=0
 $$
 
-（$\hat p$ 与 $\hat p^2$ 对易。）所以 $\hat p_H(t)=\hat p(0)$ 是常数——动量守恒。
+（$\hat p$ 与 $\hat p^2$ 对易。）所以 $\hat p_H(t)=\hat p(0)$ 是常数，动量守恒。
 
 再看位置：
 
@@ -286,9 +286,9 @@ $$
 \hat x_H(t)=\hat x(0)+\frac{\hat p(0)}{m}t
 $$
 
-**和经典的 $x=x_0+vt$ 一模一样**，只是所有量都是算符。
+形式与经典的 $x=x_0+vt$ 相同，只是所有量都是算符。
 
-有意思的是，由此可以一行算出波包弥散。用 $[\hat x(0),\hat p(0)]=\ii\hbar$ 展开 $\sigma_x^2(t)=\langle\hat x_H^2\rangle-\langle\hat x_H\rangle^2$：
+由此可以很快算出波包弥散。用 $[\hat x(0),\hat p(0)]=\ii\hbar$ 展开 $\sigma_x^2(t)=\langle\hat x_H^2\rangle-\langle\hat x_H\rangle^2$：
 
 $$
 \sigma_x^2(t)=\sigma_x^2(0)+\frac{\sigma_p^2}{m^2}t^2+(\text{交叉项})
@@ -300,7 +300,7 @@ $$
 \sigma_x(t)=\sigma_0\sqrt{1+\left(\frac{\hbar t}{2m\sigma_0^2}\right)^2}
 $$
 
-**这正是[2.10 节](/ch/02-wavefunction/10-free-particle/)那个展宽公式**，当时是靠配方做高斯积分得到的，代数相当繁琐。海森堡绘景把它变成了几行代数。
+这就是 [2.10 节](/ch/02-wavefunction/10-free-particle/)的展宽公式。当时是靠配方做高斯积分得到的，代数相当繁琐，在海森堡绘景里只需几行。
 
 </Derivation>
 
@@ -330,7 +330,7 @@ $$
       distractors: {
         3: '本征值为实来自 Ĥ 的厄米性，是幺正性的前提而非推论。',
       },
-      explain: '幺正性来自 Ĥ 厄米：U†U = e^{+iĤt/ħ}e^{−iĤt/ħ} = 1。它与测量（投影、不可逆、信息丢失）形成鲜明对比，整个测量问题的张力就在这里。',
+      explain: '幺正性来自 Ĥ 厄米：U†U = e^{+iĤt/ħ}e^{−iĤt/ħ} = 1。它与测量（投影、不可逆、信息丢失）形成对比，测量问题的张力就来自这里。',
     },
     {
       id: 'pic-2',
@@ -347,7 +347,7 @@ $$
         2: '两者在非相对论情形同样适用。',
         3: '精度完全相同。',
       },
-      explain: '⟨ψ(0)|U†ÂU|ψ(0)⟩ 里括号往哪边打是自由的：打在态上得薛定谔绘景，打在算符上得海森堡绘景。选哪个纯粹看哪个算起来省事。',
+      explain: '⟨ψ(0)|U†ÂU|ψ(0)⟩ 里括号往哪边打是自由的：打在态上得薛定谔绘景，打在算符上得海森堡绘景。选哪个只看计算是否方便。',
     },
     {
       id: 'pic-3',
@@ -364,7 +364,7 @@ $$
         2: '与本征值无关。',
         3: '只需与 Ĥ 对易即可。',
       },
-      explain: 'dÂ_H/dt = (i/ħ)[Ĥ,Â_H]，对易子为零则算符不随时间变。这是诺特定理的量子版本，而且比经典版本更直白：对称性直接表现为与 Ĥ 对易。',
+      explain: 'dÂ_H/dt = (i/ħ)[Ĥ,Â_H]，对易子为零则算符不随时间变。这是诺特定理的量子版本，而且比经典版本更直接：对称性表现为与 Ĥ 对易。',
     },
     {
       id: 'pic-4',
@@ -381,7 +381,7 @@ $$
         2: '含时的 Ĥ(t) 在每个时刻仍是厄米的。',
         3: '概率仍然守恒，演化仍是幺正的。',
       },
-      explain: '算符指数满足 e^Ae^B = e^{A+B} 只在 [A,B] = 0 时成立。正确形式需要编时算符 T，展开后是 Dyson 级数——散射理论与含时微扰论的出发点。',
+      explain: '算符指数满足 e^Ae^B = e^{A+B} 只在 [A,B] = 0 时成立。正确形式需要编时算符 T，展开后是 Dyson 级数，它是散射理论与含时微扰论的出发点。',
     },
   ]}
 />
@@ -390,6 +390,6 @@ $$
 
 到目前为止，我们假设自己总是知道体系处于哪个态。
 
-但如果不知道呢？比如从炉子里飞出来的原子，自旋方向完全随机；或者一个与环境纠缠的体系，它根本没有自己的态矢量。
+如果不知道，该怎么描述？例如从炉子里飞出来的原子，自旋方向完全随机；又如一个与环境纠缠的体系，它没有属于自己的态矢量。
 
 下一节引入处理这种情形的工具，它也是[第 10 章](/ch/10-open-systems/)的入口。

@@ -2,7 +2,7 @@
 title: 用 Dirac 符号重写前几章
 section: '3.11'
 order: 11
-summary: 一次结算。把第 2 章那些花了大量篇幅的推导用新语言重做，看看到底省下了多少。
+summary: 本章的总结。把第 2 章那些花了大量篇幅的推导用新语言重做一遍，比较两种写法的繁简。
 status: done
 prereqs:
   - 03-formalism/10-density-operator
@@ -13,16 +13,16 @@ objectives:
 sims: ['infinite-well', 'harmonic-oscillator']
 ---
 
-工具都齐了。这一节做一次结算：**把第 2 章的结果全部翻译成新语言**，然后看看省下了多少。
+工具已经齐备。这一节把第 2 章的结果全部翻译成新语言，并比较两种写法的繁简。
 
-这不是复习。有些证明会从半页缩到三行，有些则从「解偏微分方程」变成「做代数」——**后一种才是真正的收获**。
+这一节的目的不只是复习。有些证明会从半页缩到三行，有些则从解偏微分方程变成做代数，后一种变化的意义更大。
 
 ## 无限深势阱：写成矩阵
 
 <DualView>
 <div slot="left">
 
-**第 2 章的写法**
+第 2 章的写法
 
 $$
 \psi_n(x)=\sqrt{\frac2L}\sin\frac{n\pi x}{L}
@@ -47,7 +47,7 @@ $$
 </div>
 <div slot="right">
 
-**新写法**
+新写法
 
 $$
 \hat H\ket{n}=E_n\ket{n}
@@ -61,7 +61,7 @@ $$
 \ket{\Psi}=\sum_nc_n\ket{n},\qquad c_n=\braket{n}{\Psi}
 $$
 
-**波函数只是分量**：$\psi_n(x)=\braket{x}{n}$。
+波函数只是分量：$\psi_n(x)=\braket{x}{n}$。
 
 在能量基下，$\hat H$ 是对角矩阵：
 
@@ -80,9 +80,9 @@ $$
 =\sum_nc_n\ee^{-\ii E_nt/\hbar}\ket{n}
 $$
 
-完。第三个等号用的是[3.4 节](/ch/03-formalism/04-linear-operators/)那条「$f(\hat A)\ket{a}=f(a)\ket{a}$」。
+推导到此结束。第三个等号用的是 [3.4 节](/ch/03-formalism/04-linear-operators/)那条「$f(\hat A)\ket{a}=f(a)\ket{a}$」。
 
-**概率密度的摆动是怎么来的？**
+再看概率密度的摆动从何而来：
 
 $$
 |\Psi(x,t)|^2=\Big|\sum_nc_n\ee^{-\ii E_nt/\hbar}\braket{x}{n}\Big|^2
@@ -90,7 +90,7 @@ $$
 
 展开后交叉项带因子 $\ee^{-\ii(E_n-E_m)t/\hbar}$。$n=m$ 的项相位抵消（不随时间变），$n\ne m$ 的项以玻尔频率 $\omega_{nm}=(E_n-E_m)/\hbar$ 振荡。
 
-[2.5 节](/ch/02-wavefunction/05-stationary-states/)用了整整一节讲「定态不动、叠加态摆动」，在这里是两行——**而且能一眼看出摆动频率只由能级差决定**。
+[2.5 节](/ch/02-wavefunction/05-stationary-states/)用了整整一节讲「定态不动、叠加态摆动」，在这里只需两行，而且可以直接看出摆动频率只由能级差决定。
 
 </Derivation>
 
@@ -99,52 +99,52 @@ $$
 <Callout type="check" title="对照着看">
 模拟里把 $c_1$、$c_2$ 设成相等，观察摆动周期；再换成 $c_1$、$c_3$。
 
-按上面的分析，频率比应当是 $(E_3-E_1)/(E_2-E_1)=8/3$。这就是[2.5 节](/ch/02-wavefunction/05-stationary-states/)那道自测题，现在你能一眼从公式看出来，不必再算一遍。
+按上面的分析，频率比应当是 $(E_3-E_1)/(E_2-E_1)=8/3$。这是 [2.5 节](/ch/02-wavefunction/05-stationary-states/)的一道自测题，现在可以直接从公式读出答案，不必再算一遍。
 </Callout>
 
 ## 谐振子：纯代数解法
 
 [2.9 节](/ch/02-wavefunction/09-harmonic-oscillator/)已经用过升降算符，但当时还没有 Dirac 记号。用新语言重写一遍，结构会清楚得多。
 
-<Derivation title="完整代数解，一次微分方程都不解" level="进阶" minutes={10} open={true}>
+<Derivation title="完整代数解，不解微分方程" level="进阶" minutes={10} open={true}>
 
-**出发点只有一条**：$[\hat x,\hat p]=\ii\hbar$。定义
+出发点只有一条：$[\hat x,\hat p]=\ii\hbar$。定义
 
 $$
 \hat a=\sqrt{\frac{m\omega}{2\hbar}}\left(\hat x+\frac{\ii\hat p}{m\omega}\right),\qquad
 \hat a^\dagger=\sqrt{\frac{m\omega}{2\hbar}}\left(\hat x-\frac{\ii\hat p}{m\omega}\right)
 $$
 
-（用 $\hat a^\dagger$ 而不是 $\hat a_\pm$ 是标准写法；注意 $\hat a$ **不厄米**，$\hat a^\dagger$ 是它的共轭。）
+（用 $\hat a^\dagger$ 而不是 $\hat a_\pm$ 是标准写法；注意 $\hat a$ 不厄米，$\hat a^\dagger$ 是它的共轭。）
 
-**第一步：对易关系。**
+第一步，对易关系：
 
 $$
 [\hat a,\hat a^\dagger]=\frac{m\omega}{2\hbar}\cdot\frac{2\ii}{m\omega}[\hat p,\hat x]\cdot(-1)=1
 $$
 
-**第二步：哈密顿量。** 定义**粒子数算符** $\hat N=\hat a^\dagger\hat a$，则
+第二步，哈密顿量。定义**粒子数算符** $\hat N=\hat a^\dagger\hat a$，则
 
 $$
 \hat H=\hbar\omega\left(\hat N+\frac12\right)
 $$
 
-于是问题变成：**求 $\hat N$ 的本征值。**
+于是问题变成求 $\hat N$ 的本征值。
 
-**第三步：$\hat N$ 的本征值非负。** 设 $\hat N\ket{\nu}=\nu\ket{\nu}$，$\braket{\nu}{\nu}=1$：
+第三步，$\hat N$ 的本征值非负。设 $\hat N\ket{\nu}=\nu\ket{\nu}$，$\braket{\nu}{\nu}=1$：
 
 $$
 \nu=\bra{\nu}\hat a^\dagger\hat a\ket{\nu}=\big\|\hat a\ket{\nu}\big\|^2\ge0
 $$
 
-**第四步：升降性质。** 用 $[\hat N,\hat a]=-\hat a$、$[\hat N,\hat a^\dagger]=+\hat a^\dagger$（由 $[\hat a,\hat a^\dagger]=1$ 直接算出）：
+第四步，升降性质。用 $[\hat N,\hat a]=-\hat a$、$[\hat N,\hat a^\dagger]=+\hat a^\dagger$（由 $[\hat a,\hat a^\dagger]=1$ 直接算出）：
 
 $$
 \hat N\big(\hat a\ket{\nu}\big)=(\nu-1)\big(\hat a\ket{\nu}\big),\qquad
 \hat N\big(\hat a^\dagger\ket{\nu}\big)=(\nu+1)\big(\hat a^\dagger\ket{\nu}\big)
 $$
 
-**第五步：阶梯必须有底。** 反复用 $\hat a$ 会得到本征值 $\nu-1,\nu-2,\dots$，但第三步说本征值非负。唯一的出路是这个序列在某处终止，即存在 $\ket{0}$ 使
+第五步，阶梯必须有底。反复用 $\hat a$ 会得到本征值 $\nu-1,\nu-2,\dots$，但第三步说本征值非负，所以这个序列必须在某处终止，即存在 $\ket{0}$ 使
 
 $$
 \hat a\ket{0}=0
@@ -158,13 +158,13 @@ $$
 
 （若某个 $\nu$ 不是整数，反复降会跨过 0 得到负本征值，矛盾。）
 
-**第六步：能级。**
+第六步，能级：
 
 $$
 E_n=\hbar\omega\left(n+\frac12\right)
 $$
 
-**第七步：归一化的阶梯。** 由 $\|\hat a^\dagger\ket{n}\|^2=\bra{n}\hat a\hat a^\dagger\ket{n}=\bra{n}(\hat N+1)\ket{n}=n+1$：
+第七步，归一化的阶梯。由 $\|\hat a^\dagger\ket{n}\|^2=\bra{n}\hat a\hat a^\dagger\ket{n}=\bra{n}(\hat N+1)\ket{n}=n+1$：
 
 $$
 \hat a^\dagger\ket{n}=\sqrt{n+1}\,\ket{n+1},\qquad \hat a\ket{n}=\sqrt{n}\,\ket{n-1}
@@ -174,9 +174,9 @@ $$
 \ket{n}=\frac{(\hat a^\dagger)^n}{\sqrt{n!}}\ket{0}
 $$
 
-**全部结果只用了一条对易关系。** 从头到尾没有出现 Hermite 多项式，也没有解过任何微分方程。
+全部结果只用了一条对易关系，从头到尾没有出现 Hermite 多项式，也没有解过任何微分方程。
 
-**要波函数的话**，才需要回到位置基：把 $\hat a\ket{0}=0$ 写成 $\braket{x}{\cdot}$ 的形式，得到一阶常微分方程
+需要波函数时，才回到位置基：把 $\hat a\ket{0}=0$ 写成 $\braket{x}{\cdot}$ 的形式，得到一阶常微分方程
 
 $$
 \left(x+\frac{\hbar}{m\omega}\frac{\dd}{\dd x}\right)\psi_0(x)=0
@@ -190,14 +190,14 @@ $$
 
 <Sim name="harmonic-oscillator" />
 
-<Callout type="insight" title="为什么这个方法如此重要">
-这套代数不只是解谐振子的技巧，它是一个**模板**，在物理学里被反复复用：
+<Callout type="insight" title="阶梯算符方法的推广">
+这套代数不只是解谐振子的技巧，它在物理学里被反复使用：
 
-- **角动量**（[第 5 章](/ch/05-angular-momentum/)）：由 $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$ 定义 $\hat L_\pm=\hat L_x\pm\ii\hat L_y$，同样的阶梯论证给出 $l$ 与 $m$ 的全部允许值——包括半整数自旋，这是波函数方法完全给不出的。
-- **量子场论**（[8.5 节](/ch/08-identical-particles/05-second-quantization/)）：$\hat a^\dagger$ 变成产生一个粒子的算符，$\ket{n}$ 变成「有 $n$ 个粒子」。「第 $n$ 激发态」与「$n$ 个粒子」在这里是同一句话。
-- **相干态**：$\hat a\ket{\alpha}=\alpha\ket{\alpha}$ 的本征态就是激光的量子描述。
+- 角动量（[第 5 章](/ch/05-angular-momentum/)）：由 $[\hat L_x,\hat L_y]=\ii\hbar\hat L_z$ 定义 $\hat L_\pm=\hat L_x\pm\ii\hat L_y$，同样的阶梯论证给出 $l$ 与 $m$ 的全部允许值，包括波函数方法给不出的半整数自旋。
+- 量子场论（[8.5 节](/ch/08-identical-particles/05-second-quantization/)）：$\hat a^\dagger$ 变成产生一个粒子的算符，$\ket{n}$ 变成「有 $n$ 个粒子」。「第 $n$ 激发态」与「$n$ 个粒子」在这里是同一句话。
+- 相干态：$\hat a\ket{\alpha}=\alpha\ket{\alpha}$ 的本征态就是激光的量子描述。
 
-**代数方法比微分方程方法走得远得多。** 这是第 3 章最实在的一笔收获。
+代数方法的适用范围比微分方程方法广得多，这是第 3 章最重要的收获。
 </Callout>
 
 ## 不确定性原理：从推导变成代入
@@ -205,16 +205,16 @@ $$
 <DualView>
 <div slot="left">
 
-**第 2 章**
+第 2 章
 
 只能说「严格证明需要广义不确定性关系」，并给一个傅里叶分析的直观来源。
 
-具体到无限深势阱基态，还要老老实实算两个积分：$\langle x^2\rangle$ 用两次分部积分，$\langle p^2\rangle$ 靠 $2mE_1$ 绕过去。
+具体到无限深势阱基态，还要逐个计算两个积分：$\langle x^2\rangle$ 用两次分部积分，$\langle p^2\rangle$ 靠 $2mE_1$ 绕过去。
 
 </div>
 <div slot="right">
 
-**第 3 章**
+第 3 章
 
 $$
 \sigma_A\sigma_B\ge\frac12\big|\langle[\hat A,\hat B]\rangle\big|
@@ -226,7 +226,7 @@ $$
 \sigma_x\sigma_p\ge\frac{\hbar}{2}
 $$
 
-**一步。** 而且这条不等式对任意一对可观测量都成立，不限于 $x$ 与 $p$。
+只需一步代入，而且这条不等式对任意一对可观测量都成立，不限于 $x$ 与 $p$。
 
 </div>
 </DualView>
@@ -240,7 +240,7 @@ $$
 \hat p=\ii\sqrt{\frac{m\omega\hbar}{2}}(\hat a^\dagger-\hat a)
 $$
 
-**一阶矩。** 在 $\ket{0}$ 上，$\hat a\ket{0}=0$ 且 $\braket{0}{1}=0$，所以
+一阶矩。在 $\ket{0}$ 上，$\hat a\ket{0}=0$ 且 $\braket{0}{1}=0$，所以
 
 $$
 \langle x\rangle=\bra{0}\hat x\ket{0}\propto\bra{0}(\hat a+\hat a^\dagger)\ket{0}=0+\braket{0}{1}=0
@@ -248,7 +248,7 @@ $$
 
 同理 $\langle p\rangle=0$。
 
-**二阶矩。**
+二阶矩：
 
 $$
 \hat x^2=\frac{\hbar}{2m\omega}\big(\hat a^2+\hat a\hat a^\dagger+\hat a^\dagger\hat a+(\hat a^\dagger)^2\big)
@@ -266,22 +266,22 @@ $$
 \langle p^2\rangle=\frac{m\omega\hbar}{2}
 $$
 
-**乘起来**：
+两者相乘：
 
 $$
 \sigma_x\sigma_p=\sqrt{\frac{\hbar}{2m\omega}}\cdot\sqrt{\frac{m\omega\hbar}{2}}=\frac{\hbar}{2}
 $$
 
-**恰好取到下限。** 谐振子基态是最小不确定性态——[2.10 节](/ch/02-wavefunction/10-free-particle/)说高斯波包精确取到 $\hbar/2$，这里给出了不做任何积分的证明。
+恰好取到下限，谐振子基态是最小不确定性态。[2.10 节](/ch/02-wavefunction/10-free-particle/)说高斯波包精确取到 $\hbar/2$，这里给出了不做任何积分的证明。
 
-**顺带得到零点能**：
+由此还可以得到零点能：
 
 $$
 E_0=\frac{\langle p^2\rangle}{2m}+\frac12m\omega^2\langle x^2\rangle
 =\frac{\hbar\omega}{4}+\frac{\hbar\omega}{4}=\frac{\hbar\omega}{2}
 $$
 
-而且看得出动能与势能各占一半——这是维里定理在谐振子上的表现。
+动能与势能各占一半，这是维里定理在谐振子上的表现。
 
 </Derivation>
 
@@ -290,16 +290,16 @@ $$
 <DualView>
 <div slot="left">
 
-**第 2 章的做法**
+第 2 章的做法
 
-对 $\langle x\rangle$ 求时间导数，代入薛定谔方程，两次分部积分，边界项归零……大半页。
+对 $\langle x\rangle$ 求时间导数，代入薛定谔方程，两次分部积分，边界项归零，写下来要大半页。
 
 对 $\langle p\rangle$ 再来一遍。
 
 </div>
 <div slot="right">
 
-**用海森堡方程**
+用海森堡方程
 
 $$
 \frac{\dd\langle A\rangle}{\dd t}=\frac{\ii}{\hbar}\big\langle[\hat H,\hat A]\big\rangle
@@ -321,23 +321,23 @@ $$
 </DualView>
 
 <Callout type="insight" title="注意右边仍是 ⟨V′(x̂)⟩ 而不是 V′(⟨x⟩)">
-新语言让推导变短，但**没有改变物理**。[2.6 节](/ch/02-wavefunction/06-expectation-and-uncertainty/)强调过的那个区别依然在：
+新语言让推导变短，但没有改变物理。[2.6 节](/ch/02-wavefunction/06-expectation-and-uncertainty/)强调过的那个区别依然在：
 
 $$
 \big\langle V'(\hat x)\big\rangle\ne V'\big(\langle x\rangle\big)\quad\text{一般情况下}
 $$
 
-只有当 $V'$ 在波包宽度内近似线性时两者才相等，那时期望值才真正沿经典轨道运动。
+只有当 $V'$ 在波包宽度内近似线性时两者才相等，那时期望值才沿经典轨道运动。
 
-**这是一个值得记住的一般教训**：换语言能省掉计算，但省不掉物理内容。如果某个结论在新语言里「消失」了，那多半是你把它漏掉了。
+这一点具有普遍性：换语言能省掉计算，但省不掉物理内容。如果某个结论在新语言里「消失」了，多半是推导中把它漏掉了。
 </Callout>
 
-## 结算
+## 总结
 
 <DualView>
 <div slot="left">
 
-**省下的篇幅**
+篇幅对比
 
 | 结果 | 第 2 章 | 第 3 章 |
 | --- | --- | --- |
@@ -352,30 +352,30 @@ $$
 </div>
 <div slot="right">
 
-**买到的新能力**
+新增的能力
 
-不只是省篇幅，还有第 2 章根本做不到的事：
+除了节省篇幅，新语言还能处理第 2 章做不到的问题：
 
-- **自旋**：没有波函数，只有二维态矢量。[第 5 章](/ch/05-angular-momentum/)整章依赖这一点。
-- **半整数角动量**：代数方法自然给出 $j=1/2,3/2,\dots$，波函数方法只能给出整数 $l$。
-- **纠缠与混合态**：需要密度算符，[第 9](/ch/09-quantum-information/)、[10 章](/ch/10-open-systems/)的全部基础。
-- **量子场论**：$\hat a^\dagger$ 直接变成产生算符。
+- 自旋：没有波函数，只有二维态矢量。[第 5 章](/ch/05-angular-momentum/)整章依赖这一点。
+- 半整数角动量：代数方法自然给出 $j=1/2,3/2,\dots$，波函数方法只能给出整数 $l$。
+- 纠缠与混合态：需要密度算符，这是[第 9](/ch/09-quantum-information/)、[10 章](/ch/10-open-systems/)的基础。
+- 量子场论：$\hat a^\dagger$ 直接变成产生算符。
 
 </div>
 </DualView>
 
-<Callout type="check" title="本章结束前值得自问的几个问题">
+<Callout type="check" title="本章思考题">
 1. 第 2 章说「电子在盒子里的能量是分立的」，第 3 章说「$\hat H$ 的本征值是分立的」。这两句话是同一件事吗？
 2. 为什么说波函数不是基本对象？换成动量表象会丢失任何物理内容吗？
 3. 测量公设与演化公设的性质完全相反。为什么这不是一个可以靠更精细的计算消除的问题？
 4. 谐振子的解法只用了 $[\hat x,\hat p]=\ii\hbar$。这是否意味着任何满足这条对易关系的体系都有等间距能谱？
 
-（第 4 题的答案是「不」——还需要 $\hat H$ 恰好是 $\hat a^\dagger\hat a$ 的线性函数。对易关系给出的是**代数结构**，哈密顿量决定的是**动力学**。分清这两者，是学完这一章的标志。）
+（第 4 题的答案是否定的：还需要 $\hat H$ 恰好是 $\hat a^\dagger\hat a$ 的线性函数。对易关系给出的是代数结构，哈密顿量决定的是动力学。能分清这两者，说明这一章已经学懂了。）
 </Callout>
 
 <KeyFormulas
   items={[
-    { name: '演化（能量基）', latex: '\\ket{\\Psi(t)}=\\sum_nc_n\\ee^{-\\ii E_nt/\\hbar}\\ket{n}', note: '第 2 章整节内容，在这里是三行' },
+    { name: '演化（能量基）', latex: '\\ket{\\Psi(t)}=\\sum_nc_n\\ee^{-\\ii E_nt/\\hbar}\\ket{n}', note: '第 2 章一整节的内容，在这里只需三行' },
     { name: '升降算符', latex: '[\\hat a,\\hat a^\\dagger]=1,\\quad\\hat H=\\hbar\\omega(\\hat a^\\dagger\\hat a+\\tfrac12)', note: '整个谐振子只用这一条' },
     { name: '归一化阶梯', latex: '\\hat a^\\dagger\\ket{n}=\\sqrt{n+1}\\ket{n+1},\\quad\\hat a\\ket{n}=\\sqrt{n}\\ket{n-1}', note: '第 8 章的产生湮灭算符就是它' },
     { name: 'x̂ 与 p̂ 的算符表示', latex: '\\hat x=\\sqrt{\\tfrac{\\hbar}{2m\\omega}}(\\hat a+\\hat a^\\dagger),\\ \\hat p=\\ii\\sqrt{\\tfrac{m\\omega\\hbar}{2}}(\\hat a^\\dagger-\\hat a)', note: '算矩阵元时不必碰积分' },
@@ -400,7 +400,7 @@ $$
         2: '「阶梯必须有底」用的是 N̂ 本征值非负，不是显式边界条件。',
         3: '归一化只用来定阶梯的系数，不参与导出能级。',
       },
-      explain: '链条是：[x̂,p̂] = iħ → [â,â†] = 1 → Ĥ = ħω(N̂+½) → 升降性质 → 本征值非负迫使阶梯有底 → Eₙ = (n+½)ħω。同一套模板在角动量和量子场论里被反复复用。',
+      explain: '链条是：[x̂,p̂] = iħ → [â,â†] = 1 → Ĥ = ħω(N̂+½) → 升降性质 → 本征值非负迫使阶梯有底 → Eₙ = (n+½)ħω。同样的方法在角动量和量子场论里被反复使用。',
     },
     {
       id: 'rw-2',
@@ -434,7 +434,7 @@ $$
         2: '它一般不为零。',
         3: '它完全有意义。',
       },
-      explain: '这是本节最值得带走的一条教训：新语言让推导变短，但省不掉物理内容。⟨V′(x̂)⟩ 与 V′(⟨x⟩) 的差别正是「量子效应何时重要」的判据，它在任何语言里都必须出现。',
+      explain: '这是本节的一个要点：新语言让推导变短，但省不掉物理内容。⟨V′(x̂)⟩ 与 V′(⟨x⟩) 的差别是判断量子效应何时重要的依据，它在任何语言里都必须出现。',
     },
     {
       id: 'rw-4',
@@ -449,7 +449,7 @@ $$
       distractors: {
         3: '两种语言对同一个问题给出完全相同的答案，精度并无差别。',
       },
-      explain: '前三条都是波函数语言原则上做不到的：自旋没有 ψ(x)；波函数方法只能给出整数 l；纠缠态的部分根本没有态矢量。这才是换语言真正买到的东西，省篇幅只是附带的。',
+      explain: '前三条都是波函数语言原则上做不到的：自旋没有 ψ(x)；波函数方法只能给出整数 l；纠缠态的部分没有态矢量。这些是换语言的主要收获，节省篇幅是附带的。',
     },
   ]}
 />
@@ -458,10 +458,10 @@ $$
 
 第 2 章留下的三个问题，现在有答案了：
 
-**为什么可观测量对应算符？** 因为要求「测量值为实、不同结果可分辨、任何态都能展开」，这三条恰好挑出厄米算符（[3.5 节](/ch/03-formalism/05-hermitian-operators/)）。
+为什么可观测量对应算符？因为「测量值为实、不同结果可分辨、任何态都能展开」这三条要求挑出的正是厄米算符（[3.5 节](/ch/03-formalism/05-hermitian-operators/)）。
 
-**$|c_n|^2$ 凭什么是概率？** 这一条仍是公设（Born 规则）。但谱定理保证了 $\sum_n|c_n|^2=1$，所以它至少是**自洽**的——而 Gleason 定理进一步说明，在维数 $\ge3$ 时几乎没有别的选择。
+$|c_n|^2$ 为什么是概率？这一条仍是公设（Born 规则）。但谱定理保证了 $\sum_n|c_n|^2=1$，所以它至少是自洽的；Gleason 定理进一步说明，在维数 $\ge3$ 时几乎没有别的选择。
 
-**测量到底发生了什么？** 投影公设描述了它的效果，但**没有解释它的机制**（[3.8 节](/ch/03-formalism/08-measurement/)）。这一条至今没有共识，而且不是靠算得更细能解决的。
+测量时发生了什么？投影公设描述了它的效果，但没有解释它的机制（[3.8 节](/ch/03-formalism/08-measurement/)）。这一条至今没有共识，也无法靠更细的计算解决。
 
-带着这套语言，接下来可以走得快很多。[第 4 章](/ch/04-1d-problems/)回到一维问题，但这次会用对称性和转移矩阵这类结构化的方法，并给出一个能处理任意势的数值求解器。
+有了这套语言，后面的内容可以推进得快很多。[第 4 章](/ch/04-1d-problems/)回到一维问题，但这次会用对称性和转移矩阵这类结构化的方法，并给出一个能处理任意势的数值求解器。
