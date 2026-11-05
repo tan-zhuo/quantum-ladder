@@ -47,7 +47,7 @@ Every number displayed in a scene is in these units. Multiply by the appropriate
 | Hydrogen orbitals | Radial inverse CDF plus angular rejection sampling | Monte Carlo noise $\sim 1/\sqrt N$ |
 | One-dimensional wells | Three-point differences, QL for eigenvalues, inverse iteration for eigenvectors | Grid discretisation $O(\dd x^2)$; a finite window squeezes weakly bound states |
 | Double slit | Direct Huygens summation (no far-field approximation) | A finite number of sub-sources (11 per slit) |
-| Tunnelling | Split-operator, symmetric splitting | Time step $O(\dd t^3)$; the absorbing layer at the edges |
+| Tunnelling | Split-operator, symmetric splitting | Time step ($O(\dd t^3)$ per step, $O(\dd t^2)$ accumulated); the absorbing layer at the edges |
 | Path integral | Monte Carlo sampling over paths | Sample size; discrete time steps |
 
 Full derivations of the numerical methods are in [appendix C](/ch/appendix-c-numerics/01-finite-difference/) (in Chinese).

@@ -64,7 +64,7 @@ $$
 
 - $|\vec r|$ 不变（态始终是纯态）；
 - $\vec r \cdot \hat\omega$ 不变（与磁场的夹角固定）；
-- 只有绕磁场的方位角在匀速增加。
+- 只有绕磁场的方位角在匀速变化。
 
 场景里的圆锥表示的就是这种运动。经典直觉常常预期自旋会被磁场扳过去，最后指向磁场方向，但那是耗散系统的行为（比如在有摩擦的空气里的指南针）。孤立量子系统的幺正演化只会让它绕磁场转动。要让自旋弛豫到磁场方向，必须引入与环境的耦合，这是[模块 12](/lab/12-decoherence/) 的内容。
 
@@ -85,10 +85,10 @@ $$
 代入即得
 
 $$
-\dot\sigma_x = -\omega\,\sigma_y,\qquad \dot\sigma_y = \omega\,\sigma_x,\qquad \dot\sigma_z = 0,
+\dot\sigma_x = \omega\,\sigma_y,\qquad \dot\sigma_y = -\omega\,\sigma_x,\qquad \dot\sigma_z = 0,
 $$
 
-取期望值就是 $\dot{\vec r} = \vec\omega\times\vec r$，其中 $\vec\omega = \omega\hat z$。第三式 $\dot\sigma_z = 0$ 表示与磁场的夹角不变。
+取期望值就是 $\dot{\vec r} = \vec\omega\times\vec r$，其中 $\vec\omega = -\omega\hat z$。在这个符号约定下方位角随时间减小，$\varphi(t) = \varphi_0 - \omega t$，场景读数里的 φ 也是这样变化的。第三式 $\dot\sigma_z = 0$ 表示与磁场的夹角不变。
 
 </Derivation>
 
@@ -150,7 +150,7 @@ Bloch 球是数学图像。Stern 和 Gerlach 在 1922 年做的实验第一次�
 </Callout>
 
 <Callout type="misconception" title="“测量前它其实已经是上或下，只是我们不知道”">
-这种想法称为局域隐变量假设。它可以被实验检验：Bell 不等式给出了判据，[模块 08](/lab/08-entanglement/) 会让你亲自验证它被违反。
+这种想法称为隐变量假设。只看单个自旋，可以构造出与量子力学预言完全一致的隐变量模型，单自旋实验无法排除它。换成两个纠缠的自旋，局域隐变量假设就可以被实验检验：Bell 不等式给出了判据，[模块 08](/lab/08-entanglement/) 会让你亲自验证它被违反。
 </Callout>
 
 ## 检验一下自己

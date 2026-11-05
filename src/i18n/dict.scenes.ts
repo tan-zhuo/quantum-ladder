@@ -173,8 +173,8 @@ export const DICT_SCENES: Record<string, string> = {
     'Start by dragging θ to 90°. The state lands on the equator, and measuring along z gives 0 and 1 with equal probability. On the sphere, "equal superposition" simply means "standing on the equator".',
   '保持 θ 不变、只拖 φ：沿 z 测量的概率完全不变。φ 是相对相位，它在 z 基下不可见，却决定了沿 x、y 测量的结果。切到 σx 再拖一次 φ，看读数怎么变。':
     'Now hold θ fixed and drag only φ: the probabilities along z do not budge. φ is the relative phase — invisible in the z basis, yet it fixes the outcome along x and y. Switch to σx and drag φ again to see the readout move.',
-  '打开磁场按播放：注意矢量与磁场方向的夹角始终不变，只有 φ 在均匀增加。这就是 Larmor 进动。':
-    'Switch on the field and press play. The angle between the vector and the field never changes; only φ increases steadily. That is Larmor precession.',
+  '打开磁场按播放：注意矢量与磁场方向的夹角始终不变，只有 φ 在匀速变化，这就是 Larmor 进动。':
+    'Switch on the field and press play. The angle between the vector and the field never changes; only φ changes at a steady rate. That is Larmor precession.',
   '点「测量一次」十几次，观察单次结果是随机的；再点「重复制备 ×200」，看实测频率如何逼近理论 P₊。':
     'Hit "Measure once" a dozen times and watch how random single outcomes are. Then hit "Re-prepare ×200" and watch the measured frequency close in on the theoretical P₊.',
   '“Bloch 球上的点就是粒子在空间中的方向”':

@@ -68,7 +68,7 @@ A cross product means the rate of change is **always perpendicular to both $\vec
 
 - $|\vec r|$ is constant (the state stays pure);
 - $\vec r \cdot \hat\omega$ is constant (the angle to the field is locked);
-- only the azimuth around the field increases, at a constant rate.
+- only the azimuth around the field changes, at a constant rate.
 
 That is the cone in the scene. Classical intuition usually expects the field to bend the spin round until it points along the field — but that is what a **dissipative** system does (a compass needle in air with friction). Unitary evolution of an isolated quantum system does no such thing; it only turns. Laying the spin down along the field requires coupling to an environment, which is [module 12](/en/lab/12-decoherence/).
 
@@ -89,10 +89,10 @@ $$
 Substituting gives
 
 $$
-\dot\sigma_x = -\omega\,\sigma_y,\qquad \dot\sigma_y = \omega\,\sigma_x,\qquad \dot\sigma_z = 0,
+\dot\sigma_x = \omega\,\sigma_y,\qquad \dot\sigma_y = -\omega\,\sigma_x,\qquad \dot\sigma_z = 0,
 $$
 
-and taking expectation values yields $\dot{\vec r} = \vec\omega\times\vec r$ with $\vec\omega = \omega\hat z$. The third equation, $\dot\sigma_z = 0$, is exactly the statement that the angle to the field never changes.
+and taking expectation values yields $\dot{\vec r} = \vec\omega\times\vec r$ with $\vec\omega = -\omega\hat z$. With this sign convention the azimuth decreases in time, $\varphi(t) = \varphi_0 - \omega t$, which is also how the φ readout in the scene moves. The third equation, $\dot\sigma_z = 0$, is exactly the statement that the angle to the field never changes.
 
 </Derivation>
 
@@ -154,7 +154,7 @@ The name is a historical accident. Treat the electron as a classical rotating ba
 </Callout>
 
 <Callout type="misconception" title="“It was already up or down; we simply did not know”">
-That is the local hidden-variable assumption, and it can be tested experimentally. Bell inequalities give the criterion, and in [module 08](/en/lab/08-entanglement/) you get to refute it yourself.
+That is the hidden-variable assumption. For a single spin one can build a hidden-variable model that reproduces every quantum prediction, so single-spin experiments cannot rule it out. With two entangled spins, the local hidden-variable assumption becomes experimentally testable: Bell inequalities give the criterion, and in [module 08](/en/lab/08-entanglement/) you get to refute it yourself.
 </Callout>
 
 ## Check yourself
