@@ -218,7 +218,7 @@ $$
 <Callout type="warning" title="The two classic ways to crash">
 **1. Degeneracy: a zero denominator.** If some $E_m^{(0)}=E_n^{(0)}$ with $H'_{mn}\neq0$, the first-order wavefunction correction divides by zero outright. This is not a technical blemish — the method has genuinely broken down. The four $n=2$ states of hydrogen slam straight into it, and the next section is devoted to the repair.
 
-**2. The series does not converge at all.** Even when every term is computable, the series may be an **asymptotic series**: the first few orders get more and more accurate, and beyond some order things get steadily worse. The Stark series of hydrogen is exactly like this — and the reason hides in the physics: as long as the field is non-zero, the electron can always tunnel out through the barrier (the potential $-e\mathcal E z$ is infinitely deep far away), so strictly speaking no true bound state exists. The series is "pretending" that a bound state exists, and of course it cannot converge to an answer that is not there. The practical attitude: at weak fields keep the first order or two and the results are excellent; just do not expect infinitely many orders to hand you an exact solution.
+**2. The series does not converge at all.** Even when every term is computable, the series may be an **asymptotic series**: the first few orders get more and more accurate, and beyond some order things get steadily worse. The Stark series of hydrogen is exactly like this — and the reason hides in the physics: as long as the field is non-zero, the electron can always tunnel out through the barrier (the potential $e\mathcal E z$ is infinitely deep as $z\to-\infty$), so strictly speaking no true bound state exists. The series is "pretending" that a bound state exists, and of course it cannot converge to an answer that is not there. The practical attitude: at weak fields keep the first order or two and the results are excellent; just do not expect infinitely many orders to hand you an exact solution.
 </Callout>
 
 Back to helium: the repulsion term is about $1/3$ of the main part — not exactly small — and first-order perturbation theory gives
@@ -291,7 +291,7 @@ the right direction, but mediocre accuracy. To do better, either grind out highe
       answer: 0.05,
       tolerance: 0.005,
       unit: 'eV',
-      explain: 'E⁽¹⁾ = (V₀/L)⟨x⟩ = V₀/2 = 0.05 eV. |ψₙ|² is symmetric about the centre of the well, so ⟨x⟩ = L/2 for every n and the first-order correction is a uniform shift. What actually changes the level spacings and leans the wavefunction to one side is the second-order effect (about −2.9×10⁻⁴ eV).',
+      explain: 'E⁽¹⁾ = (V₀/L)⟨x⟩ = V₀/2 = 0.05 eV. |ψₙ|² is symmetric about the centre of the well, so ⟨x⟩ = L/2 for every n and the first-order correction is a uniform shift. The wavefunction already leans to one side at first order, but that distortion only shows up in the energy at second order, which is what changes the level spacings (about −2.9×10⁻⁴ eV).',
     },
   ]}
 />
