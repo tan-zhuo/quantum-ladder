@@ -24,7 +24,7 @@ $$
 \sigma_{xy}=\nu\,\frac{e^2}{h},\qquad \nu=1,2,3,\dots
 $$
 
-其中 $\nu$ 是整数，精度在 $10^{-9}$ 以上。样品中的杂质、不规则的边缘和任意的几何形状都不影响这一结果。
+其中 $\nu$ 是整数，此后的测量把精度推到了 $10^{-9}$ 以上。样品中的杂质、不规则的边缘和任意的几何形状都不影响这一结果。
 这个精度足以让国际单位制用它来定义电阻标准：
 $R_K=h/e^2\approx 25\,812.807\ \Omega$，冯·克利青常数。
 
@@ -148,7 +148,7 @@ Majorana 零模、拓扑超导和拓扑量子计算的提案都建立在这一�
 <KeyFormulas
   items={[
     { name: 'SSH 哈密顿量', latex: 'H(k)=(v+w\\cos k)\\,\\sigma_x+w\\sin k\\,\\sigma_y', note: '绕数 W=0（v>w）或 1（v<w），改变 W 必须关闭能隙' },
-    { name: '绕数（Zak 相位）', latex: 'W=\\frac{1}{2\\pi\\ii}\\oint \\dd k\\;\\partial_k \\ln\\big(h_x-\\ii h_y\\big)', note: '占据带 Berry 相位 = πW，只能取整数' },
+    { name: '绕数（Zak 相位）', latex: 'W=\\frac{1}{2\\pi\\ii}\\oint \\dd k\\;\\partial_k \\ln\\big(h_x+\\ii h_y\\big)', note: '占据带 Berry 相位 = πW，只能取整数' },
     { name: 'TKNN 公式', latex: '\\sigma_{xy}=\\frac{e^2}{h}\\,C,\\quad C=\\frac{1}{2\\pi}\\int_{\\text{BZ}}\\Omega\\,\\dd^2k', note: 'C 是占据带的 Chern 数；宏观输运 = 波函数几何' },
     { name: '冯·克利青常数', latex: 'R_K=\\frac{h}{e^2}\\approx 25\\,812.807\\ \\Omega', note: '2019 年起为精确值，用于实现电阻单位' },
   ]}

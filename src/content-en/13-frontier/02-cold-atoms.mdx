@@ -47,7 +47,7 @@ $$
 N\approx\frac{300}{6\times10^{-3}}\approx5\times10^4\ \text{photons}
 $$
 
-**How long does the kicking take?** The absorption–emission cycle rate is capped by the excited-state lifetime; rubidium's spontaneous emission rate is $\Gamma\approx2\pi\times6\ \text{MHz}$, giving a saturated scattering rate of about $\Gamma/2\sim2\times10^7$ per second. So the stopping time is $\sim5\times10^4/2\times10^7\approx3\ \text{ms}$, over a stopping distance of about 1 metre — which is exactly the length of the "Zeeman slower" tube in the lab. A tabletop-scale apparatus, just right.
+**How long does the kicking take?** The absorption–emission cycle rate is capped by the excited-state lifetime; rubidium's spontaneous emission rate is $\Gamma\approx2\pi\times6\ \text{MHz}$, giving a saturated scattering rate of about $\Gamma/2\sim2\times10^7$ per second. So the stopping time is $\sim5\times10^4/2\times10^7\approx3\ \text{ms}$, over a stopping distance of about half a metre — which is exactly the length of the "Zeeman slower" tube in the lab. A tabletop-scale apparatus, just right.
 
 **How cold can it get?** The damping cannot go on forever: each spontaneous emission delivers a random recoil, a continuous "heating noise". Balancing cooling against heating leaves the atom with a residual energy of order the excited state's energy width $\hbar\Gamma$ (velocity differences within the linewidth are invisible to the Doppler mechanism). The careful calculation gives the **Doppler limit**
 
@@ -73,7 +73,7 @@ Three beam pairs make a three-dimensional simple-cubic "lattice" with spacing ha
 
 - **has no impurities, no defects, no lattice vibrations** — the potential is printed by laser light, perfectly periodic;
 - **has adjustable depth** — turning the laser-power knob changes the barrier height;
-- **runs ten orders of magnitude slower** — electrons hop between sites in femtoseconds, atoms in milliseconds, slow enough to **photograph the atoms site by site through a microscope** (the quantum gas microscope, mature since 2009).
+- **runs twelve orders of magnitude slower** — electrons hop between sites in femtoseconds, atoms in milliseconds, slow enough to **photograph the atoms site by site through a microscope** (the quantum gas microscope, mature since 2009).
 
 In a deep lattice each site is approximately a harmonic-oscillator well ([section 2.9](/en/ch/02-wavefunction/09-harmonic-oscillator/)), the atoms occupy only the lowest orbital, and the physics of the whole system reduces to two ingredients: **tunnelling** to the neighbouring site (amplitude $t$ — the barrier penetration of [section 2.11](/en/ch/02-wavefunction/11-tunneling/)) and the **repulsion energy** $U$ of two atoms on the same site. Written in the language of [section 8.5](/en/ch/08-identical-particles/05-second-quantization/), this is the celebrated **Bose–Hubbard model**:
 
@@ -96,7 +96,7 @@ In 2002, Greiner and colleagues filmed this tug-of-war: switch the lattice off s
 <Callout type="insight" title="Solid-state physics done backwards">
 Traditional condensed-matter research is a game where "God deals the cards": whatever the material happens to be, that is your Hamiltonian, and theorists guess after the fact. The optical lattice reverses the order: **first write the Hamiltonian you want to study on the blackboard, then build it with lasers** — $t$ and $U$ each get their own knob, and dimensionality, lattice geometry and statistics (just switch to fermionic atoms) are yours to choose.
 
-This is the prototype of the next section's subject, quantum simulation: when the Hubbard model defeats every classical algorithm, a Hubbard model made of real atoms is itself the most honest computer.
+This is the prototype of the subject of section 13.4, quantum simulation: when the Hubbard model defeats every classical algorithm, a Hubbard model made of real atoms is itself the most honest computer.
 </Callout>
 
 <Callout type="note" title="The fermionic side">

@@ -49,7 +49,7 @@ Equally spaced levels, separated by $\hbar\omega$. Note what is being quantised 
 
 **Step 3: work out how cold.**
 
-With typical parameters around $L\sim10\ \text{nH}$ and $C\sim1\ \text{pF}$, take a design frequency $\omega/2\pi=5\ \text{GHz}$. To see discrete levels, thermal fluctuations must be far smaller than the level spacing, $k_BT\ll\hbar\omega$. The crossover temperature is
+With typical parameters around $L\sim1\ \text{nH}$ and $C\sim1\ \text{pF}$, take a design frequency $\omega/2\pi=5\ \text{GHz}$. To see discrete levels, thermal fluctuations must be far smaller than the level spacing, $k_BT\ll\hbar\omega$. The crossover temperature is
 
 $$
 T^*=\frac{\hbar\omega}{k_B}=\frac{6.63\times10^{-34}\times5\times10^9}{1.38\times10^{-23}}
@@ -82,7 +82,7 @@ In the parameter regime $E_J/E_C\sim50$ this design is called the **transmon** (
 
 ## Step three: lock the atom and the photon in the same box
 
-The original question of cavity QED (which won Haroche and Wineland the 2012 Nobel Prize): how strongly can one atom interact with **a single photon**? Trap the photon in a standing-wave cavity between two mirrors so it sweeps past the atom over and over, and the answer is: strongly enough that "atom + photon" becomes an inseparable whole.
+The original question of cavity QED (which won Haroche his share of the 2012 Nobel Prize, alongside Wineland for trapped ions): how strongly can one atom interact with **a single photon**? Trap the photon in a standing-wave cavity between two mirrors so it sweeps past the atom over and over, and the answer is: strongly enough that "atom + photon" becomes an inseparable whole.
 
 The circuit version: place a microwave resonator (another LC oscillator) next to a transmon and couple them capacitively. Near resonance, in the approximation where only one excitation is exchanged at a time, you get the star model of quantum optics — the **Jaynes–Cummings model**:
 
@@ -106,7 +106,7 @@ $$
 Read it this way: **the cavity frequency shifts by $\pm\chi$ depending on the qubit's state**. Send a microwave tone at the cavity and look at the reflected phase, and you know whether the qubit is $\ket{0}$ or $\ket{1}$ — without ever touching the qubit directly. This is the engineering realisation of the "quantum non-demolition measurement" idea from [section 3.8](/en/ch/03-formalism/08-measurement/), and it is how every superconducting processor today reads out its qubits.
 
 <Callout type="insight" title="Why the circuit version is, if anything, more quantum">
-A natural atom's dipole is only ångströms across and couples feebly to photons; Haroche's experiments needed ultra-high-quality cavities to bounce the photon hundreds of millions of times just to accumulate enough interaction. An artificial atom is a **millimetre-scale antenna**, with a dipole moment four or five orders of magnitude larger, so the coupling $g$ easily exceeds both the cavity and atomic linewidths a thousandfold — the "strong-coupling regime" comes as a factory default on a chip.
+A natural atom's dipole is only ångströms across and couples feebly to photons; Haroche's experiments needed ultra-high-quality cavities to bounce the photon hundreds of millions of times just to accumulate enough interaction. An artificial atom is a **millimetre-scale antenna**, with a dipole moment four or five orders of magnitude larger, so the coupling $g$ easily exceeds both the cavity and atomic linewidths a hundredfold or more — the "strong-coupling regime" comes as a factory default on a chip.
 
 This upends an intuition: quantum effects are not reserved for the microscopic. **As long as a degree of freedom is isolated cleanly enough (zero dissipation from superconductivity + no thermal noise at 20 mK), a macroscopic collective variable obeys quantum mechanics just the same** — superposition, entanglement, measurement, the whole repertoire.
 </Callout>

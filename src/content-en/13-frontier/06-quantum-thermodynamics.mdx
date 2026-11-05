@@ -76,8 +76,10 @@ $$
 This is an **equality**, not an inequality — exact for processes arbitrarily far from equilibrium. The convexity inequality $\langle\ee^x\rangle\ge\ee^{\langle x\rangle}$ immediately recovers the familiar second law, $\langle W\rangle\ge\Delta F$. But it says more: in individual runs $W$ **can** come out below $\Delta F$ ("violating" the second law) — only such events are exponentially suppressed, with the exact ratio supplied by the Crooks theorem:
 
 $$
-\frac{P(+W)}{P(-W)}=\ee^{(W-\Delta F)/k_BT}
+\frac{P_F(W)}{P_R(-W)}=\ee^{(W-\Delta F)/k_BT}
 $$
+
+Here $P_F$ is the work distribution of the forward protocol and $P_R$ that of the time-reversed protocol.
 
 The second law is demoted from "prohibition" to "statistical tendency", and precisely thereby becomes **quantitatively testable**: experiments stretching single RNA molecules (from 2002 on) used it to reconstruct free-energy landscapes. The quantum version (with work defined via two projective energy measurements) holds just the same, and connects to the open-system framework of [section 10.4](/en/ch/10-open-systems/04-lindblad/).
 
@@ -92,7 +94,7 @@ The second law is demoted from "prohibition" to "statistical tendency", and prec
     { name: 'Szilard engine', latex: 'W=k_BT\\ln2\\ \\text{(max work bought by 1 bit of information)}', note: 'The information–work exchange rate; exactly cancelled by the cost of erasing the demon\'s memory' },
     { name: 'Landauer principle', latex: 'Q_{\\min}=k_BT\\ln2\\approx2.9\\times10^{-21}\\ \\text{J}\\ (300\\ \\text{K})', note: 'Minimum heat to erase 1 bit; measured in 2012; modern CPUs run ~10⁴ above it' },
     { name: 'Jarzynski equality', latex: '\\big\\langle \\ee^{-W/k_BT}\\big\\rangle=\\ee^{-\\Delta F/k_BT}', note: 'Exact arbitrarily far from equilibrium; convexity recovers ⟨W⟩ ≥ ΔF' },
-    { name: 'Crooks theorem', latex: '\\frac{P(+W)}{P(-W)}=\\ee^{(W-\\Delta F)/k_BT}', note: 'Second-law-"violating" events exist, but are exponentially suppressed' },
+    { name: 'Crooks theorem', latex: '\\frac{P_F(W)}{P_R(-W)}=\\ee^{(W-\\Delta F)/k_BT}', note: 'Second-law-"violating" events exist, but are exponentially suppressed' },
   ]}
 />
 

@@ -28,7 +28,7 @@ The skeleton of the vast majority of current "quantum machine learning" experime
    $E(\vec\theta)=\braket{\psi(\vec\theta)}{\hat H|\psi(\vec\theta)}$;
 4. A classical computer updates $\vec\theta$ from the measurement results, and back to step 2.
 
-This is the variational method: **the trial wavefunction has been swapped from "a formula on paper" to "a state prepared by a circuit"**, with the minimisation handed to a classical optimiser — a quantum–classical hybrid loop. The molecular-chemistry version is called VQE, and since 2017 it has run on real hardware for small systems such as lithium hydride and water; swap the cost function for a classification loss, and the circuit becomes a "quantum neural network". The physics is impeccable — the variational principle guarantees $E(\vec\theta)\ge E_0$ unconditionally, and hardware noise can only loosen the upper bound, never trick you across the lower one.
+This is the variational method: **the trial wavefunction has been swapped from "a formula on paper" to "a state prepared by a circuit"**, with the minimisation handed to a classical optimiser — a quantum–classical hybrid loop. The molecular-chemistry version is called VQE, and since 2017 it has run on real hardware for small systems such as lithium hydride and water; swap the cost function for a classification loss, and the circuit becomes a "quantum neural network". The physics is impeccable — the variational principle guarantees $E(\vec\theta)\ge E_0$ unconditionally, and hardware noise during state preparation can only loosen the upper bound, never trick you across the lower one (finite-sampling fluctuations and readout errors are a separate matter).
 
 The trouble is a single word: **scale**. Can it beat classical methods on a problem that matters? That question runs straight into the two walls below.
 
@@ -125,7 +125,7 @@ Proposals that pass all four are vanishingly rare — which is exactly what show
       id: 'qml-3',
       prompt: 'Which of the following belong to a sober assessment of quantum machine learning today? (Select all that apply.)',
       options: [
-        'The variational principle guarantees the VQE energy is an upper bound on the true ground-state energy, and noise cannot push it below the bound',
+        'The variational principle guarantees the VQE energy is an upper bound on the true ground-state energy, and noise during state preparation cannot push it below the bound',
         'For naturally occurring classical datasets, a quantum advantage has not been demonstrated',
         '"Quantum data" (the outputs of quantum sensors and simulators) has no data-loading bottleneck and is the healthier near-term direction',
         'The exponential speedup of HHL-type algorithms holds in every usage scenario',

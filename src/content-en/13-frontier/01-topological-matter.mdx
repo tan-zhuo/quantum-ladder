@@ -22,7 +22,7 @@ $$
 \sigma_{xy}=\nu\,\frac{e^2}{h},\qquad \nu=1,2,3,\dots
 $$
 
-**Integer multiples, accurate to better than $10^{-9}$.** The sample had impurities, the edges were ragged, the geometry was drawn however you liked — none of it mattered. How good is that precision? Good enough that the SI resistance standard is now defined by it: $R_K=h/e^2\approx 25\,812.807\ \Omega$, the von Klitzing constant.
+**Integer multiples, which later measurements pinned down to better than $10^{-9}$.** The sample had impurities, the edges were ragged, the geometry was drawn however you liked — none of it mattered. How good is that precision? Good enough that the SI resistance standard is now defined by it: $R_K=h/e^2\approx 25\,812.807\ \Omega$, the von Klitzing constant.
 
 How can a grubby macroscopic sample produce a number as exact as $\pi$? This section's answer: **because $\nu$ is not an ordinary physical quantity at all — it is a topological invariant, a "count" that can only take integer values and cannot be changed by any continuous perturbation.** And the Berry phase you learned in [section 7.7](/en/ch/07-approximation/07-berry-phase/) is precisely the bridge to it.
 
@@ -111,7 +111,7 @@ The classification programme was upgraded along the way: instead of asking "what
 <KeyFormulas
   items={[
     { name: 'SSH Hamiltonian', latex: 'H(k)=(v+w\\cos k)\\,\\sigma_x+w\\sin k\\,\\sigma_y', note: 'Winding number W = 0 (v>w) or 1 (v<w); changing W requires closing the gap' },
-    { name: 'Winding number (Zak phase)', latex: 'W=\\frac{1}{2\\pi\\ii}\\oint \\dd k\\;\\partial_k \\ln\\big(h_x-\\ii h_y\\big)', note: 'Occupied-band Berry phase = πW, integer-valued only' },
+    { name: 'Winding number (Zak phase)', latex: 'W=\\frac{1}{2\\pi\\ii}\\oint \\dd k\\;\\partial_k \\ln\\big(h_x+\\ii h_y\\big)', note: 'Occupied-band Berry phase = πW, integer-valued only' },
     { name: 'TKNN formula', latex: '\\sigma_{xy}=\\frac{e^2}{h}\\,C,\\quad C=\\frac{1}{2\\pi}\\int_{\\text{BZ}}\\Omega\\,\\dd^2k', note: 'C is the Chern number of the occupied bands; macroscopic transport = wavefunction geometry' },
     { name: 'von Klitzing constant', latex: 'R_K=\\frac{h}{e^2}\\approx 25\\,812.807\\ \\Omega', note: 'Defines the unit of resistance since 2019 — topological precision entered the SI' },
   ]}

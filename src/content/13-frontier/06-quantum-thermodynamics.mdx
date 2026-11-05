@@ -106,9 +106,10 @@ $\langle W\rangle\ge\Delta F$。但它包含更多信息：个别实验里 $W$ �
 （「违反」第二定律），只是这种事件的概率被指数压低。Crooks 定理给出精确比值
 
 $$
-\frac{P(+W)}{P(-W)}=\ee^{(W-\Delta F)/k_BT}
+\frac{P_F(W)}{P_R(-W)}=\ee^{(W-\Delta F)/k_BT}
 $$
 
+其中 $P_F$ 是正向过程的功分布，$P_R$ 是把控制参数按时间反演方式走一遍时的功分布。
 第二定律从一条禁令变为一种统计倾向，也因此可以定量检验：
 2002 年起的单个 RNA 分子拉伸实验就用它反推出了自由能面。
 量子版本（功通过两次能量投影测量定义）同样成立，
@@ -138,7 +139,7 @@ $$
     { name: 'Szilard 引擎', latex: 'W=k_BT\\ln2\\ \\text{（1 比特信息可换的最大功）}', note: '信息与功的换算关系；被妖精记忆的擦除成本精确抵消' },
     { name: 'Landauer 原理', latex: 'Q_{\\min}=k_BT\\ln2\\approx2.9\\times10^{-21}\\ \\text{J}\\ (300\\ \\text{K})', note: '擦除 1 比特的最低发热；2012 年实验证实；现代 CPU 高出约 10⁴ 倍' },
     { name: 'Jarzynski 等式', latex: '\\big\\langle \\ee^{-W/k_BT}\\big\\rangle=\\ee^{-\\Delta F/k_BT}', note: '任意远离平衡过程严格成立；由凸性推回 ⟨W⟩ ≥ ΔF' },
-    { name: 'Crooks 定理', latex: '\\frac{P(+W)}{P(-W)}=\\ee^{(W-\\Delta F)/k_BT}', note: '「违反」第二定律的事件存在，但概率被指数压低' },
+    { name: 'Crooks 定理', latex: '\\frac{P_F(W)}{P_R(-W)}=\\ee^{(W-\\Delta F)/k_BT}', note: '「违反」第二定律的事件存在，但概率被指数压低' },
   ]}
 />
 
