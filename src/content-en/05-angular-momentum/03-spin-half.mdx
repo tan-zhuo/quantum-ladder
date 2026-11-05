@@ -24,8 +24,8 @@ a stack of debts that "orbits + integer $l$" could not pay:
 - **Spectral lines come in pairs.** Under a spectrometer, sodium's yellow D line is actually **two** lines,
   at wavelengths 589.0 nm and 589.6 nm, split by a mere 0.002 eV. Hydrogen's lines show the same "doublet" fine structure.
   It was as if something unknown was gently snapping every level in two.
-- **The anomalous Zeeman effect.** Lines in a magnetic field often split into an even number of components.
-  But we just counted in the previous section: orbital angular momentum gives $2l+1$ lines with integer $l$,
+- **The anomalous Zeeman effect.** Lines in a magnetic field often split into an even number of components, which traces back to levels split into an even number of sublevels.
+  But we just counted in the previous section: orbital angular momentum gives $2l+1$ sublevels with integer $l$,
   and that number is **always odd**. An even count means some angular momentum has an even $2j+1$ —
   and $j$ must be a half-integer.
 
@@ -39,7 +39,7 @@ an angular momentum $s=\tfrac12$, along with a magnetic moment to match. They na
 
 <Callout type="warning" title="The quantitative bankruptcy of the spinning-ball picture">
 Even granting the electron the largest radius imaginable — the classical electron radius
-$r_e\approx2.8\times10^{-15}\ \text{m}$ (any larger contradicts scattering experiments) —
+$r_e\approx2.8\times10^{-15}\ \text{m}$ (scattering experiments put the electron's size several orders of magnitude below even this) —
 for this uniform ball to accumulate $\hbar/2$ of angular momentum by rotation,
 solving $L=\tfrac25 m r^2\omega=\hbar/2$ for the equatorial speed gives
 
@@ -222,9 +222,9 @@ This is section 5.1's cone picture in its most extreme, minimal-system form: the
 <Callout type="note" title="Spin and position are separate ledgers">
 The full electron state is "the position ledger" times "the spin ledger":
 $\Psi(\vec r)\,\ket{\chi}$, one two-component object (a spinor).
-The Schrödinger equation governs the former; with no magnetic field, spin is a quiet bystander.
-When do the two ledgers couple? The moment a magnetic field switches on —
-that is the story of sections 5.5 and 5.7.
+The Schrödinger equation governs the former; as long as the Hamiltonian has no spin-dependent term, spin is a quiet bystander.
+When do the two ledgers couple? An external magnetic field does it (section 5.5),
+and so does spin-orbit coupling with no external field at all (section 5.7).
 </Callout>
 
 <KeyFormulas
@@ -252,7 +252,7 @@ that is the story of sections 5.5 and 5.7.
         1: 'A small mass makes the same angular momentum require a higher speed, not a lower one — the problem is "too fast", not "cannot turn".',
         2: 'That is the classical difficulty of orbital motion (chapter 1), not of spin.',
       },
-      explain: 'L = (2/5)mr²ω = ħ/2 with r ≈ 2.8×10⁻¹⁵ m gives v ≈ 5×10¹⁰ m/s ≈ 170c. Spin is an intrinsic angular momentum defined by the commutator algebra, unrelated to rotation in space — exactly where section 5.1\'s "algebra defines angular momentum" earns its keep.',
+      explain: 'L = (2/5)mr²ω = ħ/2 with r ≈ 2.8×10⁻¹⁵ m gives v ≈ 5×10¹⁰ m/s ≈ 170c. Spin is an intrinsic angular momentum defined by the commutator algebra, unrelated to the particle\'s motion through space — exactly where section 5.1\'s "algebra defines angular momentum" earns its keep.',
     },
     {
       id: 'am3-2',
