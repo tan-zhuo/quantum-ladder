@@ -45,7 +45,7 @@ $$
 =\exp\left(\hat A+\hat B+O(\Delta t^3)\right)
 $$
 
-The $O(\Delta t^2)$ commutator term is cancelled by the symmetry (left and right are mirror images, so odd-order errors flip sign and cancel), giving third-order error per step and **global error $O(\Delta t^2)$**: a second-order method. The extra cost is essentially zero — the two adjacent "half potential steps" of consecutive steps can even be merged into one.
+The $O(\Delta t^2)$ commutator term is cancelled by the symmetry (left and right are mirror images, so even-order error terms flip sign and cancel), giving third-order error per step and **global error $O(\Delta t^2)$**: a second-order method. The extra cost is essentially zero — the two adjacent "half potential steps" of consecutive steps can even be merged into one.
 
 </Derivation>
 
@@ -223,7 +223,7 @@ Halve the step, the error drops precisely to a quarter — the $O(\Delta t^2)$ g
       answer: 0,
       distractors: {
         1: 'Norm preservation is exact; the printed norm is still 1.000000000000.',
-        3: 'The Schrödinger equation is a one-particle equation — it does not create particles.',
+        2: 'The Schrödinger equation is a one-particle equation — it does not create particles.',
       },
       explain: 'Periodic boundaries mean x = +L/2 connects to x = −L/2. Remedies: enlarge the box, shorten the run, or add an imaginary absorbing potential at the edges to eat the outgoing wave.',
     },

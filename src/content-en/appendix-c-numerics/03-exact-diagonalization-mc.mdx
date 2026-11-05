@@ -38,7 +38,7 @@ The overwhelming majority of the matrix entries are zero, so **sparse matrices**
 
 At $2^{12}=4096$ dimensions you can still diagonalise the whole thing; beyond that you cannot. But usually we only want the lowest few states — and then full diagonalisation is unnecessary:
 
-- **Power method**: multiply a random vector by $\hat H$ over and over. Expanded in the eigenbasis, the eigencomponent with the largest modulus is amplified most on every multiplication, and it is the one left standing at the end. All it needs is the ability to "multiply a matrix by a vector" — never the inverse or a factorisation of the whole matrix.
+- **Power method**: multiply a random vector by $\hat H$ over and over. Expanded in the eigenbasis, the eigencomponent with the largest modulus is amplified most on every multiplication, and it is the one left standing at the end. To get the ground state, first shift to $\hat H-c$ with $c$ at least the largest eigenvalue, so the ground state becomes the largest-modulus component. All it needs is the ability to "multiply a matrix by a vector" — never the inverse or a factorisation of the whole matrix.
 - The **Lanczos method** is the power method's clever cousin: instead of keeping only the last vector, it exploits the whole subspace spanned by the successive products (the Krylov space $\{v,\hat Hv,\hat H^2v,\dots\}$) and diagonalises a small tridiagonal matrix inside it. Convergence is far faster — typically a few dozen matrix–vector products converge the ground-state energy to ten significant figures. scipy's `eigsh` wraps algorithms of this family.
 
 ```python
@@ -160,7 +160,7 @@ The energy takes its minimum of $0.5$ at $a=0.5$ — precisely the oscillator gr
 - **Burn-in**: the chain starts at an arbitrary point and needs time to "forget" its starting position and reach the target distribution; those samples get discarded.
 - The statistical error goes as $1/\sqrt{\text{sample count}}$, and neighbouring samples are correlated; the rigorous treatment estimates the error with blocking over the correlation length.
 
-In practice, replace $x$ by the configuration of $N$ particles $(\vec r_1,\dots,\vec r_N)$ and the trial function by a Slater determinant times a correlation factor (Slater–Jastrow) — the workflow is identical. Growing the dimension costs only linearly: that is Monte Carlo's victory over the exponential wall.
+In practice, replace $x$ by the configuration of $N$ particles $(\vec r_1,\dots,\vec r_N)$ and the trial function by a Slater determinant times a correlation factor (Slater–Jastrow) — the workflow is identical. Growing the dimension costs only polynomially: that is Monte Carlo's victory over the exponential wall.
 
 ## The sign problem: an honest confession
 
@@ -170,7 +170,7 @@ $$
 \langle\text{sign}\rangle\sim\ee^{-cN\beta}
 $$
 
-decaying **exponentially** in particle number $N$ and inverse temperature $\beta$ — so the statistical error blows up exponentially in return. This is the famous **fermion sign problem**, proved NP-hard in the worst case, with no general solution in existence. VMC dodges it with approximations such as fixed nodes (at the price of a systematic error) — and this is precisely the class of problem where quantum computers may deliver a genuine breakthrough.
+decaying **exponentially** in particle number $N$ and inverse temperature $\beta$ — so the statistical error blows up exponentially in return. This is the famous **fermion sign problem**, proved NP-hard in the worst case, with no general solution in existence. Projector methods such as diffusion Monte Carlo (DMC) dodge it with the fixed-node approximation (at the price of a systematic error) — and this is precisely the class of problem where quantum computers may deliver a genuine breakthrough.
 
 <KeyFormulas
   items={[

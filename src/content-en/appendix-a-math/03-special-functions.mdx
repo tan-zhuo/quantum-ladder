@@ -128,7 +128,7 @@ $$
 $L_0^1=1$, $L_1^1=2-x$.
 
 <Callout type="warning" title="Two normalisation conventions coexist">
-Laguerre polynomials come in a "mathematical convention" (the formula above, with the $1/q!$, used by Griffiths) and an "old physics convention" (an extra overall factor of $(q+k)!$, used by some older texts). The two differ only by constants, but the normalisation coefficients of the hydrogen wavefunctions change accordingly. When comparing two books, first check $L_1^1$: the mathematical convention gives $2-x$, the old convention gives $4-2x$ (off by a multiple). scipy's `genlaguerre` uses the mathematical convention.
+Laguerre polynomials come in a "mathematical convention" (the formula above, with the $1/q!$, used by Griffiths from the 3rd edition on) and an "old physics convention" (an extra overall factor of $(q+k)!$, used by some older texts). The two differ only by constants, but the normalisation coefficients of the hydrogen wavefunctions change accordingly. When comparing two books, first check $L_1^1$: the mathematical convention gives $2-x$, the old convention gives $4-2x$ (off by a multiple). scipy's `genlaguerre` uses the mathematical convention.
 </Callout>
 
 How the hydrogen radial wavefunction is assembled ($a$ is the Bohr radius):
@@ -142,7 +142,7 @@ The polynomial part has $n-\ell-1$ zeros — exactly the number of radial nodes.
 
 ## Spherical Bessel functions
 
-**The problem they solve**: the radial equation in regions of zero (or constant) potential. After setting $u=rR$, the radial equation becomes
+**The problem they solve**: the radial equation in regions of zero (or constant) potential. There $R(r)$ satisfies
 $R''+\frac{2}{r}R'+\left[k^2-\frac{\ell(\ell+1)}{r^2}\right]R=0$,
 whose solutions are the **spherical Bessel functions** $j_\ell(kr)$ (regular at the origin) and the **spherical Neumann functions** $n_\ell(kr)$ (divergent at the origin).
 

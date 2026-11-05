@@ -158,7 +158,7 @@ The ratio converges cleanly to 4 — exactly the $O(h^2)$ the derivation predict
 </Callout>
 
 <Callout type="insight" title="Want another order of magnitude: the Numerov method">
-The three-point scheme uses the Taylor expansion only to $h^2$. The Numerov method uses the Schrödinger equation itself to eliminate the $h^4$ term, reaching $O(h^6)$ accuracy with the same three points, at the mere cost of slightly messier matrix elements (a generalised eigenvalue problem). For coursework the three-point scheme is plenty; move up to Numerov when you need table-grade precision.
+The three-point scheme uses the Taylor expansion only to $h^2$. The Numerov method uses the Schrödinger equation itself to eliminate the $h^4$ term, reaching a local truncation error of $O(h^6)$ (eigenvalue error $O(h^4)$) with the same three points, at the mere cost of slightly messier matrix elements (a generalised eigenvalue problem). For coursework the three-point scheme is plenty; move up to Numerov when you need table-grade precision.
 </Callout>
 
 ## Try another potential
