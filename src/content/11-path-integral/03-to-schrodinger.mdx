@@ -2,7 +2,7 @@
 title: 从路径积分到薛定谔方程
 section: '11.3'
 order: 3
-summary: 只看一小段时间 ε 的传播，展开到 ε 的一阶——薛定谔方程从路径积分里一步步长出来。两种表述从此正式等价。
+summary: 只看一小段时间 ε 的传播，展开到 ε 的一阶，就能从路径积分推出薛定谔方程，从而证明两种表述等价。
 status: done
 prereqs:
   - 11-path-integral/02-propagator
@@ -15,16 +15,16 @@ objectives:
 sims: []
 ---
 
-上一节我们算出了自由粒子传播子，代回去检验它满足薛定谔方程——但那只是一个例子。
-现在要还一笔更大的账：第 2 章我们把薛定谔方程当**公设**接受下来；
+上一节我们算出了自由粒子传播子，代回去检验了它满足薛定谔方程，但那只是一个例子。
+第 2 章我们把薛定谔方程当作公设接受下来；
 这一节要证明，只要接受「所有路径求和、每条贡献 $\ee^{\ii S/\hbar}$」这一条规则，
-薛定谔方程就不再是公设，而是**推论**。这是 Feynman 1948 年论文的核心计算，
-每一步都只用大一微积分。
+薛定谔方程就可以作为推论得到。这是 Feynman 1948 年论文的核心计算，
+每一步都只用到大一微积分。
 
 ## 策略：只看一小段时间
 
 直接处理有限时间的路径积分很难（一般势场下积不出来）。
-但微分方程说的本来就是「下一瞬间发生什么」——所以我们只需要短时行为。
+但微分方程描述的本来就是「下一瞬间发生什么」，所以只需要短时行为。
 
 取一小段时间 $\varepsilon$。切片定义里，这一段本来就只有一步：
 粒子从 $x'$ 直线走到 $x$。这一步的作用量按折线规则是
@@ -34,7 +34,7 @@ S_\varepsilon\approx\frac{m(x-x')^2}{2\varepsilon}-\varepsilon V\!\Bigl(\frac{x+
 $$
 
 动能项用平均速度 $(x-x')/\varepsilon$，势能项用中点的值乘以时长
-（$\varepsilon$ 的一阶精度下，取中点、端点还是平均值都不影响结果——见文末的警告框）。
+（$\varepsilon$ 的一阶精度下，取中点、端点还是平均值都不影响结果，见文末的警告框）。
 于是**短时传播子**为
 
 $$
@@ -48,23 +48,23 @@ $$
 \Psi(x,t+\varepsilon)=\int_{-\infty}^{\infty}K_\varepsilon(x,x')\,\Psi(x',t)\,\dd x'
 $$
 
-接下来整个游戏就是：把两边都展开到 $\varepsilon$ 的一阶，看看逼出什么方程。
+接下来要做的是把两边都展开到 $\varepsilon$ 的一阶，看得到什么方程。
 
-## 哪些 x′ 真的有贡献？
+## 哪些 x′ 有贡献
 
 <DualView>
 <div slot="left">
 
-**先看清积分的结构再动手。** 被积函数里最凶的因子是
+动手之前先看积分的结构。被积函数里变化最剧烈的因子是
 
 $$
 \exp\!\left[\frac{\ii m(x-x')^2}{2\hbar\varepsilon}\right]
 $$
 
-当 $x'$ 离 $x$ 较远时，$(x-x')^2/\varepsilon$ 很大，这个相位随 $x'$ 疯狂振荡，
-贡献互相抵消——正是上上节的驻相机制在一小步里的翻版。
+当 $x'$ 离 $x$ 较远时，$(x-x')^2/\varepsilon$ 很大，这个相位随 $x'$ 快速振荡，
+贡献互相抵消，这是 11.1 节的驻相机制在一小步里的体现。
 
-真正存活下来的是相位变化不超过 $\sim1$ 的范围：
+留下来的是相位变化不超过 $\sim1$ 的范围：
 
 $$
 \frac{m(x-x')^2}{2\hbar\varepsilon}\lesssim1
@@ -73,12 +73,12 @@ $$
 $$
 
 一步 $\varepsilon$ 里粒子只「探测」身边 $\sqrt{\hbar\varepsilon/m}$ 的邻域。
-这就是为什么下面可以放心对 $x'-x$ 做泰勒展开。
+因此下面可以对 $x'-x$ 做泰勒展开。
 
 </div>
 <div slot="right">
 
-**顺手读出一个惊人的性质。** 一步的典型位移 $\delta x\sim\sqrt{\hbar\varepsilon/m}$，
+从这里还能读出一个出人意料的性质：一步的典型位移 $\delta x\sim\sqrt{\hbar\varepsilon/m}$，
 于是典型「速度」
 
 $$
@@ -86,10 +86,10 @@ $$
 \xrightarrow{\ \varepsilon\to0\ }\infty
 $$
 
-位移 $\propto\sqrt{\varepsilon}$ 而不是 $\propto\varepsilon$——
-这正是布朗运动（扩散过程）的标度。路径积分里的典型路径处处连续、处处不可导，
-瞬时速度根本没有定义。这与不确定性原理一拍即合：
-时间切得越细等于位置盯得越紧，动量就越失控。
+位移 $\propto\sqrt{\varepsilon}$，而不是 $\propto\varepsilon$，
+这是布朗运动（扩散过程）的标度。路径积分里的典型路径处处连续、处处不可导，
+瞬时速度没有定义。这与不确定性原理一致：
+时间切得越细，相当于位置确定得越精确，动量的涨落也就越大。
 
 </div>
 </DualView>
@@ -98,7 +98,7 @@ $$
 
 <Derivation title="从短时传播子到薛定谔方程" level="进阶" minutes={12} open={true}>
 
-**第一步：换变量。** 令 $\eta=x'-x$（这一步的位移），积分方程变成
+第一步，换变量。 令 $\eta=x'-x$（这一步的位移），积分方程变成
 
 $$
 \Psi(x,t+\varepsilon)=\sqrt{\frac{m}{2\pi\ii\hbar\varepsilon}}
@@ -106,9 +106,9 @@ $$
 \ee^{-\ii\varepsilon V(x+\eta/2)/\hbar}\;\Psi(x+\eta,t)
 $$
 
-**第二步：数一数各因子的量级。** 有效的 $\eta\sim\sqrt{\hbar\varepsilon/m}$，
-所以 $\eta^2\sim\varepsilon$：要保留 $\varepsilon$ 一阶，$\Psi$ 必须展开到 $\eta$ 的**二阶**——
-这是整个推导最要紧的一个判断（也是二阶空间导数的来源）：
+第二步，估计各因子的量级。 有效的 $\eta\sim\sqrt{\hbar\varepsilon/m}$，
+所以 $\eta^2\sim\varepsilon$：要保留 $\varepsilon$ 一阶，$\Psi$ 必须展开到 $\eta$ 的二阶。
+这是整个推导中最要紧的一个判断（也是二阶空间导数的来源）：
 
 $$
 \Psi(x+\eta,t)=\Psi+\eta\,\partial_x\Psi+\frac{\eta^2}2\,\partial_x^2\Psi+O(\eta^3)
@@ -120,7 +120,7 @@ $$
 \ee^{-\ii\varepsilon V/\hbar}=1-\frac{\ii\varepsilon}{\hbar}V(x)+O(\varepsilon^2)
 $$
 
-**第三步：逐项做高斯积分。** 需要三个矩（都是标准高斯积分，
+第三步，逐项做高斯积分。 需要三个矩（都是标准高斯积分，
 $\alpha\equiv m/2\hbar\varepsilon$）：
 
 $$
@@ -130,11 +130,11 @@ $$
 $$
 
 （第二个因奇函数为零；第三个可由第一个对 $\alpha$ 求导得到。）
-代入 $\alpha=m/2\hbar\varepsilon$：零阶矩恰好消去前面的归一化系数
-$\sqrt{m/2\pi\ii\hbar\varepsilon}$——总系数为 1；二阶矩额外带来因子
+代入 $\alpha=m/2\hbar\varepsilon$：零阶矩正好消去前面的归一化系数
+$\sqrt{m/2\pi\ii\hbar\varepsilon}$，总系数为 1；二阶矩额外带来因子
 $\ii\hbar\varepsilon/m$。
 
-**第四步：收集到 ε 一阶。** 逐项相乘、只留 $\varepsilon^1$：
+第四步，收集到 ε 一阶。 逐项相乘、只留 $\varepsilon^1$：
 
 $$
 \Psi(x,t+\varepsilon)=\Psi(x,t)
@@ -143,9 +143,9 @@ $$
 +O(\varepsilon^2)
 $$
 
-（交叉项如 $\varepsilon V\times\eta^2\partial_x^2\Psi$ 都是 $\varepsilon^2$ 量级，扔掉。）
+（交叉项如 $\varepsilon V\times\eta^2\partial_x^2\Psi$ 都是 $\varepsilon^2$ 量级，略去。）
 
-**第五步：取极限。** 左边写成 $\Psi(x,t)+\varepsilon\,\partial_t\Psi+O(\varepsilon^2)$，
+第五步，取极限。 左边写成 $\Psi(x,t)+\varepsilon\,\partial_t\Psi+O(\varepsilon^2)$，
 两边消去 $\Psi(x,t)$、除以 $\varepsilon$、令 $\varepsilon\to0$，再整体乘 $\ii\hbar$：
 
 $$
@@ -153,47 +153,47 @@ $$
 =-\frac{\hbar^2}{2m}\frac{\partial^2\Psi}{\partial x^2}+V(x)\,\Psi\;}
 $$
 
-薛定谔方程。第 2 章的公设，在这里变成了定理。
+这是薛定谔方程。第 2 章的公设在这里成为定理。
 
 </Derivation>
 
-<Callout type="insight" title="每一项都有出处">
-回头看这台机器的零件是怎么咬合的，很值得：
+<Callout type="insight" title="各项的来源">
+回头看方程中每一项的来源：
 
-- **$\ii\hbar\partial_t$**：来自把一步演化展开到 $\varepsilon$ 一阶——时间的一阶导数
+- $\ii\hbar\partial_t$：来自把一步演化展开到 $\varepsilon$ 一阶，时间的一阶导数
   对应「一步」的结构。
-- **动能项 $-\frac{\hbar^2}{2m}\partial_x^2$**：来自动能相位
-  $\ee^{\ii m\eta^2/2\hbar\varepsilon}$ 的二阶矩。路径抖得越凶（$\partial_x^2\Psi$ 越大），
-  这项越大——动能算符测量的正是波函数的「弯曲程度」，与
-  [2.3 节](/ch/02-wavefunction/03-time-independent-schrodinger/)的读法完全呼应。
-- **势能项 $V\Psi$**：来自 $\ee^{-\ii\varepsilon V/\hbar}$ 的一阶展开——
-  待在势场里的每一瞬都在积累相位。
+- 动能项 $-\frac{\hbar^2}{2m}\partial_x^2$：来自动能相位
+  $\ee^{\ii m\eta^2/2\hbar\varepsilon}$ 的二阶矩。路径抖动越剧烈（$\partial_x^2\Psi$ 越大），
+  这项越大。动能算符衡量的是波函数的「弯曲程度」，与
+  [2.3 节](/ch/02-wavefunction/03-time-independent-schrodinger/)的解读一致。
+- 势能项 $V\Psi$：来自 $\ee^{-\ii\varepsilon V/\hbar}$ 的一阶展开，
+  粒子在势场中的每一时刻都在积累相位。
 
-系数不多不少刚好对上，依赖于归一化常数 $A=\sqrt{2\pi\ii\hbar\varepsilon/m}$
-取上一节由拼接自洽性定出的那个值。三处来源、一台方程，严丝合缝。
+各项系数能够对上，依赖于归一化常数 $A=\sqrt{2\pi\ii\hbar\varepsilon/m}$
+取上一节由拼接自洽性定出的那个值。
 </Callout>
 
-<Callout type="warning" title="两个技术性的坑">
-1. **势能取在哪一点？** 我们用了中点 $V\bigl((x+x')/2\bigr)$。在 $\varepsilon$
-   一阶精度下取端点也一样——因为 $V(x+\eta/2)-V(x)\sim\eta\sim\sqrt\varepsilon$，
+<Callout type="warning" title="两个技术细节">
+1. 势能取在哪一点。我们用了中点 $V\bigl((x+x')/2\bigr)$。在 $\varepsilon$
+   一阶精度下取端点也一样，因为 $V(x+\eta/2)-V(x)\sim\eta\sim\sqrt\varepsilon$，
    乘上已有的 $\varepsilon$ 后是高阶小量。但一旦势依赖速度（比如磁场中的
-   $\vec A\cdot\dot{\vec x}$ 项），中点规则就**不再是可选项**而是必须——不同取法差出的
-   正是算符排序的歧义。这是路径积分与算符语言的对应里最著名的细节。
-2. **展开阶数要数对。** 初学最容易犯的错是把 $\Psi(x+\eta)$ 只展开到 $\eta$ 一阶——
-   那样动能项直接丢失。判断标准始终是「$\eta^2\sim\varepsilon$」：
+   $\vec A\cdot\dot{\vec x}$ 项），就必须用中点规则，不同取法之间的差别
+   对应算符排序的歧义。这是路径积分与算符语言对应关系中最有名的细节。
+2. 展开阶数。初学者最容易犯的错是把 $\Psi(x+\eta)$ 只展开到 $\eta$ 一阶，
+   那样会丢掉动能项。判断标准始终是「$\eta^2\sim\varepsilon$」：
    凡是最后要留 $\varepsilon^1$ 的地方，$\eta$ 就要留到二阶。
 </Callout>
 
-至此三种表述正式会师：Heisenberg 的矩阵（1925）、Schrödinger 的波动方程（1926）、
-Feynman 的路径求和（1948）——三套形式语言，同一个量子力学。
-第 3 章证明了前两者等价，本节补上了第三块拼图。
+至此三种表述都已联系起来：Heisenberg 的矩阵（1925）、Schrödinger 的波动方程（1926）、
+Feynman 的路径求和（1948），它们是同一个量子力学的三种形式。
+第 3 章证明了前两者等价，本节补上了第三者。
 
 <KeyFormulas
   items={[
     { name: '短时传播子', latex: 'K_\\varepsilon=\\sqrt{\\frac{m}{2\\pi\\ii\\hbar\\varepsilon}}\\,\\exp\\Bigl[\\frac{\\ii m(x-x\')^2}{2\\hbar\\varepsilon}-\\frac{\\ii\\varepsilon}{\\hbar}V\\Bigr]', note: 'ε 一阶精确；一切从它展开' },
     { name: '有效位移范围', latex: '|x-x\'|\\sim\\sqrt{\\hbar\\varepsilon/m}', note: '高斯振荡抑制远处贡献；位移 ∝ √ε 是扩散标度' },
     { name: '关键高斯矩', latex: '\\int\\eta^2\\ee^{\\ii\\alpha\\eta^2}\\dd\\eta=\\frac{\\ii}{2\\alpha}\\sqrt{\\frac{\\pi\\ii}{\\alpha}}', note: 'η² 矩 → 动能项 −(ħ²/2m)∂ₓ²' },
-    { name: '推导结论', latex: '\\ii\\hbar\\,\\partial_t\\Psi=-\\frac{\\hbar^2}{2m}\\partial_x^2\\Psi+V\\Psi', note: '薛定谔方程：从公设降级为路径积分的推论' },
+    { name: '推导结论', latex: '\\ii\\hbar\\,\\partial_t\\Psi=-\\frac{\\hbar^2}{2m}\\partial_x^2\\Psi+V\\Psi', note: '薛定谔方程：由公设变为路径积分的推论' },
   ]}
 />
 
@@ -210,10 +210,10 @@ Feynman 的路径求和（1948）——三套形式语言，同一个量子力�
       ],
       answer: 0,
       distractors: {
-        1: '一阶项 ∫η·e^{iαη²}dη 因奇函数恰好为零——它对结果毫无贡献。',
-        3: '推导要求的是「恰好到 ε 一阶」的一致精度：三阶 η 项是 ε^{3/2} 量级，留了也会被扔掉。',
+        1: '一阶项 ∫η·e^{iαη²}dη 因被积函数为奇函数而为零，对结果没有贡献。',
+        3: '推导要求的是「恰好到 ε 一阶」的一致精度：三阶 η 项是 ε^{3/2} 量级，保留了也要略去。',
       },
-      explain: '高斯核把有效位移压在 η∼√(ħε/m)，所以 η²∼ε 是同阶量。丢掉 η² 项等于丢掉动能项——薛定谔方程的二阶空间导数正是从这里来的。',
+      explain: '高斯核把有效位移压在 η∼√(ħε/m)，所以 η²∼ε 是同阶量。丢掉 η² 项等于丢掉动能项，薛定谔方程的二阶空间导数就来自这里。',
     },
     {
       id: 'pi3-2',
@@ -226,9 +226,9 @@ Feynman 的路径求和（1948）——三套形式语言，同一个量子力�
       ],
       answer: [0, 1, 3],
       distractors: {
-        2: '锯齿性在 ε→0 时不是消失而是加剧（典型速度 ∼√(ħ/mε)→∞）；光滑的是宏观极限下驻相带的中心线，不是单条典型路径。',
+        2: '锯齿性在 ε→0 时会加剧（典型速度 ∼√(ħ/mε)→∞）；光滑的是宏观极限下驻相带的中心线，而非单条典型路径。',
       },
-      explain: 'δx∼√(ħε/m) 的扩散标度意味着 δx/ε→∞。「粒子有光滑轨迹」在路径积分里从来不成立，成立的只是 S≫ħ 时干涉筛选出的经典包络。',
+      explain: 'δx∼√(ħε/m) 的扩散标度意味着 δx/ε→∞。在路径积分里，「粒子有光滑轨迹」并不成立，成立的只是 S≫ħ 时干涉筛选出的经典包络。',
     },
     {
       id: 'pi3-3',
@@ -244,7 +244,7 @@ Feynman 的路径求和（1948）——三套形式语言，同一个量子力�
         1: '势能因子的一阶展开给出的是 VΨ 项。',
         2: 'A 只负责让零阶项系数恰好为 1（概率守恒），不产生新的项。',
       },
-      explain: '∫η²e^{iαη²}dη 带来因子 iħε/m，乘上 Ψ 展开中的 ½∂ₓ²Ψ 正好凑出 (iħε/2m)∂ₓ²Ψ。路径抖动的二阶统计 = 波函数的曲率 = 动能。',
+      explain: '∫η²e^{iαη²}dη 带来因子 iħε/m，乘上 Ψ 展开中的 ½∂ₓ²Ψ 正好凑出 (iħε/2m)∂ₓ²Ψ。路径抖动的二阶统计对应波函数的曲率，也就是动能。',
     },
     {
       id: 'pi3-4',
@@ -257,8 +257,8 @@ Feynman 的路径求和（1948）——三套形式语言，同一个量子力�
       ],
       answer: 0,
       distractors: {
-        1: '本节的推导里 V 取端点同样给出薛定谔方程——差别 ∼η·ε 是 ε^{3/2} 量级。',
-        3: '恰好说反了：中点规则对应对称（Weyl）排序，是与标准哈密顿算符一致的选择。',
+        1: '本节的推导里 V 取端点同样给出薛定谔方程，差别 ∼η·ε 是 ε^{3/2} 量级。',
+        3: '说反了：中点规则对应对称（Weyl）排序，是与标准哈密顿算符一致的选择。',
       },
       explain: '差异 V(x+η/2)−V(x) ∼ √ε，乘上因子 ε 后不影响一阶结果；但 A·ẋ 型耦合里位移因子本身 ∼√ε，取点方式的差异升到 ε 一阶，正对应算符排序歧义。',
     },
@@ -267,6 +267,6 @@ Feynman 的路径求和（1948）——三套形式语言，同一个量子力�
 
 ## 接下来
 
-等价性证完，路径积分似乎只是「重新推了一遍已知的东西」。
-下一节让它露一手波函数语言很难做到的绝活：把时间旋转到虚轴上去，
-隧穿问题会变成一个**经典**力学问题——势垒下面藏着一条名叫「瞬子」的经典路径。
+证明了等价性之后，路径积分看上去只是把已知结果重新推了一遍。
+下一节介绍一个用波函数语言很难做到的处理：把时间旋转到虚轴上，
+隧穿问题就变成一个经典力学问题，势垒下面存在一条叫做「瞬子」的经典路径。
