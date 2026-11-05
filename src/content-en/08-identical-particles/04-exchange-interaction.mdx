@@ -76,7 +76,7 @@ $$
 K=\int\phi_{1s}^*(\vec{r}_1)\phi_{2s}^*(\vec{r}_2)\,\frac{e^2}{4\pi\epsilon_0 r_{12}}\,\phi_{2s}(\vec{r}_1)\phi_{1s}(\vec{r}_2)\,\dd^3r_1\dd^3r_2
 $$
 
-Notice that the orbitals on the two sides of the kernel have **swapped places** — this has no classical counterpart. It is an interference term: the interference between the two histories "particle 1 in $1s$, particle 2 in $2s$" and "the other way round". For nodeless overlapping real orbitals like $1s,2s$, $K>0$ (one can prove it is strictly positive here).
+Notice that the orbitals on the two sides of the kernel have **swapped places** — this has no classical counterpart. It is an interference term: the interference between the two histories "particle 1 in $1s$, particle 2 in $2s$" and "the other way round". For orbitals like $1s,2s$, $K>0$. In fact $K\ge0$ for any pair of orbitals: with $\rho(\vec r)=\phi_{1s}^*(\vec r)\phi_{2s}(\vec r)$, $K$ is the Coulomb self-energy of this "overlap charge", and the positive-definiteness of the Coulomb kernel keeps it non-negative.
 
 **Step 3: read off the physics.**
 
@@ -154,7 +154,7 @@ $$
 
 Converted to temperature, that is only **0.04 K**: thermal motion above a few hundredths of a kelvin would scramble such an alignment completely. Yet iron's Curie temperature is **1043 K** — an energy scale of about 0.09 eV, more than four orders of magnitude beyond the dipole interaction.
 
-What bridges the chasm is precisely the exchange interaction: $K$ is a Coulomb-scale quantity (a good fraction of an eV), and in helium it is already 0.4 eV. The "aligning force" of ferromagnetism is not magnetic at all — it is Coulomb repulsion acting through the hands of antisymmetry. A magnet is quantum mechanics you can hold. (Incidentally, the sign of the exchange integral depends on the orbital details; for $J_{ij}<0$ the spins prefer antiparallel alignment — that is an antiferromagnet.)
+What bridges the chasm is precisely the exchange interaction: $K$ is a Coulomb-scale quantity (a good fraction of an eV), and in helium it is already 0.4 eV. The "aligning force" of ferromagnetism is not magnetic at all — it is Coulomb repulsion acting through the hands of antisymmetry. A magnet is quantum mechanics you can hold. (Incidentally, the bare exchange integral $K$ between two orthogonal orbitals is never negative, but the effective exchange coupling $J_{ij}$ in a solid also includes electron hopping, superexchange via intermediate ions and so on, and its sign depends on the orbital details; for $J_{ij}<0$ the spins prefer antiparallel alignment — that is an antiferromagnet.)
 </Callout>
 
 ## The spectrum puzzle, revisited
@@ -204,12 +204,12 @@ Finally, close the case we opened with. The two sets of lines rarely cross-trans
       options: [
         'It arises from interference between the "two ways of occupying the orbitals" and has no counterpart in classical electromagnetism',
         'It decays as the overlap of the two orbitals shrinks, and vanishes when the orbitals do not overlap',
-        'It always lowers the energy of the parallel-spin configuration',
+        'The exchange interaction it drives lowers the energy of the parallel-spin configuration in every material',
         'In the effective spin Hamiltonian it plays the role of the spin coupling constant',
       ],
       answer: [0, 1, 3],
       distractors: {
-        2: 'For cases like helium 1s2s, K > 0 and the triplet lies lower; but in general the sign of the exchange coupling depends on orbital structure and intermediate processes — systems with negative K (favouring antiparallel spins) are antiferromagnets.',
+        2: 'For cases like helium 1s2s, K > 0 and the triplet lies lower; the bare K itself is never negative, but in a solid the effective exchange coupling also includes hopping and superexchange, its sign depends on orbital structure and intermediate processes, and systems where that effective coupling is negative (favouring antiparallel spins) are antiferromagnets.',
       },
       explain: 'K is an interference term, short-ranged, and can be packaged into a coupling of the form −(2K/ħ²)S₁·S₂; only "always favours parallel" fails — magnetic materials come in ferromagnetic and antiferromagnetic varieties, matching the two signs of the coupling constant.',
     },
