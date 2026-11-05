@@ -2,7 +2,7 @@
 title: 傅里叶分析速查
 section: 'A.2'
 order: 2
-summary: 变换约定（含动量空间的 ħ 版本）、常用变换对表、Parseval 与卷积定理、δ 函数、高斯积分——位置与动量表象之间的全部桥梁。
+summary: 变换约定（含动量空间的 ħ 版本）、常用变换对表、Parseval 与卷积定理、δ 函数、高斯积分，这些是在位置表象与动量表象之间换算所需的工具。
 status: done
 prereqs:
   - 微积分（会算定积分与分部积分）
@@ -14,22 +14,22 @@ objectives:
 sims: []
 ---
 
-傅里叶变换的物理内容一句话：**把一个函数拆成不同频率的波的叠加**。
+傅里叶变换把一个函数拆成不同频率的波的叠加。
 在量子力学里，「频率」就是动量（$p=\hbar k$），
-所以傅里叶变换就是**位置表象与动量表象之间的换基公式**。
+所以傅里叶变换就是位置表象与动量表象之间的换基公式。
 
-**正文哪里会用到：**
+正文中用到的地方：
 [2.10 自由粒子](/ch/02-wavefunction/10-free-particle/)用它构造波包；
 [3.3 Hilbert 空间](/ch/03-formalism/03-hilbert-space/)把它解释为连续基的展开；
 [7.6 Fermi 黄金规则](/ch/07-approximation/06-fermi-golden-rule/)与
 [11 章路径积分](/ch/11-path-integral/02-propagator/)大量使用高斯积分；
-附录 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)靠 FFT 在两个表象间来回切换。
+附录 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)用 FFT 在两个表象间来回切换。
 
 ## 变换约定
 
-同一个「傅里叶变换」在不同书里差一个常数或指数符号，先把本书的约定钉死。
+同一个「傅里叶变换」在不同书里差一个常数或指数符号，这里先写明本书的约定。
 
-**数学约定**（对称版，$k$ 是波数）：
+数学约定（对称版，$k$ 是波数）：
 
 $$
 \tilde f(k)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} f(x)\,\ee^{-\ii kx}\,\dd x,
@@ -37,7 +37,7 @@ $$
 f(x)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} \tilde f(k)\,\ee^{\ii kx}\,\dd k
 $$
 
-**量子力学约定**（$p=\hbar k$，动量波函数记 $\phi(p)$）：
+量子力学约定（$p=\hbar k$，动量波函数记 $\phi(p)$）：
 
 $$
 \phi(p)=\frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^{\infty}\psi(x)\,\ee^{-\ii px/\hbar}\,\dd x,
@@ -46,34 +46,34 @@ $$
 $$
 
 前置因子 $1/\sqrt{2\pi\hbar}$ 的作用是让两边同时归一（见下面的 Parseval）。
-用 Dirac 记号看，这不过是插入一组完备的动量本征态：
+用 Dirac 记号看，这相当于插入一组完备的动量本征态：
 $\phi(p)=\braket{p}{\psi}$，而 $\braket{x}{p}=\ee^{\ii px/\hbar}/\sqrt{2\pi\hbar}$。
 
-<Callout type="warning" title="查别的书时的三个坑">
+<Callout type="warning" title="不同教材的约定差异">
 1. 符号约定：有的书正变换用 $\ee^{+\ii kx}$。物理里几乎统一用上面的写法，
    好处是平面波 $\ee^{\ii(kx-\omega t)}$ 向 $+x$ 传播。
-2. 常数分配：工程书常把 $2\pi$ 全塞给逆变换（正变换无因子）。
+2. 常数分配：工程书常把 $2\pi$ 全部放在逆变换里（正变换无因子）。
    换约定时变换对表里的常数会跟着变，抄结论前先对约定。
 3. 频率变量：信号处理用 $\nu$（单位 Hz），指数是 $\ee^{-2\pi\ii\nu t}$，没有任何前置常数。
 </Callout>
 
 ## δ 函数
 
-**Dirac δ 函数**不是普通函数，而是一个「取值器」：它在积分里出现时，
+**Dirac δ 函数**不是普通函数。它在积分里出现时，
 把被积函数在尖峰位置的值取出来：
 
 $$
 \int_{-\infty}^{\infty} f(x)\,\delta(x-x_0)\,\dd x=f(x_0)
 $$
 
-可以把它想象成一个宽度趋于零、面积始终为 1 的极限尖峰。最重要的表示是**平面波叠加**：
+可以把它想象成一个宽度趋于零、面积始终为 1 的极限尖峰。最重要的表示是平面波叠加：
 
 $$
 \delta(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\ee^{\ii kx}\,\dd k
 $$
 
-——所有波数的平面波等权叠加，处处相消，只在 $x=0$ 处同相堆积。
-这个式子正是连续基正交归一 $\braket{x}{x'}=\delta(x-x')$、
+即所有波数的平面波等权叠加，在 $x\neq0$ 处相消，只在 $x=0$ 处同相叠加。
+这个式子是连续基正交归一 $\braket{x}{x'}=\delta(x-x')$、
 $\braket{p}{p'}=\delta(p-p')$ 的来源。
 
 常用性质：
@@ -99,20 +99,20 @@ $\braket{p}{p'}=\delta(p-p')$ 的来源。
 | $f(x-x_0)$ | $\ee^{-\ii kx_0}\tilde f(k)$ | 平移 ⇔ 挂相位 |
 | $f'(x)$ | $\ii k\tilde f(k)$ | 求导 ⇔ 乘 $\ii k$；C.2 的算法基础 |
 
-第一行值得多看一眼：高斯波包越窄（$\sigma$ 小），动量分布越宽——
-这就是[不确定性原理](/ch/02-wavefunction/06-expectation-and-uncertainty/)在傅里叶层面的体现，
-且高斯恰好取到下限 $\sigma_x\sigma_p=\hbar/2$。
+注意第一行：高斯波包越窄（$\sigma$ 小），动量分布越宽，
+这是[不确定性原理](/ch/02-wavefunction/06-expectation-and-uncertainty/)在傅里叶层面的体现，
+且高斯波包取到下限 $\sigma_x\sigma_p=\hbar/2$。
 
 ## Parseval 定理与卷积定理
 
-**Parseval（Plancherel）定理**：变换前后「总量不变」，
+**Parseval（Plancherel）定理**：变换前后模平方的积分不变，
 
 $$
 \int_{-\infty}^{\infty}\lvert f(x)\rvert^2\,\dd x=\int_{-\infty}^{\infty}\lvert\tilde f(k)\rvert^2\,\dd k
 $$
 
-物理翻译：$\psi(x)$ 归一化了，$\phi(p)$ 就自动归一化——
-在位置表象里总概率是 1，换到动量表象还是 1。这就是为什么
+物理上，$\psi(x)$ 归一化了，$\phi(p)$ 就自动归一化：
+在位置表象里总概率是 1，换到动量表象还是 1。因此
 $\lvert\phi(p)\rvert^2$ 可以直接解释为动量的概率密度。
 
 **卷积定理**：两个函数的卷积
@@ -123,13 +123,13 @@ $$
 \widetilde{f*g}(k)=\sqrt{2\pi}\,\tilde f(k)\,\tilde g(k)
 $$
 
-用途：卷积难算、乘法好算，所以「变换—相乘—变回来」是标准套路。
-数值上这正是 FFT 卷积的原理，也是 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)
+卷积难算、乘法好算，所以「变换、相乘、再变回来」是常用的做法。
+数值上这是 FFT 卷积的原理，也是 [C.2 分步算符法](/ch/appendix-c-numerics/02-split-operator/)
 每一步做的事。
 
 ## 高斯积分
 
-量子力学里出现频率最高的积分家族。基本式（$\operatorname{Re}a>0$）：
+高斯积分是量子力学里最常出现的一类积分。基本式（$\operatorname{Re}a>0$）：
 
 $$
 \int_{-\infty}^{\infty}\ee^{-ax^2}\,\dd x=\sqrt{\frac{\pi}{a}}
@@ -143,24 +143,24 @@ $$
 I=\int_{-\infty}^{\infty}\ee^{-ax^2+bx}\,\dd x
 $$
 
-**配方**。把指数写成完全平方：
+第一步，配方。把指数写成完全平方：
 
 $$
 -ax^2+bx=-a\left(x-\frac{b}{2a}\right)^2+\frac{b^2}{4a}
 $$
 
-**平移积分变量** $u=x-b/2a$（积分限不变），常数因子提出去：
+第二步，平移积分变量 $u=x-b/2a$（积分限不变），把常数因子提出去：
 
 $$
 I=\ee^{b^2/4a}\int_{-\infty}^{\infty}\ee^{-au^2}\,\dd u
 =\sqrt{\frac{\pi}{a}}\;\ee^{b^2/4a}
 $$
 
-这一个式子就够对付大部分场合：$b$ 可以是复数（比如 $b=\ii k$，
-这正是「高斯的傅里叶变换还是高斯」的来历），$a$ 也可以带虚部
+这个式子适用于大部分场合：$b$ 可以是复数（比如 $b=\ii k$，
+「高斯的傅里叶变换还是高斯」即由此而来），$a$ 也可以带虚部
 （路径积分里 $a\propto\ii$，即 Fresnel 积分，结果形式相同，理解为极限意义下收敛）。
 
-**带多项式的版本**用「对参数求导」生成：
+带多项式的版本可以通过对参数求导得到：
 
 $$
 \int x^2\,\ee^{-ax^2}\dd x=-\frac{\partial}{\partial a}\int\ee^{-ax^2}\dd x
@@ -176,8 +176,8 @@ $$
     { name: '动量表象（ħ 约定）', latex: '\\phi(p)=\\frac{1}{\\sqrt{2\\pi\\hbar}}\\int\\psi(x)\\,\\ee^{-\\ii px/\\hbar}\\,\\dd x', note: '即 ⟨p|ψ⟩，插入动量完备基' },
     { name: 'δ 函数的平面波表示', latex: '\\delta(x)=\\frac{1}{2\\pi}\\int_{-\\infty}^{\\infty}\\ee^{\\ii kx}\\,\\dd k', note: '连续基正交归一化的来源' },
     { name: 'Parseval 定理', latex: '\\int|\\psi(x)|^2\\dd x=\\int|\\phi(p)|^2\\dd p', note: '位置归一 ⇔ 动量归一，|φ(p)|² 才有概率解释' },
-    { name: '卷积定理', latex: '\\widetilde{f*g}=\\sqrt{2\\pi}\\,\\tilde f\\,\\tilde g', note: '卷积难算就去傅里叶空间做乘法' },
-    { name: '高斯积分', latex: '\\int_{-\\infty}^{\\infty}\\ee^{-ax^2+bx}\\dd x=\\sqrt{\\frac{\\pi}{a}}\\,\\ee^{b^2/4a}', note: '配方 + 平移；b 可为复数，路径积分的基本砖块' },
+    { name: '卷积定理', latex: '\\widetilde{f*g}=\\sqrt{2\\pi}\\,\\tilde f\\,\\tilde g', note: '把卷积换成傅里叶空间中的乘法' },
+    { name: '高斯积分', latex: '\\int_{-\\infty}^{\\infty}\\ee^{-ax^2+bx}\\dd x=\\sqrt{\\frac{\\pi}{a}}\\,\\ee^{b^2/4a}', note: '配方 + 平移；b 可为复数，路径积分的基本工具' },
   ]}
 />
 
@@ -187,9 +187,9 @@ $$
       id: 'apa2-1',
       prompt: '一个高斯波包在位置空间变得更窄，它的动量分布会怎样？',
       options: [
-        '变宽——傅里叶宽度互为倒数',
-        '也变窄——两者同步',
-        '不变——归一化保证分布固定',
+        '变宽，傅里叶宽度互为倒数',
+        '也变窄，两者同步',
+        '不变，归一化保证分布固定',
         '取决于波包的中心动量',
       ],
       answer: 0,
@@ -224,7 +224,7 @@ $$
         1: '忘了缩放因子：δ(ax) = δ(x)/|a|。',
         2: '因子是除以 |a| 不是乘。',
       },
-      explain: '换元 u = 2x 即得 δ(2x) = δ(x)/2，所以积分为 f(0)/2。一般地 δ(ax) = δ(x)/|a|——δ 函数按「面积为 1」定义，横向压缩必须纵向补偿。',
+      explain: '换元 u = 2x 即得 δ(2x) = δ(x)/2，所以积分为 f(0)/2。一般地 δ(ax) = δ(x)/|a|：δ 函数按「面积为 1」定义，横向压缩必须由纵向放大补偿。',
     },
   ]}
 />

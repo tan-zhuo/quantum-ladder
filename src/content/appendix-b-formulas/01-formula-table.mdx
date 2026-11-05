@@ -9,29 +9,29 @@ objectives: []
 sims: []
 ---
 
-这一页是全书的公式速查面板：按章组织，每条公式注明它在正文中的出处，
-点链接可以回到推导现场。每章开头用一两句话点明这一章公式的主线。
-末尾附常用对易子恒等式、物理常数与做题时最好用的单位换算。
+这一页是全书的公式速查表：按章组织，每条公式注明它在正文中的出处，
+点链接可以回到推导所在的小节。每章开头用一两句话概括这一章公式的主线。
+末尾附常用对易子恒等式、物理常数与做题时常用的单位换算。
 
-三种打开方式：
+三种用法：
 
-- **做题时**：按章跳到对应表格，顺链接回正文看推导与适用条件；
-- **复习时**：只看每章开头的「主线」句子，能否自己把表里的公式默写出一半；
-- **查符号时**：直接看下面的符号约定表。
+- 做题时：按章跳到对应表格，顺链接回正文看推导与适用条件；
+- 复习时：只看每章开头的「主线」句子，试着自己把表里的公式默写出一半；
+- 查符号时：直接看下面的符号约定表。
 
-先把撑起全书的骨架单独列出——如果只允许背十条，就是这十条：
+先单独列出全书最基本的十条公式，如果只背十条，应当是这十条：
 
 <KeyFormulas
   items={[
     { name: '薛定谔方程', latex: '\\ii\\hbar\\,\\partial_t\\Psi=\\hat H\\Psi', note: '全书唯一的运动方程' },
-    { name: 'Born 规则', latex: 'P=|\\braket{a}{\\psi}|^2', note: '理论与实验之间唯一的桥' },
+    { name: 'Born 规则', latex: 'P=|\\braket{a}{\\psi}|^2', note: '连接理论与实验的规则' },
     { name: '正则对易关系', latex: '[\\hat x,\\hat p]=\\ii\\hbar', note: '量子性的代数源头' },
     { name: '不确定性原理', latex: '\\sigma_x\\sigma_p\\ge\\hbar/2', note: '上一条的直接推论' },
     { name: '定态展开', latex: '\\Psi(t)=\\sum_n c_n\\,\\ee^{-\\ii E_nt/\\hbar}\\ket{n}', note: '解任何演化问题的标准流程' },
     { name: '角动量谱', latex: '\\hat J^2:\\ j(j+1)\\hbar^2,\\qquad \\hat J_z:\\ m\\hbar', note: '纯代数推出，轨道与自旋通用' },
     { name: '氢原子能级', latex: 'E_n=-13.6\\ \\text{eV}/n^2', note: '第一个被完整解释的原子' },
     { name: '交换对称性', latex: '\\Psi(1,2)=\\pm\\Psi(2,1)', note: '玻色子 +，费米子 −；元素周期表由此而来' },
-    { name: '变分原理', latex: 'E_{\\text{gs}}\\le\\braket{\\psi_T}{\\hat H\\psi_T}', note: '解不出来时的救命稻草' },
+    { name: '变分原理', latex: 'E_{\\text{gs}}\\le\\braket{\\psi_T}{\\hat H\\psi_T}', note: '无法精确求解时估计基态能量的常用方法' },
     { name: '密度算符演化', latex: '\\ii\\hbar\\,\\dot{\\hat\\rho}=[\\hat H,\\hat\\rho]', note: '孤立系统版；开放系统加 Lindblad 项' },
   ]}
 />
@@ -55,8 +55,8 @@ sims: []
 
 ## 第 1 章 · 旧量子论
 
-主线：一批「经典物理解释不了」的实验，各自逼出一个含 $h$ 的公式——
-它们还不是理论，但已经把普朗克常数钉进了物理学。
+主线：一批经典物理解释不了的实验，各自引出一个含 $h$ 的公式。
+它们还不构成理论，但已经把普朗克常数引入了物理学。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ sims: []
 | $\hbar\omega=W+\frac{1}{2}mv_{\max}^2$ | 光电效应方程，$W$ 为逸出功 | [1.3](/ch/01-history/03-photoelectric-effect/) |
 | $E_n=-\dfrac{13.6\ \text{eV}}{n^2}$ | Bohr 氢原子能级 | [1.4](/ch/01-history/04-bohr-model/) |
 | $L=n\hbar$ | Bohr 角动量量子化条件 | [1.4](/ch/01-history/04-bohr-model/) |
-| $\dfrac{1}{\lambda}=R\left(\dfrac{1}{n_1^2}-\dfrac{1}{n_2^2}\right)$ | 氢光谱的 Rydberg 公式，Bohr 模型的胜利 | [1.4](/ch/01-history/04-bohr-model/) |
+| $\dfrac{1}{\lambda}=R\left(\dfrac{1}{n_1^2}-\dfrac{1}{n_2^2}\right)$ | 氢光谱的 Rydberg 公式，Bohr 模型成功解释了它 | [1.4](/ch/01-history/04-bohr-model/) |
 | $\lambda=\dfrac{h}{p}$ | de Broglie 物质波波长 | [1.5](/ch/01-history/05-de-broglie/) |
 | $\sigma_x\sigma_p\gtrsim\hbar$ | 不确定性关系的启发式版本 | [1.7](/ch/01-history/07-uncertainty-origins/) |
 
@@ -94,7 +94,7 @@ sims: []
 
 ## 第 3 章 · 形式理论
 
-主线：把第 2 章的具体计算升级成一套抽象语法——态是向量、
+主线：把第 2 章的具体计算推广成一套抽象形式：态是向量、
 可观测量是厄米算符、测量按谱分解投影、演化是幺正变换。
 
 | 公式 | 说明 | 出处 |
@@ -113,11 +113,11 @@ sims: []
 
 ## 第 4 章 · 一维问题进阶
 
-主线：对称性帮你少算一半，散射问题用透射/反射系数与转移矩阵系统化。
+主线：利用对称性可以省去一半计算，散射问题用透射/反射系数与转移矩阵系统处理。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
-| $\hat\Pi\psi(x)=\psi(-x)$，本征值 $\pm1$ | 宇称算符：$\hat\Pi^2=\hat{\mathbb{1}}$ 逼出的仅有两个本征值 | [4.1](/ch/04-1d-problems/01-symmetry-parity/) |
+| $\hat\Pi\psi(x)=\psi(-x)$，本征值 $\pm1$ | 宇称算符：由 $\hat\Pi^2=\hat{\mathbb{1}}$ 得到仅有的两个本征值 | [4.1](/ch/04-1d-problems/01-symmetry-parity/) |
 | $[\hat H,\hat\Pi]=0\ \Rightarrow\ $ 本征态可取确定宇称 | 对称势的宇称定理 | [4.1](/ch/04-1d-problems/01-symmetry-parity/) |
 | $T+R=1$ | 透射率加反射率守恒 | [4.2](/ch/04-1d-problems/02-scattering-phase-shift/) |
 | $M_{\text{total}}=M_N\cdots M_2M_1$ | 转移矩阵按区域连乘 | [4.3](/ch/04-1d-problems/03-transfer-matrix/) |
@@ -126,7 +126,7 @@ sims: []
 ## 第 5 章 · 角动量与自旋
 
 主线：一套对易关系 $[\hat L_i,\hat L_j]=\ii\hbar\,\epsilon_{ijk}\hat L_k$
-就决定了全部谱结构——轨道、自旋、以及它们的相加都只是这套代数的不同表示。
+就决定了全部谱结构，轨道、自旋以及它们的相加都是这套代数的不同表示。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
@@ -134,7 +134,7 @@ sims: []
 | $\hat L^2\ket{\ell,m}=\ell(\ell+1)\hbar^2\ket{\ell,m}$，$\hat L_z\ket{\ell,m}=m\hbar\ket{\ell,m}$ | 本征值谱，$m=-\ell,\dots,\ell$ | [5.1](/ch/05-angular-momentum/01-orbital-angular-momentum/) |
 | $\hat L_\pm\ket{\ell,m}=\hbar\sqrt{\ell(\ell+1)-m(m\pm1)}\ket{\ell,m\pm1}$ | 升降算符 | [5.1](/ch/05-angular-momentum/01-orbital-angular-momentum/) |
 | $\hat S_i=\dfrac{\hbar}{2}\sigma_i$ | 自旋 1/2 与 Pauli 矩阵 | [5.3](/ch/05-angular-momentum/03-spin-half/) |
-| $\sigma_i\sigma_j=\delta_{ij}\hat{\mathbb{1}}+\ii\epsilon_{ijk}\sigma_k$ | Pauli 矩阵乘法一条顶十条 | [5.3](/ch/05-angular-momentum/03-spin-half/) |
+| $\sigma_i\sigma_j=\delta_{ij}\hat{\mathbb{1}}+\ii\epsilon_{ijk}\sigma_k$ | Pauli 矩阵乘法的通用公式 | [5.3](/ch/05-angular-momentum/03-spin-half/) |
 | $\hat R_{\vec n}(\theta)=\ee^{-\ii\theta\,\vec n\cdot\vec\sigma/2}=\cos\dfrac{\theta}{2}\,\hat{\mathbb{1}}-\ii\sin\dfrac{\theta}{2}\,\vec n\cdot\vec\sigma$ | 自旋 1/2 的转动算符；转 $2\pi$ 差个负号 | [5.3](/ch/05-angular-momentum/03-spin-half/) |
 | $\omega_L=\dfrac{g q B}{2m}$ | 磁场中自旋进动（Larmor）频率 | [5.5](/ch/05-angular-momentum/05-spin-precession/) |
 | 单态 $\dfrac{\ket{\uparrow\downarrow}-\ket{\downarrow\uparrow}}{\sqrt2}$；三态 $\ket{\uparrow\uparrow},\ \dfrac{\ket{\uparrow\downarrow}+\ket{\downarrow\uparrow}}{\sqrt2},\ \ket{\downarrow\downarrow}$ | 两个自旋 1/2 的相加：$1\oplus0$ | [5.6](/ch/05-angular-momentum/06-clebsch-gordan/) |
@@ -144,7 +144,7 @@ sims: []
 ## 第 6 章 · 氢原子
 
 主线：中心力场分离变量，角向部分通用（球谐），
-径向方程给出能级——三个量子数 $n,\ell,m$ 各司其职。
+径向方程给出能级，三个量子数 $n,\ell,m$ 各有分工。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
@@ -159,13 +159,13 @@ sims: []
 
 ## 第 7 章 · 近似方法
 
-主线：解不出来的问题占绝大多数——微扰、变分、WKB 三板斧
-各有适用范围，含时微扰则通向「跃迁速率」这个可测量。
+主线：能精确求解的问题只占少数。微扰、变分、WKB 三种方法
+各有适用范围，含时微扰则给出「跃迁速率」这个可测量。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
 | $E_n^{(1)}=\braket{n^{(0)}}{\hat H'\,n^{(0)}}$ | 一阶能量修正 = 微扰在无微扰态里的平均 | [7.1](/ch/07-approximation/01-nondegenerate-perturbation/) |
-| $E_n^{(2)}=\displaystyle\sum_{m\ne n}\frac{\lvert\bra{m^{(0)}}\hat H'\ket{n^{(0)}}\rvert^2}{E_n^{(0)}-E_m^{(0)}}$ | 二阶能量修正；基态永远被压低 | [7.1](/ch/07-approximation/01-nondegenerate-perturbation/) |
+| $E_n^{(2)}=\displaystyle\sum_{m\ne n}\frac{\lvert\bra{m^{(0)}}\hat H'\ket{n^{(0)}}\rvert^2}{E_n^{(0)}-E_m^{(0)}}$ | 二阶能量修正；基态能量总是被压低 | [7.1](/ch/07-approximation/01-nondegenerate-perturbation/) |
 | 简并空间内先对角化 $\hat H'$ | 简并微扰的核心操作 | [7.2](/ch/07-approximation/02-degenerate-perturbation/) |
 | $E_{\text{gs}}\le\dfrac{\bra{\psi_T}\hat H\ket{\psi_T}}{\braket{\psi_T}{\psi_T}}$ | 变分原理：任何试探态给出基态能上界 | [7.3](/ch/07-approximation/03-variational-method/) |
 | $\ket{n^{(1)}}=\displaystyle\sum_{m\ne n}\frac{\bra{m^{(0)}}\hat H'\ket{n^{(0)}}}{E_n^{(0)}-E_m^{(0)}}\ket{m^{(0)}}$ | 一阶波函数修正 | [7.1](/ch/07-approximation/01-nondegenerate-perturbation/) |
@@ -173,13 +173,13 @@ sims: []
 | $\displaystyle\oint p\,\dd x=\left(n+\tfrac12\right)2\pi\hbar$ | WKB 量子化条件（两个软转折点） | [7.4](/ch/07-approximation/04-wkb/) |
 | 共振时二能级完全翻转：$P_{i\to f}(t)=\sin^2\dfrac{\omega_1 t}{2}$ | Rabi 振荡（$\omega_1$ 正比于驱动强度） | [7.5](/ch/07-approximation/05-time-dependent-perturbation/) |
 | $\Gamma_{i\to f}=\dfrac{2\pi}{\hbar}\lvert\bra{f}\hat H'\ket{i}\rvert^2\rho(E_f)$ | Fermi 黄金规则 | [7.6](/ch/07-approximation/06-fermi-golden-rule/) |
-| 骤变近似：$P_{i\to f}=\lvert\braket{f_{\text{new}}}{i_{\text{old}}}\rvert^2$ | 哈密顿量突变时态来不及动，直接投影 | [7.8](/ch/07-approximation/08-sudden-approximation/) |
+| 骤变近似：$P_{i\to f}=\lvert\braket{f_{\text{new}}}{i_{\text{old}}}\rvert^2$ | 哈密顿量突变时态来不及变化，直接投影 | [7.8](/ch/07-approximation/08-sudden-approximation/) |
 | $\gamma_n=\ii\displaystyle\oint\braket{n}{\nabla_{\!R}\,n}\cdot\dd\vec R$ | Berry 相位 | [7.7](/ch/07-approximation/07-berry-phase/) |
 
 ## 第 8 章 · 全同粒子
 
-主线：全同粒子交换只允许两种结局——对称（玻色子）或反对称（费米子），
-一切「交换效应」都从这条二选一里长出来。
+主线：全同粒子交换只允许两种结果，对称（玻色子）或反对称（费米子），
+所有「交换效应」都来源于此。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
@@ -187,7 +187,7 @@ sims: []
 | $\Psi=\dfrac{1}{\sqrt{N!}}\det[\psi_i(x_j)]$ | Slater 行列式；两行相同即为零 ⇒ Pauli 不相容 | [8.3](/ch/08-identical-particles/03-pauli-exclusion/) |
 | $[\hat a_i,\hat a_j^\dagger]=\delta_{ij}$（玻色）；$\{\hat c_i,\hat c_j^\dagger\}=\delta_{ij}$（费米） | 二次量子化基本（反）对易关系 | [8.5](/ch/08-identical-particles/05-second-quantization/) |
 | $E_{\text{singlet/triplet}}=E_0\pm J$ | 交换积分 $J$ 劈裂自旋单态/三态 | [8.4](/ch/08-identical-particles/04-exchange-interaction/) |
-| 平均场自洽：每个电子在其余电子的平均势里解单粒子方程，迭代到收敛 | Hartree–Fock 方法的一句话版本 | [8.6](/ch/08-identical-particles/06-hartree-fock/) |
+| 平均场自洽：每个电子在其余电子的平均势里解单粒子方程，迭代到收敛 | Hartree–Fock 方法的基本思路 | [8.6](/ch/08-identical-particles/06-hartree-fock/) |
 
 ## 第 9 章 · 量子信息
 
@@ -197,12 +197,12 @@ sims: []
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
 | $\ket{\psi}=\cos\dfrac{\theta}{2}\ket{0}+\ee^{\ii\varphi}\sin\dfrac{\theta}{2}\ket{1}$ | 量子比特的 Bloch 球参数化 | [9.1](/ch/09-quantum-information/01-qubit-bloch-sphere/) |
-| $X,Y,Z=\sigma_x,\sigma_y,\sigma_z$；$H=\dfrac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ | 单比特门就是 Pauli 矩阵一家；$H$ 制备等权叠加 | [9.2](/ch/09-quantum-information/02-quantum-gates/) |
-| 不可克隆定理：不存在 $\hat U\ket{\psi}\ket{0}=\ket{\psi}\ket{\psi}$（对任意 $\ket{\psi}$） | 线性性的直接推论；量子密码的根基 | [9.2](/ch/09-quantum-information/02-quantum-gates/) |
+| $X,Y,Z=\sigma_x,\sigma_y,\sigma_z$；$H=\dfrac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ | 常用单比特门是 Pauli 矩阵；$H$ 制备等权叠加 | [9.2](/ch/09-quantum-information/02-quantum-gates/) |
+| 不可克隆定理：不存在 $\hat U\ket{\psi}\ket{0}=\ket{\psi}\ket{\psi}$（对任意 $\ket{\psi}$） | 线性性的直接推论；量子密码的基础 | [9.2](/ch/09-quantum-information/02-quantum-gates/) |
 | $S(\hat\rho_A)=-\operatorname{tr}(\hat\rho_A\log_2\hat\rho_A)$ | 纠缠熵（纯态二分纠缠的度量） | [9.3](/ch/09-quantum-information/03-entanglement-measures/) |
 | $\lvert\langle\text{CHSH}\rangle\rvert\le2$（经典）vs $2\sqrt2$（量子） | Bell 不等式与 Tsirelson 上限 | [9.4](/ch/09-quantum-information/04-bell-chsh/) |
-| 1 个 Bell 对 + 2 比特经典信息 ⇒ 传 1 个量子比特 | 量子隐形传态的资源账本 | [9.5](/ch/09-quantum-information/05-teleportation/) |
-| 1 次查询判定「常函数还是平衡函数」（经典最坏要 $2^{n-1}+1$ 次） | Deutsch–Jozsa：量子并行的第一个干净示范 | [9.7](/ch/09-quantum-information/07-deutsch-jozsa/) |
+| 1 个 Bell 对 + 2 比特经典信息 ⇒ 传 1 个量子比特 | 量子隐形传态所需的资源 | [9.5](/ch/09-quantum-information/05-teleportation/) |
+| 1 次查询判定「常函数还是平衡函数」（经典最坏要 $2^{n-1}+1$ 次） | Deutsch–Jozsa：量子并行最早的简洁示例 | [9.7](/ch/09-quantum-information/07-deutsch-jozsa/) |
 | $O(\sqrt N)$ 次查询 | Grover 搜索的平方加速 | [9.8](/ch/09-quantum-information/08-grover/) |
 
 ## 第 10 章 · 开放系统
@@ -212,16 +212,16 @@ sims: []
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
-| $\hat\rho_A=\operatorname{tr}_B\,\hat\rho_{AB}$ | 偏迹：只看子系统时的唯一正确操作 | [10.1](/ch/10-open-systems/01-why-density-matrix/) |
+| $\hat\rho_A=\operatorname{tr}_B\,\hat\rho_{AB}$ | 偏迹：只描述子系统时的正确操作 | [10.1](/ch/10-open-systems/01-why-density-matrix/) |
 | $\operatorname{tr}\hat\rho=1$，$\hat\rho^\dagger=\hat\rho$，$\hat\rho\ge0$ | 密度矩阵三条件 | [10.2](/ch/10-open-systems/02-mixed-states/) |
 | $\operatorname{tr}\hat\rho^2\le1$，取等号仅当纯态 | 纯度：区分纯态与混态 | [10.2](/ch/10-open-systems/02-mixed-states/) |
 | $\hat\rho\mapsto\displaystyle\sum_k\hat K_k\hat\rho\hat K_k^\dagger$，$\sum_k\hat K_k^\dagger\hat K_k=\hat{\mathbb{1}}$ | Kraus 表示（CPTP 映射） | [10.3](/ch/10-open-systems/03-cptp-maps/) |
 | $\dot{\hat\rho}=-\dfrac{\ii}{\hbar}[\hat H,\hat\rho]+\displaystyle\sum_k\left(\hat L_k\hat\rho\hat L_k^\dagger-\dfrac12\{\hat L_k^\dagger\hat L_k,\hat\rho\}\right)$ | Lindblad 主方程 | [10.4](/ch/10-open-systems/04-lindblad/) |
-| 相干项衰减：$\rho_{01}(t)=\rho_{01}(0)\,\ee^{-t/T_2}$ | 退相干杀的是非对角元；$T_2$ 是相干时间 | [10.5](/ch/10-open-systems/05-decoherence/) |
+| 相干项衰减：$\rho_{01}(t)=\rho_{01}(0)\,\ee^{-t/T_2}$ | 退相干使非对角元衰减；$T_2$ 是相干时间 | [10.5](/ch/10-open-systems/05-decoherence/) |
 
 ## 第 11 章 · 路径积分
 
-主线：传播子 = 对所有路径求和，每条路径按经典作用量挂相位——
+主线：传播子 = 对所有路径求和，每条路径按经典作用量贡献一个相位，
 经典力学是相位驻定的极限。
 
 | 公式 | 说明 | 出处 |
@@ -232,12 +232,12 @@ sims: []
 
 ## 第 12 章 · 相对论量子力学
 
-主线：把 $E^2=p^2c^2+m^2c^4$ 塞进量子力学，
-代价与回报都是新自由度——负能解、自旋、反粒子。
+主线：把 $E^2=p^2c^2+m^2c^4$ 纳入量子力学，
+由此出现新的自由度：负能解、自旋、反粒子。
 
 | 公式 | 说明 | 出处 |
 | --- | --- | --- |
-| $E^2=p^2c^2+m^2c^4$ | 相对论能量动量关系：一切的出发点 | [12.1](/ch/12-relativistic/01-why-relativistic/) |
+| $E^2=p^2c^2+m^2c^4$ | 相对论能量动量关系：本章的出发点 | [12.1](/ch/12-relativistic/01-why-relativistic/) |
 | $\left(\dfrac{1}{c^2}\partial_t^2-\nabla^2+\dfrac{m^2c^2}{\hbar^2}\right)\phi=0$ | Klein–Gordon 方程 | [12.2](/ch/12-relativistic/02-klein-gordon/) |
 | $\ii\hbar\,\partial_t\psi=\left(c\,\vec\alpha\cdot\hat{\vec p}+\beta mc^2\right)\psi$ | Dirac 方程 | [12.3](/ch/12-relativistic/03-dirac-equation/) |
 | $\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}$ | γ 矩阵代数 | [12.3](/ch/12-relativistic/03-dirac-equation/) |
@@ -248,32 +248,32 @@ sims: []
 各节自带的 KeyFormulas 块仍可用站内搜索直达。
 
 <Callout type="check" title="抄公式前的量纲三查">
-1. **指数必须无量纲**：$\ee^{-\ii Et/\hbar}$、$\ee^{-r/a_0}$、$\ee^{-2\gamma}$——
-   指数上但凡凑不成无量纲组合，一定抄错了。
-2. **一维波函数量纲是 $1/\sqrt{\text{长度}}$**（因为 $\int\lvert\psi\rvert^2\dd x=1$）；
+1. 指数必须无量纲：$\ee^{-\ii Et/\hbar}$、$\ee^{-r/a_0}$、$\ee^{-2\gamma}$。
+   指数上的组合如果不是无量纲的，一定抄错了。
+2. 一维波函数量纲是 $1/\sqrt{\text{长度}}$（因为 $\int\lvert\psi\rvert^2\dd x=1$）；
    三维是 $1/\sqrt{\text{体积}}$。归一化系数对不上量纲就是丢了根号。
-3. **$\hbar$ 的量纲是能量 × 时间 = 动量 × 长度**：任何公式里 $\hbar$ 的幂次
+3. $\hbar$ 的量纲是能量 × 时间 = 动量 × 长度：任何公式里 $\hbar$ 的幂次
    都可以用这条独立验证一遍。
 </Callout>
 
 ## 常用对易子与算符恒等式
 
-散落在各章、但每章都在用的「代数弹药库」。$\hat A,\hat B,\hat C$ 为任意算符。
+下面是分散在各章、但各章都会用到的代数恒等式。$\hat A,\hat B,\hat C$ 为任意算符。
 
 | 恒等式 | 说明 |
 | --- | --- |
-| $[\hat A,\hat B\hat C]=[\hat A,\hat B]\hat C+\hat B[\hat A,\hat C]$ | 乘积展开（类莱布尼茨规则），拆长对易子全靠它 |
+| $[\hat A,\hat B\hat C]=[\hat A,\hat B]\hat C+\hat B[\hat A,\hat C]$ | 乘积展开（类莱布尼茨规则），用于拆开长对易子 |
 | $[\hat x,f(\hat p)]=\ii\hbar\,f'(\hat p)$，$[\hat p,g(\hat x)]=-\ii\hbar\,g'(\hat x)$ | 由 $[\hat x,\hat p]=\ii\hbar$ 逐阶推出 |
-| $[\hat a,\hat a^\dagger]=1$，$\hat N=\hat a^\dagger\hat a$ | 谐振子/二次量子化的全部代数起点 |
+| $[\hat a,\hat a^\dagger]=1$，$\hat N=\hat a^\dagger\hat a$ | 谐振子/二次量子化的代数起点 |
 | $[\hat J_i,\hat J_j]=\ii\hbar\,\epsilon_{ijk}\hat J_k$，$[\hat J^2,\hat J_i]=0$ | 任何角动量（轨道、自旋、总）通用 |
 | $\ee^{\hat A}\hat B\,\ee^{-\hat A}=\hat B+[\hat A,\hat B]+\dfrac{1}{2!}[\hat A,[\hat A,\hat B]]+\cdots$ | Hadamard 引理：算符「换到旋转参考系」的展开式 |
-| $\ee^{\hat A}\ee^{\hat B}=\ee^{\hat A+\hat B+\frac12[\hat A,\hat B]}$（当 $[\hat A,\hat B]$ 与两者都对易） | BCH 公式的可用特例；相干态、平移算符、[C.2 分步法](/ch/appendix-c-numerics/02-split-operator/)都靠它 |
+| $\ee^{\hat A}\ee^{\hat B}=\ee^{\hat A+\hat B+\frac12[\hat A,\hat B]}$（当 $[\hat A,\hat B]$ 与两者都对易） | BCH 公式的可用特例；相干态、平移算符、[C.2 分步法](/ch/appendix-c-numerics/02-split-operator/)都会用到 |
 | $\operatorname{tr}(\hat A\hat B\hat C)=\operatorname{tr}(\hat B\hat C\hat A)$ | 迹的轮换不变性；密度矩阵计算的日常工具 |
 | $(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger$ | 取厄米共轭要反序 |
 
 ## 物理常数与单位换算
 
-做题强烈推荐用「eV 制」组合常数——避免 $10^{-34}$ 量级的数值相乘：
+做题时建议用「eV 制」组合常数，避免 $10^{-34}$ 量级的数值相乘：
 
 | 常数 | 数值 | 用法提示 |
 | --- | --- | --- |
@@ -287,13 +287,13 @@ sims: []
 | $\mu_B$ | $5.788\times10^{-5}\ \text{eV/T}$ | Bohr 磁子，Zeeman 分裂用 |
 | $k_BT$（300 K） | $\approx0.0259\ \text{eV}$ | 「室温 ≈ 26 meV」判断热效应是否重要 |
 | $hc$ | $1240\ \text{eV·nm}$ | 光子能量 ↔ 波长：$E=1240/\lambda(\text{nm})$ eV |
-| $1\ \text{eV}$ | $1.602\times10^{-19}\ \text{J}$ | 与 SI 制互换时才需要；能不换就不换 |
+| $1\ \text{eV}$ | $1.602\times10^{-19}\ \text{J}$ | 与 SI 制互换时才需要，一般不必换算 |
 | $1\ \text{Å}$ | $0.1\ \text{nm}=10^{-10}\ \text{m}$ | 原子尺度的自然标尺（$a_0\approx0.53$ Å） |
 
 <Callout type="check" title="快速自检：三个数量级直觉">
-1. 可见光光子 $\approx1240/500\approx2.5$ eV——所以原子的 eV 级能隙对应可见/紫外光谱。
-2. 室温 $k_BT\approx26$ meV——远小于原子能隙（原子在室温下待在基态），
+1. 可见光光子 $\approx1240/500\approx2.5$ eV，所以原子的 eV 级能隙对应可见/紫外光谱。
+2. 室温 $k_BT\approx26$ meV，远小于原子能隙（原子在室温下待在基态），
    但可与半导体浅能级、分子转动能级相比。
-3. 电子限制在 1 nm 内的动能 $\sim(\hbar c)^2/(2m_ec^2L^2)\approx0.04$ eV·$(\pi^2\approx10)\approx0.4$ eV——
-   纳米尺度正是量子效应的舞台。
+3. 电子限制在 1 nm 内的动能 $\sim(\hbar c)^2/(2m_ec^2L^2)\approx0.04$ eV·$(\pi^2\approx10)\approx0.4$ eV，
+   因此纳米尺度上量子效应很显著。
 </Callout>

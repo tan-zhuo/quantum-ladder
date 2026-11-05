@@ -2,7 +2,7 @@
 title: 线性代数速查
 section: 'A.1'
 order: 1
-summary: 用量子力学自己的记号把向量空间、内积、本征值、对角化、张量积过一遍——查完直接回正文。
+summary: 用量子力学的记号回顾向量空间、内积、本征值、对角化和张量积，查完可直接回到正文。
 status: done
 prereqs:
   - 高中向量与复数运算
@@ -13,34 +13,34 @@ objectives:
 sims: []
 ---
 
-这一节是**速查表兼补课站**。如果你在正文里被「本征值」「幺正」「张量积」这类词卡住了，
+这一节兼作速查表和补课材料。如果你在正文里被「本征值」「幺正」「张量积」这类词卡住了，
 到这里找到对应小节，看完最小必要的解释和一个算例，就可以回去继续读。
 全部记号都用量子力学的写法（$\ket{\psi}$ 而不是列向量 $\vec v$），
 这样你查到的结论可以原样搬回正文。
 
-**正文哪里会用到：**
+正文中用到的地方：
 [第 3 章](/ch/03-formalism/01-from-wavefunction-to-vector/)整章建立在这套语言上；
 [5.3 自旋 1/2](/ch/05-angular-momentum/03-spin-half/) 与
-[9.1 量子比特](/ch/09-quantum-information/01-qubit-bloch-sphere/) 是 2×2 矩阵的主战场；
+[9.1 量子比特](/ch/09-quantum-information/01-qubit-bloch-sphere/) 大量使用 2×2 矩阵；
 [8.1 全同粒子](/ch/08-identical-particles/01-identity-principle/) 和
 [9.3 纠缠](/ch/09-quantum-information/03-entanglement-measures/) 离不开张量积。
 
 ## 向量空间与内积
 
-**向量空间**说白了就是一个「集合加两条规则」：集合里的元素（这里叫态矢 $\ket{\psi}$）
-可以相加，可以乘上一个复数，结果仍然在集合里。量子力学的叠加原理——
-两个允许的态叠加起来还是允许的态——本质上就是在说「态构成向量空间」。
+**向量空间**是一个「集合加两条规则」：集合里的元素（这里叫态矢 $\ket{\psi}$）
+可以相加，可以乘上一个复数，结果仍然在集合里。量子力学的叠加原理（两个允许的态叠加起来还是允许的态）
+说的就是「态构成向量空间」。
 
 **内积**是给每一对向量指定一个复数 $\braket{\phi}{\psi}$ 的规则，
 它衡量两个态「有多像」。要求三条性质：
 
-| 性质 | 写出来 | 大白话 |
+| 性质 | 写出来 | 含义 |
 | --- | --- | --- |
 | 共轭对称 | $\braket{\phi}{\psi}=\braket{\psi}{\phi}^*$ | 交换顺序要取复共轭 |
 | 右侧线性 | $\braket{\phi}{a\psi_1+b\psi_2}=a\braket{\phi}{\psi_1}+b\braket{\phi}{\psi_2}$ | 对右边那个是线性的 |
 | 正定 | $\braket{\psi}{\psi}\ge 0$，取等号仅当 $\ket{\psi}=0$ | 自己和自己的内积是「长度平方」 |
 
-注意第二条：物理的约定是**对右边线性、对左边共轭线性**
+注意第二条：物理的约定是对右边线性、对左边共轭线性
 （$\bra{a\phi}=a^*\bra{\phi}$），和多数数学教材相反。
 
 两个常用推论：
@@ -49,18 +49,18 @@ $$
 \text{Cauchy–Schwarz:}\quad |\braket{\phi}{\psi}|^2\le\braket{\phi}{\phi}\braket{\psi}{\psi}
 $$
 
-这条不等式是[不确定性原理的数学骨架](/ch/03-formalism/06-commutators/)。
+这条不等式是[不确定性原理](/ch/03-formalism/06-commutators/)的数学基础。
 归一化条件 $\braket{\psi}{\psi}=1$ 则对应总概率为 1。
 
-**正交归一基**：一组基 $\{\ket{e_i}\}$ 满足 $\braket{e_i}{e_j}=\delta_{ij}$。
+正交归一基：一组基 $\{\ket{e_i}\}$ 满足 $\braket{e_i}{e_j}=\delta_{ij}$。
 任何态可展开为 $\ket{\psi}=\sum_i c_i\ket{e_i}$，且系数直接由内积读出：
-$c_i=\braket{e_i}{\psi}$。把它抽象成一条恒等式就是**完备性关系**
+$c_i=\braket{e_i}{\psi}$。把它抽象成一条恒等式就是完备性关系
 
 $$
 \sum_i \ket{e_i}\bra{e_i}=\hat{\mathbb{1}}
 $$
 
-——「在任何地方插入一组完备基都不改变结果」，这是第 3 章里用得最频繁的一招。
+它的意思是在任何地方插入一组完备基都不改变结果，第 3 章里经常用到这一步。
 
 ## 本征值问题
 
@@ -74,8 +74,8 @@ $$
 
 求法分两步：
 
-1. **本征值**：解特征方程 $\det(\hat A-a\hat{\mathbb{1}})=0$。$n$ 维矩阵给出 $n$ 次多项式，$n$ 个根。
-2. **本征向量**：把每个 $a$ 代回 $(\hat A-a\hat{\mathbb{1}})\ket{a}=0$，解线性方程组。
+1. 本征值：解特征方程 $\det(\hat A-a\hat{\mathbb{1}})=0$。$n$ 维矩阵给出 $n$ 次多项式，$n$ 个根。
+2. 本征向量：把每个 $a$ 代回 $(\hat A-a\hat{\mathbb{1}})\ket{a}=0$，解线性方程组。
 
 对 2×2 矩阵有条好用的捷径：本征值之和等于迹（对角元之和），乘积等于行列式：
 
@@ -86,13 +86,13 @@ $$
 <Derivation title="算例：求 σ_x 的本征值与本征向量" level="基础" minutes={5} open={true}>
 
 Pauli 矩阵 $\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix}$
-是[自旋测量](/ch/05-angular-momentum/04-stern-gerlach/)的核心角色。
+在[自旋测量](/ch/05-angular-momentum/04-stern-gerlach/)中经常出现。
 
-**本征值**：$\operatorname{tr}\sigma_x=0$，$\det\sigma_x=-1$，
+本征值：$\operatorname{tr}\sigma_x=0$，$\det\sigma_x=-1$，
 所以 $a_++a_-=0$、$a_+a_-=-1$，立得 $a_\pm=\pm1$。
-（或者老老实实解 $\det\begin{pmatrix}-a&1\\1&-a\end{pmatrix}=a^2-1=0$。）
+（也可以直接解 $\det\begin{pmatrix}-a&1\\1&-a\end{pmatrix}=a^2-1=0$。）
 
-**本征向量**：$a=+1$ 时方程 $\begin{pmatrix}-1&1\\1&-1\end{pmatrix}\begin{pmatrix}\alpha\\\beta\end{pmatrix}=0$
+本征向量：$a=+1$ 时方程 $\begin{pmatrix}-1&1\\1&-1\end{pmatrix}\begin{pmatrix}\alpha\\\beta\end{pmatrix}=0$
 给出 $\alpha=\beta$，归一化后
 
 $$
@@ -103,14 +103,14 @@ $$
 同理 $a=-1$ 给出 $\ket{-_x}=(\ket{0}-\ket{1})/\sqrt2$。
 验证正交性：$\braket{+_x}{-_x}=\frac12(1-1)=0$。✓
 
-这正是正文里反复出现的结论：沿 $x$ 方向测自旋，本征态是 $\ket{0},\ket{1}$ 的等权叠加。
+正文里会反复用到这个结论：沿 $x$ 方向测自旋，本征态是 $\ket{0},\ket{1}$ 的等权叠加。
 
 </Derivation>
 
 ## 厄米矩阵与幺正矩阵
 
 先定义**厄米共轭**（记号 $\dagger$，读作 dagger）：把矩阵转置再逐元素取复共轭，
-$(\hat A^\dagger)_{ij}=\hat A_{ji}^*$。它满足 $(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger$——顺序会反过来。
+$(\hat A^\dagger)_{ij}=\hat A_{ji}^*$。它满足 $(\hat A\hat B)^\dagger=\hat B^\dagger\hat A^\dagger$，注意顺序反过来。
 
 | 类型 | 定义 | 物理角色 | 关键性质 |
 | --- | --- | --- | --- |
@@ -118,48 +118,48 @@ $(\hat A^\dagger)_{ij}=\hat A_{ji}^*$。它满足 $(\hat A\hat B)^\dagger=\hat B
 | 幺正 | $\hat U^\dagger\hat U=\hat{\mathbb{1}}$ | 时间演化、变基、量子门 | 保内积 $\braket{U\phi}{U\psi}=\braket{\phi}{\psi}$；本征值是模 1 复数 $\ee^{\ii\theta}$ |
 | 投影 | $\hat P^2=\hat P=\hat P^\dagger$ | 测量 | 本征值只有 0 和 1 |
 
-两者由指数映射相连：若 $\hat H$ 厄米，则 $\ee^{-\ii\hat H t/\hbar}$ 幺正——
-这就是[薛定谔方程的解](/ch/03-formalism/09-time-evolution-pictures/)为什么自动保概率。
+两者由指数映射相连：若 $\hat H$ 厄米，则 $\ee^{-\ii\hat H t/\hbar}$ 幺正，
+因此[薛定谔方程的解](/ch/03-formalism/09-time-evolution-pictures/)自动保持总概率。
 
 厄米矩阵的两条核心定理（证明见 [3.5 节](/ch/03-formalism/05-hermitian-operators/)）：
 
-1. **本征值必为实数**——所以测量结果是实数。
-2. **谱定理**：厄米矩阵总能找到一组正交归一的本征向量作为完备基。
+1. 本征值必为实数，所以测量结果是实数。
+2. 谱定理：厄米矩阵总能找到一组正交归一的本征向量作为完备基。
 
 ## 对角化与谱分解
 
-**对角化**就是换到本征向量组成的基底去看这个矩阵——在那个基底里它变成对角的，
-所有信息一目了然。具体做法：把归一化本征向量按列排成矩阵 $U$（厄米矩阵的 $U$ 自动幺正），则
+对角化就是换到本征向量组成的基底去表示这个矩阵。在那个基底里它是对角的，
+本征值直接写在对角线上。具体做法：把归一化本征向量按列排成矩阵 $U$（厄米矩阵的 $U$ 自动幺正），则
 
 $$
 U^\dagger \hat A\, U=\operatorname{diag}(a_1,a_2,\dots)
 $$
 
-等价的写法是**谱分解**——把矩阵拆成「本征值 × 对应投影算符」之和：
+等价的写法是**谱分解**，即把矩阵拆成「本征值 × 对应投影算符」之和：
 
 $$
 \hat A=\sum_i a_i\ket{a_i}\bra{a_i}
 $$
 
-它的最大用处是定义**矩阵函数**：对本征值逐个作用即可，
+它最主要的用途是定义矩阵函数：对本征值逐个作用即可，
 
 $$
 f(\hat A)=\sum_i f(a_i)\ket{a_i}\bra{a_i}
 $$
 
-比如 $\ee^{-\ii\hat H t/\hbar}=\sum_n \ee^{-\ii E_n t/\hbar}\ket{E_n}\bra{E_n}$——
-这一行就是「先展开到能量本征态、再逐项挂相位」这套标准流程的全部数学内容。
+比如 $\ee^{-\ii\hat H t/\hbar}=\sum_n \ee^{-\ii E_n t/\hbar}\ket{E_n}\bra{E_n}$。
+「先展开到能量本征态、再逐项乘上相位」这套标准流程，数学上就是这一行。
 
 <Callout type="warning" title="什么时候不能同时对角化？">
-两个厄米矩阵能被**同一组基**同时对角化，当且仅当它们对易（$[\hat A,\hat B]=0$）。
-不对易的矩阵（如 $\sigma_x$ 与 $\sigma_z$）没有公共本征基——
-这正是[不确定性原理](/ch/03-formalism/06-commutators/)的代数根源：
+两个厄米矩阵能被同一组基同时对角化，当且仅当它们对易（$[\hat A,\hat B]=0$）。
+不对易的矩阵（如 $\sigma_x$ 与 $\sigma_z$）没有公共本征基，
+这是[不确定性原理](/ch/03-formalism/06-commutators/)的代数根源：
 不存在一个态同时是两者的本征态。
 </Callout>
 
 ## 张量积
 
-两个系统 A、B 合成一个大系统时，大系统的态空间不是「拼接」而是**张量积**
+两个系统 A、B 合成一个大系统时，大系统的态空间是**张量积**
 $\mathcal{H}_A\otimes\mathcal{H}_B$：维数相乘（$2\times2=4$），
 基底是所有配对 $\ket{i}_A\otimes\ket{j}_B$（常简写 $\ket{ij}$）。
 
@@ -169,7 +169,7 @@ $$
 \hat A\otimes \hat B=\begin{pmatrix}A_{11}\hat B & A_{12}\hat B\\ A_{21}\hat B & A_{22}\hat B\end{pmatrix}
 $$
 
-运算规则一句话：**各管各的**——
+运算规则是各自作用在各自的因子上：
 $(\hat A\otimes\hat B)(\ket{\phi}\otimes\ket{\chi})=(\hat A\ket{\phi})\otimes(\hat B\ket{\chi})$。
 「只对 A 系统操作」写成 $\hat A\otimes\hat{\mathbb{1}}$。
 
@@ -185,16 +185,16 @@ $$
 设它能写成乘积态 $(\alpha\ket0+\beta\ket1)\otimes(\gamma\ket0+\delta\ket1)$，
 展开得四个分量 $(\alpha\gamma,\alpha\delta,\beta\gamma,\beta\delta)$。
 要求中间两个为零、两端非零：$\alpha\delta=0$ 迫使 $\alpha=0$ 或 $\delta=0$，
-但 $\alpha\gamma\neq0$ 又要求 $\alpha\neq0$，$\beta\delta\neq0$ 要求 $\delta\neq0$——矛盾。
+但 $\alpha\gamma\neq0$ 又要求 $\alpha\neq0$，$\beta\delta\neq0$ 要求 $\delta\neq0$，矛盾。
 
-所以 $\ket{\Phi^+}$ **不是**任何两个单粒子态的乘积：这就是纠缠态的定义，
+所以 $\ket{\Phi^+}$ 不能写成任何两个单粒子态的乘积。这样的态称为纠缠态，
 详见 [9.3 节](/ch/09-quantum-information/03-entanglement-measures/)。
 
 </Derivation>
 
 <KeyFormulas
   items={[
-    { name: '完备性关系', latex: '\\sum_i \\ket{e_i}\\bra{e_i}=\\hat{\\mathbb{1}}', note: '「插入一组完备基」的依据，第 3 章的万能工具' },
+    { name: '完备性关系', latex: '\\sum_i \\ket{e_i}\\bra{e_i}=\\hat{\\mathbb{1}}', note: '「插入一组完备基」的依据，第 3 章中经常使用' },
     { name: '本征值问题', latex: '\\hat A\\ket{a}=a\\ket{a},\\quad \\det(\\hat A-a\\hat{\\mathbb{1}})=0', note: '2×2 捷径：本征值之和 = 迹，乘积 = 行列式' },
     { name: '谱分解', latex: '\\hat A=\\sum_i a_i\\ket{a_i}\\bra{a_i},\\quad f(\\hat A)=\\sum_i f(a_i)\\ket{a_i}\\bra{a_i}', note: '矩阵函数的定义方式；时间演化算符由此而来' },
     { name: '厄米与幺正', latex: '\\hat A^\\dagger=\\hat A\\ \\Rightarrow\\ a_i\\in\\mathbb{R};\\qquad \\hat U^\\dagger\\hat U=\\hat{\\mathbb{1}}', note: '可观测量 / 演化与变基；e^{-iHt/ħ} 把两者连起来' },
@@ -210,7 +210,7 @@ $$
       options: ['4 和 2', '3 和 3', '4 和 −2', '2 和 −2'],
       answer: 0,
       distractors: {
-        1: '对角元本身一般不是本征值——只有矩阵已经是对角的才行。',
+        1: '对角元本身一般不是本征值，只有矩阵已经是对角的才成立。',
         2: '检查乘积：本征值乘积应等于 det A = 9 − 1 = 8，而 4×(−2) = −8。',
       },
       explain: '迹 = 6，行列式 = 8，解 a² − 6a + 8 = 0 得 a = 4, 2。对应本征向量分别是 (1,1)/√2 与 (1,−1)/√2。',
@@ -226,7 +226,7 @@ $$
       ],
       answer: 0,
       distractors: {
-        1: '这正是 U†U = 1 的直接推论，是幺正性的物理意义。',
+        1: '这是 U†U = 1 的直接推论，也是幺正性的物理意义。',
         3: '这是厄米与幺正之间的指数映射，成立。',
       },
       explain: '幺正矩阵的本征值是模为 1 的复数 e^{iθ}，一般不是实数。本征值全为实数是厄米矩阵的特征。',
@@ -237,10 +237,10 @@ $$
       options: ['8', '6', '9', '3'],
       answer: 0,
       distractors: {
-        1: '维数是相乘（张量积）不是相加（直和）：2+2+2 = 6 是错误的直觉。',
+        1: '张量积的维数相乘，2+2+2 = 6 是直和的维数。',
         2: '9 = 3² 混淆了「三个二维系统」与「两个三维系统」。',
       },
-      explain: '张量积空间维数相乘：2×2×2 = 8。这个指数增长（N 个自旋 → 2^N 维）正是多体量子问题难算、也是量子计算有潜力的根源，见附录 C.3。',
+      explain: '张量积空间维数相乘：2×2×2 = 8。这个指数增长（N 个自旋 → 2^N 维）是多体量子问题难以计算的原因，也是量子计算潜力的来源，见附录 C.3。',
     },
   ]}
 />
