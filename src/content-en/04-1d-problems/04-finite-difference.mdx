@@ -158,7 +158,7 @@ Each doubling of $N$ (halving of $h$) shrinks the error almost exactly to $1/4$ 
 
 <Callout type="warning" title="Two knobs, two ways to fail">
 - **$L$ too small**: the wavefunction's exponential tails get clipped by the walls and the levels are pushed **up** (a smaller box means more zero-point energy — remember section 2.7's $1/L^2$). Symptom: enlarging $L$ still visibly moves the low levels.
-- **$h$ too coarse**: too few samples per wavelength, so the bending cannot be measured. The high excited states suffer first — the faster $\psi_n$ oscillates, the worse the damage, which is why the errors in the table above creep up with level number. Rule of thumb: **at least a dozen or so grid points in the shortest oscillation period**.
+- **$h$ too coarse**: too few samples per wavelength, so the bending cannot be measured. The high excited states suffer first — the faster $\psi_n$ oscillates, the worse the damage, which is why the errors in the code output above creep up with level number. Rule of thumb: **at least a dozen or so grid points in the shortest oscillation period**.
 
 The two knobs pull against each other: with $N$ fixed, enlarging $L$ simultaneously coarsens $h$. The correct posture is to check each one separately and converge each on its own.
 </Callout>
@@ -172,7 +172,7 @@ $$
 
 As $h\to0$, $1-\cos x\approx x^2/2-x^4/24$, and expanding yields $E_j^{(h)}\approx E_j\left[1-\frac{1}{12}\left(\frac{j\pi h}{L}\right)^2\right]$: the error is indeed $O(h^2)$ and grows as the square of $j$ — higher levels are hurt more. Everything checks out. One more subtle message: the bracket carries a minus sign — **the difference method computes the levels low** (the discrete Laplacian underestimates the bending of fast oscillations).
 
-This idea of putting a continuum problem on a grid is far more than a numerical trick: lattice field theory (lattice QCD) is today's only systematic way to compute the strong interaction, and the tight-binding models of solid-state physics simply declare that crystals were grids all along. That $1-\cos$ spectrum above is exactly the standard shape of a tight-binding band.
+This idea of putting a continuum problem on a grid is far more than a numerical trick: lattice field theory (lattice QCD) is today's main first-principles way to compute the strong interaction in its non-perturbative regime, and the tight-binding models of solid-state physics simply declare that crystals were grids all along. That $1-\cos$ spectrum above is exactly the standard shape of a tight-binding band.
 </Callout>
 
 <KeyFormulas

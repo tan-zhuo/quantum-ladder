@@ -186,7 +186,7 @@ Publication-grade code adds two more items: the Numerov method to lift the accur
 <KeyFormulas
   items={[
     { name: 'Nondimensionalisation', latex: '\\varepsilon_0=\\frac{\\hbar^2}{mL_0^2}=\\frac{(\\hbar c)^2}{mc^2L_0^2}\\ \\xrightarrow{\\text{electron},\\,L_0=1\\,\\text{nm}}\\ 0.0762\\ \\text{eV}', note: 'Choosing the length unit fixes the energy unit; multiply back when done' },
-    { name: 'Tunneling splitting', latex: 'E_1-E_0=\\Delta E\\ \\propto\\ \\ee^{-2\\int\\kappa\\,\\dd x}', note: 'Exponentially sensitive to barrier height and width; infinite barrier restores two-fold degeneracy' },
+    { name: 'Tunneling splitting', latex: 'E_1-E_0=\\Delta E\\ \\propto\\ \\ee^{-\\int\\kappa\\,\\dd x}', note: 'Exponentially sensitive to barrier height and width; infinite barrier restores two-fold degeneracy' },
     { name: 'Left/right localised states', latex: '\\psi_{L,R}=\\frac{\\psi_0\\pm\\psi_1}{\\sqrt2}', note: 'Superpositions of stationary states, themselves not stationary; even and odd parity reinforce/cancel on each side' },
     { name: 'Two-well oscillation', latex: 'P_L(t)=\\cos^2\\frac{\\Delta E\\,t}{2\\hbar},\\qquad T_{\\text{osc}}=\\frac{2\\pi\\hbar}{\\Delta E}', note: 'Ammonia ΔE ≈ 9.8×10⁻⁵ eV → 24 GHz, the maser operating frequency' },
   ]}
@@ -209,7 +209,7 @@ Publication-grade code adds two more items: the Numerov method to lift the accur
         2: 'Every eigenstate spreads over both wells at once (even or odd parity); the "left-well state" and "right-well state" are their superpositions, not eigenstates.',
         3: 'Parity only dictates that each state is even or odd; it does not require even and odd energies to be close. The size of the splitting is set by tunneling.',
       },
-      explain: 'Two sealed-off wells each hold a ground state at the same energy; with a finite barrier the tails meet by tunneling and the degeneracy splits into an even (lower) and odd (higher) pair. ΔE varies with the barrier as e^{−2∫κdx} — in the numerical experiment, dropping V₀ from 20 to 10 grew ΔE from 0.019 to 0.125.',
+      explain: 'Two sealed-off wells each hold a ground state at the same energy; with a finite barrier the tails meet by tunneling and the degeneracy splits into an even (lower) and odd (higher) pair. ΔE varies with the barrier as e^{−∫κdx} — in the numerical experiment, dropping V₀ from 20 to 10 grew ΔE from 0.019 to 0.125.',
     },
     {
       id: 'cps-2',

@@ -165,7 +165,7 @@ A positive shift — the well pulls the waveform in by about $\delta/k\approx0.0
 </Derivation>
 
 <Callout type="warning" title="Keep an eye on the arctan branch">
-The period of $\tan$ is $\pi$, so the $\arctan$ above can only hand back a principal value in $(-\pi/2,\pi/2)$ at a time, and $\delta$ is born with a "mod $\pi$" ambiguity. The standard convention is to define $\delta(k)$ as a **continuous function** of $k$: start from the high-energy end with $\delta(\infty)=0$ and track downward in energy, adding $\pi$ to the $\arctan$ by hand each time $k'a$ crosses an odd multiple of $\pi/2$. In the example above, $k'a=1.255$ has not yet reached $\pi/2\approx1.571$, so the principal value happens to be right.
+The period of $\tan$ is $\pi$, so the $\arctan$ above can only hand back a principal value in $(-\pi/2,\pi/2)$ at a time, and $\delta$ is born with a "mod $\pi$" ambiguity. The standard convention is to define $\delta(k)$ as a **continuous function** of $k$: start from the high-energy end with $\delta(\infty)=0$ and track downward in energy, which amounts to adding $n\pi$ to the principal value, where $n$ is the number of odd multiples of $\pi/2$ that $k'a$ has passed. In the example above, $k'a=1.255$ has not yet reached $\pi/2\approx1.571$, so the principal value happens to be right.
 
 The $\delta(0)$ pinned down this way carries a beautiful bonus — see Levinson's theorem below.
 </Callout>
@@ -226,9 +226,9 @@ As $E$ sweeps through the resonance energy $E_R$, $\delta$ passes through $\pi/2
 <Callout type="insight" title="A resonance = a state that almost made it to bound">
 Why does δ suddenly surge? Because the potential can almost hide a bound state — a "quasi-bound state": the particle gets in, is trapped for a while, and rattles around before leaking out. During the rattling the wave winds up nearly a full half-turn of extra phase inside the potential, so δ jumps by π.
 
-"How long it rattles" can be quantified: the **Wigner time delay** τ = 2ħ dδ/dE. The steeper δ becomes, the longer the particle lingers; at the peak of a resonance τ ≈ 2ħ/Γ — the narrower the line, the longer the lifetime. This is the scattering version of the alpha-decay picture from section 2.11: an alpha particle is a particle stuck in an extremely narrow resonance, with Γ so small the lifetime can reach tens of billions of years.
+"How long it rattles" can be quantified: the **Wigner time delay** τ = 2ħ dδ/dE. The steeper δ becomes, the longer the particle lingers; at the peak of a resonance τ = 4ħ/Γ, the same order as the quasi-bound lifetime ħ/Γ — the narrower the line, the longer the lifetime. This is the scattering version of the alpha-decay picture from section 2.11: an alpha particle is a particle stuck in an extremely narrow resonance, with Γ so small the lifetime can reach tens of billions of years.
 
-And there is a theorem that stitches bound states and scattering together for good — **Levinson's theorem**: with the continuity convention, the zero-energy phase shift satisfies δ(0) = n_b π, where n_b is the number of bound states in that channel. In other words, **count how many turns the scattering waveform has been pulled in at infinity, and you have counted the bound states hiding in the potential**. Last section and this one were two halves of a single story all along.
+And there is a theorem that stitches bound states and scattering together for good — **Levinson's theorem**: with the continuity convention, the zero-energy phase shift satisfies δ(0) = n_b π, where n_b is the number of bound states in that channel (this is the form for the odd channel and the half-line problem; the one-dimensional even channel generically loses half a turn: δₑ(0) = (n_b − ½)π). In other words, **count how many turns the scattering waveform has been pulled in at infinity, and you have counted the bound states hiding in the potential**. Last section and this one were two halves of a single story all along.
 </Callout>
 
 Now watch all of this with your own eyes. In the simulation below, set $V_0$ negative (a well) and switch to the transmission curve: the spikes where $T$ returns to 1 are the moments $\delta_{\ee}-\delta_{\text{o}}$ crosses $\pi$. Then watch the transmitted wave packet near a resonance energy emerge **later** than off resonance — that is the Wigner delay:
@@ -299,7 +299,7 @@ Now watch all of this with your own eyes. In the simulation below, set $V_0$ neg
       distractors: {
         3: 'At resonance the transmission is typically a peak (T = 1 for a double barrier, for instance), not zero; the actual value of T depends on the difference of the two channel shifts.',
       },
-      explain: 'A surge of π in δ is the signature of a Breit–Wigner resonance: the potential hides a state that "almost got bound", and the particle loiters inside for τ ≈ 2ħ/Γ before leaving. Γ is the energy width of the surge — the smaller it is, the longer the lifetime. Alpha decay is the extreme case.',
+      explain: 'A surge of π in δ is the signature of a Breit–Wigner resonance: the potential hides a state that "almost got bound", and the particle loiters inside for a time of order ħ/Γ before leaving (the Wigner delay at the peak is 4ħ/Γ). Γ is the energy width of the surge — the smaller it is, the longer the lifetime. Alpha decay is the extreme case.',
     },
     {
       id: 'ph-4',
@@ -315,6 +315,6 @@ Now watch all of this with your own eyes. In the simulation below, set $V_0$ neg
 
 ## What comes next
 
-Phase shifts and transmission — we can now compute both, as long as the potential is **one** square well or barrier. Real potentials are rarely so obliging: a resonant-tunneling diode is a three-layer barrier-well-barrier stack, and semiconductor superlattices run to hundreds of layers. With the method of section 2.11, every added layer means four more matching equations — a hundred layers means solving several hundred simultaneously. Doing that by hand is suicide.
+Phase shifts and transmission — we can now compute both, as long as the potential is **one** square well or barrier. Real potentials are rarely so obliging: a resonant-tunneling diode is a three-layer barrier-well-barrier stack, and semiconductor superlattices run to hundreds of layers. With the method of section 2.11, every added layer means one more interface and two more matching equations — a hundred layers means solving several hundred simultaneously. Doing that by hand is suicide.
 
 The next section brings in an assembly-line tool: package each slab of potential as a $2\times2$ matrix, and the whole multilayer structure becomes a **product of matrices**. The razor-sharp resonance in the double barrier — that $T$ rocketing from 0.04 to 1 — will be its first trophy.
