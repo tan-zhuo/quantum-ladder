@@ -178,7 +178,7 @@ Bennett–Bernstein–Brassard–Vazirani 定理指出，任何量子算法解�
 至少需要 $\Omega(\sqrt N)$ 次 oracle 查询。证明思路如下：
 每次查询对态的扰动至多 $O(1/\sqrt N)$（只改变一个分支的符号），
 而要把「目标是 $w_1$」和「目标是 $w_2$」的末态拉开到可区分的距离，
-累计扰动必须达到 $O(1)$，相除即得 $\Omega(\sqrt N)$。
+累计扰动必须达到 $\Omega(1)$，相除即得 $\Omega(\sqrt N)$。
 Grover 算法恰好达到这个下界，连常数 $\pi/4$ 也是最优的。
 
 <Callout type="warning" title="量子搜索的局限">

@@ -25,7 +25,7 @@ and the quantum part all the way through.
 ## The problem at the door: multiplication is easy, division is deadly
 
 $3\times5=15$ — mental arithmetic. The reverse, "15 = ? × ?", is not hard either.
-But make the number 617 digits long (2048 bits): multiplying two thousand-digit primes takes a
+But make the number 617 digits long (2048 bits): multiplying two primes of about 309 digits (1024 bits) each takes a
 computer milliseconds; recovering the two factors from the product, using the fastest known
 classical algorithm (the number field sieve), takes time on the order of
 
@@ -143,8 +143,8 @@ $\ee^{2\pi\ii ry/Q}$.
 
 $r$ sharp peaks stand evenly spaced at $y=0,\ \tfrac{Q}{r},\ \tfrac{2Q}{r},\dots$, carrying total
 probability about 1. (When $r$ does not divide $Q$ the peaks acquire a slight width and sit at the
-nearest integers, but the conclusion stands — this is exactly why we demanded $Q\gg r^2$:
-peak width much smaller than peak spacing.)
+nearest integers, but the conclusion stands. The demand $Q\gg r^2$ serves step 4: with $Q\ge N^2>r^2$ the reading obeys
+$|y/Q-k/r|\le\tfrac{1}{2Q}<\tfrac{1}{2r^2}$, which lets the continued-fraction expansion recover $k/r$ uniquely.)
 
 **Step 4: recover $r$ from the readout.** Measuring some $y\approx kQ/r$ means
 
@@ -197,7 +197,7 @@ this is not a speedup; it is a different species.
 
 <Callout type="insight" title="The timetable hanging over RSA">
 The threat is real, but the accounting must be done in logical qubits. Breaking 2048-bit RSA takes
-roughly **thousands of logical qubits** and trillions of gate operations; after the error-correction
+roughly **thousands of logical qubits** and $10^9$ to $10^{10}$ gate operations; after the error-correction
 overhead (Section 9.10), that converts to roughly **millions of physical qubits** on current
 architectures — while machines of the mid-2020s hold only hundreds to thousands of physical qubits,
 with several orders of magnitude of engineering in between.
@@ -292,7 +292,7 @@ two entirely different threat levels.
 
 ## What comes next
 
-Shor needs trillions of gate operations to run back-to-back without a slip, and real qubits are
+Shor needs billions of gate operations to run back-to-back without a slip, and real qubits are
 delicate creatures: a one-percent gate error counts as excellent, and even left alone they quietly
 drift. Classical computers correct errors with redundant backups — but quantum states cannot be
 cloned (Section 9.5), and a measurement collapses them (Section 9.1) — **so how do you back up,

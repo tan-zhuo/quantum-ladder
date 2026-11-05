@@ -15,8 +15,8 @@ objectives:
 sims: []
 ---
 
-Shor's algorithm demands trillions of gate operations with next to no mistakes, while real
-hardware has single-gate error rates around $10^{-3}$ — nine orders of magnitude apart.
+Shor's algorithm demands billions of gate operations with next to no mistakes, while real
+hardware has single-gate error rates around $10^{-3}$ — six or seven orders of magnitude apart.
 Classical computers cleared this hurdle with error correction: keep three copies, let the
 majority rule. But in the quantum world that old road looks blocked at every turn.
 What this section presents is one of the most beautiful escapes in this book.
@@ -34,7 +34,7 @@ $\ket{\chi}=\alpha\ket{0}+\beta\ket{1}$ and you slam into three walls at once:
    arbitrarily small rotations on the Bloch sphere — a turn of $0.01$ radians is an error too.
    Are we supposed to keep a correction table for every angle?
 
-Quantum information looks doomed to go unprotected. In 1995, Shor and Steane each found the
+Quantum information looks doomed to go unprotected. In 1995–1996, Shor and Steane each found the
 hidden door, and it takes two keys: **replace copying with entanglement, and replace peeking
 with measurements that ask only about relationships, never about content**.
 
@@ -263,7 +263,7 @@ on error correction itself.
       prompt: 'The physical flip probability is p = 0.1. Under three-qubit protection, what is the logical error rate 3p² − 2p³?',
       answer: 0.028,
       tolerance: 0.002,
-      explain: '3(0.01) − 2(0.001) = 0.03 − 0.002 = 0.028, roughly a quarter of the unencoded 0.1. Make p ten times smaller and the advantage becomes a hundredfold — the p² suppression is exactly the statistical dividend of "distance 3 corrects 1 error".',
+      explain: '3(0.01) − 2(0.001) = 0.03 − 0.002 = 0.028, roughly a quarter of the unencoded 0.1. Make p ten times smaller (0.01) and the logical error rate is about 3×10⁻⁴, roughly a thirtieth of the unencoded rate, with the advantage growing as p shrinks; the p² suppression is exactly the statistical dividend of "distance 3 corrects 1 error".',
     },
     {
       id: 'ec-4',

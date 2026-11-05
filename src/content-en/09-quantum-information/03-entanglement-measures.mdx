@@ -88,8 +88,8 @@ $$
 \rho_A=\frac12\ket{0}\bra{0}+\frac12\ket{1}\bra{1}=\frac{I}{2}
 $$
 
-**Step 3: read off the physics.** $\rho_A=I/2$ is the **maximally mixed state** — the centre of last
-section's Bloch sphere. Looking at particle A alone, every axis measures fifty-fifty; statistically
+**Step 3: read off the physics.** $\rho_A=I/2$ is the **maximally mixed state** — the centre of the Bloch
+sphere of section 9.1. Looking at particle A alone, every axis measures fifty-fifty; statistically
 it is indistinguishable from "a coin that has been tossed but not yet looked at".
 The cross terms (the coherences) were killed in the partial trace by the orthogonality on B's side:
 **the global coherence has moved into the correlations, and locally only noise remains.**
@@ -151,7 +151,7 @@ up one such pair — the unit in which the protocols of sections 9.5 and 9.6 kee
 
 **Why is entropy the "right" ruler?** Because it is not an arbitrary pick: one can prove that with
 local operations plus phone calls (LOCC), the two parties **can neither create new entanglement nor
-increase the entanglement entropy** — like energy, it is a conserved resource on the books.
+increase the entanglement entropy** — it is a resource that can be spent but never manufactured by local means.
 And it is operational: from $n$ pairs with entanglement entropy $E$ one can (asymptotically) distil
 about $nE$ Bell pairs, and conversely dilute $nE$ Bell pairs to prepare them.
 "Entropy = the number of Bell pairs it exchanges for" — that is what earns it the name of a measure.
@@ -201,8 +201,10 @@ as $\chi$ turns from 0 to 45°, the entanglement climbs smoothly from 0 to 1.
    read together) is also perfectly correlated, but that corresponds to a separable mixed state.
    What makes entanglement special is being **correlated along every measurement axis**:
    a Bell state is perfectly correlated measured along $z$, and still perfectly correlated along $x$ —
-   classical correlations cannot win on both axes at once, and that is precisely the vein the Bell
-   inequality mines in the next section.
+   no separable state can manage both axes at once (separable states obey
+   $|\langle ZZ\rangle|+|\langle XX\rangle|\le1$). Same-axis perfect correlations on their own can still
+   be mimicked by a local hidden-variable model, though; the Bell inequality of the next section compares
+   correlations between different axes, and that is what separates entanglement from every classical account.
 2. **Mixed-state entanglement is not this simple.** This section's entropy and concurrence formulas
    hold only for **pure states**. Mixed states carry classical noise from the start, "mixed" no
    longer equals "entangled", and heavier machinery such as Wootters' formula is needed (not covered
