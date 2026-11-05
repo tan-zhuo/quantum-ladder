@@ -183,7 +183,7 @@ Not every mathematical function will do. The requirements come from two directio
 <Callout type="warning" title="The last row has exceptions, and they are common">
 At the walls of an infinite well, and at the location of a delta potential, $\partial_x\Psi$ **is allowed** to jump.
 
-This is not a loophole granted by hand; it follows from the equation itself. Integrate the Schrödinger equation across the discontinuity over a width $\varepsilon\to 0$ and the jump in $\partial_x\Psi$ is proportional to $\int V\dd x$. For finite $V$ that integral vanishes; for a delta function it does not.
+This is not a loophole granted by hand; it follows from the equation itself. Integrate the Schrödinger equation across the discontinuity over a width $\varepsilon\to 0$ and the jump in $\partial_x\Psi$ is proportional to $\int_{-\varepsilon}^{\varepsilon} V\Psi\,\dd x$. For finite $V$ that integral goes to zero as $\varepsilon\to0$; for $V=\alpha\,\delta(x)$ it equals $\alpha\Psi(0)$, which does not. The wall of an infinite well is best treated as the $V_0\to\infty$ limit of a finite well.
 
 This will be needed immediately in sections [2.7](/en/ch/02-wavefunction/07-infinite-well/) and [2.8](/en/ch/02-wavefunction/08-finite-well/).
 </Callout>

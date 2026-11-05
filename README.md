@@ -1,14 +1,16 @@
 # Quantum Ladder · 量子力学阶梯
 
-以 **3D 交互为主要教学语言**的量子力学学习平台。纯前端、可静态部署、支持离线、中英双语。
+一个以交互式 3D 演示为主线的量子力学学习网站，配有完整的中英双语教材。纯前端实现，可静态部署，支持离线访问。
 
-*A quantum-mechanics learning platform where interactive 3D scenes do the teaching. Static, offline-capable, bilingual (中文 / English).*
+*An interactive quantum-mechanics course built around 3D demonstrations, with a full bilingual (中文 / English) textbook. Static, front-end only, works offline.*
 
 - 博客 Blog：<https://tanzhuo.xyz>
 - 源码 Source：<https://github.com/tan-zhuo/quantum-ladder>
 
-> 这不是电子书。12 个 3D 场景是这里的主讲人——每一个重要原理都尽可能用三维把物理图像讲透，
-> 让人先「看见」量子世界在发生什么，再谈公式。所有计算都在浏览器里实时进行。
+站内的 3D 场景覆盖双缝干涉、势阱、隧穿、自旋、氢原子轨道、纠缠和退相干等主题，
+每个场景都可以调节参数并观察演化，所有数值计算在浏览器中实时完成。
+教材部分给出完整的推导、习题和数值方法，场景页与教材小节之间互相链接。
+正文写作约定见 [`docs/STYLE.md`](docs/STYLE.md)。
 
 ## 快速开始
 

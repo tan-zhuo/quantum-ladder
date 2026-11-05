@@ -24,51 +24,51 @@ const FEATURED = [
   {
     module: '05-spin',
     scene: 'Bloch 球',
-    title: '把自旋态变成可以用手拖的球',
-    desc: '球面上每个点都是一个纯态。加磁场看它进动，选一个轴测量看它塌缩，重复两百次看频率收敛到 Born 规则。',
+    title: '在 Bloch 球上操作自旋态',
+    desc: '球面上每一点对应一个纯态。可以施加磁场观察进动，沿任意轴测量观察投影，重复测量后比较统计频率与 Born 规则的预测。',
   },
   {
     module: '06-hydrogen',
     scene: '氢原子轨道',
-    title: '真正看见 |ψ|² 长什么样',
-    desc: '六万个点一个个显影出来，每个点是一次位置测量的可能结果。切换 n、l、m，剖开 3d 轨道看里面。',
+    title: '氢原子的概率密度 |ψ|²',
+    desc: '以六万次位置采样逐点显示概率分布。可以切换量子数 n、l、m，并对轨道做剖切以观察内部结构。',
   },
   {
     module: '03-bound-states',
     scene: '势阱与谐振子',
-    title: '定态为什么被称为「静止」',
-    desc: 'ψ 在复平面里转个不停，而它的影子 |ψ|² 一动不动。能级、节点、渗出阱壁的指数尾巴都在同一张图里。',
+    title: '定态的时间演化',
+    desc: '定态波函数的相位随时间旋转，|ψ|² 保持不变。图中同时给出能级、节点位置和阱壁外的指数衰减部分。',
   },
   {
     module: '01-double-slit',
     scene: '双缝干涉',
-    title: '条纹是一颗颗粒子累积出来的',
-    desc: '前几十个点毫无规律，几百个之后条纹自己浮现。在缝口放上探测器，条纹当场消失。',
+    title: '单粒子累积的干涉条纹',
+    desc: '粒子逐个到达屏幕，起初分布看不出规律，数百个之后干涉条纹逐渐显现。在缝处加入路径探测器后，条纹消失。',
   },
   {
     module: '04-tunneling',
     scene: '隧道效应',
-    title: '波包撞上一堵它翻不过的墙',
-    desc: '浏览器里实时解含时薛定谔方程。经典小球原路弹回，波包却有一部分出现在了另一侧。',
+    title: '波包穿过势垒',
+    desc: '实时数值求解含时薛定谔方程。能量低于势垒时，经典粒子被完全反射，波包则有一部分透射到势垒另一侧。',
   },
 ]
 
 const PATHS = [
   {
-    name: '第一次接触量子力学',
-    desc: '按模块编号顺序走：01 → 02 → 03 → 04，四个模块之后你已经能读懂大多数科普里说错的地方。',
+    name: '初学者',
+    desc: '按模块编号依次学习 01 → 04，建立波函数、定态和隧穿的基本图像。',
     route: ['00', '01', '02', '03', '04'],
     accent: 'var(--accent)',
   },
   {
-    name: '正在上量子力学课',
-    desc: '课上讲到哪，就来对应模块看一眼图像，再回去看推导。场景下方的「深入阅读」直达教材小节。',
+    name: '正在修读量子力学课程',
+    desc: '配合课程进度查看对应模块的图像，再回到推导。每个场景下方的「深入阅读」链接到相应教材小节。',
     route: ['03', '06', '05', '09', '11'],
     accent: 'var(--c-prob)',
   },
   {
-    name: '目标是量子信息',
-    desc: '跳过连续谱与氢原子，主攻二能级系统：Bloch 球 → 测量 → 纠缠 → 退相干。',
+    name: '侧重量子信息',
+    desc: '略过连续谱和氢原子，集中学习二能级系统：Bloch 球、测量、纠缠、退相干。',
     route: ['05', '07', '08', '12'],
     accent: 'var(--c-energy)',
   },
@@ -80,7 +80,7 @@ const PATHS = [
     <!-- ── Hero ─────────────────────────────────────────── -->
     <section class="mb-14">
       <p class="mb-3 font-mono text-[13px] tracking-wide text-[var(--accent-text)]">
-        {t('ψ · 3D 优先 · 纯前端 · 无需注册 · 可离线使用')}
+        {t('交互式量子力学 · 中英双语 · 可离线使用')}
       </p>
       <h1 class="max-w-[20ch] text-[36px] leading-[1.15] font-bold tracking-tight sm:text-[46px]">
         {t('量子力学阶梯')}
@@ -88,7 +88,7 @@ const PATHS = [
       <p class="mt-5 max-w-[62ch] text-[17px] leading-relaxed text-[var(--text-muted)]">
         {
           t(
-            '这不是电子书。{0} 个 3D 交互场景是这里的主讲人——每一个重要原理都尽可能用三维把物理图像讲透， 让你先「看见」量子世界在发生什么，再谈公式。所有计算都在你的浏览器里实时进行。',
+            '一套以交互演示为主线的量子力学入门与进阶材料。站内有 {0} 个 3D 场景，涵盖双缝干涉、势阱、隧穿、自旋、氢原子轨道和纠缠等内容，每个场景都可以调节参数、观察演化，并与配套教材中的推导相互对照。全部数值计算在浏览器中完成。',
             sceneCount,
           )
         }
@@ -114,7 +114,7 @@ const PATHS = [
           href={L('lab/00-intro/')}
           class="text-[14px] text-[var(--text-faint)] underline underline-offset-4 transition-colors hover:text-[var(--accent-text)]"
         >
-          {t('怎么用这个平台？')}
+          {t('使用说明')}
         </a>
       </div>
 
@@ -136,7 +136,7 @@ const PATHS = [
     <section class="mb-16">
       <div class="mb-4 flex items-baseline justify-between gap-3">
         <h2 class="text-[13px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
-          {t('先看这五个')}
+          {t('推荐场景')}
         </h2>
         <a href={`${base}lab/`} class="text-[13px] text-[var(--accent-text)] hover:underline">
           {t('全部模块 →')}
@@ -171,16 +171,16 @@ const PATHS = [
       {
         [
           {
-            t: '3D 是主讲人',
-            d: '能用三维讲清楚的，绝不只用二维图或纯文字。每个场景都支持旋转、缩放、剖切、时间演化与预设视角。',
+            t: '三维可视化',
+            d: '适合用空间图像说明的内容尽量用三维呈现。场景支持旋转、缩放、剖切、时间演化和预设视角。',
           },
           {
-            t: '数字是算出来的',
-            d: '本征值问题、split-operator 演化、蒙特卡洛采样全在浏览器里跑。读数区会把数值解与解析解并排放着让你对照。',
+            t: '实时数值计算',
+            d: '本征值求解、split-operator 时间演化和蒙特卡洛采样均在浏览器中运行。读数区并列给出数值解与解析解，便于对照。',
           },
           {
-            t: '先图像，后数学',
-            d: '每个场景配一份观察指南（该看什么、调什么），以及一组「常见错误直觉」——那些几乎每个人都会踩一次的坑。',
+            t: '图像与推导对照',
+            d: '每个场景附有观察指南，说明应关注的现象和可调参数，并列出初学者常见的错误理解。',
           },
         ].map((x) => (
           <div class="rounded-xl border border-[var(--border)] px-4 py-3.5">
@@ -194,7 +194,7 @@ const PATHS = [
     <!-- ── 学习路线 ─────────────────────────────────────── -->
     <section class="mb-16">
       <h2 class="mb-4 text-[13px] font-semibold tracking-[0.12em] text-[var(--text-faint)] uppercase">
-        {t('三条路线，看你从哪来')}
+        {t('学习路线')}
       </h2>
       <div class="grid gap-3 sm:grid-cols-3">
         {
@@ -234,11 +234,11 @@ const PATHS = [
     <!-- ── 教材部分 ─────────────────────────────────────── -->
     <section class="mb-16">
       <div class="rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] px-5 py-5">
-        <h2 class="text-[16px] font-semibold">{t('还有一整本教材')}</h2>
+        <h2 class="text-[16px] font-semibold">{t('配套教材')}</h2>
         <p class="mt-2 max-w-[68ch] text-[14px] leading-relaxed text-[var(--text-muted)]">
           {
             t(
-              '3D 模块负责建立图像，完整的推导、习题与数值方法在教材部分： {0} 章、{1} 节，其中 {2} 节已定稿。 每个模块页面底部都有对应章节的直达链接。',
+              '完整的推导、习题和数值方法见教材部分，共 {0} 章 {1} 节，其中 {2} 节已定稿。每个模块页面底部都附有对应章节的链接。',
               toc.length,
               allSections.length,
               doneSections.length,
@@ -290,7 +290,7 @@ const PATHS = [
       <p>
         {
           t(
-            '纯静态站点，全部计算在你的浏览器里完成。学习进度只存在本机 localStorage，不上传任何数据。 支持离线访问：访问过的页面会被缓存下来。',
+            '本站为纯静态站点，所有计算在本地浏览器中完成。学习进度保存在本机 localStorage 中，不会上传。访问过的页面会被缓存，可离线浏览。',
           )
         }
       </p>

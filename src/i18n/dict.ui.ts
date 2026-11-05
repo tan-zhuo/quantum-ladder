@@ -3,8 +3,8 @@ export const DICT_UI: Record<string, string> = {
   // ── 站点与页眉 ──────────────────────────────────────────
   量子力学阶梯: 'Quantum Ladder',
   跳到正文: 'Skip to content',
-  '从零基础到前沿的量子力学系统教程，以 3D 交互场景为主讲。':
-    'Quantum mechanics from scratch to the research frontier, taught mainly through interactive 3D scenes.',
+  '从入门到前沿的量子力学教程，以交互式 3D 演示配合系统的推导。':
+    'A quantum mechanics course from the basics to current research, combining interactive 3D demonstrations with systematic derivations.',
   打开目录: 'Open contents',
   搜索: 'Search',
   '公式速查（快捷键 f）': 'Formula reference (press f)',
@@ -63,65 +63,80 @@ export const DICT_UI: Record<string, string> = {
     'The 3D modules build the physical picture; the textbook does the calculation properly. Every module page links directly to the matching chapters, and the sidebar has the whole textbook under "Textbook".',
 
   // ── 首页 ────────────────────────────────────────────────
-  'ψ · 3D 优先 · 纯前端 · 无需注册 · 可离线使用':
-    'ψ · 3D first · front-end only · no sign-up · works offline',
-  '这不是电子书。{0} 个 3D 交互场景是这里的主讲人——每一个重要原理都尽可能用三维把物理图像讲透， 让你先「看见」量子世界在发生什么，再谈公式。所有计算都在你的浏览器里实时进行。':
-    'This is not an e-book. {0} interactive 3D scenes do the teaching here: every important principle is pushed as far as three dimensions can take it, so that you *see* what is happening before anyone shows you a formula. Every calculation runs live in your browser.',
+  '交互式量子力学 · 中英双语 · 可离线使用':
+    'Interactive quantum mechanics · bilingual · works offline',
+  '一套以交互演示为主线的量子力学入门与进阶材料。站内有 {0} 个 3D 场景，涵盖双缝干涉、势阱、隧穿、自旋、氢原子轨道和纠缠等内容，每个场景都可以调节参数、观察演化，并与配套教材中的推导相互对照。全部数值计算在浏览器中完成。':
+    'An introductory-to-intermediate course in quantum mechanics built around interactive demonstrations. The site has {0} 3D scenes covering double-slit interference, potential wells, tunnelling, spin, hydrogen orbitals and entanglement. In each one you can adjust parameters, follow the time evolution, and compare what you see with the derivations in the accompanying textbook. All numerical work runs in the browser.',
   '从 Bloch 球开始': 'Start with the Bloch sphere',
   '全部 {0} 个模块': 'All {0} modules',
-  '怎么用这个平台？': 'How do I use this?',
+  '使用说明':
+    'How to use this site',
   '继续上次：': 'Continue: ',
-  先看这五个: 'Start with these five',
+  '推荐场景':
+    'Recommended scenes',
   '全部模块 →': 'All modules →',
   'Bloch 球': 'Bloch sphere',
   氢原子轨道: 'Hydrogen orbitals',
   势阱与谐振子: 'Wells and the oscillator',
   双缝干涉: 'Double-slit interference',
   隧道效应: 'Tunnelling',
-  把自旋态变成可以用手拖的球: 'A spin state you can drag around a sphere',
-  '球面上每个点都是一个纯态。加磁场看它进动，选一个轴测量看它塌缩，重复两百次看频率收敛到 Born 规则。':
-    'Every point on the sphere is a pure state. Add a field and watch it precess, pick an axis and watch it collapse, repeat two hundred times and watch the frequencies converge on the Born rule.',
-  '真正看见 |ψ|² 长什么样': 'Actually see what |ψ|² looks like',
-  '六万个点一个个显影出来，每个点是一次位置测量的可能结果。切换 n、l、m，剖开 3d 轨道看里面。':
-    'Sixty thousand dots develop one by one, each a possible outcome of a position measurement. Change n, l, m, and slice a 3d orbital open to see inside.',
-  '定态为什么被称为「静止」': 'Why a stationary state is called "stationary"',
-  'ψ 在复平面里转个不停，而它的影子 |ψ|² 一动不动。能级、节点、渗出阱壁的指数尾巴都在同一张图里。':
-    'ψ spins endlessly in the complex plane while its shadow |ψ|² does not move at all. Levels, nodes and the exponential tail leaking through the wall are all in one picture.',
-  条纹是一颗颗粒子累积出来的: 'The fringes are built one particle at a time',
-  '前几十个点毫无规律，几百个之后条纹自己浮现。在缝口放上探测器，条纹当场消失。':
-    'The first few dozen dots look random; after a few hundred the fringes surface by themselves. Put a detector at the slits and they vanish on the spot.',
-  波包撞上一堵它翻不过的墙: 'A wave packet hits a wall it cannot climb',
-  '浏览器里实时解含时薛定谔方程。经典小球原路弹回，波包却有一部分出现在了另一侧。':
-    'The time-dependent Schrödinger equation, solved live in your browser. The classical ball bounces straight back; part of the wave packet turns up on the far side.',
-  '3D 是主讲人': '3D does the teaching',
-  '能用三维讲清楚的，绝不只用二维图或纯文字。每个场景都支持旋转、缩放、剖切、时间演化与预设视角。':
-    'Anything three dimensions can explain never gets reduced to a flat figure or a paragraph. Every scene rotates, zooms, clips, evolves in time and offers preset viewpoints.',
-  数字是算出来的: 'The numbers are computed',
-  '本征值问题、split-operator 演化、蒙特卡洛采样全在浏览器里跑。读数区会把数值解与解析解并排放着让你对照。':
-    'Eigenvalue problems, split-operator evolution and Monte Carlo sampling all run in the browser. The readout puts the numerical and analytic answers side by side so you can check them.',
-  '先图像，后数学': 'Picture first, mathematics second',
-  '每个场景配一份观察指南（该看什么、调什么），以及一组「常见错误直觉」——那些几乎每个人都会踩一次的坑。':
-    'Every scene comes with a guide to what to look at and what to change, plus a set of common wrong intuitions — the traps almost everybody falls into once.',
-  '三条路线，看你从哪来': 'Three routes, depending on where you are coming from',
-  第一次接触量子力学: 'First encounter with quantum mechanics',
-  '按模块编号顺序走：01 → 02 → 03 → 04，四个模块之后你已经能读懂大多数科普里说错的地方。':
-    'Take the modules in order: 01 → 02 → 03 → 04. Four modules in, you will already spot most of what popular accounts get wrong.',
-  正在上量子力学课: 'Currently taking a course',
-  '课上讲到哪，就来对应模块看一眼图像，再回去看推导。场景下方的「深入阅读」直达教材小节。':
-    'Whatever the lecture covers, come and look at the matching picture, then go back to the derivation. Each scene links straight to the relevant textbook section.',
-  目标是量子信息: 'Heading for quantum information',
-  '跳过连续谱与氢原子，主攻二能级系统：Bloch 球 → 测量 → 纠缠 → 退相干。':
-    'Skip the continuum and hydrogen and go straight for two-level systems: Bloch sphere → measurement → entanglement → decoherence.',
-  还有一整本教材: 'There is a whole textbook as well',
-  '3D 模块负责建立图像，完整的推导、习题与数值方法在教材部分： {0} 章、{1} 节，其中 {2} 节已定稿。 每个模块页面底部都有对应章节的直达链接。':
-    'The 3D modules build the picture; the derivations, exercises and numerical methods live in the textbook: {0} chapters, {1} sections, {2} of them finalised. Every module page links straight to the matching chapters.',
+  '在 Bloch 球上操作自旋态':
+    'Manipulating spin states on the Bloch sphere',
+  '球面上每一点对应一个纯态。可以施加磁场观察进动，沿任意轴测量观察投影，重复测量后比较统计频率与 Born 规则的预测。':
+    'Each point on the sphere is a pure state. Apply a field to watch it precess, measure along any axis to see the projection, and compare the statistics of repeated measurements with the Born rule.',
+  '氢原子的概率密度 |ψ|²':
+    'The hydrogen probability density |ψ|²',
+  '以六万次位置采样逐点显示概率分布。可以切换量子数 n、l、m，并对轨道做剖切以观察内部结构。':
+    'The distribution is built up from sixty thousand sampled positions. Switch the quantum numbers n, l, m and clip the orbital to see its interior.',
+  '定态的时间演化':
+    'Time evolution of stationary states',
+  '定态波函数的相位随时间旋转，|ψ|² 保持不变。图中同时给出能级、节点位置和阱壁外的指数衰减部分。':
+    'The phase of a stationary state rotates in time while |ψ|² stays fixed. The same figure shows the energy levels, the nodes and the exponentially decaying tail outside the well.',
+  '单粒子累积的干涉条纹':
+    'Interference built up one particle at a time',
+  '粒子逐个到达屏幕，起初分布看不出规律，数百个之后干涉条纹逐渐显现。在缝处加入路径探测器后，条纹消失。':
+    'Particles arrive one at a time. At first the pattern looks random; after a few hundred the fringes appear. Adding a which-path detector at the slits removes them.',
+  '波包穿过势垒':
+    'A wave packet meeting a barrier',
+  '实时数值求解含时薛定谔方程。能量低于势垒时，经典粒子被完全反射，波包则有一部分透射到势垒另一侧。':
+    'The time-dependent Schrödinger equation is solved numerically in real time. Below the barrier height a classical particle is fully reflected, while part of the wave packet is transmitted.',
+  '三维可视化':
+    '3D visualisation',
+  '适合用空间图像说明的内容尽量用三维呈现。场景支持旋转、缩放、剖切、时间演化和预设视角。':
+    'Material that benefits from a spatial picture is presented in three dimensions. Scenes support rotation, zoom, clipping, time evolution and preset viewpoints.',
+  '实时数值计算':
+    'Live numerical computation',
+  '本征值求解、split-operator 时间演化和蒙特卡洛采样均在浏览器中运行。读数区并列给出数值解与解析解，便于对照。':
+    'Eigenvalue solvers, split-operator time evolution and Monte Carlo sampling run in the browser. The readout lists numerical and analytic results side by side for comparison.',
+  '图像与推导对照':
+    'Pictures alongside derivations',
+  '每个场景附有观察指南，说明应关注的现象和可调参数，并列出初学者常见的错误理解。':
+    'Each scene has an observation guide describing what to look for and which parameters to change, together with a list of common misconceptions.',
+  '学习路线':
+    'Learning paths',
+  '初学者':
+    'New to quantum mechanics',
+  '按模块编号依次学习 01 → 04，建立波函数、定态和隧穿的基本图像。':
+    'Work through modules 01 → 04 in order to build the basic picture of wavefunctions, stationary states and tunnelling.',
+  '正在修读量子力学课程':
+    'Taking a quantum mechanics course',
+  '配合课程进度查看对应模块的图像，再回到推导。每个场景下方的「深入阅读」链接到相应教材小节。':
+    'Follow your course and use the matching module for the picture, then return to the derivation. The "Further reading" links under each scene point to the relevant textbook sections.',
+  '侧重量子信息':
+    'Focusing on quantum information',
+  '略过连续谱和氢原子，集中学习二能级系统：Bloch 球、测量、纠缠、退相干。':
+    'Skip the continuum and hydrogen and concentrate on two-level systems: the Bloch sphere, measurement, entanglement and decoherence.',
+  '配套教材':
+    'The textbook',
+  '完整的推导、习题和数值方法见教材部分，共 {0} 章 {1} 节，其中 {2} 节已定稿。每个模块页面底部都附有对应章节的链接。':
+    'Full derivations, exercises and numerical methods are in the textbook: {0} chapters and {1} sections, {2} of them finalised. Each module page links to the corresponding chapters at the bottom.',
   你的学习进度只存在本机浏览器里: 'Your progress stays in this browser',
   '其中 {0} 处自评为「{1}」以上': 'including {0} rated "{1}" or better',
   '个 3D 场景': '3D scenes',
   个模块: 'modules',
   节教材: 'textbook sections',
-  '纯静态站点，全部计算在你的浏览器里完成。学习进度只存在本机 localStorage，不上传任何数据。 支持离线访问：访问过的页面会被缓存下来。':
-    'A fully static site: every calculation happens in your browser. Progress is kept in localStorage and never uploaded. Pages you have visited are cached, so the site keeps working offline.',
+  '本站为纯静态站点，所有计算在本地浏览器中完成。学习进度保存在本机 localStorage 中，不会上传。访问过的页面会被缓存，可离线浏览。':
+    'This is a static site and all computation happens in your browser. Progress is stored in localStorage and is not uploaded. Visited pages are cached for offline use.',
 
   // ── 教材小节页 ──────────────────────────────────────────
   面包屑: 'Breadcrumb',

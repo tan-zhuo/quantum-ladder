@@ -176,7 +176,7 @@ The relativistic generalisation is [chapter 12](/en/ch/12-relativistic/).
 <Callout type="misconception" title="The i is not optional">
 You will occasionally read that the $\ii$ in the equation is a convention. It is not.
 
-Delete the $\ii$ from $\ii\hbar\partial_t\Psi=\hat H\Psi$ and you have a **diffusion equation**, $\partial_t\Psi\propto\partial_x^2\Psi$. Its solutions decay exponentially; they do not oscillate and they do not interfere. That equation describes ink spreading in water, not an electron.
+Replace the $\ii$ on the left of $\ii\hbar\partial_t\Psi=\hat H\Psi$ by $-1$ and, for a free particle, you have a **diffusion equation**, $\partial_t\Psi=\frac{\hbar}{2m}\partial_x^2\Psi$ (simply deleting the $\ii$ gives the opposite sign: the backward diffusion equation, whose initial-value problem is ill-posed). Its solutions decay exponentially; they do not oscillate and they do not interfere. That equation describes ink spreading in water, not an electron.
 
 The $\ii$ turns exponential solutions from $\ee^{-\lambda t}$ (decay) into $\ee^{-\ii\omega t}$ (oscillation), and all wave behaviour and interference follows from that. Incidentally, substituting $t\to-\ii\tau$ really does turn the Schrödinger equation into a diffusion equation; that trick is called Wick rotation and it underpins quantum Monte Carlo and the [path integral](/en/ch/11-path-integral/).
 </Callout>
