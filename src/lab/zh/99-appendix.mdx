@@ -1,10 +1,10 @@
 ---
 num: '99'
 title: 附录：数学工具与符号约定
-goal: 把全站用到的记号、单位与数学工具集中在一处，随用随查。
+goal: 把全站用到的记号、单位与数学工具集中在一处，便于查阅。
 youWillSee:
   - 全站统一的符号表与单位约定
-  - 每个 3D 场景背后的数值方法与它们的误差来源
+  - 每个 3D 场景采用的数值方法及其误差来源
 prereqs: []
 scenes: []
 related:
@@ -31,13 +31,13 @@ status: done
 
 ## 单位约定
 
-3D 场景里为了让数值好看，一律采用**自然单位**：
+为了让数值简洁，3D 场景一律采用**自然单位**：
 
 - 一维问题：$\hbar = m = 1$。能量与长度都是无量纲的，只有比值有意义。
 - 氢原子：$\hbar = m_e = e = 1$（原子单位）。长度单位是玻尔半径 $a_0 = 0.529$ Å，能量单位是 Hartree $= 27.211$ eV。
 - 自旋：$\hbar/2$ 为单位，泡利矩阵的本征值取 $\pm1$。
 
-场景里显示的数字都在这套单位下。要换回国际单位，乘上相应的常数即可。
+场景里显示的数字都以这套单位表示。要换回国际单位，乘上相应的常数即可。
 
 ## 每个场景背后的数值方法
 
@@ -54,9 +54,9 @@ status: done
 
 ## 常用数学工具
 
-- **线性代数**：厄米算符、本征分解、张量积 → [附录 A.1](/ch/appendix-a-math/01-linear-algebra/)
-- **傅里叶变换**：位置-动量对偶、不确定性关系的数学来源 → [附录 A.2](/ch/appendix-a-math/02-fourier/)
-- **特殊函数**：Hermite（谐振子）、Laguerre（氢原子径向）、Legendre 与球谐（角向）→ [附录 A.3](/ch/appendix-a-math/03-special-functions/)
+- 线性代数：厄米算符、本征分解、张量积 → [附录 A.1](/ch/appendix-a-math/01-linear-algebra/)
+- 傅里叶变换：位置-动量对偶、不确定性关系的数学来源 → [附录 A.2](/ch/appendix-a-math/02-fourier/)
+- 特殊函数：Hermite（谐振子）、Laguerre（氢原子径向）、Legendre 与球谐（角向）→ [附录 A.3](/ch/appendix-a-math/03-special-functions/)
 
 ## 常数速查
 
@@ -69,4 +69,4 @@ status: done
 | Rydberg | $13.606$ eV |
 | $k_B$ | $8.617\times10^{-5}$ eV/K |
 
-完整表格见[附录 B](/ch/appendix-b-formulas/01-formula-table/)，或按快捷键 <kbd>f</kbd> 呼出全站公式速查面板。
+完整表格见[附录 B](/ch/appendix-b-formulas/01-formula-table/)，或按快捷键 <kbd>f</kbd> 打开全站公式速查面板。
