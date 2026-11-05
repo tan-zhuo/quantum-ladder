@@ -64,7 +64,7 @@ $$
 \hat{\vec A}=\frac{1}{2\mu}\left(\hat{\vec p}\times\hat{\vec L}-\hat{\vec L}\times\hat{\vec p}\right)-\frac{e^2}{4\pi\varepsilon_0}\frac{\hat{\vec r}}{r}
 $$
 
-Classical counterpart: a vector pointing along the ellipse's major axis, with length proportional to the eccentricity. Its conservation is equivalent to **the orbit not precessing** — the Kepler ellipse closing on itself year after year without drifting. This is a property unique to the $1/r$ potential (and the harmonic oscillator): nudge the potential away from $1/r$ ever so slightly and the orbit starts to precess, and $\vec A$ is no longer conserved (Mercury's perihelion precession is precisely the effect of general relativity's tiny correction to $1/r$).
+Classical counterpart: a vector pointing along the ellipse's major axis, with length proportional to the eccentricity. Its conservation is equivalent to **the orbit not precessing** — the Kepler ellipse closing on itself year after year without drifting. This is a property unique to the $1/r$ potential (and the harmonic oscillator): nudge the potential away from $1/r$ ever so slightly and the orbit starts to precess, and $\vec A$ is no longer conserved (the 43″ per century of Mercury's perihelion precession left over after subtracting the pull of the other planets is precisely the effect of general relativity's tiny correction to $1/r$).
 
 Quantum mechanically $[\hat H,\hat{\vec A}]=0$, so $\hat{\vec A}$ connects states of different $l$ without changing the energy — this is the engine of the $l$ degeneracy. Together, $\vec L$ and $\vec A$ generate a symmetry group larger than 3D rotations (its mathematical name is SO(4)); in 1926 Pauli used it to derive the full energy spectrum purely algebraically, without solving a single differential equation.
 
@@ -153,7 +153,7 @@ The commonest beginner's confusion: the number and positions of the spectral lin
         1: 'The m degeneracy comes from the isotropy of space; every central potential has it — it belongs to the "necessary" kind.',
         3: 'd(4) = 1+3+5+7 = 16.',
       },
-      explain: 'The m degeneracy is guaranteed by rotational symmetry; the l degeneracy requires an extra conserved quantity (the Runge–Lenz vector), possessed only by the 1/r potential (and the 3D oscillator). Alkali-metal potentials deviate from 1/r and their s and p levels immediately separate — sodium\'s yellow light is the evidence.',
+      explain: 'The m degeneracy is guaranteed by rotational symmetry; the l degeneracy requires an extra conserved quantity, possessed only by the 1/r potential (the Runge–Lenz vector) and the 3D oscillator (a symmetric tensor). Alkali-metal potentials deviate from 1/r and their s and p levels immediately separate — sodium\'s yellow light is the evidence.',
     },
     {
       id: 'el-2',
@@ -188,11 +188,11 @@ The commonest beginner's confusion: the number and positions of the spectral lin
     {
       id: 'el-4',
       type: 'numeric',
-      prompt: 'Compute the wavelength of the Lyman α line (n = 2 → 1) in nm. (E₁ = −13.606 eV, hc = 1240 eV·nm)',
-      answer: 121.5,
+      prompt: 'Compute the wavelength of the Lyman α line (n = 2 → 1) in nm. (E₁ = −13.598 eV, hc = 1240 eV·nm)',
+      answer: 121.6,
       tolerance: 1.0,
       unit: 'nm',
-      explain: 'ΔE = 13.606×(1 − 1/4) = 10.20 eV, λ = 1240/10.20 = 121.5 nm. This vacuum-UV line is among the most important in the universe: cosmic expansion redshifts distant galaxies\' Lyα into the visible and even infrared, and the "Lyman break" is a standard ruler for measuring galaxy redshifts.',
+      explain: 'ΔE = 13.598×(1 − 1/4) = 10.20 eV, λ = 1240/10.20 = 121.6 nm. This vacuum-UV line is among the most important in the universe: cosmic expansion redshifts distant galaxies\' Lyα into the visible and even infrared, while light shortward of the Lyman limit (91.2 nm) is absorbed by neutral hydrogen, and the resulting "Lyman break" is a standard tool for measuring galaxy redshifts.',
     },
   ]}
 />

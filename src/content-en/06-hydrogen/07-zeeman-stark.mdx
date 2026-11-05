@@ -52,7 +52,7 @@ Two "small terms" now share the stage: fine structure ($\sim10^{-4}$ eV) and the
 $$
 \mu_B B\sim\Delta E_\text{fs}
 \quad\Longrightarrow\quad
-B\sim\text{a few tesla}
+B\sim1\ \text{tesla}
 $$
 
 which lands squarely in the middle of laboratory field strengths, so both limits are experimentally accessible.
@@ -60,7 +60,7 @@ which lands squarely in the middle of laboratory field strengths, so both limits
 <DualView>
 <div slot="left">
 
-**Weak field ($B$ well below a few tesla): Zeeman obeys fine structure.**
+**Weak field ($B$ well below 1 tesla): Zeeman obeys fine structure.**
 
 Spin–orbit coupling first locks $\vec L$ and $\vec S$ into the total angular momentum $\vec J$, about which both precess rapidly; the slow magnetic field feels only the **average component of the moment along $\vec J$**. The good quantum numbers are $(n,l,j,m_j)$, and the shift is:
 
@@ -79,7 +79,7 @@ For instance $g_J=2$ for $2\mathrm s_{1/2}$, $2/3$ for $2\mathrm p_{1/2}$, $4/3$
 </div>
 <div slot="right">
 
-**Strong field ($B$ well above a few tesla): fine structure obeys Zeeman.**
+**Strong field ($B$ well above 1 tesla): fine structure obeys Zeeman.**
 
 The magnetic term overpowers spin–orbit coupling; the lock between $\vec L$ and $\vec S$ is torn apart, and each precesses independently about $\vec B$ (the Paschen–Back effect). The good quantum numbers switch to $(n,l,m_l,m_s)$:
 
@@ -95,7 +95,7 @@ The pattern actually simplifies — the lines return to an approximate triplet (
 </DualView>
 
 <Callout type="insight" title="The Zeeman effect is the astronomer's magnetometer">
-The splitting is proportional to $B$ — so read it backwards: **measure the splitting and you have measured the field**. In 1908 George Hale aimed the Mount Wilson telescope at a sunspot and found Zeeman splittings in its spectrum corresponding to about 0.3 T — **the first magnetic field ever measured beyond the Earth** — proving that sunspots are cool regions where magnetism suppresses convection. To this day, stellar surface fields and the micro-gauss whispers of interstellar molecular clouds are measured by Zeeman splitting (or its polarisation signatures). For scale: at 0.3 T, $\mu_B B\approx1.7\times10^{-5}$ eV — about 0.007 nm on a 500 nm line. The gratings of the late nineteenth century were already up to it.
+The splitting is proportional to $B$ — so read it backwards: **measure the splitting and you have measured the field**. In 1908 George Hale aimed the Mount Wilson telescope at a sunspot and found Zeeman splittings in its spectrum corresponding to about 0.3 T — **the first magnetic field ever measured beyond the Earth**. Later (Biermann, 1941) it was understood that sunspots are cool regions where magnetism suppresses convection. To this day, stellar surface fields and the micro-gauss whispers of interstellar molecular clouds are measured by Zeeman splitting (or its polarisation signatures). For scale: at 0.3 T, $\mu_B B\approx1.7\times10^{-5}$ eV — on a 500 nm line, adjacent components sit about 0.0035 nm apart, and the two outer σ components about 0.007 nm apart. The gratings of the late nineteenth century were already up to it.
 </Callout>
 
 ## The Stark effect: the electric field's turn
@@ -179,7 +179,7 @@ Take inventory of what these seven hydrogen sections leave us: one exact solutio
 <KeyFormulas
   items={[
     { name: 'Zeeman coupling', latex: '\\hat H_Z=\\frac{\\mu_B B}{\\hbar}(\\hat L_z+2\\hat S_z),\\qquad \\mu_B=5.79\\times10^{-5}\\ \\text{eV/T}', note: 'The spin g = 2 is the whole source of the "anomalous" pattern' },
-    { name: 'Weak-field Zeeman', latex: '\\Delta E=g_J\\,\\mu_B B\\,m_j,\\qquad g_J=1+\\frac{j(j+1)+s(s+1)-l(l+1)}{2j(j+1)}', note: 'Weak/strong boundary: μ_B B ∼ fine structure, i.e. B ∼ a few tesla' },
+    { name: 'Weak-field Zeeman', latex: '\\Delta E=g_J\\,\\mu_B B\\,m_j,\\qquad g_J=1+\\frac{j(j+1)+s(s+1)-l(l+1)}{2j(j+1)}', note: 'Weak/strong boundary: μ_B B ∼ fine structure, i.e. B ∼ 1 T' },
     { name: 'Strong field (Paschen–Back)', latex: '\\Delta E=\\mu_B B\\,(m_l+2m_s)', note: 'L and S decouple; good quantum numbers change shift to (m_l, m_s)' },
     { name: 'Ground-state Stark', latex: '\\Delta E=-\\frac12\\alpha_{\\text{pol}}\\mathcal E^2,\\qquad \\alpha_{\\text{pol}}=4.5\\,(4\\pi\\varepsilon_0)a_0^3', note: 'Parity forbids first order; non-degenerate states get only a feeble quadratic response' },
     { name: 'n=2 linear Stark', latex: '\\Delta E=\\pm3ea_0\\mathcal E,\\qquad \\psi_\\pm=\\frac{\\psi_{200}\\mp\\psi_{210}}{\\sqrt2}', note: 'Degeneracy + opposite parity ⇒ mixing yields a permanent dipole 3ea₀' },
@@ -208,7 +208,7 @@ Take inventory of what these seven hydrogen sections leave us: one exact solutio
       id: 'zs-2',
       prompt: 'To decide between the weak- and strong-field Zeeman regimes, which two energy scales are compared?',
       options: [
-        'μ_B B versus the fine-structure splitting (about 10⁻⁴ eV), with the boundary at a few tesla',
+        'μ_B B versus the fine-structure splitting (about 10⁻⁴ eV), with the boundary around 1 tesla',
         'μ_B B versus 13.6 eV',
         'μ_B B versus the hyperfine splitting',
         'The photon energy versus the ionisation energy',
@@ -250,4 +250,4 @@ Take inventory of what these seven hydrogen sections leave us: one exact solutio
 
 Looking back over the second half of this chapter, we have frankly been driving without a licence: "the first-order shift equals the average of the perturbation", "when degenerate, diagonalise first" — all reasonable guesses acted on before being proven. Time to pay up.
 
-More pressing still: the hydrogen atom is quantum mechanics' last free lunch. **One step further — helium, the hydrogen molecule, any many-body system — and exact solutions do not exist, in principle.** Physics does not grind to a halt; it runs on a systematic machinery of approximations: perturbation theory, the variational method, WKB. In Chapter 7, we build that toolkit piece by piece.
+More pressing still: the hydrogen atom is quantum mechanics' last free lunch. **One step further — helium, the hydrogen molecule, any many-body system — and there is no closed-form analytic solution.** Physics does not grind to a halt; it runs on a systematic machinery of approximations: perturbation theory, the variational method, WKB. In Chapter 7, we build that toolkit piece by piece.
