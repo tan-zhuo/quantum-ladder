@@ -68,10 +68,10 @@ The two are unrelated. This section is about the first; the completeness relatio
 <Callout type="insight" title="Why the third condition matters: a concrete hole">
 The first two conditions feel natural; the third looks like mathematical fussiness. It is not.
 
-Consider the space of all continuous functions, with the inner product $\int f^*g\,\dd x$. Take a sequence of ever-steeper continuous functions:
+Consider the space of all continuous functions on the interval $[-1,1]$, with the inner product $\int f^*g\,\dd x$. Take a sequence of ever-steeper continuous functions:
 
 $$
-f_n(x)=\begin{cases}0,&x<0\\ nx,&0\le x\le 1/n\\ 1,&x>1/n\end{cases}
+f_n(x)=\begin{cases}0,&-1\le x<0\\ nx,&0\le x\le 1/n\\ 1,&1/n<x\le 1\end{cases}
 $$
 
 In the distance induced by the inner product, $\{f_n\}$ is a Cauchy sequence — its members get ever closer to one another. But the limit is a step function, **discontinuous**, and not in the space.
@@ -199,7 +199,7 @@ $$
 
 $\Phi$ is a smaller space of "very well-behaved functions" (say, rapidly decreasing ones), and $\Phi'$ is its dual, which contains generalised objects like $\delta$ functions and plane waves. The generalised eigenstates live in $\Phi'$.
 
-This framework makes every formal manipulation above rigorous. **You do not need it for physics** — the δ-normalisation rules work perfectly well — but it is reassuring to know the whole thing can be made rigorous. Von Neumann sorted out the mathematical foundations of quantum mechanics back in 1932; the physicist's formal manipulations are not a castle in the air.
+This framework makes every formal manipulation above rigorous. **You do not need it for physics** — the δ-normalisation rules work perfectly well — but it is reassuring to know the whole thing can be made rigorous. Von Neumann put quantum mechanics on a rigorous Hilbert-space and spectral-theory footing back in 1932; the rigged Hilbert space came later (Gelfand and others, 1950s–60s) and brought the δ-functions and plane waves of the physicist's formal manipulations into the rigorous fold as well.
 </Callout>
 
 <KeyFormulas

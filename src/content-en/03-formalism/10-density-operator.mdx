@@ -260,7 +260,7 @@ The two are **the same operator** (both equal $\frac12\hat 1$).
 
 So the question "which pure states was this mixture made from?" has **no unique answer** — and no measurement can distinguish the recipes even in principle, because every prediction enters only through $\operatorname{Tr}(\hat\rho\hat A)$, and $\hat\rho$ is the same.
 
-**This is a feature, not a bug.** The security of quantum teleportation and quantum key distribution rests precisely on it: the reduced state an eavesdropper obtains is identical to the legitimate users', and no information can be extracted from it ([sections 9.5](/en/ch/09-quantum-information/05-teleportation/)–[9.6](/en/ch/09-quantum-information/06-superdense-coding/)).
+**This is a feature, not a bug.** Why teleportation cannot signal faster than light, and why intercepting a single particle in superdense coding reveals nothing, both rest precisely on it: whoever holds only one part has a reduced state that does not depend on what the other side did, and no information can be extracted from it ([sections 9.5](/en/ch/09-quantum-information/05-teleportation/)–[9.6](/en/ch/09-quantum-information/06-superdense-coding/)).
 </Callout>
 
 ## The reduced density operator
@@ -368,7 +368,7 @@ From $\hat\rho(t)=\hat U\hat\rho(0)\hat U^\dagger$ it follows that $\operatornam
         2: 'This is the standard result for an entangled state.',
         3: 'Entangled states are perfectly legitimate.',
       },
-      explain: 'Classically, knowing the whole means knowing the parts; quantum mechanically it does not. This is the defining feature of entanglement, and the source of security in quantum teleportation and quantum key distribution — the reduced state an eavesdropper holds contains no information.',
+      explain: 'Classically, knowing the whole means knowing the parts; quantum mechanically it does not. This is the defining feature of entanglement, and the reason teleportation cannot signal faster than light and a single particle in superdense coding leaks nothing — the reduced state of whoever holds only one particle contains no information.',
     },
     {
       id: 'dens-4',
@@ -385,7 +385,7 @@ From $\hat\rho(t)=\hat U\hat\rho(0)\hat U^\dagger$ it follows that $\operatornam
         2: 'It has nothing to do with precision — the indistinguishability is a matter of principle.',
         3: 'Mixed states are the most common states in any laboratory.',
       },
-      explain: '½|↑⟩⟨↑| + ½|↓⟩⟨↓| and ½|+ₓ⟩⟨+ₓ| + ½|−ₓ⟩⟨−ₓ| are the same operator, ½·1. That is a feature, not a bug: the security of quantum cryptography is built precisely on the eavesdropper\'s inability to distinguish these preparations.',
+      explain: '½|↑⟩⟨↑| + ½|↓⟩⟨↓| and ½|+ₓ⟩⟨+ₓ| + ½|−ₓ⟩⟨−ₓ| are the same operator, ½·1. That is a feature, not a bug: in BB84 quantum key distribution, the states prepared in either basis average to ½·1, so an eavesdropper cannot tell from the state alone which basis was used, one ingredient of the protocol\'s security.',
     },
   ]}
 />
